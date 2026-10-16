@@ -1,75 +1,163 @@
-# ShareShield
+<div align="center">
 
-**Detect. Redact. Verify. Then Share.**
+# 🛡️ ShareShield
 
-> **Status:** Planning and repository setup. Development begins 19 October 2026. This is not yet a finished application.
+### Detect. Redact. Verify. Then Share.
 
-ShareShield is a privacy-focused document review and redaction project. It aims to help people identify selected sensitive information, review it, remove it from a copy of a supported file, and **inspect the exported copy** for residual information before sharing.
+**A local-first system for sensitive-document detection, user-controlled redaction, and post-export privacy checks.**
 
-## The problem
+**🟡 Planning & setup** · **🔒 Private development** · **📅 Mini-project demo: 28 October 2026**
 
-A black box drawn over an identifier can make it appear hidden while the original text remains searchable, copyable, or otherwise present in the file. ShareShield's distinguishing research focus is the **post-export verification step**, alongside user-controlled redaction.
-
-## Mini-project scope — demo on 28 October 2026
-
-The first demonstration is planned as a **locally hosted web application**: documents are selected from the user's laptop and processed by a local service, not uploaded to a public cloud.
-
-Planned workflow:
-
-1. Select a **searchable English PDF** or a **text-based .pptx** presentation.
-2. Extract supported text and flag configured ID/email patterns.
-3. Show detections and let the user choose what to remove.
-4. Apply actual content redaction or text replacement to a **new copy**, retaining the original.
-5. Reopen the saved copy and check for selected sensitive values.
-6. Report **PASS**, **FLAG**, or **UNVERIFIED** with the checks performed; allow verified output to be downloaded.
-
-**Priority:** A robust searchable-PDF workflow is the minimum demo commitment; PPTX is a planned extension subject to testing. Image-only PDFs, OCR, text inside pictures, embedded files, complex presentation structures, and broader leak checks are not assumed to be supported in version 1.
-
-**PASS is not a claim of complete safety:** It means selected values were not detected by the checks actually completed. Failed or incomplete required checks must not be represented as passing.
-
-## Intended development stack
-
-| Area | Planned technology |
-| --- | --- |
-| Frontend | React, TypeScript, Vite |
-| Local API | Python, FastAPI |
-| PDF operations | PyMuPDF (licensing review required before distribution) |
-| PPTX operations | python-pptx |
-| Initial detection | Configurable rules and regular expressions |
-| Version control | Git and GitHub |
-
-Technology choices can change as compatibility, evaluation, and licensing are checked. No source code or installable application is included yet.
-
-## Development milestones
-
-| Date | Target |
-| --- | --- |
-| 16–18 Oct 2026 | Repository, prerequisites, and fictional test materials |
-| 19–22 Oct | Frontend/backend foundations; PDF detection and review |
-| 23–25 Oct | PDF redaction and verification; attempt PPTX support |
-| 26 Oct | Validation, bug fixes, documentation |
-| 27 Oct | Freeze, backup and rehearsal |
-| **28 Oct** | **Mini-project demonstration** |
-
-## Future major-project direction
-
-Explore Android/iOS applications with on-device processing, OCR, visual and face redaction, and user-initiated share-sheet or authorized app integrations. Mobile operating systems do **not** provide unrestricted access to monitor every WhatsApp, Gmail, or other-app upload in the background. Supported sharing integrations must be evaluated per platform.
-
-## Repository documents
-
-- [Prerequisites](docs/PREREQUISITES.md)
-- [Scope and milestones](docs/PROJECT_SCOPE.md)
-- [Collaboration guidelines](CONTRIBUTING.md)
-- [Security policy](SECURITY.md)
-- [IP and licensing considerations](docs/IP_AND_LICENSING.md)
-
-## Privacy and responsible development
-
-Use **fictional or explicitly authorized** sample documents only. Do not commit real identifiers, private user documents, generated redacted exports, credentials, or processing logs. Verification outcomes must document the limitations of completed checks.
-
-## Rights and license
-
-This repository is private and **has no public software license at present**. No permission for general reuse or redistribution is granted by the absence of a license. Ownership, college policies, contributor agreements, and dependency licenses require review before public release. See [IP and licensing](docs/IP_AND_LICENSING.md).
+</div>
 
 ---
-**Project:** ShareShield · Mini-project prototype (planned) · Malnad College of Engineering
+
+## Overview
+
+ShareShield is designed to help users **check documents before sharing them**. It aims to detect selected sensitive information, let users review and remove it from a new copy, and then **reopen the exported file** to check whether the selected information is still present.
+
+> **Why verification matters:** A black rectangle can make a student ID look hidden while its text remains searchable or copyable in a PDF. ShareShield focuses on checking the *saved file*, not just trusting how the preview looks.
+
+**Current status:** This repository contains project documentation and preparation material. Implementation starts **19 October 2026**. No working application, measured accuracy, or security certification is claimed yet.
+
+## At a glance
+
+| | Mini project — October 2026 | Major project — future direction |
+| --- | --- | --- |
+| **Experience** | Local browser-based document review | Android, iOS and web experiences |
+| **Input** | Searchable English PDFs; text-based PPTX as an extension | More documents, screenshots and images |
+| **Detection** | Selected ID and email patterns | Patterns, contextual recognition, OCR and visual detection |
+| **Redaction** | PDF content redaction; editable PPTX text replacement | Wider document and image support |
+| **Verification** | Reopen saved output and run documented checks | Expanded text, visual and file-structure checks |
+| **Sharing** | User downloads a reviewed copy | User-initiated system share sheets and authorized integrations |
+
+**Delivery priority:** A dependable **PDF workflow** comes first. PPTX support is planned for the mini project but is **subject to testing** and must not jeopardize the PDF demonstration.
+
+## Mini-project workflow
+
+The following diagram describes the **planned** interaction, not a completed feature.
+
+\`\`\`mermaid
+flowchart TD
+    A(["Choose local PDF or PPTX"]) --> B{"Supported file and content?"}
+    B -->|No| U["Show unsupported / unverified warning"]
+    B -->|Yes| C["Extract supported text"]
+    C --> D["Detect possible IDs and emails"]
+    D --> E["User reviews and selects findings"]
+    E --> F["Redact a NEW copy; preserve the original"]
+    F --> G["Save and reopen the exported file"]
+    G --> H{"Required verification checks"}
+    H -->|Completed and passed| P["PASS: provide copy and check report"]
+    H -->|Sensitive data remains| X["FLAG: hold for review"]
+    H -->|Incomplete or unsupported| Y["UNVERIFIED: hold for review"]
+\`\`\`
+
+**PASS is scoped, not absolute.** It means no selected sensitive value was found by the required checks **actually completed**. A check that fails to run, or content that cannot be reliably inspected, must not be called safe.
+
+## Planned architecture
+
+The mini project is designed to run **locally on one laptop during the demo**. Its browser frontend communicates with a local backend; original documents do not need to be uploaded to a public cloud.
+
+\`\`\`mermaid
+flowchart LR
+    subgraph Device["User's laptop — local processing"]
+        UI["React + TypeScript<br/>Review interface"]
+        API["FastAPI<br/>Local API"]
+        PDF["PyMuPDF<br/>PDF operations"]
+        PPT["python-pptx<br/>PPTX text operations"]
+        DET["PII patterns<br/>Detection results"]
+        V["Export verification<br/>Reopen saved file"]
+    end
+    UI <-->|"Upload, review, result"| API
+    API --> PDF
+    API --> PPT
+    PDF --> DET
+    PPT --> DET
+    DET --> API
+    PDF --> V
+    PPT --> V
+    V --> API
+\`\`\`
+
+### Intended stack
+
+| Layer | Planned tools | Purpose |
+| --- | --- | --- |
+| User interface | React, TypeScript, Vite | Upload, findings review, results |
+| Local service | Python, FastAPI | File handling and coordination |
+| PDF | PyMuPDF | Text extraction and true content redaction |
+| Presentations | python-pptx | Editable text extraction and replacement |
+| Detection | Configurable patterns / regular expressions | Initial ID and email detection |
+| Verification | Independent saved-file checks | PASS / FLAG / UNVERIFIED reporting |
+| Collaboration | Git + private GitHub repository | Version history and reviews |
+
+Tool choices may change following compatibility and license review. **PyMuPDF's AGPL/commercial licensing options require evaluation before distribution.**
+
+## Supported scope and limitations
+
+| Scenario | Mini-project target |
+| --- | --- |
+| Searchable English PDF containing fictional ID/email | **Core target** |
+| Editable text in a modern \`.pptx\` | **Planned extension** |
+| A PDF where a black shape merely covers copyable text | **Illustrative leak test** |
+| Scanned/image-only PDFs or text embedded in pictures | Not part of the initial guarantee |
+| Complex PPTX objects, speaker notes and embedded documents | Not automatically considered verified |
+| OCR, face redaction, multilingual support | Future work |
+| Monitoring every WhatsApp or Gmail upload silently | **Not supported** by an unrestricted third-party mobile app |
+
+Unrecognized formats, unsupported content and incomplete verification must be surfaced clearly to users rather than reported as passing.
+
+## Roadmap
+
+| When | Planned deliverable |
+| --- | --- |
+| **16–18 Oct 2026** | Repository setup, prerequisites and fictional test cases |
+| **19–22 Oct** | Frontend, local API, PDF extraction, detection and user review |
+| **23–25 Oct** | PDF redaction and export checks; attempt PPTX support |
+| **26 Oct** | Test failures, edge cases and documentation |
+| **27 Oct** | Stable code freeze, backup and rehearsal |
+| **28 Oct** | **Mini-project demonstration** |
+| **After the demo** | Mobile architecture, expanded privacy checks, testing and release planning |
+
+### Future major-project vision
+
+ShareShield may evolve into an **opt-in, on-device sharing assistant** for Android and iOS. Users would route files through a supported system sharing workflow, review recommended redactions, verify the exported file, and then choose where to share it.
+
+Native sharing capabilities and third-party integrations are **platform-dependent**. Android and iOS generally do not permit an ordinary application to inspect all WhatsApp, Gmail or other-app uploads invisibly in the background. App permissions and release policies must be evaluated before promising any integration.
+
+## Documentation
+
+| Document | What it covers |
+| --- | --- |
+| [Prerequisites](docs/PREREQUISITES.md) | Required tools and Mac-specific setup checks |
+| [Project scope](docs/PROJECT_SCOPE.md) | Acceptance criteria, milestones and limitations |
+| [Contributing](CONTRIBUTING.md) | Branches, pull requests and team workflow |
+| [Security policy](SECURITY.md) | Responsible testing and vulnerability handling |
+| [IP and licensing](docs/IP_AND_LICENSING.md) | Ownership, dependency obligations and patent considerations |
+
+There are **no app installation commands yet** because implementation has not started. Use the prerequisites document to prepare the development environment.
+
+## Responsible development
+
+- Use **fictional or expressly authorized test data**. Never commit real IDs, private user files, exports, credentials or sensitive logs.
+- Preserve original files and produce edited copies separately.
+- Report only the checks performed; do not claim universal leak prevention.
+- Keep research results evidence-based. **Patentability has not been established**; conduct a prior-art and ownership review before public technical disclosure.
+
+## Rights and licensing
+
+**Private repository · No public software license selected.**
+
+Copyright ownership and redistribution permissions still need clarification among contributors and under any applicable institutional policy. The lack of a \`LICENSE\` file does **not** authorize public reuse or redistribution. Third-party dependency licenses also require review before commercial release.
+
+For details, read [IP and licensing considerations](docs/IP_AND_LICENSING.md).
+
+---
+
+<div align="center">
+
+**ShareShield** · Mini-project prototype in planning · **Malnad College of Engineering**
+
+*Detect. Redact. Verify. Then Share.*
+
+</div>
