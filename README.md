@@ -37,7 +37,7 @@ ShareShield is designed to help users **check documents before sharing them**. I
 
 The following diagram describes the **planned** interaction, not a completed feature.
 
-\`\`\`mermaid
+```mermaid
 flowchart TD
     A(["Choose local PDF or PPTX"]) --> B{"Supported file and content?"}
     B -->|No| U["Show unsupported / unverified warning"]
@@ -50,7 +50,7 @@ flowchart TD
     H -->|Completed and passed| P["PASS: provide copy and check report"]
     H -->|Sensitive data remains| X["FLAG: hold for review"]
     H -->|Incomplete or unsupported| Y["UNVERIFIED: hold for review"]
-\`\`\`
+```
 
 **PASS is scoped, not absolute.** It means no selected sensitive value was found by the required checks **actually completed**. A check that fails to run, or content that cannot be reliably inspected, must not be called safe.
 
@@ -58,7 +58,7 @@ flowchart TD
 
 The mini project is designed to run **locally on one laptop during the demo**. Its browser frontend communicates with a local backend; original documents do not need to be uploaded to a public cloud.
 
-\`\`\`mermaid
+```mermaid
 flowchart LR
     subgraph Device["User's laptop — local processing"]
         UI["React + TypeScript<br/>Review interface"]
@@ -77,7 +77,7 @@ flowchart LR
     PDF --> V
     PPT --> V
     V --> API
-\`\`\`
+```
 
 ### Intended stack
 
@@ -98,7 +98,7 @@ Tool choices may change following compatibility and license review. **PyMuPDF's 
 | Scenario | Mini-project target |
 | --- | --- |
 | Searchable English PDF containing fictional ID/email | **Core target** |
-| Editable text in a modern \`.pptx\` | **Planned extension** |
+| Editable text in a modern `.pptx` | **Planned extension** |
 | A PDF where a black shape merely covers copyable text | **Illustrative leak test** |
 | Scanned/image-only PDFs or text embedded in pictures | Not part of the initial guarantee |
 | Complex PPTX objects, speaker notes and embedded documents | Not automatically considered verified |
@@ -148,7 +148,7 @@ There are **no app installation commands yet** because implementation has not st
 
 **Private repository · No public software license selected.**
 
-Copyright ownership and redistribution permissions still need clarification among contributors and under any applicable institutional policy. The lack of a \`LICENSE\` file does **not** authorize public reuse or redistribution. Third-party dependency licenses also require review before commercial release.
+Copyright ownership and redistribution permissions still need clarification among contributors and under any applicable institutional policy. The lack of a `LICENSE` file does **not** authorize public reuse or redistribution. Third-party dependency licenses also require review before commercial release.
 
 For details, read [IP and licensing considerations](docs/IP_AND_LICENSING.md).
 
