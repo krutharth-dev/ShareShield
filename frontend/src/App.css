@@ -352,3 +352,31 @@ button:focus-visible, .dropzone:focus-visible, a:focus-visible { outline: 3px so
 .effect-option { display: inline-flex; gap: 7px; align-items: center; background: white; border: 1px solid #dce8e0; padding: 8px 10px; border-radius: 9px; font-size: 11px; cursor: pointer; color: #536f60; }
 .effect-option.chosen { border-color: #338a60; background: #eaf5ed; color: #176b4c; font-weight: 700; }
 @media (max-width: 650px) { .privacy-checkboxes { grid-template-columns: 1fr; } }
+
+
+/* Final demo: precise manual-box controls and export review. */
+.zoom-controls { display: flex; gap: 14px; align-items: center; justify-content: space-between; margin: 17px 0 5px; flex-wrap: wrap; font-size: 12px; color: #31634b; }
+.zoom-controls label { display: flex; align-items: center; gap: 10px; }
+.zoom-controls input { accent-color: #16784b; max-width: 135px; }
+.zoom-viewport { overflow: auto; border-radius: 10px; max-height: 620px; }
+.zoom-viewport .page-frame { max-width: none; }
+.mask-editor, .comparison-panel, .page-review { border: 1px solid #d6e5da; background: #f8fcf9; padding: 14px; border-radius: 10px; margin-top: 14px; }
+.mask-editor > strong { color: #276342; font-size: 12px; }
+.mask-selector, .mask-actions { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+.mask-selector button, .mask-actions button { border: 1px solid #cbded0; background: #fff; color: #285c43; border-radius: 7px; font-size: 11px; font-weight: 600; padding: 7px 10px; }
+.mask-selector button.active { background: #16784b; color: white; border-color: #16784b; }
+.mask-actions button:disabled { opacity: .45; }
+.comparison-view { position: relative; overflow: hidden; border-radius: 9px; border: 1px solid #d5e1d9; }
+.comparison-view > img:first-child { display: block; width: 100%; height: auto; }
+.comparison-view .comparison-original { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: fill; }
+.comparison-rule { position: absolute; top: 0; bottom: 0; width: 2px; background: #fafafa; box-shadow: 0 0 0 1px #165d42, 0 0 9px #0007; pointer-events: none; }
+.compare-slider { display: flex; align-items: center; gap: 14px; color: #477158; font-size: 11px; margin-top: 12px; }
+.compare-slider input { flex: 1; accent-color: #16784b; min-width: 0; }
+.page-review { display: grid; gap: 7px; }
+.page-review label, .acknowledgement { display: flex; align-items: flex-start; gap: 8px; font-size: 12px; color: #235d40; font-weight: 650; }
+.page-review small { color: #678574; font-size: 11px; }
+.page-review input, .acknowledgement input { accent-color: #16784b; }
+.acknowledgement { padding: 12px; border: 1px solid #c0dfca; border-radius: 8px; margin-top: 13px; line-height: 1.55; background: #fff; }
+.remaining-list { border: 1px solid #ead3ae; background: #fff8eb; border-radius: 9px; padding: 11px; margin-top: 12px; }
+.remaining-list > strong { color: #755022; font-size: 11px; }
+.remaining-list ul { max-height: 180px; overflow: auto; }
