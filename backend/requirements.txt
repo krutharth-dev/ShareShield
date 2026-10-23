@@ -8,3 +8,8 @@ pillow-heif>=0.18,<2
 python-docx>=1.1,<2
 python-pptx>=0.6.23,<2
 openpyxl>=3.1,<4
+
+# Known-good macOS Ventura Intel x86_64 wheel and Linux Docker support.
+# OpenCV 4.13+ requires newer macOS for Intel (avoid source builds).
+opencv-python-headless==4.10.0.84
+numpy>=1.26,<3
