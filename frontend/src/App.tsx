@@ -1,172 +1,439 @@
-
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import './App.css'
 
-type ScreenStatus = 'idle' | 'selected' | 'unsupported'
+type Finding = {
+  id: number
+  category: string
+  severity: string
+  value: string
+  page: number
+  location?: string
+  rectangles: number[][]
+  locatable: boolean
+}
+type Analysis = {
+  analysis_id: string
+  filename: string
+  format: string
+  findings: Finding[]
+  counts: Record<string, number>
+  high_risk_count: number
+  page_count: number
+  preview_supported: boolean
+  limitations: string[]
+}
+type ManualBox = { page: number; x: number; y: number; w: number; h: number }
+type Report = {
+  status: 'PASS_SCOPED' | 'FLAG' | 'UNVERIFIED'
+  selected_count: number
+  manual_boxes: number
+  output_sha256: string
+  remaining_selected: { value: string; category: string }[]
+  checks: string[]
+  unverified: string[]
+}
+const allowed = new Set(['pdf', 'docx', 'pptx', 'xlsx', 'csv', 'txt', 'jpg', 'jpeg', 'png', 'heic', 'heif', 'webp', 'bmp', 'tif', 'tiff'])
+const outputExt: Record<string, string> = { '.pdf': '.pdf', '.docx': '.docx', '.pptx': '.pptx', '.xlsx': '.xlsx', '.csv': '.csv', '.txt': '.txt' }
+function dataFor(file: File, extra?: Record<string, string>) {
+  const data = new FormData()
+  data.append('file', file)
+  Object.entries(extra || {}).forEach(([key, value]) => data.append(key, value))
+  return data
+}
+async function errorFrom(response: Response) {
+  try {
+    const json = await response.json()
+    return typeof json.detail === 'string' ? json.detail : 'Request failed (' + response.status + ')'
+  } catch { return 'Request failed (' + response.status + ')' }
+}
+function formatType(name: string) {
+  return name.split('.').pop()?.toUpperCase() || 'FILE'
+}
+function MB(bytes: number) { return (bytes / 1048576).toFixed(2) + ' MB' }
 
 function App() {
   const [file, setFile] = useState<File | null>(null)
-  const [status, setStatus] = useState<ScreenStatus>('idle')
+  const [analysis, setAnalysis] = useState<Analysis | null>(null)
+  const [selected, setSelected] = useState<number[]>([])
+  const [phase, setPhase] = useState<'ready' | 'scanning' | 'processing'>('ready')
+  const [message, setMessage] = useState('')
+  const [problem, setProblem] = useState(false)
+  const [page, setPage] = useState(1)
+  const [manual, setManual] = useState<ManualBox[]>([])
+  const [draft, setDraft] = useState<ManualBox | null>(null)
+  const [originalPreview, setOriginalPreview] = useState('')
+  const [outputPreview, setOutputPreview] = useState('')
+  const [previewWidth, setPreviewWidth] = useState(1)
+  const [previewHeight, setPreviewHeight] = useState(1)
+  const [result, setResult] = useState<File | null>(null)
+  const [report, setReport] = useState<Report | null>(null)
+  const [ocrAvailable, setOcrAvailable] = useState<boolean | null>(null)
+  const input = useRef<HTMLInputElement>(null)
+  const previewSurface = useRef<HTMLDivElement>(null)
+  const requestId = useRef(0)
+  const resultUrl = useRef<string | null>(null)
+  const [dragging, setDragging] = useState(false)
+  const [recent, setRecent] = useState(false)
 
-  function handleFileChange(event: React.ChangeEvent<HTMLInputElement>) {
-    const selected = event.target.files?.[0]
+  useEffect(() => {
+    let active = true
+    fetch('/health', { cache: 'no-store' }).then(r => r.json())
+      .then(x => { if (active) setOcrAvailable(Boolean(x.ocr_available)) })
+      .catch(() => { if (active) setOcrAvailable(null) })
+    return () => { active = false }
+  }, [])
+  useEffect(() => () => { if (resultUrl.current) URL.revokeObjectURL(resultUrl.current) }, [])
 
-    if (!selected) return
-
-    setFile(selected)
-    setStatus(
-      selected.type === 'application/pdf'
-        ? 'selected'
-        : 'unsupported',
-    )
+  function clearResult() {
+    if (resultUrl.current) { URL.revokeObjectURL(resultUrl.current); resultUrl.current = null }
+    setResult(null)
+    setReport(null)
+    setOutputPreview('')
   }
+  function choose(next: File | null) {
+    requestId.current += 1
+    setPhase('ready')
+    setFile(next)
+    setAnalysis(null)
+    setSelected([])
+    setManual([])
+    setDraft(null)
+    setPage(1)
+    setRecent(false)
+    setOriginalPreview('')
+    clearResult()
+    setProblem(false)
+    setMessage('')
+    if (next && (!allowed.has(next.name.split('.').pop()?.toLowerCase() || '') || next.size > 12 * 1048576)) {
+      setProblem(true)
+      setMessage(next.size > 12 * 1048576 ? 'File exceeds the 12 MiB limit.' : 'Unsupported file extension. Convert it to a supported format.')
+    }
+  }
+  const invalid = Boolean(file && (!allowed.has(file.name.split('.').pop()?.toLowerCase() || '') || file.size > 12 * 1048576))
+  function handleInput(event: React.ChangeEvent<HTMLInputElement>) {
+    choose(event.target.files?.[0] || null)
+    event.currentTarget.value = ''
+  }
+  function sample() {
+    choose(new File(
+      ['SHARESHIELD FICTIONAL TEST\nEmail: demo@example.org\nPhone: 9876543210\nPAN: ABCDE1234F\nIFSC: HDFC0001234\nCard: 4111 1111 1111 1111\nUPI: studentdemo@okaxis\n'],
+      'shareshield-sample.txt', { type: 'text/plain' }
+    ))
+  }
+  async function scan() {
+    if (!file || invalid) return
+    const id = ++requestId.current
+    setPhase('scanning'); setProblem(false); setMessage('Scanning file for supported identifiers…')
+    setAnalysis(null); setSelected([]); setManual([]); clearResult()
+    try {
+      const response = await fetch('/analyze', { method: 'POST', body: dataFor(file), cache: 'no-store' })
+      if (!response.ok) throw Error(await errorFrom(response))
+      const data: Analysis = await response.json()
+      if (id !== requestId.current) return
+      setAnalysis(data)
+      setSelected(data.findings.filter(f => f.locatable).map(f => f.id))
+      setPage(1)
+      setMessage(data.findings.length
+        ? data.findings.length + ' candidate(s) found. Review them before redacting.'
+        : 'No configured patterns detected. The file is NOT certified safe; use manual redaction for images and PDFs.')
+      setProblem(false)
+    } catch (error) {
+      if (id !== requestId.current) return
+      setProblem(true); setMessage(error instanceof Error ? error.message : 'Unable to analyze file.')
+    } finally { if (id === requestId.current) setPhase('ready') }
+  }
+  useEffect(() => {
+    if (!file || !analysis?.preview_supported) return
+    let active = true
+    const controller = new AbortController()
+    async function load() {
+      const response = await fetch('/preview', {
+        method: 'POST', body: dataFor(file!, { page: String(page) }), signal: controller.signal, cache: 'no-store',
+      })
+      if (!response.ok) throw Error(await errorFrom(response))
+      const blob = await response.blob()
+      if (!active) return
+      setPreviewWidth(Number(response.headers.get('X-Document-Width')) || 1)
+      setPreviewHeight(Number(response.headers.get('X-Document-Height')) || 1)
+      const url = URL.createObjectURL(blob)
+      setOriginalPreview(previous => { if (previous) URL.revokeObjectURL(previous); return url })
+    }
+    load().catch(error => { if (active && error.name !== 'AbortError') { setProblem(true); setMessage(error.message) } })
+    return () => { active = false; controller.abort() }
+  }, [file, analysis, page])
+  useEffect(() => {
+    if (!result || !analysis?.preview_supported) return
+    let active = true
+    const controller = new AbortController()
+    async function load() {
+      const response = await fetch('/preview', {
+        method: 'POST', body: dataFor(result, { page: String(page) }), signal: controller.signal, cache: 'no-store',
+      })
+      if (!response.ok) throw Error(await errorFrom(response))
+      const blob = await response.blob()
+      if (!active) return
+      const url = URL.createObjectURL(blob)
+      setOutputPreview(previous => { if (previous) URL.revokeObjectURL(previous); return url })
+    }
+    load().catch(() => { if (active) setOutputPreview('') })
+    return () => { active = false; controller.abort() }
+  }, [result, analysis, page])
+  useEffect(() => () => {
+    if (originalPreview) URL.revokeObjectURL(originalPreview)
+  }, [originalPreview])
+  useEffect(() => () => {
+    if (outputPreview) URL.revokeObjectURL(outputPreview)
+  }, [outputPreview])
 
+  function changeSelected(id: number) {
+    setSelected(current => current.includes(id) ? current.filter(i => i !== id) : [...current, id])
+    clearResult()
+  }
+  function selectionAll(all: boolean) {
+    setSelected(all ? (analysis?.findings.filter(f => f.locatable).map(f => f.id) || []) : [])
+    clearResult()
+  }
+  function point(event: React.PointerEvent<HTMLDivElement>) {
+    const box = previewSurface.current?.getBoundingClientRect()
+    if (!box) return { x: 0, y: 0 }
+    return {
+      x: Math.min(1, Math.max(0, (event.clientX - box.left) / box.width)),
+      y: Math.min(1, Math.max(0, (event.clientY - box.top) / box.height)),
+    }
+  }
+  const initialPoint = useRef<{ x: number; y: number } | null>(null)
+  function onPointerDown(event: React.PointerEvent<HTMLDivElement>) {
+    if (!analysis?.preview_supported || phase !== 'ready') return
+    const pos = point(event)
+    initialPoint.current = pos
+    setDraft({ page, ...pos, w: 0, h: 0 })
+    event.currentTarget.setPointerCapture(event.pointerId)
+  }
+  function onPointerMove(event: React.PointerEvent<HTMLDivElement>) {
+    const start = initialPoint.current
+    if (!start) return
+    const end = point(event)
+    setDraft({ page, x: Math.min(start.x, end.x), y: Math.min(start.y, end.y),
+      w: Math.abs(end.x - start.x), h: Math.abs(end.y - start.y) })
+  }
+  function onPointerUp(event: React.PointerEvent<HTMLDivElement>) {
+    const start = initialPoint.current
+    if (!start) return
+    const end = point(event)
+    const box = { page, x: Math.min(start.x, end.x), y: Math.min(start.y, end.y),
+      w: Math.abs(end.x - start.x), h: Math.abs(end.y - start.y) }
+    if (box.w > .005 && box.h > .005 && manual.length < 60) {
+      setManual(current => [...current, box])
+      clearResult()
+    }
+    initialPoint.current = null
+    setDraft(null)
+  }
+  function undo() {
+    const index = manual.map(m => m.page).lastIndexOf(page)
+    if (index < 0) return
+    setManual(m => m.filter((_, i) => i !== index)); clearResult()
+  }
+  async function processFile() {
+    if (!file || !analysis || (!selected.length && !manual.length)) return
+    const id = requestId.current
+    setPhase('processing'); setMessage('Redacting and verifying exported content…'); setProblem(false)
+    clearResult()
+    try {
+      const request = dataFor(file, {
+        analysis_id: analysis.analysis_id,
+        selected_ids: selected.join(','),
+        manual_regions: JSON.stringify(manual),
+      })
+      const response = await fetch('/redact', { method: 'POST', body: request, cache: 'no-store' })
+      if (!response.ok) throw Error(await errorFrom(response))
+      const bytes = await response.blob()
+      const ext = outputExt[analysis.format] || '.png'
+      const processed = new File([bytes], 'shareshield-redacted' + ext, { type: bytes.type })
+      const verify = new FormData()
+      verify.append('file', file)
+      verify.append('redacted', processed)
+      verify.append('analysis_id', analysis.analysis_id)
+      verify.append('selected_ids', selected.join(','))
+      verify.append('manual_count', String(manual.length))
+      const check = await fetch('/verify', { method: 'POST', body: verify, cache: 'no-store' })
+      if (!check.ok) throw Error(await errorFrom(check))
+      const checked: Report = await check.json()
+      if (id !== requestId.current) return
+      setReport(checked)
+      if (checked.status === 'FLAG') {
+        setProblem(true); setMessage('Verification found selected information in the output. Download withheld.')
+      } else {
+        setResult(processed)
+        setMessage(checked.status === 'PASS_SCOPED'
+          ? 'Selected identifiers passed scoped reinspection. Review the output before sharing.'
+          : 'Output created, but verification is incomplete. Inspect every masked area before sharing.')
+      }
+    } catch (error) {
+      if (id !== requestId.current) return
+      setProblem(true); setMessage(error instanceof Error ? error.message : 'Redaction failed.')
+    } finally { if (id === requestId.current) setPhase('ready') }
+  }
+  function download() {
+    if (!result) return
+    const url = URL.createObjectURL(result)
+    resultUrl.current = url
+    const link = document.createElement('a')
+    link.href = url; link.download = result.name
+    document.body.append(link); link.click(); link.remove()
+  }
+  function downloadReport() {
+    if (!report || !analysis) return
+    const payload = {
+      ...report, original_sha256: analysis.analysis_id, original_format: analysis.format,
+      generated_at: new Date().toISOString(), disclaimer: 'Scoped checks only; not a full-file privacy guarantee.'
+    }
+    const url = URL.createObjectURL(new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' }))
+    const link = document.createElement('a')
+    link.href = url; link.download = 'shareshield-verification.json'
+    document.body.append(link); link.click(); link.remove()
+    setTimeout(() => URL.revokeObjectURL(url), 1000)
+  }
+  const chosen = analysis?.findings.filter(f => selected.includes(f.id)) || []
+  const statusColor = report?.status === 'FLAG' ? 'failed' : report?.status === 'PASS_SCOPED' ? 'passed' : 'incomplete'
   return (
     <main className="app-shell">
       <aside className="sidebar">
         <a className="brand" href="/">
           <span className="brand-icon">S</span>
-          <span>
-            <strong>ShareShield</strong>
-            <small>PRIVACY WORKSPACE</small>
-          </span>
+          <span><strong>ShareShield</strong><small>PRIVACY WORKSPACE</small></span>
         </a>
-
         <p className="nav-heading">WORKSPACE</p>
-        <div className="nav-item active">▤ <span>Document review</span></div>
-        <div className="nav-item">◷ <span>Recent activity</span></div>
-
+        <button className={'nav-item ' + (!recent ? 'active' : '')} onClick={() => setRecent(false)}>▤ <span>Document review</span></button>
+        <button className={'nav-item ' + (recent ? 'active' : '')} onClick={() => setRecent(true)}>◷ <span>Session status</span></button>
         <div className="sidebar-bottom">
           <span className="local-indicator" />
-          <div>
-            <strong>Local-first processing</strong>
-            <small>Your files stay on your device</small>
-          </div>
+          <div><strong>Local-first processing</strong><small>Use a trusted, self-hosted server</small></div>
         </div>
       </aside>
-
       <section className="main-content">
         <header className="topbar">
-          <span>Workspace / Document review</span>
-          <span className="prototype-badge">PHASE 1 PROTOTYPE</span>
+          <span>Workspace / {recent ? 'Session status' : 'Document review'}</span>
+          <span className="prototype-badge">SELF-HOSTED PROTOTYPE</span>
         </header>
-
-        <section className="welcome">
-          <p className="eyebrow">DOCUMENT PRIVACY, SIMPLIFIED</p>
-          <h1>Review before<br />you share.</h1>
-          <p className="intro">
-            Find sensitive information, choose what to redact,
-            and verify the exported document before sharing it.
-          </p>
-        </section>
-
-        <section className="upload-card">
-          <div className="section-title">
-            <div>
-              <h2>Start a document review</h2>
-              <p>Choose a searchable English PDF to get started.</p>
+        {recent ? (
+          <section className="upload-card status-dashboard">
+            <h2>Current session</h2>
+            <p>ShareShield does not keep a document history or save uploaded files to an account.</p>
+            <div className="metric-strip">
+              <span><strong>{analysis?.findings.length || 0}</strong> detected candidates</span>
+              <span><strong>{selected.length}</strong> selected</span>
+              <span><strong>{manual.length}</strong> manual masks</span>
             </div>
-            <span className="step-number">01 / 03</span>
-          </div>
-
-          <label className="dropzone">
-            <input
-              type="file"
-              accept="application/pdf,.pdf"
-              onChange={handleFileChange}
-            />
-            <span className="upload-icon">↑</span>
-            <strong>Select a PDF file</strong>
-            <span className="muted">
-              Choose a file from your computer
-            </span>
-            <span className="browse-button">Browse files</span>
-          </label>
-
-          {file && (
-            <div className="file-row">
-              <span className="pdf-icon">PDF</span>
-              <div className="file-details">
-                <strong>{file.name}</strong>
-                <small>{(file.size / 1024 / 1024).toFixed(2)} MB</small>
+            <p className="caption">This page reflects your current browser session only. Close or reload to clear session state.</p>
+            <button className="primary-action" onClick={() => setRecent(false)}>Return to review</button>
+          </section>
+        ) : (
+          <>
+            <section className="welcome">
+              <p className="eyebrow">DOCUMENT PRIVACY, SIMPLIFIED</p>
+              <h1>Review before<br />you share.</h1>
+              <p className="intro">Find potentially sensitive text in images, PDFs and documents. Approve removals, inspect the exported copy and check what has or hasn't been verified.</p>
+            </section>
+            <section className="upload-card">
+              <div className="section-title"><div><h2>01 · Select a file</h2>
+                <p>PDF, photos, Word, Excel, PowerPoint, CSV and text · up to 12 MiB</p></div>
+                <span className="step-number">01 / 03</span></div>
+              <div className={'dropzone ' + (dragging ? 'drag-over' : '')}
+                role="button" tabIndex={0} aria-label="Browse supported files"
+                onClick={() => input.current?.click()}
+                onKeyDown={event => { if (event.key === 'Enter' || event.key === ' ') input.current?.click() }}
+                onDragOver={event => { event.preventDefault(); setDragging(true) }}
+                onDragLeave={event => { event.preventDefault(); setDragging(false) }}
+                onDrop={event => { event.preventDefault(); setDragging(false); choose(event.dataTransfer.files[0] || null) }}>
+                <input ref={input} type="file" accept=".pdf,.jpg,.jpeg,.png,.heic,.heif,.webp,.bmp,.tif,.tiff,.docx,.pptx,.xlsx,.csv,.txt" onChange={handleInput} onClick={event => event.stopPropagation()} />
+                <span className="upload-icon">↑</span><strong>Drop a file or select from your computer</strong>
+                <span className="muted">Only files you explicitly choose are processed</span>
+                <span className="browse-button">Browse files</span>
               </div>
-              <span className="file-state">
-                {status === 'selected' ? 'Selected' : 'Unsupported'}
-              </span>
-              <button
-                className="remove-button"
-                onClick={() => {
-                  setFile(null)
-                  setStatus('idle')
-                }}
-                aria-label="Remove selected file"
-              >
-                ×
-              </button>
-            </div>
-          )}
-
-          {status === 'unsupported' && (
-            <p className="warning">
-              This prototype currently accepts PDF files only.
-            </p>
-          )}
-
-          {status === 'selected' && (
-            <p className="notice">
-              File selected. Detection and upload processing have not
-              been connected to the backend yet.
-            </p>
-          )}
-
-          <div className="privacy-note">
-            <span>♧</span>
-            <p>
-              <strong>Privacy comes first.</strong>
-              <br />
-              The original document will be preserved. Redaction and
-              verification will be performed by the connected backend.
-            </p>
-          </div>
-        </section>
-
-        <section className="workflow">
-          <div className="section-title">
-            <div>
-              <h2>How ShareShield works</h2>
-              <p>Three steps to a more carefully reviewed document.</p>
-            </div>
-          </div>
-
-          <div className="workflow-grid">
-            <article className="workflow-card">
-              <span className="workflow-icon">⌕</span>
-              <span className="workflow-step">STEP 01</span>
-              <h3>Detect</h3>
-              <p>Identify potential IDs and email addresses.</p>
-            </article>
-            <article className="workflow-card">
-              <span className="workflow-icon">✎</span>
-              <span className="workflow-step">STEP 02</span>
-              <h3>Review & redact</h3>
-              <p>Choose findings and redact a separate copy.</p>
-            </article>
-            <article className="workflow-card">
-              <span className="workflow-icon">✓</span>
-              <span className="workflow-step">STEP 03</span>
-              <h3>Verify</h3>
-              <p>Reopen the export and check for residual leaks.</p>
-            </article>
-          </div>
-        </section>
-
-        <footer>
-          <span>ShareShield · Mini-project prototype</span>
-          <span>Detect. Redact. Verify. Then Share.</span>
-        </footer>
+              {file && <div className="file-row"><span className="pdf-icon">{formatType(file.name)}</span>
+                <div className="file-details"><strong>{file.name}</strong><small>{MB(file.size)}</small></div>
+                <span className="file-state">{invalid ? 'Unsupported' : 'Selected'}</span>
+                <button className="remove-button" onClick={() => choose(null)} aria-label="Remove selected file">×</button></div>}
+              <div className="action-row">
+                <button className="secondary-action" onClick={sample} disabled={phase !== 'ready'}>Load fictional demo file</button>
+                <button className="primary-action" onClick={scan} disabled={!file || invalid || phase !== 'ready'}>{phase === 'scanning' ? 'Scanning…' : 'Scan file →'}</button>
+              </div>
+              {ocrAvailable === false && <p className="warning">OCR is not installed on this server. Images and scanned PDFs cannot be automatically scanned; selectable PDF/Office text still works.</p>}
+              <p className={problem ? 'warning' : 'notice'} role="status" aria-live="polite">{message}</p>
+              <div className="privacy-note"><span>♧</span><p><strong>Privacy comes first.</strong><br />
+                Files are sent only to your configured ShareShield server. Use local deployment for private documents; this prototype cannot guarantee complete sanitization.</p></div>
+            </section>
+            {analysis && <section className="review-grid">
+              <article className="review-card">
+                <div className="section-title"><div><h2>02 · Review detections</h2><p>Choose information to redact</p></div><span className="step-number">{analysis.findings.length} FOUND</span></div>
+                <div className="metric-strip"><span><strong>{analysis.high_risk_count}</strong> high-priority candidates</span><span><strong>{analysis.findings.length}</strong> total</span></div>
+                <div className="action-row compact-actions">
+                  <button className="secondary-action" onClick={() => selectionAll(true)}>Select all</button>
+                  <button className="secondary-action" onClick={() => selectionAll(false)}>Clear</button>
+                </div>
+                <div className="findings-list">
+                  {analysis.findings.length === 0 && <p className="muted">No supported patterns found. This does not mean the file is safe.</p>}
+                  {analysis.findings.map(f => <label key={f.id} className="finding-row">
+                    <input type="checkbox" checked={selected.includes(f.id)} disabled={!f.locatable} onChange={() => changeSelected(f.id)} />
+                    <span className="finding-text"><strong>{f.value}</strong><small>{f.category.replaceAll('_', ' ')} · {f.severity} · {analysis.preview_supported ? 'page ' + f.page : f.location || 'text'}</small></span>
+                  </label>)}
+                </div>
+                <details className="limitations" open><summary>Unverified areas and limits</summary>
+                  <ul>{analysis.limitations.map((x, i) => <li key={i}>{x}</li>)}</ul>
+                </details>
+              </article>
+              <article className="review-card preview-card">
+                <div className="section-title"><div><h2>03 · Redact and verify</h2>
+                  <p>{analysis.preview_supported ? 'Draw on the original to mask anything detection missed' : 'Preview is available for images and PDFs only'}</p></div><span className="step-number">03 / 03</span></div>
+                {analysis.preview_supported ? <>
+                  <div className="preview-pair">
+                    <div><p className="preview-caption">Original · selected areas highlighted</p>
+                      <div className="page-frame" ref={previewSurface} onPointerDown={onPointerDown} onPointerMove={onPointerMove} onPointerUp={onPointerUp} onPointerCancel={() => { initialPoint.current = null; setDraft(null) }}>
+                        {originalPreview ? <img src={originalPreview} alt={'Original page ' + page} draggable={false} /> : <span>Loading preview…</span>}
+                        <svg className="mark-layer" viewBox="0 0 1000 1000" preserveAspectRatio="none" aria-hidden="true">
+                          {chosen.filter(f => f.page === page).flatMap(f => f.rectangles.map((r, i) =>
+                            <rect key={f.id + ':' + i} x={r[0] / previewWidth * 1000} y={r[1] / previewHeight * 1000}
+                              width={(r[2] - r[0]) / previewWidth * 1000} height={(r[3] - r[1]) / previewHeight * 1000} className="auto-mask" />))}
+                          {[...manual.filter(m => m.page === page), ...(draft ? [draft] : [])].map((m, i) =>
+                            <rect key={'mask:' + i} x={m.x * 1000} y={m.y * 1000} width={m.w * 1000} height={m.h * 1000} className="manual-mask" />)}
+                        </svg>
+                      </div></div>
+                    <div><p className="preview-caption">Export preview</p><div className="page-frame after">
+                      {outputPreview ? <img src={outputPreview} alt={'Redacted page ' + page} /> : <span>Generate output to preview here</span>}
+                    </div></div>
+                  </div>
+                  <div className="page-controls"><button onClick={() => setPage(x => Math.max(1, x - 1))} disabled={page === 1}>←</button>
+                    <span>Page {page} of {analysis.page_count}</span><button onClick={() => setPage(x => Math.min(analysis.page_count, x + 1))} disabled={page === analysis.page_count}>→</button>
+                    <button onClick={undo} disabled={!manual.some(m => m.page === page)}>Undo box</button>
+                    <span className="muted">{manual.length} manual masks</span>
+                  </div>
+                </> : <p className="preview-placeholder">This file has no browser preview. Review its detected text here, then open the exported copy in the appropriate application.</p>}
+                <div className="action-row"><button className="primary-action" disabled={phase !== 'ready' || (!selected.length && !manual.length)}
+                  onClick={processFile}>{phase === 'processing' ? 'Processing…' : 'Generate & verify copy'}</button>
+                  <button className="secondary-action" disabled={!result} onClick={download}>Download reviewed copy ↓</button></div>
+                {report && <div className={'report-card ' + statusColor}><h3>Verification: {report.status.replace('_', ' ')}</h3>
+                  <p>{report.selected_count} recognized items selected · {report.manual_boxes} manual masks</p>
+                  <p className="report-digest">Output SHA-256: {report.output_sha256}</p>
+                  <details><summary>What was checked—and what wasn't</summary>
+                    <strong>Completed checks</strong><ul>{report.checks.map((c, i) => <li key={i}>{c}</li>)}</ul>
+                    <strong>Unverified</strong><ul>{report.unverified.map((c, i) => <li key={i}>{c}</li>)}</ul></details>
+                  <button className="secondary-action" onClick={downloadReport}>Download verification JSON ↓</button>
+                </div>}
+              </article>
+            </section>}
+            <section className="workflow"><div className="section-title"><div><h2>Three steps to a safer share</h2><p>Keep control of every redaction.</p></div></div>
+              <div className="workflow-grid">
+                <article className="workflow-card"><span className="workflow-icon">⌕</span><span className="workflow-step">STEP 01</span><h3>Detect</h3><p>Scan chosen files for recognized identifier patterns.</p></article>
+                <article className="workflow-card"><span className="workflow-icon">✎</span><span className="workflow-step">STEP 02</span><h3>Review & redact</h3><p>Approve selected findings or draw manual masks on PDFs and images.</p></article>
+                <article className="workflow-card"><span className="workflow-icon">✓</span><span className="workflow-step">STEP 03</span><h3>Verify</h3><p>Check selected recognized data in the exported file and review warnings.</p></article>
+              </div>
+            </section>
+          </>
+        )}
+        <footer><span>ShareShield · Local-first student prototype</span><span>Detect. Review. Redact. Verify. Then Share.</span></footer>
       </section>
     </main>
   )
 }
-
 export default App
