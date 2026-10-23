@@ -104,8 +104,17 @@ def test_manual_also_requires_unverified_even_with_selected_detection():
 def test_demo_controls_and_report_button_exist():
     homepage = client.get("/")
     assert homepage.status_code == 200
-    assert 'id="demo"' in homepage.text
-    assert 'id="report-export"' in homepage.text
-    assert 'id="select-all"' in homepage.text
-    assert 'id="select-none"' in homepage.text
-    assert ".xlsx,.csv" in homepage.text
+    if '<div id="root"></div>' in homepage.text:
+        # React controls are rendered by bundled JavaScript, not server HTML.
+        import re
+        urls = re.findall(r'src="(/assets/[^"]+\.js)"', homepage.text)
+        assert urls, homepage.text
+        asset = client.get(urls[0])
+        assert asset.status_code == 200
+        assert "ShareShield" in asset.text and "demo" in asset.text.lower()
+    else:
+        assert 'id="demo"' in homepage.text
+        assert 'id="report-export"' in homepage.text
+        assert 'id="select-all"' in homepage.text
+        assert 'id="select-none"' in homepage.text
+        assert ".xlsx,.csv" in homepage.text
