@@ -1,36 +1,60 @@
-# Backend — searchable PDF prototype
+# ShareShield — multi-format local prototype
 
-A **local-only**, early backend for the 28 October mini-project demo. This implements detection, review identifiers, content redaction and a limited reopen-and-check workflow. It is **not** a general-purpose PII detector or a complete privacy audit.
+## Mac setup
 
-## Run locally
+Install the separate Tesseract OCR program:
 
-```bash
+~~~bash
+brew install tesseract
+~~~
+
+In Terminal, inside the ShareShield folder:
+
+~~~bash
 python3 -m venv .venv
 source .venv/bin/activate
-pip install -r backend/requirements.txt
-uvicorn backend.app:app --host 127.0.0.1 --port 8000
-```
+python -m pip install -r backend/requirements.txt
+python -m pip install pytest httpx
+python -m pytest backend/tests -v
+python -m uvicorn backend.app:app --host 127.0.0.1 --port 8000
+~~~
 
-Open `http://127.0.0.1:8000/docs` for interactive API documentation. Dependencies and this source code have not been validated on every target laptop.
+**Open http://127.0.0.1:8000/ for the real upload page.** The old /docs API page remains available. After updating a branch, stop and restart the server. Python 3.10+ is recommended; on old Macs, compatibility depends on your installed macOS and package versions.
 
-## API integration
+## What files work?
 
-1. POST multipart field `file` to `/analyze`. Read the `findings` array and let the user review categories, values and IDs.
-2. POST the **same PDF** as `file` plus `selected_ids` as comma-separated IDs (e.g. `0,2`) to `/redact`. Receive the PDF in the response body.
-3. Read `X-ShareShield-Verification` from the response. `PASS-SCOPED-TEXT-ONLY` checks selected strings in extracted page text in the reopened output; it is **not** proof that every possible privacy leak is gone.
+| Input | Examined content | Redacted output |
+| --- | --- | --- |
+| JPG/JPEG, PNG, HEIC/HEIF, WEBP, BMP, TIFF | Visible OCR text | Flattened PNG with opaque black rectangles |
+| PDF, including scanned pages | Extracted PDF text, plus OCR on pages with little text | New redacted PDF |
+| Word DOCX | Editable paragraphs, tables and headers/footers | New DOCX |
+| PowerPoint PPTX | Editable slide text, groups and tables | New PPTX |
+| Plain UTF-8 TXT | Plain text | New TXT |
 
-Important: the browser UI must use the same unchanged file for both calls, and should display the saved-file verification scope and limitations.
+Unsupported: legacy Word DOC, spreadsheets, ZIP/RAR, videos, audio, animated/multipage images, password-protected PDFs and unknown formats. Convert DOC to DOCX first. Files are limited to 12 MiB, PDFs to 25 pages, and images to 25 megapixels.
 
-## Known limitations
+## Workflow
 
-- Handles searchable PDFs only; no OCR or scanned-document support.
-- Detects common email and Indian mobile-number **candidates** via patterns; no identity validation or contextual model.
-- Does not inspect attachments, metadata, form fields, annotations, image pixels or alternate text representations. Treat these as **unverified**.
-- All matches of a selected value on its page are redacted. Review placement carefully.
-- Patterns and PDF text extraction can miss sensitive information. Never claim global privacy safety.
-- Runs in memory for this module, with 10 MiB file limit. Run on loopback; do not expose it to public networks.
-- PyMuPDF uses AGPL/commercial licensing; review obligations before distribution.
+1. Select or drag/drop a file.
+2. Click **Scan for sensitive data**.
+3. Review and select detected items (email and Indian mobile-number candidates currently).
+4. Click **Redact selected & download**.
+5. **Open and manually inspect** the new file before sharing.
 
-## Next priorities
+The original remains unchanged by the application. HEIC/JPEG/etc. image output is PNG to avoid preserving original image metadata.
 
-Synthetic PDF test fixtures, regression tests, frontend upload/review integration, export inspection for unsupported PDF structures, and a stronger verification report are still required.
+## API
+
+- POST /analyze: multipart field file; returns findings, limitations, analysis_id.
+- POST /redact: same multipart file, analysis_id, selected_ids as comma-separated integers.
+- GET /health: status.
+
+The analysis_id is a SHA-256 fingerprint to prevent using selections from the wrong document. The verification header is **PASS-SELECTED-FINDINGS-ONLY**, not a declaration that the whole file is safe.
+
+## Security and accuracy limitations
+
+This prototype uses deterministic patterns and OCR. It can miss text and produce false positives. It does **not** yet detect faces, images of ID cards as objects, handwritten text, or broad contextual personal information. It does not verify DOCX/PPTX embedded images, annotations, speaker notes, revision history, attachments, hidden content or metadata. Images embedded in otherwise searchable PDFs may be missed. Selected text redactions may modify formatting in DOCX/PPTX.
+
+The local API should run on 127.0.0.1 only, not a public-facing server. Uploaded data is handled in memory by this implementation. Never use real personal files in tests without authorization.
+
+PyMuPDF has AGPL/commercial licensing requirements that must be reviewed before external distribution. The prototype is not production-ready and does not guarantee privacy.
