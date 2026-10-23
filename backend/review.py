@@ -110,68 +110,126 @@ def parse_regions(raw: str, ext: str) -> list[dict[str,float|int]]:
     return parsed
 
 
+def _paint(image: Image.Image, rectangle: tuple[float, float, float, float],
+           mode: str, margin: int = 0) -> None:
+    """Apply an actual pixel transformation, never a removable overlay."""
+    from PIL import ImageFilter
+    x0, y0, x1, y1 = rectangle
+    left = max(0, math.floor(x0) - margin)
+    top = max(0, math.floor(y0) - margin)
+    right = min(image.width, math.ceil(x1) + margin)
+    bottom = min(image.height, math.ceil(y1) + margin)
+    if left >= right or top >= bottom:
+        return
+    coords = (left, top, right, bottom)
+    if mode == "blackout":
+        ImageDraw.Draw(image).rectangle(coords, fill="black")
+        return
+    crop = image.crop(coords)
+    width, height = crop.size
+    if mode == "blur":
+        replacement = crop.filter(ImageFilter.GaussianBlur(radius=max(12, min(width, height) * .22)))
+    elif mode == "pixelate":
+        reduced = crop.resize((max(1, width // 20), max(1, height // 20)),
+                              Image.Resampling.BILINEAR)
+        replacement = reduced.resize(crop.size, Image.Resampling.NEAREST)
+    else:
+        raise HTTPException(422, "Unknown redaction mode")
+    image.paste(replacement, (left, top))
+
+
+def _page_boxes(page_number: int, bounds: fitz.Rect,
+                selected: list[engine.Finding], manual: list[dict[str, float | int]]
+                ) -> list[tuple[tuple[float, float, float, float], str]]:
+    """Return page-space areas with the requested effect class.
+
+    Only face photos and manual image selections can be softened; text and QR
+    codes are always permanently blacked out even with visual blur selected.
+    """
+    boxes: list[tuple[tuple[float, float, float, float], str]] = []
+    for finding in selected:
+        if finding.page == page_number:
+            for rect in finding.rectangles:
+                boxes.append((tuple(rect), "visual" if finding.category == "face_candidate" else "blackout"))
+    for region in manual:
+        if region["page"] == page_number:
+            boxes.append(((bounds.x0 + region["x"] * bounds.width,
+                           bounds.y0 + region["y"] * bounds.height,
+                           bounds.x0 + (region["x"] + region["w"]) * bounds.width,
+                           bounds.y0 + (region["y"] + region["h"]) * bounds.height), "visual"))
+    return boxes
+
+
 def redact_visual(data: bytes, ext: str, selected: list[engine.Finding],
-                  manual: list[dict[str,float|int]]) -> tuple[bytes,str,str]:
+                  manual: list[dict[str, float | int]],
+                  mode: str = "blackout") -> tuple[bytes, str, str]:
+    if mode not in {"blackout", "blur", "pixelate"}:
+        raise HTTPException(422, "Redaction mode must be blackout, blur or pixelate")
     if ext in engine.IMAGE_EXTENSIONS:
         image = engine.read_image(data)
-        draw = ImageDraw.Draw(image)
-        for f in selected:
-            for x0,y0,x1,y1 in f.rectangles:
-                draw.rectangle((max(0,int(x0)-4),max(0,int(y0)-4),
-                                min(image.width,int(x1)+4),min(image.height,int(y1)+4)), fill="black")
-        for r in manual:
-            if r["page"] != 1:
-                raise HTTPException(422, "Images have one page only")
-            draw.rectangle((round(r["x"]*image.width),round(r["y"]*image.height),
-                            round((r["x"]+r["w"])*image.width),
-                            round((r["y"]+r["h"])*image.height)), fill="black")
+        if any(region["page"] != 1 for region in manual):
+            raise HTTPException(422, "Images have one page only")
+        bounds = fitz.Rect(0, 0, image.width, image.height)
+        boxes = _page_boxes(1, bounds, selected, manual)
+        # Blackout is ALWAYS used for detected IDs and QR codes.
+        for rect, kind in boxes:
+            _paint(image, rect, mode if kind == "visual" else "blackout",
+                   margin=4 if kind == "blackout" else 0)
         output = io.BytesIO()
-        image.save(output,"PNG")
-        result=output.getvalue()
-        # Without OCR, manual-only masks are permitted but not verified.
-        # Automatically selected image findings require OCR reinspection.
-        if selected and not engine.ocr_available():
-            raise HTTPException(503, "OCR is required to verify selected image detections")
-        remaining = engine.ocr(engine.read_image(result), 1) if engine.ocr_available() else []
-        if any((a.category,a.value) in {(b.category,b.value) for b in remaining} for a in selected):
-            raise HTTPException(409, "FLAG: a selected item remains in the redacted image")
-        return result,"image/png","shareshield-redacted.png"
+        image.save(output, format="PNG")
+        result = output.getvalue()
+        return result, "image/png", "shareshield-redacted.png"
+
+    if ext != ".pdf":
+        raise HTTPException(415, "Visual masking is only available for images and PDFs")
     with engine.open_pdf(data) as doc:
-        boxes: dict[int,list[fitz.Rect]]={}
-        for finding in selected:
-            for r in finding.rectangles:
-                boxes.setdefault(finding.page,[]).append(fitz.Rect(r))
-        for r in manual:
-            if r["page"]>doc.page_count:
-                raise HTTPException(422, "Manual box refers to a nonexistent PDF page")
-            bounds=doc[r["page"]-1].rect
-            boxes.setdefault(r["page"],[]).append(fitz.Rect(
-                bounds.x0+r["x"]*bounds.width,bounds.y0+r["y"]*bounds.height,
-                bounds.x0+(r["x"]+r["w"])*bounds.width,
-                bounds.y0+(r["y"]+r["h"])*bounds.height))
-        for n,rectangles in boxes.items():
-            p=doc[n-1]
-            for box in rectangles:
-                p.add_redact_annot(box,fill=(0,0,0))
-            p.apply_redactions(images=fitz.PDF_REDACT_IMAGE_PIXELS)
-        result=doc.tobytes(garbage=4,deflate=True,clean=True)
-    with engine.open_pdf(result) as pdf:
-        after,_=engine._pdf_findings(pdf)
-    tokens={(f.category,f.value,f.page) for f in after}
-    if any((f.category,f.value,f.page) in tokens for f in selected):
-        raise HTTPException(409, "FLAG: a selected item remains in the redacted PDF")
-    return result,"application/pdf","shareshield-redacted.pdf"
+        if any(region["page"] > doc.page_count for region in manual):
+            raise HTTPException(422, "Manual mask refers to a nonexistent PDF page")
+        if mode == "blackout":
+            for page_number, page in enumerate(doc, 1):
+                boxes = _page_boxes(page_number, page.rect, selected, manual)
+                if not boxes:
+                    continue
+                for rectangle, _ in boxes:
+                    page.add_redact_annot(fitz.Rect(rectangle), fill=(0, 0, 0))
+                page.apply_redactions(images=fitz.PDF_REDACT_IMAGE_PIXELS)
+            # Full garbage collection removes previous redacted content streams.
+            result = doc.tobytes(garbage=4, deflate=True, clean=True)
+        else:
+            # Blur/pixelate PDFs ONLY after flattening every page. This prevents
+            # original selectable text or embedded images hiding under a mask.
+            flattened = fitz.open()
+            for page_number, page in enumerate(doc, 1):
+                pix = page.get_pixmap(matrix=fitz.Matrix(2, 2), alpha=False)
+                if pix.width * pix.height > engine.MAX_PIXELS:
+                    raise HTTPException(413, "Flattened PDF page exceeds 25 MP")
+                image = Image.frombytes("RGB", (pix.width, pix.height), pix.samples)
+                for rectangle, kind in _page_boxes(page_number, page.rect, selected, manual):
+                    coords = tuple(2 * value for value in rectangle)
+                    _paint(image, coords, mode if kind == "visual" else "blackout",
+                           margin=7 if kind == "blackout" else 0)
+                payload = io.BytesIO()
+                image.save(payload, format="PNG")
+                output_page = flattened.new_page(width=page.rect.width, height=page.rect.height)
+                output_page.insert_image(output_page.rect, stream=payload.getvalue())
+            result = flattened.tobytes(garbage=4, deflate=True, clean=True)
+            flattened.close()
+    return result, "application/pdf", "shareshield-redacted.pdf"
 
 
 def evaluate(selected: list[engine.Finding], redacted_data: bytes, ext: str,
-             manual_count: int=0) -> dict[str,Any]:
+             manual_count: int=0, mode: str = "blackout") -> dict[str,Any]:
     """Check selected values in exported file, always flag unchecked surfaces."""
     check_file(redacted_data,ext)
     found, warnings = engine.inspect(redacted_data,ext)
     remaining={(f.category,f.value) for f in found}
     flagged=[{"category":f.category,"value":f.value} for f in selected
-             if (f.category,f.value) in remaining]
-    status="FLAG" if flagged else "UNVERIFIED" if manual_count else "PASS_SCOPED" if selected else "UNVERIFIED"
+             if f.category not in {"face_candidate", "qr_candidate"}
+             and (f.category,f.value) in remaining]
+    contains_visual = any(f.category in {"face_candidate", "qr_candidate"} for f in selected)
+    status = ("FLAG" if flagged else
+              "UNVERIFIED" if manual_count or contains_visual or mode != "blackout" else
+              "PASS_SCOPED" if selected else "UNVERIFIED")
     checks = ["Reopened exported file"]
     if ext in engine.IMAGE_EXTENSIONS or ext == ".pdf":
         if engine.ocr_available():
@@ -190,5 +248,7 @@ def evaluate(selected: list[engine.Finding], redacted_data: bytes, ext: str,
                 "OCR and pattern recognition may miss sensitive content.",
                 "Document metadata, embedded/hidden content and Office revision history are not fully sanitized.",
                 *warnings,
+                *(["Visual face/QR proposals are not independently certified; inspect all photos and codes."] if contains_visual else []),
+                *(["Blur/pixelation may leave information visually recoverable; blackout is recommended for sensitive data. PDF exports were flattened."] if mode != "blackout" else []),
                 *(["Manual boxes were not independently verified for sensitive text."] if manual_count else []),
             ]}
