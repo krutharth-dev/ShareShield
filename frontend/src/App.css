@@ -320,3 +320,16 @@ button:focus-visible, .dropzone:focus-visible, a:focus-visible { outline: 3px so
 .caption { font-size: 11px; color: #85928a; }
 @media (max-width: 1220px) { .review-grid { grid-template-columns: 1fr; } }
 @media (max-width: 700px) { .preview-pair { grid-template-columns: 1fr; } .review-card { padding: 15px; } .metric-strip { gap: 6px; } }
+
+
+/* Local service status and clear-session usability. */
+.topbar-right { display: flex; align-items: center; gap: 12px; }
+.server-pill { font-weight: 650; font-size: 11px; border-radius: 999px; padding: 6px 10px; }
+.server-pill.online { color: #176b4c; background: #e7f6ec; }
+.server-pill.checking { color: #777c6c; background: #f5f5ea; }
+.server-pill.offline { color: #af3d33; background: #fff0ed; }
+.indicator-unavailable { background: #d56256; }
+@media (max-width: 650px) {
+  .topbar-right { gap: 5px; flex-wrap: wrap; justify-content: flex-end; }
+  .server-pill { font-size: 9px; padding: 5px; }
+}
