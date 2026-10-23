@@ -27,11 +27,12 @@ CONTENT = (
 
 
 def sample_font():
-    for path in ("/System/Library/Fonts/Supplemental/Arial.ttf",
-                 "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf"):
-        if Path(path).is_file():
-            return ImageFont.truetype(path, 28)
-    return ImageFont.load_default()
+    """Use a readable, scalable font on macOS, Windows and Linux.
+
+    Never fall back to Pillow's unscaled 10px bitmap font: it can make
+    Tesseract miss otherwise valid synthetic examples on Intel Macs.
+    """
+    return ImageFont.load_default(size=32)
 
 
 def generate(out: Path):
