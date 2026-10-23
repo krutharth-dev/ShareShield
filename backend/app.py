@@ -71,6 +71,20 @@ if FRONTEND_DIST.is_dir():
     app.mount("/assets", StaticFiles(directory=FRONTEND_DIST / "assets"), name="built-assets")
 
 
+@app.get("/theme-init.js", include_in_schema=False)
+def theme_init():
+    """Serve a tiny local startup script under the existing strict CSP.
+
+    Do not put this logic in inline JavaScript; the application intentionally
+    rejects inline scripts to reduce injection risk.
+    """
+    script = FRONTEND_DIST / "theme-init.js"
+    if script.is_file():
+        return FileResponse(script, media_type="application/javascript",
+                            headers={"Cache-Control": "no-store"})
+    raise HTTPException(404, "Theme bootstrap not found")
+
+
 @app.get("/favicon.svg", include_in_schema=False)
 def favicon():
     path = FRONTEND_DIST / "favicon.svg"
