@@ -825,3 +825,13 @@ footer span { display:inline-flex; align-items:center; gap:7px; }
 @media (prefers-reduced-motion:reduce) {
   *, *::before, *::after { scroll-behavior:auto !important; animation-duration:.01ms !important; animation-iteration-count:1 !important; transition-duration:.01ms !important; }
 }
+
+
+/* Focus views let the document occupy nearly the entire workspace width. */
+.view-toolbar { display:flex; flex-wrap:wrap; gap:5px; margin:14px 0 0; padding:5px; width:fit-content; border:1px solid var(--sh-border); border-radius:10px; background:var(--sh-surface-2); }
+.view-button { border:0; background:transparent; color:var(--sh-muted); border-radius:7px; font-size:11px; padding:8px 11px; font-weight:750; }
+.view-button.active { color:var(--sh-green); background:var(--sh-green-light); box-shadow:0 1px 4px #0000000B; }
+.view-button:hover:not(.active):not(:disabled) { background:var(--sh-bg-alt); color:var(--sh-ink); }
+.preview-pair.mode-original, .preview-pair.mode-export { grid-template-columns:minmax(0,1fr); }
+.preview-pair.mode-original > div:nth-child(2), .preview-pair.mode-export > div:nth-child(1) { display:none; }
+.preview-pair.mode-original .zoom-viewport, .preview-pair.mode-export .zoom-viewport { max-height:820px; }
