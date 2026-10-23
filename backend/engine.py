@@ -8,6 +8,7 @@ from __future__ import annotations
 import hashlib
 import io
 import re
+import shutil
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Callable
@@ -81,6 +82,11 @@ def scan_text(text: str, page: int, rectangles: Callable[[str, int, int], list[t
     return [m[1] for m in sorted(matches, key=lambda v: v[0])]
 
 
+def ocr_available() -> bool:
+    """True when the external Tesseract executable is visible to this server."""
+    return shutil.which(pytesseract.pytesseract.tesseract_cmd) is not None
+
+
 def ocr(image: Image.Image, page: int, scale: float = 1.0) -> list[Finding]:
     """Locate matches in OCR lines; return rectangles in original image/page units."""
     try:
@@ -150,23 +156,28 @@ def open_pdf(data: bytes):
 
 def _pdf_findings(pdf: fitz.Document) -> tuple[list[Finding], list[str]]:
     findings: list[Finding] = []
+    has_ocr = ocr_available()
     notes = [
         "PDF annotations, attachments, file metadata and embedded content are not fully inspected.",
-        "OCR checks rendered PDF pages, but faint text, handwriting and unusual layouts may be missed.",
     ]
+    if has_ocr:
+        notes.append("Rendered pages were scanned with OCR; faint text, handwriting and unusual layouts may be missed.")
+    else:
+        notes.append("UNVERIFIED: Tesseract OCR is unavailable. Scanned pages and text inside images were NOT inspected; install with 'brew install tesseract'.")
     for number, page in enumerate(pdf, 1):
         text = page.get_text("text", sort=True)
         native = scan_text(
             text, number,
             lambda value, a, b: [tuple(r) for r in page.search_for(value)]
         )
-        # Every page is rendered, not just image-only pages, so that screenshots
-        # embedded in otherwise searchable PDFs can be detected as candidates.
-        pix = page.get_pixmap(matrix=fitz.Matrix(2, 2), alpha=False)
-        if pix.width * pix.height > MAX_PIXELS:
-            raise HTTPException(413, "Rendered PDF page exceeds 25-megapixel image limit")
-        image = Image.frombytes("RGB", (pix.width, pix.height), pix.samples)
-        visual = ocr(image, number, scale=2)
+        visual = []
+        if has_ocr:
+            # Also inspect screenshots embedded in otherwise searchable pages.
+            pix = page.get_pixmap(matrix=fitz.Matrix(2, 2), alpha=False)
+            if pix.width * pix.height > MAX_PIXELS:
+                raise HTTPException(413, "Rendered PDF page exceeds 25-megapixel image limit")
+            image = Image.frombytes("RGB", (pix.width, pix.height), pix.samples)
+            visual = ocr(image, number, scale=2)
         combined: dict[tuple[str,str,int], Finding] = {}
         for finding in native + visual:
             key = (finding.category, finding.value, finding.page)
@@ -243,8 +254,18 @@ def _office_findings(data: bytes, ext: str) -> tuple[list[Finding],list[str]]:
 def inspect(data: bytes, ext: str) -> tuple[list[Finding], list[str]]:
     validate_bytes(data)
     if ext in IMAGE_EXTENSIONS:
-        return ocr(read_image(data),1), ["Image OCR recognizes visible text only; handwriting, faces and graphics are not inspected.",
-                                                "Output image will be a flattened PNG without original EXIF metadata."]
+        image = read_image(data)  # Validate image even when OCR is unavailable.
+        limits = [
+            "Image recognition covers OCR-visible text only, not handwriting, faces or graphics.",
+            "Output image is a flattened PNG without original EXIF metadata.",
+        ]
+        if not ocr_available():
+            return [], [
+                "UNVERIFIED: Tesseract OCR is unavailable; no text was scanned. Install it with 'brew install tesseract'.",
+                "You may manually draw redaction boxes, but verify every masked region yourself.",
+                *limits,
+            ]
+        return ocr(image, 1), limits
     if ext == ".pdf":
         with open_pdf(data) as pdf:
             return _pdf_findings(pdf)
