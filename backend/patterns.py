@@ -5,6 +5,8 @@ Candidates are always user-reviewed. A format match is not proof of identity.
 import re
 
 MORE_RULES = (
+    ("ifsc_candidate", re.compile(r"(?<![A-Za-z0-9])[A-Z]{4}0[A-Z0-9]{6}(?![A-Za-z0-9])")),
+    ("payment_card_candidate", re.compile(r"(?<!\d)(?:\d[ -]?){12,18}\d(?!\d)")),
     ("aadhaar_candidate", re.compile(r"(?<!\d)[2-9]\d{3}[ -]?\d{4}[ -]?\d{4}(?!\d)")),
     ("pan_candidate", re.compile(r"(?<![A-Za-z0-9])[A-Z]{5}\d{4}[A-Z](?![A-Za-z0-9])")),
     ("upi_candidate", re.compile(
@@ -48,13 +50,32 @@ def valid_aadhaar_format(value: str) -> bool:
     return checksum == 0
 
 
+
+
+def valid_luhn_card(value: str) -> bool:
+    digits = re.sub(r"[ -]", "", value)
+    if not digits.isdigit() or len(digits) < 13 or len(digits) > 19 or len(set(digits)) < 2:
+        return False
+    total = 0
+    for i, character in enumerate(reversed(digits)):
+        number = int(character)
+        if i % 2:
+            number *= 2
+            if number > 9:
+                number -= 9
+        total += number
+    return total % 10 == 0
+
 def valid_match(category: str, value: str) -> bool:
     if category == "aadhaar_candidate":
         return valid_aadhaar_format(value)
+    if category == "payment_card_candidate":
+        return valid_luhn_card(value)
     return True
 
 
 SEVERITY = {
     "aadhaar_candidate": "high", "pan_candidate": "high",
-    "upi_candidate": "medium", "indian_mobile_candidate": "medium", "email": "medium",
+    "upi_candidate": "medium", "ifsc_candidate": "medium",
+    "payment_card_candidate": "high", "indian_mobile_candidate": "medium", "email": "medium",
 }
