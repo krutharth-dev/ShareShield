@@ -30,7 +30,7 @@ footer{text-align:center;margin-top:28px;color:#869ab7;font-size:12px}
 <section class="panel">
   <div id="drop" class="drop" tabindex="0" role="button" aria-label="Choose file"><div style="font-size:30px">📄</div><strong>Drop a file here or click to browse</strong><div class="caption">PDF · DOCX · PPTX · XLSX · CSV · TXT · JPG · PNG · HEIC · WEBP · BMP · TIFF</div><small>Maximum 12 MiB · processed on this computer</small></div>
   <input id="file" type="file" accept=".pdf,.docx,.pptx,.xlsx,.csv,.txt,.jpg,.jpeg,.png,.heic,.heif,.webp,.bmp,.tif,.tiff">
-  <div class="actions"><span class="caption spacer" id="file-label">No file selected</span><button id="scan" disabled>Scan file</button></div>
+  <div class="actions"><span class="caption spacer" id="file-label">No file selected</span><button class="alt" id="demo" type="button">Load sample demo</button><button id="scan" disabled>Scan file</button></div>
   <div id="status" class="status" aria-live="polite"></div>
 </section>
 <div id="workspace" class="grid">
@@ -38,7 +38,7 @@ footer{text-align:center;margin-top:28px;color:#869ab7;font-size:12px}
     <section class="panel">
       <h2>Detected information</h2>
       <div id="chips" class="chips"></div>
-      <div id="findings" class="findings"></div>
+      <div class="actions"><button class="alt" id="select-all" type="button">Select all</button><button class="alt" id="select-none" type="button">Clear selection</button></div><div id="findings" class="findings"></div>
       <p class="caption">Detections are candidates, not proof. Select the items you want removed.</p>
       <div class="notice"><strong>Limitations</strong><div id="limitations"></div></div>
     </section>
@@ -75,7 +75,7 @@ function note(target,msg,problem=false){$(target).textContent=msg;$(target).clas
 function clearObjectURLs(){for(const u of [beforeUrl,afterUrl,downloadUrl])if(u)URL.revokeObjectURL(u);beforeUrl=afterUrl=downloadUrl=null}
 function clearOutput(){processed=null;afterFile=null;verificationReport=null;$('report-export').hidden=true;redact.disabled=false;$('download').hidden=true;$('report').style.display='none';$('after-body').innerHTML='<div class="placeholder">Generate a redacted copy to preview it here.</div>';if(afterUrl)URL.revokeObjectURL(afterUrl);afterUrl=null;if(downloadUrl)URL.revokeObjectURL(downloadUrl);downloadUrl=null;note('process-status','')}
 function pick(f){original=f||null;analysis=null;manual=[];page=1;clearObjectURLs();$('workspace').style.display='none';scan.disabled=!f;$('file-label').textContent=f?f.name+' · '+(f.size/1048576).toFixed(2)+' MiB':'No file selected';note('status','')}
-file.addEventListener('change',()=>pick(file.files[0]));drop.addEventListener('click',()=>file.click());drop.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();file.click()}});
+file.addEventListener('change',()=>pick(file.files[0]));$('demo').addEventListener('click',()=>{const text='SHARESHIELD FICTIONAL DEMO\nEmail: demo@example.org\nPhone: 9876543210\nPAN: ABCDE1234F\nIFSC: HDFC0001234\nCard: 4111 1111 1111 1111\nUPI: studentdemo@okaxis\n';pick(new File([text], 'shareshield-demo.txt', {type:'text/plain'}))});drop.addEventListener('click',()=>file.click());drop.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();file.click()}});
 for(const e of ['dragover','dragenter'])drop.addEventListener(e,x=>{x.preventDefault();drop.classList.add('over')});
 for(const e of ['dragleave','drop'])drop.addEventListener(e,x=>{x.preventDefault();drop.classList.remove('over')});
 drop.addEventListener('drop',e=>{if(e.dataTransfer.files.length)pick(e.dataTransfer.files[0])});
@@ -83,6 +83,8 @@ function fd(f){const d=new FormData();d.append('file',f);return d}
 async function issue(r){try{let o=await r.json();return o.detail||'HTTP '+r.status}catch{return 'HTTP '+r.status}}
 function ids(){return [...$('findings').querySelectorAll('input:checked')].map(i=>Number(i.value))}
 function invalidate(){if(processed)clearOutput();if(analysis)redact.disabled=!ids().length&&!manual.length}
+function bulkSelect(selected){if(!analysis)return;for(const input of $('findings').querySelectorAll('input[type=checkbox]')){if(!input.disabled)input.checked=selected}invalidate();drawOverlay()}
+$('select-all').addEventListener('click',()=>bulkSelect(true));$('select-none').addEventListener('click',()=>bulkSelect(false));
 async function previewOf(f,target,p){let d=fd(f);d.append('page',String(p));const response=await fetch('/preview',{method:'POST',body:d,cache:'no-store'});if(!response.ok)throw Error(await issue(response));const blob=await response.blob();const url=URL.createObjectURL(blob);if(target==='before'){if(beforeUrl)URL.revokeObjectURL(beforeUrl);beforeUrl=url;currentWidth=Number(response.headers.get('X-Document-Width'))||1;currentHeight=Number(response.headers.get('X-Document-Height'))||1}else{if(afterUrl)URL.revokeObjectURL(afterUrl);afterUrl=url}
 const parent=$(target+'-body');parent.replaceChildren();const stage=document.createElement('div');stage.className='stage';const img=document.createElement('img');img.alt=target==='before'?'Original file page':'Redacted file page';img.src=url;stage.append(img);parent.append(stage);
 if(target==='before'){const canvas=document.createElement('canvas');canvas.id='overlay';canvas.setAttribute('aria-label','Draw redaction boxes');stage.append(canvas);img.onload=()=>{resizeCanvas();drawOverlay()};canvas.addEventListener('pointerdown',beginDrag);canvas.addEventListener('pointermove',continueDrag);canvas.addEventListener('pointerup',endDrag);canvas.addEventListener('pointercancel',cancelDrag);}
