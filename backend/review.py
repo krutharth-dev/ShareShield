@@ -219,36 +219,68 @@ def redact_visual(data: bytes, ext: str, selected: list[engine.Finding],
 
 def evaluate(selected: list[engine.Finding], redacted_data: bytes, ext: str,
              manual_count: int=0, mode: str = "blackout") -> dict[str,Any]:
-    """Check selected values in exported file, always flag unchecked surfaces."""
-    check_file(redacted_data,ext)
-    found, warnings = engine.inspect(redacted_data,ext)
-    remaining={(f.category,f.value) for f in found}
-    flagged=[{"category":f.category,"value":f.value} for f in selected
-             if f.category not in {"face_candidate", "qr_candidate"}
-             and (f.category,f.value) in remaining]
+    """Rescan the *entire* export, not only previously selected values.
+
+    Never claim full privacy: undetected visual content, OCR errors and
+    metadata may remain. Audit JSON contains counts and categories, not
+    raw identifiers or the unmasked selected values.
+    """
+    check_file(redacted_data, ext)
+    found, warnings = engine.inspect(redacted_data, ext)
+    selected_values = {(f.category, f.value) for f in selected
+                       if f.category not in {"face_candidate", "qr_candidate"}}
+    remaining_values = {(f.category, f.value) for f in found
+                        if f.category not in {"face_candidate", "qr_candidate"}}
+    leaked = selected_values.intersection(remaining_values)
+    remaining_selected = [
+        {"category": f.category, "page": f.page, "severity": engine.SEVERITY.get(f.category, "medium")}
+        for f in found if (f.category, f.value) in leaked
+    ]
+    # An unselected high-priority value remaining in the output is still a
+    # privacy risk. Fail closed rather than returning a reassuring pass.
+    high_risk = [f for f in found if engine.SEVERITY.get(f.category) == "high"
+                 and f.category not in {"face_candidate", "qr_candidate"}]
+    remainder = [
+        {"category": f.category, "page": f.page,
+         "severity": engine.SEVERITY.get(f.category, "medium")}
+        for f in found
+    ]
     contains_visual = any(f.category in {"face_candidate", "qr_candidate"} for f in selected)
-    status = ("FLAG" if flagged else
-              "UNVERIFIED" if manual_count or contains_visual or mode != "blackout" else
-              "PASS_SCOPED" if selected else "UNVERIFIED")
-    checks = ["Reopened exported file"]
+    status = (
+        "FLAG" if remaining_selected or high_risk else
+        "UNVERIFIED" if remainder or manual_count or contains_visual or mode != "blackout" else
+        "PASS_SCOPED" if selected else "UNVERIFIED"
+    )
+    checks = ["Reopened and rescanned the complete exported file"]
     if ext in engine.IMAGE_EXTENSIONS or ext == ".pdf":
         if engine.ocr_available():
-            checks.append("Reran available OCR and text pattern checks")
+            checks.append("Reran available OCR and text patterns over all exported pages")
         else:
-            checks.append("Reran extractable text checks only; OCR NOT available")
+            checks.append("Reran extractable text checks; OCR NOT available")
     else:
-        checks.append("Reran available cell/text pattern checks")
-    checks.append("Compared selected detected values")
-    return {"status":status,"selected_count":len(selected),"manual_boxes":manual_count,
-            "remaining_selected":flagged,
-            "checks":checks,
-            "output_sha256":engine.fingerprint(redacted_data),
-            "unverified":[
-                "Only recognized selected values were checked; other sensitive data may remain.",
-                "OCR and pattern recognition may miss sensitive content.",
-                "Document metadata, embedded/hidden content and Office revision history are not fully sanitized.",
-                *warnings,
-                *(["Visual face/QR proposals are not independently certified; inspect all photos and codes."] if contains_visual else []),
-                *(["Blur/pixelation may leave information visually recoverable; blackout is recommended for sensitive data. PDF exports were flattened."] if mode != "blackout" else []),
-                *(["Manual boxes were not independently verified for sensitive text."] if manual_count else []),
-            ]}
+        checks.append("Reran available cell/text patterns across the exported document")
+    checks.append("Compared selected values and checked for other remaining candidates")
+    return {
+        "status": status,
+        "selected_count": len(selected),
+        "manual_boxes": manual_count,
+        "remaining_selected": remaining_selected[:50],
+        "remaining_selected_count": len(remaining_selected),
+        "remaining_detected": remainder[:50],
+        "remaining_detected_count": len(remainder),
+        "remaining_high_risk_count": len(high_risk),
+        "redaction_mode": mode,
+        "checks": checks,
+        "output_sha256": engine.fingerprint(redacted_data),
+        "unverified": [
+            "Only recognized patterns were checked; undetected text, images and identity numbers may remain.",
+            "OCR and visual recognition can miss small or noisy text, Kannada, handwritten fields and unusual codes.",
+            "Document metadata, embedded/hidden content and Office revision history are not fully sanitized.",
+            *warnings,
+            *(["High-priority identifiers remain in the exported document. Do not share this version."] if high_risk else []),
+            *(["Some unselected candidate identifiers remain. Review them before sharing."] if remainder and not high_risk else []),
+            *(["Faces/QR candidates require human visual review; their removal is not machine-certified."] if contains_visual else []),
+            *(["Blur/pixelation may expose information. Blackout is recommended for private documents."] if mode != "blackout" else []),
+            *(["Manual boxes have not been independently verified. Inspect every page."] if manual_count else []),
+        ],
+    }
