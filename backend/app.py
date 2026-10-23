@@ -11,7 +11,7 @@ from fastapi.responses import FileResponse, Response
 from backend import engine, review
 from backend.patterns import SEVERITY
 
-app = FastAPI(title="ShareShield local privacy review API", version="0.3.0")
+app = FastAPI(title="ShareShield local privacy review API", version="0.4.0")
 STATIC = Path(__file__).parent / "static" / "index.html"
 
 
@@ -23,7 +23,7 @@ def index():
 
 @app.get("/health")
 def health():
-    return {"status": "ok", "mode": "local-privacy-review-v0.3"}
+    return {"status": "ok", "mode": "local-privacy-review-v0.4"}
 
 
 async def _upload(file: UploadFile) -> tuple[bytes, str]:
