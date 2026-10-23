@@ -498,7 +498,7 @@ function App() {
           </div>
         </header>
         {recent ? (
-          <section className="upload-card status-dashboard">
+          <section className="upload-card status-dashboard surface-card" id="session">
             <h2>Current session</h2>
             <p>ShareShield does not keep a document history or save uploaded files to an account.</p>
             <div className="metric-strip">
@@ -613,10 +613,10 @@ function App() {
               <div className="privacy-note"><span>♧</span><p><strong>Privacy comes first.</strong><br />
                 Files are sent only to your configured ShareShield server. Use local deployment for private documents; this prototype cannot guarantee complete sanitization.</p></div>
             </section>
-            {analysis && <section className="review-grid">
-              <article className="review-card">
-                <div className="section-title"><div><h2>02 · Review detections</h2><p>Choose information to redact</p></div><span className="step-number">{analysis.findings.length} FOUND</span></div>
-                <div className="metric-strip"><span><strong>{analysis.high_risk_count}</strong> high-priority candidates</span><span><strong>{analysis.findings.length}</strong> total</span></div>
+            {analysis && <section className="review-grid" id="review" aria-label="Redaction workspace">
+              <article className="review-card findings-card surface-card">
+                <div className="section-title"><div><span className="section-kicker">03 / FINDINGS</span><h2><Icon name="search" size={18}/> Review detections</h2><p>Approve each suggested redaction</p></div><span className="finding-total">{analysis.findings.length} found</span></div>
+                <div className="metric-strip"><span><strong>{analysis.high_risk_count}</strong> high-priority</span><span><strong>{selected.length}</strong> selected</span></div>
                 <p className="pref-note">Selected categories preselect detected candidates. Individual boxes can still be unchecked.</p>
                 <div className="action-row compact-actions">
                   <button className="secondary-action" onClick={() => selectionAll(true)}>Select all</button>
@@ -626,19 +626,28 @@ function App() {
                   {analysis.findings.length === 0 && <p className="muted">No supported patterns found. This does not mean the file is safe.</p>}
                   {analysis.findings.map(f => <label key={f.id} className="finding-row">
                     <input type="checkbox" checked={selected.includes(f.id)} disabled={!f.locatable} onChange={() => changeSelected(f.id)} />
-                    <span className="finding-text"><strong>{f.value}</strong><small>{f.category.replaceAll('_', ' ')} · {f.severity} · {analysis.preview_supported ? 'page ' + f.page : f.location || 'text'}</small></span>
+                    <span className="finding-text"><strong>{f.value}</strong><small>{f.category.replaceAll('_', ' ')} · {analysis.preview_supported ? 'page ' + f.page : f.location || 'text'}</small></span><span className={'severity-tag ' + f.severity}>{f.severity}</span>
                   </label>)}
                 </div>
                 <details className="limitations" open><summary>Unverified areas and limits</summary>
                   <ul>{analysis.limitations.map((x, i) => <li key={i}>{x}</li>)}</ul>
                 </details>
               </article>
-              <article className="review-card preview-card">
-                <div className="section-title"><div><h2>03 · Redact and verify</h2>
-                  <p>{analysis.preview_supported ? 'Draw on the original to mask anything detection missed' : 'Preview is available for images and PDFs only'}</p></div><span className="step-number">03 / 03</span></div>
+              <article className="review-card preview-card surface-card">
+                <div className="section-title"><div><span className="section-kicker">04 / DOCUMENT WORKSPACE</span><h2><Icon name="layers" size={18}/> Redact &amp; verify</h2>
+                  <p>{analysis.preview_supported ? 'Draw on the original to mask anything detection missed' : 'Preview is available for images and PDFs only'}</p></div><span className="section-side-note"><Icon name="shield" size={15}/> Human review required</span></div>
                 {analysis.preview_supported ? <>
+                  <div className="workspace-toolbar" role="toolbar" aria-label="Redaction tools">
+                    <span className="toolbar-title"><Icon name="wand" size={17}/> Tools</span>
+                    <button className={drawMode ? 'tool-button active' : 'tool-button'} aria-pressed={drawMode}
+                      onClick={() => setDrawMode(x => !x)} title="Toggle drawing rectangles on the original preview">
+                      <Icon name="privacy" size={16}/> {drawMode ? 'Drawing masks' : 'Draw mask'}
+                    </button>
+                    <span className="toolbar-spacer" />
+                    <span className="toolbar-tip">Select regions on the original document</span>
+                  </div>
                   <div className="redaction-method" role="group" aria-label="Preferred masking method">
-                    <strong>Mask appearance</strong>
+                    <strong><Icon name="lock" size={16}/> Mask appearance</strong>
                     <div className="effect-options">
                       {(['blackout', 'blur', 'pixelate'] as RedactionMode[]).map(effect =>
                         <label key={effect} className={redactionMode === effect ? 'effect-option chosen' : 'effect-option'}>
@@ -648,9 +657,9 @@ function App() {
                     </div>
                     <p className="pref-note">Text identifiers and QR codes are always blacked out. Blur/pixelation apply only to selected faces and manual boxes; PDF exports are flattened. Visual hiding is not guaranteed irreversible.</p>
                   </div>
-                  <div className="zoom-controls"><strong>Inspect fine details</strong><label>Zoom {zoom}% <input type="range" min="100" max="300" step="25" value={zoom} onChange={e => setZoom(Number(e.target.value))} /></label></div>
+                  <div className="zoom-controls"><strong><Icon name="search" size={16}/> Inspect fine details</strong><label>Zoom {zoom}% <input type="range" min="100" max="300" step="25" value={zoom} onChange={e => setZoom(Number(e.target.value))} /></label></div>
                   <div className="preview-pair">
-                    <div><p className="preview-caption">Original · selected areas highlighted</p>
+                    <div><p className="preview-caption"><span className="preview-dot original-dot"/> ORIGINAL · Selected areas highlighted</p>
                       <div className="zoom-viewport"><div className="page-frame" style={{ width: zoom + '%' }} ref={previewSurface} onPointerDown={onPointerDown} onPointerMove={onPointerMove} onPointerUp={onPointerUp} onPointerCancel={() => { initialPoint.current = null; setDraft(null) }}>
                         {originalPreview ? <img src={originalPreview} alt={'Original page ' + page} draggable={false} /> : <span>Loading preview…</span>}
                         <svg className="mark-layer" viewBox="0 0 1000 1000" preserveAspectRatio="none" aria-hidden="true">
@@ -661,7 +670,7 @@ function App() {
                             <rect key={'mask:' + i} x={m.x * 1000} y={m.y * 1000} width={m.w * 1000} height={m.h * 1000} className="manual-mask" />)}
                         </svg>
                       </div></div></div>
-                    <div><p className="preview-caption">Export preview</p><div className="zoom-viewport"><div className="page-frame after" style={{ width: zoom + '%' }}>
+                    <div><p className="preview-caption"><span className="preview-dot export-dot"/> REDACTED · Export preview</p><div className="zoom-viewport"><div className="page-frame after" style={{ width: zoom + '%' }}>
                       {outputPreview ? <img src={outputPreview} alt={'Redacted page ' + page} /> : <span>Generate output to preview here</span>}
                     </div></div></div>
                   </div>
@@ -702,10 +711,10 @@ function App() {
                     <small>{reviewedPages.length} / {analysis.page_count} pages reviewed. Inspect each page, including small IDs, signatures, photos and codes.</small>
                   </div>}
                 </> : <p className="preview-placeholder">For Word, PowerPoint, Excel, CSV and TXT, recognized text is permanently replaced. Blur/photo masking is supported in images and PDFs only.</p>}
-                <div className="action-row"><button className="primary-action" disabled={phase !== 'ready' || (!selected.length && !manual.length)}
-                  onClick={processFile}>{phase === 'processing' ? 'Processing…' : 'Generate & verify copy'}</button>
-                  <button className="secondary-action" disabled={!result || !acknowledged || !pagesComplete || report?.status === 'FLAG'} onClick={download}>Download reviewed copy ↓</button></div>
-                {report && <div className={'report-card ' + statusColor}><h3>Verification: {report.status.replace('_', ' ')}</h3>
+                <div className="action-row export-actions"><button className="primary-action" disabled={phase !== 'ready' || (!selected.length && !manual.length)}
+                  onClick={processFile}>{phase === 'processing' ? <><span className="mini-spinner"/> Processing…</> : <><Icon name="lock" size={17}/> Generate &amp; verify <Icon name="arrowRight" size={17}/></>}</button>
+                  <button className="secondary-action" disabled={!result || !acknowledged || !pagesComplete || report?.status === 'FLAG'} onClick={download}><Icon name="download" size={17}/> Download reviewed copy</button></div>
+                {report && <div id="verification" className={'report-card ' + statusColor}><h3><Icon name={report.status === 'FLAG' ? 'alert' : 'checkCircle'} size={19}/> Verification: {report.status.replace('_', ' ')}</h3>
                   <p>{report.selected_count} recognized items selected · {report.manual_boxes} manual masks</p>
                   <div className="metric-strip"><span><strong>{report.remaining_detected_count}</strong> remaining candidates</span><span><strong>{report.remaining_high_risk_count}</strong> high-risk remaining</span></div>
                   {report.remaining_detected_count > 0 && <div className="remaining-list"><strong>Detected in exported file (values omitted from audit)</strong>
@@ -726,16 +735,16 @@ function App() {
                 </div>}
               </article>
             </section>}
-            <section className="workflow"><div className="section-title"><div><h2>Three steps to a safer share</h2><p>Keep control of every redaction.</p></div></div>
+            <section className="workflow"><div className="section-title"><div><span className="section-kicker">WHY SHARESHIELD</span><h2>Built around your decisions.</h2><p>Privacy means knowing exactly what is—and isn't—protected.</p></div></div>
               <div className="workflow-grid">
-                <article className="workflow-card"><span className="workflow-icon">⌕</span><span className="workflow-step">STEP 01</span><h3>Detect</h3><p>Scan chosen files for recognized identifier patterns.</p></article>
-                <article className="workflow-card"><span className="workflow-icon">✎</span><span className="workflow-step">STEP 02</span><h3>Review & redact</h3><p>Approve selected findings or draw manual masks on PDFs and images.</p></article>
-                <article className="workflow-card"><span className="workflow-icon">✓</span><span className="workflow-step">STEP 03</span><h3>Verify</h3><p>Rescan the entire exported document and manually inspect each page.</p></article>
+                <article className="workflow-card"><span className="workflow-icon"><Icon name="scan" size={22}/></span><span className="workflow-step">STEP 01</span><h3>Detect</h3><p>Scan chosen files for recognized identifier patterns.</p></article>
+                <article className="workflow-card"><span className="workflow-icon"><Icon name="privacy" size={22}/></span><span className="workflow-step">STEP 02</span><h3>Review & redact</h3><p>Approve selected findings or draw manual masks on PDFs and images.</p></article>
+                <article className="workflow-card"><span className="workflow-icon"><Icon name="checkCircle" size={22}/></span><span className="workflow-step">STEP 03</span><h3>Verify</h3><p>Rescan the entire exported document and manually inspect each page.</p></article>
               </div>
             </section>
           </>
         )}
-        <footer><span>ShareShield · Local-first student prototype</span><span>Detect. Review. Redact. Verify. Then Share.</span></footer>
+        <footer><span><Icon name="shield" size={15}/> ShareShield · Educational local-first prototype</span><span>Detect · Review · Redact · Verify</span></footer>
       </section>
     </main>
   )
