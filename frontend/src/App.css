@@ -393,7 +393,7 @@ button:focus-visible, .dropzone:focus-visible, a:focus-visible { outline: 3px so
   --sh-surface-2: #F7FAF8;
   --sh-sidebar: #FAFCFA;
   --sh-ink: #19362A;
-  --sh-muted: #718779;
+  --sh-muted: #596F61;
   --sh-ink-soft: #435C4E;
   --sh-green: #167B53;
   --sh-green-hover: #11613F;
@@ -783,7 +783,8 @@ footer span { display:inline-flex; align-items:center; gap:7px; }
   .sidebar.mobile-open .brand-words, .sidebar.mobile-open .nav-item span, .sidebar.mobile-open .nav-heading, .sidebar.mobile-open .sidebar-privacy, .sidebar.mobile-open .sidebar-bottom div { display:block; }
   .sidebar.mobile-open .sidebar-head { justify-content:space-between; }
   .sidebar.mobile-open .sidebar-toggle { display:inline-grid; }
-  .sidebar.mobile-open .nav-item { justify-content:flex-start; padding:11px 13px; }
+  .sidebar.mobile-open .nav-item { display:flex; justify-content:flex-start; padding:11px 13px; }
+  .sidebar.mobile-open .sidebar-bottom { display:flex; }
   .sidebar.mobile-open .sidebar-privacy { display:grid; }
   .mobile-backdrop { display:block; position:fixed; z-index:55; inset:0; width:100%; height:100%; background:#07130C99; border:0; }
   .mobile-menu { display:inline-grid; }
