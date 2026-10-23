@@ -12,10 +12,10 @@ from fastapi.staticfiles import StaticFiles
 from starlette.middleware.trustedhost import TrustedHostMiddleware
 from fastapi.responses import JSONResponse
 
-from backend import engine, review
+from backend import engine, review, smart
 from backend.patterns import SEVERITY
 
-app = FastAPI(title="ShareShield local privacy review API", version="0.4.0")
+app = FastAPI(title="ShareShield local privacy review API", version="0.5.0")
 # Demo deployment only: reject hostile Host headers / DNS-rebinding requests.
 app.add_middleware(TrustedHostMiddleware, allowed_hosts=["127.0.0.1", "localhost", "testserver"])
 STATIC = Path(__file__).parent / "static" / "index.html"
@@ -87,8 +87,10 @@ def index():
 
 @app.get("/health")
 def health():
-    return {"status": "ok", "mode": "local-privacy-review-v0.4",
+    return {"status": "ok", "mode": "local-privacy-review-v0.5",
             "ocr_available": engine.ocr_available(),
+            "vision_available": smart.available(),
+            "redaction_modes": ["blackout", "blur", "pixelate"],
             "ocr_setup": None if engine.ocr_available() else "Install Tesseract with brew install tesseract; restart server"}
 
 
@@ -109,6 +111,26 @@ def _ids(raw: str, count: int) -> list[int]:
     if len(ids) != len(set(ids)) or any(n < 0 or n >= count for n in ids):
         raise HTTPException(422, "Invalid or duplicate finding IDs")
     return ids
+
+
+def _expand_ids(findings: list[engine.Finding], ids: list[int], all_occurrences: bool) -> list[engine.Finding]:
+    """Select the same recognized identifier on every page/line.
+
+    Visual candidates (faces/QR codes) are not merged by their generated
+    captions: the user should select individual rectangles or the category.
+    """
+    if not all_occurrences:
+        return [findings[i] for i in ids]
+    import re
+
+    def key(f: engine.Finding):
+        if f.category in {"aadhaar_candidate", "vid_candidate", "payment_card_candidate", "indian_mobile_candidate"}:
+            return f.category, re.sub(r"\D", "", f.value)
+        return f.category, f.value.casefold().strip()
+    keys = {key(findings[i]) for i in ids if findings[i].category not in {"face_candidate", "qr_candidate"}}
+    expanded = {i for i, f in enumerate(findings) if key(f) in keys}
+    expanded.update(ids)
+    return [findings[i] for i in sorted(expanded)]
 
 
 @app.post("/analyze")
@@ -162,24 +184,28 @@ async def redact_selected(
     analysis_id: Annotated[str, Form()],
     selected_ids: Annotated[str, Form()] = "",
     manual_regions: Annotated[str, Form()] = "[]",
+    redact_all: Annotated[bool, Form()] = False,
+    redaction_mode: Annotated[str, Form()] = "blackout",
 ):
+    if redaction_mode not in {"blackout", "blur", "pixelate"}:
+        raise HTTPException(422, "Invalid redaction mode")
     data, ext = await _upload(file)
     if engine.fingerprint(data) != analysis_id:
         raise HTTPException(409, "File differs from the analyzed copy. Reanalyze the file.")
     findings, _ = engine.inspect(data, ext)
-    chosen = [findings[i] for i in _ids(selected_ids, len(findings))]
+    chosen = _expand_ids(findings, _ids(selected_ids, len(findings)), redact_all)
     if any(not f.rectangles and not f.location for f in chosen):
         raise HTTPException(422, "One or more selected findings could not be located")
     manual = review.parse_regions(manual_regions, ext)
     if not chosen and not manual:
         raise HTTPException(422, "Select a finding or draw a manual redaction box")
     if ext in engine.IMAGE_EXTENSIONS or ext == ".pdf":
-        result, mime, name = review.redact_visual(data, ext, chosen, manual)
+        result, mime, name = review.redact_visual(data, ext, chosen, manual, redaction_mode)
         result_ext = ".png" if ext in engine.IMAGE_EXTENSIONS else ".pdf"
     else:
         result, mime, name = engine.redact(data, ext, chosen)
         result_ext = ext
-    report = review.evaluate(chosen, result, result_ext, len(manual))
+    report = review.evaluate(chosen, result, result_ext, len(manual), redaction_mode)
     if report["status"] == "FLAG":
         raise HTTPException(409, "FLAG: selected information is still detectable in the output")
     return Response(content=result, media_type=mime,
@@ -200,7 +226,11 @@ async def verify_result(
     analysis_id: Annotated[str, Form()],
     selected_ids: Annotated[str, Form()] = "",
     manual_count: Annotated[int, Form()] = 0,
+    redact_all: Annotated[bool, Form()] = False,
+    redaction_mode: Annotated[str, Form()] = "blackout",
 ):
+    if redaction_mode not in {"blackout", "blur", "pixelate"}:
+        raise HTTPException(422, "Invalid redaction mode")
     original, ext = await _upload(file)
     if engine.fingerprint(original) != analysis_id:
         raise HTTPException(409, "Original file differs from the analyzed copy")
@@ -209,7 +239,7 @@ async def verify_result(
     if out_ext not in valid_outputs:
         raise HTTPException(422, "The redacted output has an unexpected format")
     initial, _ = engine.inspect(original, ext)
-    chosen = [initial[i] for i in _ids(selected_ids, len(initial))]
+    chosen = _expand_ids(initial, _ids(selected_ids, len(initial)), redact_all)
     if manual_count < 0 or manual_count > 60:
         raise HTTPException(422, "Invalid manual redaction count")
-    return review.evaluate(chosen, output, out_ext, manual_count)
+    return review.evaluate(chosen, output, out_ext, manual_count, redaction_mode)
