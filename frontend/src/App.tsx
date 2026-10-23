@@ -96,6 +96,7 @@ function App() {
   const [editIndex, setEditIndex] = useState<number | null>(null)
   const [zoom, setZoom] = useState(100)
   const [compare, setCompare] = useState(50)
+  const [viewMode, setViewMode] = useState<'split' | 'original' | 'export'>('split')
   const [reviewedPages, setReviewedPages] = useState<number[]>([])
   const [acknowledged, setAcknowledged] = useState(false)
   const [draft, setDraft] = useState<ManualBox | null>(null)
@@ -180,6 +181,7 @@ function App() {
     setEditIndex(null)
     setZoom(100)
     setCompare(50)
+    setViewMode('split')
     setDraft(null)
     setPage(1)
     setRecent(false)
@@ -657,8 +659,13 @@ function App() {
                     </div>
                     <p className="pref-note">Text identifiers and QR codes are always blacked out. Blur/pixelation apply only to selected faces and manual boxes; PDF exports are flattened. Visual hiding is not guaranteed irreversible.</p>
                   </div>
+                  <div className="view-toolbar" role="group" aria-label="Document view">
+                    {([['split', 'Compare both'], ['original', 'Original focus'], ['export', 'Export focus']] as const).map(([value, label]) =>
+                      <button key={value} className={viewMode === value ? 'view-button active' : 'view-button'}
+                        disabled={value === 'export' && !result} aria-pressed={viewMode === value} onClick={() => setViewMode(value)}>{label}</button>)}
+                  </div>
                   <div className="zoom-controls"><strong><Icon name="search" size={16}/> Inspect fine details</strong><label>Zoom {zoom}% <input type="range" min="100" max="300" step="25" value={zoom} onChange={e => setZoom(Number(e.target.value))} /></label></div>
-                  <div className="preview-pair">
+                  <div className={"preview-pair mode-" + viewMode}>
                     <div><p className="preview-caption"><span className="preview-dot original-dot"/> ORIGINAL · Selected areas highlighted</p>
                       <div className="zoom-viewport"><div className="page-frame" style={{ width: zoom + '%' }} ref={previewSurface} onPointerDown={onPointerDown} onPointerMove={onPointerMove} onPointerUp={onPointerUp} onPointerCancel={() => { initialPoint.current = null; setDraft(null) }}>
                         {originalPreview ? <img src={originalPreview} alt={'Original page ' + page} draggable={false} /> : <span>Loading preview…</span>}
