@@ -28,7 +28,11 @@ type Report = {
   selected_count: number
   manual_boxes: number
   output_sha256: string
-  remaining_selected: { value: string; category: string }[]
+  remaining_selected: { category: string; page: number; severity: string }[]
+  remaining_detected: { category: string; page: number; severity: string }[]
+  remaining_detected_count: number
+  remaining_high_risk_count: number
+  redaction_mode: RedactionMode
   checks: string[]
   unverified: string[]
 }
@@ -76,6 +80,13 @@ function App() {
   const [problem, setProblem] = useState(false)
   const [page, setPage] = useState(1)
   const [manual, setManual] = useState<ManualBox[]>([])
+  const [history, setHistory] = useState<ManualBox[][]>([])
+  const [future, setFuture] = useState<ManualBox[][]>([])
+  const [editIndex, setEditIndex] = useState<number | null>(null)
+  const [zoom, setZoom] = useState(100)
+  const [compare, setCompare] = useState(50)
+  const [reviewedPages, setReviewedPages] = useState<number[]>([])
+  const [acknowledged, setAcknowledged] = useState(false)
   const [draft, setDraft] = useState<ManualBox | null>(null)
   const [originalPreview, setOriginalPreview] = useState('')
   const [outputPreview, setOutputPreview] = useState('')
@@ -111,6 +122,8 @@ function App() {
     setResult(null)
     setReport(null)
     setOutputPreview('')
+    setReviewedPages([])
+    setAcknowledged(false)
   }
   function choose(next: File | null) {
     requestId.current += 1
@@ -119,6 +132,11 @@ function App() {
     setAnalysis(null)
     setSelected([])
     setManual([])
+    setHistory([])
+    setFuture([])
+    setEditIndex(null)
+    setZoom(100)
+    setCompare(50)
     setDraft(null)
     setPage(1)
     setRecent(false)
@@ -146,7 +164,7 @@ function App() {
     if (!file || invalid) return
     const id = ++requestId.current
     setPhase('scanning'); setProblem(false); setMessage('Scanning file for supported identifiers…')
-    setAnalysis(null); setSelected([]); setManual([]); clearResult()
+    setAnalysis(null); setSelected([]); setManual([]); setHistory([]); setFuture([]); setEditIndex(null); clearResult()
     try {
       const response = await fetch('/analyze', { method: 'POST', body: dataFor(file), cache: 'no-store' })
       if (!response.ok) throw Error(await errorFrom(response))
@@ -234,6 +252,36 @@ function App() {
     }
   }
   const initialPoint = useRef<{ x: number; y: number } | null>(null)
+  function commitManual(next: ManualBox[]) {
+    setHistory(p => [...p.slice(-29), manual])
+    setFuture([])
+    setManual(next)
+    clearResult()
+  }
+  function modifyManual(deltaX: number, deltaY: number, deltaSize: number) {
+    if (editIndex === null || !manual[editIndex]) return
+    const current = manual[editIndex]
+    const w = Math.min(.99, Math.max(.01, current.w + deltaSize))
+    const h = Math.min(.99, Math.max(.01, current.h + deltaSize))
+    const next = { ...current, w, h,
+      x: Math.max(0, Math.min(1 - w, current.x + deltaX - deltaSize / 2)),
+      y: Math.max(0, Math.min(1 - h, current.y + deltaY - deltaSize / 2)) }
+    commitManual(manual.map((box, index) => index === editIndex ? next : box))
+  }
+  function deleteManual() {
+    if (editIndex === null) return
+    commitManual(manual.filter((_, index) => index !== editIndex))
+    setEditIndex(null)
+  }
+  function redo() {
+    if (!future.length) return
+    const next = future[future.length - 1]
+    setHistory(p => [...p.slice(-29), manual])
+    setFuture(p => p.slice(0, -1))
+    setManual(next)
+    setEditIndex(null)
+    clearResult()
+  }
   function onPointerDown(event: React.PointerEvent<HTMLDivElement>) {
     if (!analysis?.preview_supported || phase !== 'ready') return
     const pos = point(event)
@@ -255,16 +303,20 @@ function App() {
     const box = { page, x: Math.min(start.x, end.x), y: Math.min(start.y, end.y),
       w: Math.abs(end.x - start.x), h: Math.abs(end.y - start.y) }
     if (box.w > .005 && box.h > .005 && manual.length < 60) {
-      setManual(current => [...current, box])
-      clearResult()
+      commitManual([...manual, box])
+      setEditIndex(manual.length)
     }
     initialPoint.current = null
     setDraft(null)
   }
   function undo() {
-    const index = manual.map(m => m.page).lastIndexOf(page)
-    if (index < 0) return
-    setManual(m => m.filter((_, i) => i !== index)); clearResult()
+    if (!history.length) return
+    const previous = history[history.length - 1]
+    setFuture(p => [...p.slice(-29), manual])
+    setHistory(p => p.slice(0, -1))
+    setManual(previous)
+    setEditIndex(null)
+    clearResult()
   }
   async function processFile() {
     if (!file || !analysis || (!selected.length && !manual.length)) return
@@ -311,7 +363,7 @@ function App() {
     } finally { if (id === requestId.current) setPhase('ready') }
   }
   function download() {
-    if (!result) return
+    if (!result || report?.status === 'FLAG' || !acknowledged || (analysis?.preview_supported && reviewedPages.length !== analysis.page_count)) return
     const url = URL.createObjectURL(result)
     resultUrl.current = url
     const link = document.createElement('a')
@@ -322,7 +374,9 @@ function App() {
     if (!report || !analysis) return
     const payload = {
       ...report, original_sha256: analysis.analysis_id, original_format: analysis.format,
-      generated_at: new Date().toISOString(), disclaimer: 'Scoped checks only; not a full-file privacy guarantee.'
+      review_pages_marked: reviewedPages.length, review_page_total: analysis.page_count,
+      categories_requested: privacyCategories, acknowledged,
+      generated_at: new Date().toISOString(), disclaimer: 'Best-effort scan only; not a certificate of complete sanitization.'
     }
     const url = URL.createObjectURL(new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' }))
     const link = document.createElement('a')
@@ -331,6 +385,7 @@ function App() {
     setTimeout(() => URL.revokeObjectURL(url), 1000)
   }
   const chosen = analysis?.findings.filter(f => selected.includes(f.id)) || []
+  const pagesComplete = Boolean(analysis && (!analysis.preview_supported || reviewedPages.length === analysis.page_count))
   const statusColor = report?.status === 'FLAG' ? 'failed' : report?.status === 'PASS_SCOPED' ? 'passed' : 'incomplete'
   return (
     <main className="app-shell">
