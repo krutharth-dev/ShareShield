@@ -93,3 +93,32 @@ def test_browser_review_features_exist_in_frontend_source():
         "remaining_detected_count", "What would you like to protect?",
     ):
         assert label in app_source, label
+
+
+def test_pdf_export_strips_metadata_attachments_and_annotations(monkeypatch):
+    import fitz
+
+    from backend import smart
+    monkeypatch.setattr(engine, "ocr_available", lambda: False)
+    monkeypatch.setattr(smart, "available", lambda: False)
+    with fitz.open() as original:
+        page = original.new_page()
+        page.insert_text((55, 100), "Email: demo@example.org")
+        page.add_text_annot((100, 160), "Fictional private comment")
+        original.set_metadata({"title": "Fictional sensitive title"})
+        original.embfile_add("secret-fixture.txt", b"fake hidden payload")
+        data = original.tobytes()
+    analysis = client.post("/analyze", files={"file": ("sample.pdf", data)})
+    assert analysis.status_code == 200, analysis.text
+    info = analysis.json()
+    email = next(f["id"] for f in info["findings"] if f["category"] == "email")
+    redacted = client.post(
+        "/redact", files={"file": ("sample.pdf", data)},
+        data={"analysis_id": info["analysis_id"], "selected_ids": str(email)},
+    )
+    assert redacted.status_code == 200, redacted.text
+    with fitz.open(stream=redacted.content, filetype="pdf") as exported:
+        assert not exported.metadata["title"]
+        assert exported.embfile_names() == []
+        assert list(exported[0].annots() or []) == []
+        assert "demo@example.org" not in exported[0].get_text()
