@@ -80,7 +80,7 @@ def test_txt_and_input_validation():
     data=b'demo@example.org\n'; report=request_analysis('input.txt',data)
     assert b'[REDACTED]' in request_redaction('input.txt',data,report).content
     assert client.post('/analyze',files={'file':('old.doc',b'a')}).status_code==415
-    assert client.post('/analyze',files={'file':('photo.jpg',b'invalid')}).status_code==422
+    assert client.post('/analyze',files={'file':('photo.jpg',b'invalid')}).status_code==415
     assert request_redaction('input.txt',data,{'analysis_id':'wrong','findings':report['findings']}).status_code==409
 
 
