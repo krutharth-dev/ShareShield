@@ -46,6 +46,9 @@ reports/
 *.ppt
 *.pptx
 *.docx
+*.xlsx
+*.xls
+*.csv
 # Intentionally use synthetic test files outside Git unless explicitly approved.
 
 # IDE and OS
