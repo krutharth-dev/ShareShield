@@ -128,7 +128,11 @@ def redact_visual(data: bytes, ext: str, selected: list[engine.Finding],
         output = io.BytesIO()
         image.save(output,"PNG")
         result=output.getvalue()
-        remaining=engine.ocr(engine.read_image(result),1)
+        # Without OCR, manual-only masks are permitted but not verified.
+        # Automatically selected image findings require OCR reinspection.
+        if selected and not engine.ocr_available():
+            raise HTTPException(503, "OCR is required to verify selected image detections")
+        remaining = engine.ocr(engine.read_image(result), 1) if engine.ocr_available() else []
         if any((a.category,a.value) in {(b.category,b.value) for b in remaining} for a in selected):
             raise HTTPException(409, "FLAG: a selected item remains in the redacted image")
         return result,"image/png","shareshield-redacted.png"
@@ -168,9 +172,18 @@ def evaluate(selected: list[engine.Finding], redacted_data: bytes, ext: str,
     flagged=[{"category":f.category,"value":f.value} for f in selected
              if (f.category,f.value) in remaining]
     status="FLAG" if flagged else "UNVERIFIED" if manual_count else "PASS_SCOPED" if selected else "UNVERIFIED"
+    checks = ["Reopened exported file"]
+    if ext in engine.IMAGE_EXTENSIONS or ext == ".pdf":
+        if engine.ocr_available():
+            checks.append("Reran available OCR and text pattern checks")
+        else:
+            checks.append("Reran extractable text checks only; OCR NOT available")
+    else:
+        checks.append("Reran available cell/text pattern checks")
+    checks.append("Compared selected detected values")
     return {"status":status,"selected_count":len(selected),"manual_boxes":manual_count,
             "remaining_selected":flagged,
-            "checks":["Reopened exported file","Reran configured text/OCR detectors","Compared selected detected values"],
+            "checks":checks,
             "output_sha256":engine.fingerprint(redacted_data),
             "unverified":[
                 "Only recognized selected values were checked; other sensitive data may remain.",
