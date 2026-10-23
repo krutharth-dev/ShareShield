@@ -50,6 +50,15 @@ const privacyOptions = [
   { id: 'financial', label: 'PAN, UPI, cards and IFSC', categories: ['pan_candidate', 'upi_candidate', 'payment_card_candidate', 'ifsc_candidate'] },
   { id: 'other', label: 'Other areas (draw manually)', categories: [] },
 ]
+const privacyIcons: Record<string, string> = {
+  identity: 'shield', name: 'file', address: 'privacy', dob: 'report',
+  photo: 'image', contacts: 'monitor', codes: 'scan', financial: 'lock', other: 'wand',
+}
+const privacyNotes: Record<string, string> = {
+  identity: 'National IDs', name: 'Personal identity', address: 'Home & location',
+  dob: 'Personal dates', photo: 'Face detection', contacts: 'Email & mobile',
+  codes: 'Visual codes', financial: 'Payment details', other: 'Manual areas',
+}
 function defaultFindingIds(findings: Finding[], wanted: string[]) {
   const categories = new Set(privacyOptions.filter(option => wanted.includes(option.id)).flatMap(option => option.categories))
   return findings.filter(f => f.locatable && categories.has(f.category)).map(f => f.id)
@@ -502,15 +511,69 @@ function App() {
           </section>
         ) : (
           <>
-            <section className="welcome">
-              <p className="eyebrow">DOCUMENT PRIVACY, SIMPLIFIED</p>
-              <h1>Review before<br />you share.</h1>
-              <p className="intro">Find potentially sensitive text in images, PDFs and documents. Approve removals, inspect the exported copy and check what has or hasn't been verified.</p>
+            <section className="welcome" id="overview">
+              <div className="hero-copy">
+                <span className="hero-eyebrow"><Icon name="sparkle" size={14}/> INTELLIGENT DOCUMENT PRIVACY</span>
+                <h1>Your privacy,<br/><span>in your control.</span></h1>
+                <p className="intro">Detect what matters. Redact with precision. Verify before you share. One thoughtful workspace for safer document handling.</p>
+                <div className="hero-actions">
+                  <button className="primary-action hero-primary" onClick={() => navigateTo('upload')}><Icon name="upload" size={18}/> Protect a document <Icon name="arrowRight" size={17}/></button>
+                  <button className="secondary-action hero-secondary" onClick={() => { sample(); navigateTo('upload') }}><Icon name="file" size={17}/> Try fictional demo</button>
+                </div>
+                <p className="hero-footnote"><Icon name="lock" size={14}/> Designed for local processing · Your choice, every step</p>
+              </div>
+              <div className="hero-art" aria-hidden="true">
+                <div className="hero-orbit orbit-one"/>
+                <div className="hero-orbit orbit-two"/>
+                <div className="hero-emblem"><Icon name="shield" size={82}/></div>
+                <div className="hero-floating floating-top"><Icon name="checkCircle" size={17}/> Review before sharing</div>
+                <div className="hero-floating floating-bottom"><Icon name="lock" size={16}/> Privacy first</div>
+                <span className="hero-spark spark-a"/><span className="hero-spark spark-b"/>
+              </div>
             </section>
-            <section className="upload-card">
-              <div className="section-title"><div><h2>01 · Select a file and privacy goals</h2>
+            <section className="dashboard-metrics" aria-label="Current privacy workspace status">
+              {[
+                { icon: 'layers', label: 'Supported formats', value: String(allowed.size), note: 'Documents and images' },
+                { icon: 'scan', label: 'Detected candidates', value: String(analysis?.findings.length ?? 0), note: analysis ? 'Current analysis' : 'Ready for your first scan' },
+                { icon: 'shield', label: 'OCR engine', value: ocrAvailable === null ? '—' : ocrAvailable ? 'Ready' : 'Offline', note: 'Tesseract processing' },
+                { icon: 'checkCircle', label: 'Export review', value: report ? report.status.replace('_', ' ') : 'Not started', note: report ? 'Latest session outcome' : 'Review required' },
+              ].map(metric => <article className="dashboard-metric" key={metric.label}>
+                <span className="metric-icon"><Icon name={metric.icon} size={20}/></span>
+                <span className="dashboard-metric-label">{metric.label}</span>
+                <strong>{metric.value}</strong>
+                <small>{metric.note}</small>
+              </article>)}
+            </section>
+            {showSettings && <section className="settings-panel surface-card" id="settings">
+              <div className="section-title"><div><h2><Icon name="settings" size={19}/> Appearance preferences</h2><p>Choose your theme. System automatically follows macOS.</p></div></div>
+              <div className="theme-choices">
+                {([['light', 'sun', 'Light'], ['system', 'monitor', 'System default'], ['dark', 'moon', 'Dark']] as const).map(([value, icon, label]) =>
+                  <button key={value} className={'theme-choice ' + (appearance === value ? 'active' : '')}
+                    aria-pressed={appearance === value} onClick={() => setAppearance(value)}>
+                    <Icon name={icon} size={19}/><span>{label}</span>{appearance === value && <Icon name="check" size={17}/>}
+                  </button>)}
+              </div>
+              <p className="pref-note">Only the appearance preference is saved in this browser. Documents and analysis results are not stored by this control.</p>
+            </section>}
+            {showAbout && <section className="about-panel surface-card" id="about">
+              <div className="section-title"><div><h2><Icon name="info" size={19}/> About ShareShield</h2><p>Intelligent on-device privacy leak detection and automatic redaction system.</p></div></div>
+              <p>ShareShield is a student-built, local-first prototype for reviewing and redacting files you explicitly choose. It does not silently inspect other applications or certify complete anonymization.</p>
+              <p className="pref-note">Always examine the exported file. Automatic OCR, face proposals, and other detections can miss sensitive information.</p>
+            </section>}
+            <section className="journey-panel" aria-label="Document protection process">
+              <div className="journey-heading"><div><span className="eyebrow">YOUR WORKFLOW</span><h2>One clear path to a safer share.</h2></div>
+                <span className="journey-progress">{report ? 'Review generated' : phase === 'scanning' ? 'Analyzing file' : phase === 'processing' ? 'Creating export' : analysis ? 'Ready for review' : 'Ready when you are'}</span></div>
+              <div className="workflow-stepper">
+                {workflowSteps.map((step, index) => <div key={step.label} className={'journey-step ' + (index < workflowStage ? 'complete ' : '') + (index === workflowStage ? 'current' : '')}>
+                  <span className="journey-icon">{index < workflowStage ? <Icon name="check" size={17}/> : <Icon name={step.icon} size={18}/>}</span>
+                  <span><small>{String(index+1).padStart(2,'0')}</small><strong>{step.label}</strong></span>
+                </div>)}
+              </div>
+            </section>
+            <section className="upload-card surface-card" id="upload">
+              <div className="section-title"><div><span className="section-kicker">01 / GET STARTED</span><h2>Start with your document</h2>
                 <p>PDF, photos, Word, Excel, PowerPoint, CSV and text · up to 12 MiB</p></div>
-                <span className="step-number">01 / 03</span></div>
+                <span className="section-side-note"><Icon name="lock" size={14}/> Explicit upload only</span></div>
               <div className={'dropzone ' + (dragging ? 'drag-over' : '')}
                 role="button" tabIndex={0} aria-label="Browse supported files"
                 onClick={() => input.current?.click()}
@@ -519,33 +582,34 @@ function App() {
                 onDragLeave={event => { event.preventDefault(); setDragging(false) }}
                 onDrop={event => { event.preventDefault(); setDragging(false); choose(event.dataTransfer.files[0] || null) }}>
                 <input ref={input} type="file" accept=".pdf,.jpg,.jpeg,.png,.heic,.heif,.webp,.bmp,.tif,.tiff,.docx,.pptx,.xlsx,.csv,.txt" onChange={handleInput} onClick={event => event.stopPropagation()} />
-                <span className="upload-icon">↑</span><strong>Drop a file or select from your computer</strong>
-                <span className="muted">Only files you explicitly choose are processed</span>
-                <span className="browse-button">Browse files</span>
+                <span className="upload-icon"><Icon name="upload" size={26}/></span><strong>Drag your file here, or browse</strong>
+                <span className="muted">Your files stay within your configured ShareShield server</span>
+                <span className="browse-button">Choose a file <Icon name="arrowRight" size={15}/></span>
+                <span className="format-pills"><em>PDF</em><em>JPG / PNG</em><em>HEIC</em><em>Word</em><em>PowerPoint</em><em>Excel</em></span>
               </div>
               {file && <div className="file-row"><span className="pdf-icon">{formatType(file.name)}</span>
                 <div className="file-details"><strong>{file.name}</strong><small>{MB(file.size)}</small></div>
                 <span className="file-state">{invalid ? 'Unsupported' : 'Selected'}</span>
                 <button className="remove-button" onClick={() => choose(null)} aria-label="Remove selected file">×</button></div>}
               {file && <div className="privacy-preferences">
-                <div className="pref-heading"><strong>What would you like to protect?</strong><span>Choose categories to preselect in your scan</span></div>
+                <div className="pref-heading"><div><span className="section-kicker">02 / PRIVACY PREFERENCES</span><strong>What would you like to protect?</strong></div><span>{privacyCategories.length} selected · Choose your categories</span></div>
                 <div className="privacy-checkboxes">
-                  {privacyOptions.map(item => <label key={item.id} className="privacy-option">
+                  {privacyOptions.map(item => <label key={item.id} className={"privacy-option " + (privacyCategories.includes(item.id) ? "is-selected" : "")}>
                     <input type="checkbox" checked={privacyCategories.includes(item.id)} disabled={phase !== 'ready'} onChange={() => toggleCategory(item.id)} />
-                    <span>{item.label}</span>
+                    <span className="privacy-option-icon"><Icon name={privacyIcons[item.id]} size={18}/></span><span className="privacy-option-copy"><strong>{item.label}</strong><small>{privacyNotes[item.id]}</small></span><span className="privacy-option-check"><Icon name="check" size={13}/></span>
                   </label>)}
                 </div>
                 <label className="repeat-option"><input type="checkbox" checked={allOccurrences} onChange={event => { setAllOccurrences(event.target.checked); clearResult() }} /> Protect every recognized occurrence of a selected identifier, including other pages</label>
                 <p className="pref-note">Names, addresses, dates and images are detected on a best-effort basis. Check every page and draw manual boxes for anything missed.</p>
               </div>}
-              <div className="action-row">
-                <button className="secondary-action" onClick={sample} disabled={phase !== 'ready'}>Load fictional demo file</button>
-                <button className="primary-action" onClick={scan} disabled={!file || invalid || phase !== 'ready'}>{phase === 'scanning' ? 'Scanning…' : 'Scan file →'}</button>
+              <div className="action-row upload-actions">
+                <button className="secondary-action" onClick={sample} disabled={phase !== 'ready'}><Icon name="file" size={17}/> Use fictional sample</button>
+                <button className="primary-action" onClick={scan} disabled={!file || invalid || phase !== 'ready'}>{phase === 'scanning' ? <><span className="mini-spinner"/> Analyzing…</> : <><Icon name="scan" size={18}/> Analyze document <Icon name="arrowRight" size={17}/></>}</button>
               </div>
               {serverStatus === "offline" && <p className="warning">The local backend is not responding. Start the server, then refresh this page.</p>}
               {ocrAvailable === false && <p className="warning">OCR isn't available. Images and scanned PDFs cannot be text-scanned automatically.</p>}
               {visionAvailable === false && <p className="warning">Face/QR auto-detection is unavailable; manually draw masks over photos and codes.</p>}
-              <p className={problem ? 'warning' : 'notice'} role="status" aria-live="polite">{message}</p>
+              <p className={problem ? 'warning' : 'notice'} role="status" aria-live="polite">{phase === 'scanning' && <span className="mini-spinner"/>}{message}</p>
               <div className="privacy-note"><span>♧</span><p><strong>Privacy comes first.</strong><br />
                 Files are sent only to your configured ShareShield server. Use local deployment for private documents; this prototype cannot guarantee complete sanitization.</p></div>
             </section>
