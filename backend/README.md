@@ -56,6 +56,19 @@ The original file is not overwritten. Statuses have intentionally limited meanin
 - POST /verify — original file, redacted output, analysis_id, selected_ids and manual_count; returns checks, warnings and output_sha256 checksum. The browser additionally adds the original SHA-256 and a timestamp to the downloadable audit JSON.
 - GET /health — status.
 
+
+## If Tesseract OCR is missing on macOS
+
+The Python package `pytesseract` is **not** the OCR executable. Install the system program:
+
+```bash
+brew install tesseract
+which tesseract
+tesseract --version
+```
+
+After installation, **stop and restart** the ShareShield server. The `GET /health` endpoint includes an `ocr_available` boolean. Without Tesseract, the app can still scan selectable PDF text and DOCX/PPTX/CSV/XLSX/TXT data. It can also generate **UNVERIFIED manual-only image/PDF masks**, but cannot automatically read image text or scanned-PDF text; the website displays an explicit warning. A partial text-only scan does not establish that the whole document is safe.
+
 ## Limits and privacy caveats
 
 This is not full-file sanitization. OCR can miss handwriting, faint text and complex layouts. Rules can yield false positives or miss sensitive items. PAN, IFSC and UPI patterns are only syntactic candidates; Luhn is not proof a card number is issued, and Aadhaar checksum validation does not establish an identity. Face detection/redaction has **not** been implemented. Some Office comments, revision history, embedded media and metadata, plus PDF attachments, hidden content and metadata remain unchecked.
