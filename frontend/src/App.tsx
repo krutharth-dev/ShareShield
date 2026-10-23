@@ -32,6 +32,22 @@ type Report = {
   checks: string[]
   unverified: string[]
 }
+type RedactionMode = 'blackout' | 'blur' | 'pixelate'
+const privacyOptions = [
+  { id: 'identity', label: 'Aadhaar number & VID', categories: ['aadhaar_candidate', 'vid_candidate'] },
+  { id: 'name', label: 'Full name', categories: ['name_candidate'] },
+  { id: 'address', label: 'Residential address', categories: ['address_candidate'] },
+  { id: 'dob', label: 'Date of birth', categories: ['dob_candidate'] },
+  { id: 'photo', label: 'Face / photograph', categories: ['face_candidate'] },
+  { id: 'contacts', label: 'Phone and email', categories: ['email', 'indian_mobile_candidate'] },
+  { id: 'codes', label: 'QR codes (barcode: manual)', categories: ['qr_candidate'] },
+  { id: 'financial', label: 'PAN, UPI, cards and IFSC', categories: ['pan_candidate', 'upi_candidate', 'payment_card_candidate', 'ifsc_candidate'] },
+  { id: 'other', label: 'Other areas (draw manually)', categories: [] },
+]
+function defaultFindingIds(findings: Finding[], wanted: string[]) {
+  const categories = new Set(privacyOptions.filter(option => wanted.includes(option.id)).flatMap(option => option.categories))
+  return findings.filter(f => f.locatable && categories.has(f.category)).map(f => f.id)
+}
 const allowed = new Set(['pdf', 'docx', 'pptx', 'xlsx', 'csv', 'txt', 'jpg', 'jpeg', 'png', 'heic', 'heif', 'webp', 'bmp', 'tif', 'tiff'])
 const outputExt: Record<string, string> = { '.pdf': '.pdf', '.docx': '.docx', '.pptx': '.pptx', '.xlsx': '.xlsx', '.csv': '.csv', '.txt': '.txt' }
 function dataFor(file: File, extra?: Record<string, string>) {
@@ -68,6 +84,10 @@ function App() {
   const [result, setResult] = useState<File | null>(null)
   const [report, setReport] = useState<Report | null>(null)
   const [ocrAvailable, setOcrAvailable] = useState<boolean | null>(null)
+  const [visionAvailable, setVisionAvailable] = useState<boolean | null>(null)
+  const [privacyCategories, setPrivacyCategories] = useState<string[]>(privacyOptions.map(item => item.id))
+  const [redactionMode, setRedactionMode] = useState<RedactionMode>('blackout')
+  const [allOccurrences, setAllOccurrences] = useState(true)
   const [serverStatus, setServerStatus] = useState<'checking' | 'online' | 'offline'>('checking')
   const input = useRef<HTMLInputElement>(null)
   const previewSurface = useRef<HTMLDivElement>(null)
@@ -80,8 +100,8 @@ function App() {
     let active = true
     fetch('/health', { cache: 'no-store' })
       .then(r => { if (!r.ok) throw Error('Server health check failed'); return r.json() })
-      .then(x => { if (active) { setOcrAvailable(Boolean(x.ocr_available)); setServerStatus('online') } })
-      .catch(() => { if (active) { setOcrAvailable(null); setServerStatus('offline') } })
+      .then(x => { if (active) { setOcrAvailable(Boolean(x.ocr_available)); setVisionAvailable(Boolean(x.vision_available)); setServerStatus('online') } })
+      .catch(() => { if (active) { setOcrAvailable(null); setVisionAvailable(null); setServerStatus('offline') } })
     return () => { active = false }
   }, [])
   useEffect(() => () => { if (resultUrl.current) URL.revokeObjectURL(resultUrl.current) }, [])
@@ -133,7 +153,7 @@ function App() {
       const data: Analysis = await response.json()
       if (id !== requestId.current) return
       setAnalysis(data)
-      setSelected(data.findings.filter(f => f.locatable).map(f => f.id))
+      setSelected(defaultFindingIds(data.findings, privacyCategories))
       setPage(1)
       setMessage(data.findings.length
         ? data.findings.length + ' candidate(s) found. Review them before redacting.'
@@ -187,6 +207,16 @@ function App() {
     if (outputPreview) URL.revokeObjectURL(outputPreview)
   }, [outputPreview])
 
+  function toggleCategory(id: string) {
+    const next = privacyCategories.includes(id) ? privacyCategories.filter(item => item !== id) : [...privacyCategories, id]
+    setPrivacyCategories(next)
+    if (analysis) setSelected(defaultFindingIds(analysis.findings, next))
+    clearResult()
+  }
+  function chooseMode(next: RedactionMode) {
+    setRedactionMode(next)
+    clearResult()
+  }
   function changeSelected(id: number) {
     setSelected(current => current.includes(id) ? current.filter(i => i !== id) : [...current, id])
     clearResult()
@@ -246,6 +276,8 @@ function App() {
         analysis_id: analysis.analysis_id,
         selected_ids: selected.join(','),
         manual_regions: JSON.stringify(manual),
+        redact_all: String(allOccurrences),
+        redaction_mode: analysis.preview_supported ? redactionMode : 'blackout',
       })
       const response = await fetch('/redact', { method: 'POST', body: request, cache: 'no-store' })
       if (!response.ok) throw Error(await errorFrom(response))
@@ -258,6 +290,8 @@ function App() {
       verify.append('analysis_id', analysis.analysis_id)
       verify.append('selected_ids', selected.join(','))
       verify.append('manual_count', String(manual.length))
+      verify.append('redact_all', String(allOccurrences))
+      verify.append('redaction_mode', analysis.preview_supported ? redactionMode : 'blackout')
       const check = await fetch('/verify', { method: 'POST', body: verify, cache: 'no-store' })
       if (!check.ok) throw Error(await errorFrom(check))
       const checked: Report = await check.json()
@@ -297,6 +331,7 @@ function App() {
     setTimeout(() => URL.revokeObjectURL(url), 1000)
   }
   const chosen = analysis?.findings.filter(f => selected.includes(f.id)) || []
+  const currentMode = analysis && !analysis.preview_supported ? 'blackout' : redactionMode
   const statusColor = report?.status === 'FLAG' ? 'failed' : report?.status === 'PASS_SCOPED' ? 'passed' : 'incomplete'
   return (
     <main className="app-shell">
@@ -338,7 +373,7 @@ function App() {
               <p className="intro">Find potentially sensitive text in images, PDFs and documents. Approve removals, inspect the exported copy and check what has or hasn't been verified.</p>
             </section>
             <section className="upload-card">
-              <div className="section-title"><div><h2>01 · Select a file</h2>
+              <div className="section-title"><div><h2>01 · Select a file and privacy goals</h2>
                 <p>PDF, photos, Word, Excel, PowerPoint, CSV and text · up to 12 MiB</p></div>
                 <span className="step-number">01 / 03</span></div>
               <div className={'dropzone ' + (dragging ? 'drag-over' : '')}
@@ -357,12 +392,24 @@ function App() {
                 <div className="file-details"><strong>{file.name}</strong><small>{MB(file.size)}</small></div>
                 <span className="file-state">{invalid ? 'Unsupported' : 'Selected'}</span>
                 <button className="remove-button" onClick={() => choose(null)} aria-label="Remove selected file">×</button></div>}
+              {file && <div className="privacy-preferences">
+                <div className="pref-heading"><strong>What would you like to protect?</strong><span>Choose categories to preselect in your scan</span></div>
+                <div className="privacy-checkboxes">
+                  {privacyOptions.map(item => <label key={item.id} className="privacy-option">
+                    <input type="checkbox" checked={privacyCategories.includes(item.id)} disabled={phase !== 'ready'} onChange={() => toggleCategory(item.id)} />
+                    <span>{item.label}</span>
+                  </label>)}
+                </div>
+                <label className="repeat-option"><input type="checkbox" checked={allOccurrences} onChange={event => { setAllOccurrences(event.target.checked); clearResult() }} /> Protect every recognized occurrence of a selected identifier, including other pages</label>
+                <p className="pref-note">Names, addresses, dates and images are detected on a best-effort basis. Check every page and draw manual boxes for anything missed.</p>
+              </div>}
               <div className="action-row">
                 <button className="secondary-action" onClick={sample} disabled={phase !== 'ready'}>Load fictional demo file</button>
                 <button className="primary-action" onClick={scan} disabled={!file || invalid || phase !== 'ready'}>{phase === 'scanning' ? 'Scanning…' : 'Scan file →'}</button>
               </div>
               {serverStatus === "offline" && <p className="warning">The local backend is not responding. Start the server, then refresh this page.</p>}
-              {ocrAvailable === false && <p className="warning">OCR is not installed on this server. Images and scanned PDFs cannot be automatically scanned; selectable PDF/Office text still works.</p>}
+              {ocrAvailable === false && <p className="warning">OCR isn't available. Images and scanned PDFs cannot be text-scanned automatically.</p>}
+              {visionAvailable === false && <p className="warning">Face/QR auto-detection is unavailable; manually draw masks over photos and codes.</p>}
               <p className={problem ? 'warning' : 'notice'} role="status" aria-live="polite">{message}</p>
               <div className="privacy-note"><span>♧</span><p><strong>Privacy comes first.</strong><br />
                 Files are sent only to your configured ShareShield server. Use local deployment for private documents; this prototype cannot guarantee complete sanitization.</p></div>
@@ -371,6 +418,7 @@ function App() {
               <article className="review-card">
                 <div className="section-title"><div><h2>02 · Review detections</h2><p>Choose information to redact</p></div><span className="step-number">{analysis.findings.length} FOUND</span></div>
                 <div className="metric-strip"><span><strong>{analysis.high_risk_count}</strong> high-priority candidates</span><span><strong>{analysis.findings.length}</strong> total</span></div>
+                <p className="pref-note">Selected categories preselect detected candidates. Individual boxes can still be unchecked.</p>
                 <div className="action-row compact-actions">
                   <button className="secondary-action" onClick={() => selectionAll(true)}>Select all</button>
                   <button className="secondary-action" onClick={() => selectionAll(false)}>Clear</button>
@@ -390,6 +438,17 @@ function App() {
                 <div className="section-title"><div><h2>03 · Redact and verify</h2>
                   <p>{analysis.preview_supported ? 'Draw on the original to mask anything detection missed' : 'Preview is available for images and PDFs only'}</p></div><span className="step-number">03 / 03</span></div>
                 {analysis.preview_supported ? <>
+                  <div className="redaction-method" role="group" aria-label="Preferred masking method">
+                    <strong>Mask appearance</strong>
+                    <div className="effect-options">
+                      {(['blackout', 'blur', 'pixelate'] as RedactionMode[]).map(effect =>
+                        <label key={effect} className={redactionMode === effect ? 'effect-option chosen' : 'effect-option'}>
+                          <input type="radio" name="redaction-effect" checked={redactionMode === effect} onChange={() => chooseMode(effect)} />
+                          {effect === 'blackout' ? '■ Permanent black box' : effect === 'blur' ? '◌ Blur photos' : '▦ Pixelate photos'}
+                        </label>)}
+                    </div>
+                    <p className="pref-note">Text identifiers and QR codes are always blacked out. Blur/pixelation apply only to selected faces and manual boxes; PDF exports are flattened. Visual hiding is not guaranteed irreversible.</p>
+                  </div>
                   <div className="preview-pair">
                     <div><p className="preview-caption">Original · selected areas highlighted</p>
                       <div className="page-frame" ref={previewSurface} onPointerDown={onPointerDown} onPointerMove={onPointerMove} onPointerUp={onPointerUp} onPointerCancel={() => { initialPoint.current = null; setDraft(null) }}>
@@ -411,7 +470,7 @@ function App() {
                     <button onClick={undo} disabled={!manual.some(m => m.page === page)}>Undo box</button>
                     <span className="muted">{manual.length} manual masks</span>
                   </div>
-                </> : <p className="preview-placeholder">This file has no browser preview. Review its detected text here, then open the exported copy in the appropriate application.</p>}
+                </> : <p className="preview-placeholder">For Word, PowerPoint, Excel, CSV and TXT, recognized text is permanently replaced. Blur/photo masking is supported in images and PDFs only.</p>
                 <div className="action-row"><button className="primary-action" disabled={phase !== 'ready' || (!selected.length && !manual.length)}
                   onClick={processFile}>{phase === 'processing' ? 'Processing…' : 'Generate & verify copy'}</button>
                   <button className="secondary-action" disabled={!result} onClick={download}>Download reviewed copy ↓</button></div>
