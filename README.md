@@ -91,6 +91,19 @@ python -m uvicorn backend.app:app --host 127.0.0.1 --port 8000
 
 Open **http://127.0.0.1:8000/** for the upload interface or **http://127.0.0.1:8000/docs** for API debugging. Homebrew, HEIC decoding or dependency availability on older macOS hardware may require adaptation.
 
+
+## If Tesseract OCR is missing on macOS
+
+The Python package `pytesseract` is **not** the OCR executable. Install the system program:
+
+```bash
+brew install tesseract
+which tesseract
+tesseract --version
+```
+
+After installation, **stop and restart** the ShareShield server. The `GET /health` endpoint includes an `ocr_available` boolean. Without Tesseract, the app can still scan selectable PDF text and DOCX/PPTX/CSV/XLSX/TXT data. It can also generate **UNVERIFIED manual-only image/PDF masks**, but cannot automatically read image text or scanned-PDF text; the website displays an explicit warning. A partial text-only scan does not establish that the whole document is safe.
+
 ## Limitations and responsible use
 
 - Text-only detection: handwriting, faces, visual IDs without recognizable text, obscure layouts and false negatives remain possible.
