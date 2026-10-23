@@ -56,7 +56,7 @@ class Finding:
         return {"id": index, "category": self.category, "value": self.value,
                 "page": self.page, "locatable": bool(self.rectangles) or bool(self.location),
                 "severity": SEVERITY.get(self.category, "medium"),
-                "rectangles": self.rectangles}
+                "rectangles": self.rectangles, "location": self.location}
 
 
 def extension(filename: str) -> str:
@@ -165,7 +165,9 @@ def open_pdf(data: bytes):
 
 def _pdf_findings(pdf: fitz.Document) -> tuple[list[Finding], list[str]]:
     findings: list[Finding] = []
+    from backend import smart
     has_ocr = ocr_available()
+    has_vision = smart.available()
     notes = [
         "PDF annotations, attachments, file metadata and embedded content are not fully inspected.",
     ]
@@ -173,6 +175,9 @@ def _pdf_findings(pdf: fitz.Document) -> tuple[list[Finding], list[str]]:
         notes.append("Rendered pages were scanned with OCR; faint text, handwriting and unusual layouts may be missed.")
     else:
         notes.append("UNVERIFIED: Tesseract OCR is unavailable. Scanned pages and text inside images were NOT inspected; install with 'brew install tesseract'.")
+    notes.append("Face and QR proposals are best-effort; barcodes and QR-like codes may require manual masks.")
+    if not has_vision:
+        notes.append("UNVERIFIED: Visual face/QR detector unavailable; manually mask photos and codes.")
     for number, page in enumerate(pdf, 1):
         text = page.get_text("text", sort=True)
         native = scan_text(
@@ -180,13 +185,16 @@ def _pdf_findings(pdf: fitz.Document) -> tuple[list[Finding], list[str]]:
             lambda value, a, b: [tuple(r) for r in page.search_for(value)]
         )
         visual = []
-        if has_ocr:
-            # Also inspect screenshots embedded in otherwise searchable pages.
+        if has_ocr or has_vision:
+            # Render every page to inspect embedded images and screenshots.
             pix = page.get_pixmap(matrix=fitz.Matrix(2, 2), alpha=False)
             if pix.width * pix.height > MAX_PIXELS:
                 raise HTTPException(413, "Rendered PDF page exceeds 25-megapixel image limit")
             image = Image.frombytes("RGB", (pix.width, pix.height), pix.samples)
-            visual = ocr(image, number, scale=2)
+            if has_ocr:
+                visual.extend(ocr(image, number, scale=2))
+            if has_vision:
+                visual.extend(smart.regions(image, number, scale=2))
         combined: dict[tuple[str,str,int], Finding] = {}
         for finding in native + visual:
             key = (finding.category, finding.value, finding.page)
@@ -269,12 +277,18 @@ def _inspect_document(data: bytes, ext: str) -> tuple[list[Finding], list[str]]:
             "Output image is a flattened PNG without original EXIF metadata.",
         ]
         if not ocr_available():
-            return [], [
-                "UNVERIFIED: Tesseract OCR is unavailable; no text was scanned. Install it with 'brew install tesseract'.",
-                "You may manually draw redaction boxes, but verify every masked region yourself.",
+            from backend import smart
+            return smart.regions(image, 1), [
+                "UNVERIFIED: Tesseract OCR is unavailable; no text was scanned. Install Tesseract via MacPorts or Homebrew where supported.",
+                "Faces and QR candidates are not a full security audit; manually review all regions.",
                 *limits,
             ]
-        return ocr(image, 1), limits
+        from backend import smart
+        if not smart.available():
+            limits.append("UNVERIFIED: Face and QR detection unavailable; manually mask visible photos and codes.")
+        else:
+            limits.append("Face/QR recognition is best-effort. Review every photograph and 2D code manually.")
+        return ocr(image, 1) + smart.regions(image, 1), limits
     if ext == ".pdf":
         with open_pdf(data) as pdf:
             return _pdf_findings(pdf)
