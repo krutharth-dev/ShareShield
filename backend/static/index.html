@@ -1,43 +1,119 @@
 <!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>ShareShield — Review before you share</title>
-  <style>
-    :root{color-scheme:dark;font-family:Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,sans-serif;color:#e9effb;background:#0a1020}
-    *{box-sizing:border-box}body{margin:0;min-height:100vh;background:radial-gradient(ellipse at 50% -15%,#273b70 0%,#101a33 42%,#080e1c 100%)}
-    .wrap{width:min(860px,calc(100% - 32px));margin:0 auto;padding:36px 0 70px}header{display:flex;align-items:center;justify-content:space-between;margin-bottom:50px}
-    .brand{font-size:24px;font-weight:800;letter-spacing:-.9px}.brand span{color:#7db5ff}.pill{font-size:12px;padding:8px 11px;border:1px solid #2b4165;border-radius:99px;color:#a8caff;background:#192949}
-    h1{font-size:clamp(32px,5vw,52px);line-height:1.06;letter-spacing:-1.9px;margin:0 0 12px}h1 span{color:#85b9ff}p{color:#b2c1db;line-height:1.6}.intro{margin-bottom:28px}
-    .panel{background:#141f35dd;border:1px solid #2d3d5c;border-radius:20px;padding:28px;box-shadow:0 24px 55px #05091a70}
-    .drop{padding:43px 20px;text-align:center;border:2px dashed #59739f;border-radius:14px;background:#1b2941;cursor:pointer;transition:.2s}.drop:hover,.drop.hover{border-color:#a5caff;background:#223655}.drop strong{display:block;font-size:20px;margin:10px 0 5px}.drop small{color:#a9bbd5;display:block;margin-top:11px}.emoji{font-size:34px}
-    input[type=file]{display:none}.actions{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:20px}.btn{background:#4f91f7;border:0;border-radius:10px;color:white;font-weight:750;padding:13px 21px;cursor:pointer;font-size:14px}.btn:hover{background:#6aa7ff}.btn:disabled{opacity:.45;cursor:not-allowed}.btn.secondary{background:#2a3d61}.filemeta{font-size:14px;flex:1;color:#d3e3fc;overflow-wrap:anywhere}.hint{font-size:12px;color:#9ab0cf}
-    #status{margin-top:14px;min-height:20px;white-space:pre-wrap}#status.error{color:#ff9898}#status.ok{color:#9ee9cc}
-    #review{display:none;margin-top:25px}h2{font-size:23px;letter-spacing:-.5px;margin-top:0}.findings{display:grid;gap:10px;margin:18px 0}.finding{display:flex;align-items:flex-start;gap:12px;border:1px solid #334765;background:#192943;padding:12px;border-radius:10px;cursor:pointer}.finding input{margin-top:3px;accent-color:#71abff}.finding strong{display:block;overflow-wrap:anywhere}.finding small{display:block;color:#a0b8d7;margin-top:4px}.notice{padding:15px;background:#251e37;border:1px solid #564367;border-radius:10px;color:#d9c7e1;font-size:13px;line-height:1.6}.notice ul{padding-left:20px;margin:7px 0 0}.toolbar{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}.toolbar small{color:#b2c6e0}
-    footer{font-size:12px;color:#8ea3c3;margin-top:24px;text-align:center}.sr{position:absolute;width:1px;height:1px;clip:rect(0,0,0,0);overflow:hidden}
-  </style>
-</head>
-<body><main class="wrap">
-  <header><div class="brand">🛡️ Share<span>Shield</span></div><div class="pill">Local prototype · v0.2</div></header>
-  <section class="intro"><h1>Share safely.<br><span>Redact before you send.</span></h1><p>Choose a file, review possible private information, and download a redacted copy. Supported formats include images, PDFs, Word and PowerPoint documents.</p></section>
-  <section class="panel" aria-label="Privacy review">
-    <div class="drop" id="drop" role="button" tabindex="0" aria-label="Choose a document"><div class="emoji">📄</div><strong>Drop a file here, or click to browse</strong><div>PDF · DOCX · PPTX · TXT · JPG · PNG · HEIC · WEBP · TIFF · BMP</div><small>12 MiB maximum · processed on your local computer</small></div>
-    <input id="file" type="file" accept=".pdf,.docx,.pptx,.txt,.jpg,.jpeg,.png,.heic,.heif,.webp,.bmp,.tif,.tiff">
-    <div class="actions"><div id="filemeta" class="filemeta">No file selected</div><button class="btn" id="analyze" disabled>Scan for sensitive data</button></div>
-    <div id="status" role="status" aria-live="polite"></div>
-    <div id="review"><div class="toolbar"><h2>Review findings</h2><small id="count"></small></div><div class="findings" id="findings"></div><div class="notice"><strong>Important limitations</strong><ul id="limits"></ul><div>OCR can miss text, and a successful check covers selected findings only. Always inspect the downloaded output before sharing.</div></div><div class="actions"><button id="redact" class="btn">Redact selected & download</button><button class="btn secondary" id="reset" type="button">Choose another file</button></div></div>
-  </section><footer>ShareShield · Local-first mini-project demonstration · Not a guarantee of complete privacy</footer>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ShareShield — Private by design</title>
+<style>
+:root{color-scheme:dark;--bg:#080e1a;--panel:#111d30;--line:#293a57;--ink:#ecf3ff;--muted:#a4b5cf;--blue:#6da9ff;--teal:#4bdbad;--warn:#ffcb82}
+*{box-sizing:border-box}body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:var(--ink);background:radial-gradient(ellipse at 50% 0%,#213558,#0c1525 48%,#080d19)}
+main{width:min(1140px,calc(100% - 32px));margin:auto;padding:26px 0 56px}header{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:40px}.logo{font-size:23px;font-weight:800;letter-spacing:-.7px}.logo span{color:var(--blue)}
+.pill{padding:7px 10px;border-radius:20px;background:#192c47;border:1px solid #365175;color:#bcd8ff;font-size:12px}
+h1{font-size:clamp(32px,5vw,54px);line-height:1.06;letter-spacing:-2px;margin:0 0 13px}h1 span{color:var(--blue)}p{color:var(--muted);line-height:1.55}h2{font-size:19px;margin:0 0 13px;letter-spacing:-.4px}h3{font-size:14px;margin:0 0 10px}
+.intro{margin-bottom:26px}.intro p{max-width:670px;margin-bottom:0}.panel{border:1px solid var(--line);background:#121f33f5;border-radius:17px;padding:21px;box-shadow:0 12px 32px #0003;margin-bottom:16px}
+.drop{border:2px dashed #57749b;border-radius:13px;padding:29px 18px;cursor:pointer;text-align:center;background:#1a2a42;transition:.2s}.drop:hover,.drop.over{background:#223652;border-color:#a6cdff}.drop strong{font-size:18px;display:block;margin:7px}.drop small{display:block;color:#b5c6dc;margin-top:8px}
+#file{display:none}.actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:14px}.actions .spacer{flex:1;min-width:100px}
+button{border:0;border-radius:9px;padding:11px 16px;color:#fff;background:#467fda;font-size:14px;font-weight:700;cursor:pointer}button:hover{filter:brightness(1.13)}button:disabled{opacity:.4;cursor:not-allowed}button.alt{background:#304669}button.danger{background:#65434d}button:focus-visible,.drop:focus-visible{outline:2px solid #b9d8ff;outline-offset:3px}
+.caption{color:#a7b9d5;font-size:12px;line-height:1.5}.status{min-height:17px;font-size:13px;margin-top:10px;white-space:pre-wrap;color:#9ee7d4}.status.error{color:#ffa8a8}
+#workspace{display:none}.grid{display:grid;grid-template-columns:300px minmax(0,1fr);gap:16px;align-items:start}.col{min-width:0}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:13px}.chip{border:1px solid #425c7b;border-radius:30px;padding:6px 10px;color:#d6e5fa;font-size:12px;background:#1a2b43}.chip.high{border-color:#aa745b;color:#ffd7b1}
+.findings{max-height:430px;overflow:auto;display:grid;gap:8px}.finding{display:flex;gap:9px;padding:10px;border-radius:9px;border:1px solid #3a4f70;background:#182a44;cursor:pointer}.finding input{accent-color:#69b8ff;margin-top:3px}.finding strong{display:block;font-size:13px;overflow-wrap:anywhere}.finding small{display:block;color:#9eb2ce;margin-top:4px}.notice{margin-top:14px;border:1px solid #63506c;background:#2a2337;border-radius:10px;padding:12px;font-size:12px;color:#e4d6eb;line-height:1.55}
+.preview-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.preview-box{min-width:0;background:#0b1424;border:1px solid #344965;border-radius:11px;overflow:hidden;min-height:230px}.preview-title{background:#18283e;border-bottom:1px solid #344965;padding:10px 13px;font-size:12px;color:#c6d5ea;font-weight:700}
+.stage{position:relative;margin:auto;width:100%;background:#fff;line-height:0}.stage img{display:block;width:100%;height:auto}.stage canvas{position:absolute;inset:0;width:100%;height:100%;touch-action:none;cursor:crosshair}
+.preview-body{padding:10px;min-height:230px;display:flex;flex-direction:column;justify-content:center}.placeholder{text-align:center;color:#8fa6c5;font-size:13px;line-height:1.55;padding:24px 8px}
+.page-nav{display:flex;align-items:center;gap:9px;margin:12px 0 0}.page-nav span{font-size:12px;color:#c7d4e9}.page-nav button{padding:7px 12px}
+#manual-help{font-size:12px;color:#becde0;margin:10px 0 0}#report{display:none}#report ul{padding-left:19px;font-size:12px;color:#c5d1e6;line-height:1.6}#report-status{font-weight:800;margin-bottom:8px}#report-status.warn{color:var(--warn)}#report-status.ok{color:var(--teal)}#report-status.bad{color:#ff9898}
+footer{text-align:center;margin-top:28px;color:#869ab7;font-size:12px}
+@media(max-width:820px){.grid{grid-template-columns:1fr}.preview-grid{grid-template-columns:1fr}header{margin-bottom:25px}.panel{padding:16px}}
+</style></head><body>
+<main>
+<header><div class="logo">🛡️ Share<span>Shield</span></div><div class="pill">On-device prototype · v0.3</div></header>
+<section class="intro"><h1>Protect what you <span>share.</span></h1><p>Scan images and documents for possible private details. Review findings, draw any missing redaction boxes, then inspect the result before downloading. Files stay with your local ShareShield server.</p></section>
+<section class="panel">
+  <div id="drop" class="drop" tabindex="0" role="button" aria-label="Choose file"><div style="font-size:30px">📄</div><strong>Drop a file here or click to browse</strong><div class="caption">PDF · DOCX · PPTX · TXT · JPG · PNG · HEIC · WEBP · BMP · TIFF</div><small>Maximum 12 MiB · processed on this computer</small></div>
+  <input id="file" type="file" accept=".pdf,.docx,.pptx,.txt,.jpg,.jpeg,.png,.heic,.heif,.webp,.bmp,.tif,.tiff">
+  <div class="actions"><span class="caption spacer" id="file-label">No file selected</span><button id="scan" disabled>Scan file</button></div>
+  <div id="status" class="status" aria-live="polite"></div>
+</section>
+<div id="workspace" class="grid">
+  <div class="col">
+    <section class="panel">
+      <h2>Detected information</h2>
+      <div id="chips" class="chips"></div>
+      <div id="findings" class="findings"></div>
+      <p class="caption">Detections are candidates, not proof. Select the items you want removed.</p>
+      <div class="notice"><strong>Limitations</strong><div id="limitations"></div></div>
+    </section>
+  </div>
+  <div class="col">
+    <section class="panel">
+      <h2>Preview and manual redaction</h2>
+      <div class="preview-grid">
+        <div class="preview-box"><div class="preview-title">Original · draw boxes to hide extra content</div>
+          <div id="before-body" class="preview-body"><div class="placeholder">Choose a supported PDF or image to preview.</div></div></div>
+        <div class="preview-box"><div class="preview-title">Redacted preview</div>
+          <div id="after-body" class="preview-body"><div class="placeholder">The redacted result appears here after processing.</div></div></div>
+      </div>
+      <div id="page-nav" class="page-nav" hidden><button class="alt" id="prev">←</button><span id="page-label">Page 1</span><button class="alt" id="next">→</button><span class="spacer"></span><button class="danger" id="undo">Undo box</button></div>
+      <p id="manual-help">For images and PDFs, drag on the original preview to black out anything the scanner misses. Drawn boxes are redacted on export.</p>
+      <div class="actions"><button id="redact" disabled>Generate redacted copy</button><button class="alt" id="download" hidden>Download reviewed copy ↓</button></div>
+      <div id="process-status" class="status" role="status" aria-live="polite"></div>
+    </section>
+    <section id="report" class="panel">
+      <h2>Verification report</h2><div id="report-status"></div>
+      <div id="report-details" class="caption"></div><ul id="report-warnings"></ul>
+      <p class="caption"><strong>Always inspect the output manually before sharing.</strong> No automatic check can guarantee every private detail is gone.</p>
+    </section>
+  </div>
+</div>
+<footer>ShareShield · Offline-first student project · Real private documents should not be used until the prototype has been thoroughly tested.</footer>
 </main>
 <script>
-const fileEl=document.querySelector('#file'),drop=document.querySelector('#drop'),scan=document.querySelector('#analyze'),redact=document.querySelector('#redact'),review=document.querySelector('#review'),status=document.querySelector('#status'),list=document.querySelector('#findings'),limits=document.querySelector('#limits');
-let current=null,report=null;
-function message(text,error=false){status.textContent=text;status.className=error?'error':'ok'}
-function choose(file){current=file||null;report=null;review.style.display='none';scan.disabled=!current;document.querySelector('#filemeta').textContent=current?current.name+' · '+(current.size/1024/1024).toFixed(2)+' MiB':'No file selected';message('')}
-fileEl.addEventListener('change',()=>choose(fileEl.files[0]));drop.addEventListener('click',()=>fileEl.click());drop.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();fileEl.click()}});
-for(const event of ['dragenter','dragover'])drop.addEventListener(event,e=>{e.preventDefault();drop.classList.add('hover')});for(const event of ['dragleave','drop'])drop.addEventListener(event,e=>{e.preventDefault();drop.classList.remove('hover')});drop.addEventListener('drop',e=>{if(e.dataTransfer.files.length)choose(e.dataTransfer.files[0])});
-async function errorText(response){try{const obj=await response.json();return obj.detail||'HTTP '+response.status}catch{return 'HTTP '+response.status}}
-scan.addEventListener('click',async()=>{if(!current)return;scan.disabled=true;message('Inspecting document…');try{const fd=new FormData();fd.append('file',current);const response=await fetch('/analyze',{method:'POST',body:fd,cache:'no-store'});if(!response.ok)throw Error(await errorText(response));report=await response.json();list.replaceChildren();limits.replaceChildren();report.limitations.forEach(note=>{const li=document.createElement('li');li.textContent=note;limits.append(li)});report.findings.forEach(f=>{const label=document.createElement('label');label.className='finding';const c=document.createElement('input');c.type='checkbox';c.checked=true;c.value=f.id;const detail=document.createElement('div');const strong=document.createElement('strong');strong.textContent=f.value;const small=document.createElement('small');small.textContent=f.category+' · '+(report.format==='.pdf'?'Page '+f.page:'Document');detail.append(strong,small);label.append(c,detail);list.append(label)});if(!report.findings.length){const empty=document.createElement('p');empty.textContent='No supported patterns detected. That does NOT mean the file is safe. Try a clearer scan or review manually.';list.append(empty)}document.querySelector('#count').textContent=report.findings.length+' potential item(s)';redact.disabled=!report.findings.length;review.style.display='block';message('Analysis complete: '+report.findings.length+' potential item(s) found.')}catch(e){message(e.message,true)}finally{scan.disabled=!current}});
-redact.addEventListener('click',async()=>{if(!current||!report)return;const ids=[...list.querySelectorAll('input:checked')].map(x=>x.value);if(!ids.length){message('Select at least one finding to redact.',true);return}redact.disabled=true;message('Creating and checking redacted copy…');try{const fd=new FormData();fd.append('file',current);fd.append('selected_ids',ids.join(','));fd.append('analysis_id',report.analysis_id);const response=await fetch('/redact',{method:'POST',body:fd,cache:'no-store'});if(!response.ok)throw Error(await errorText(response));const blob=await response.blob();const type=report.format,extension={'.pdf':'.pdf','.docx':'.docx','.pptx':'.pptx','.txt':'.txt'}[type]||'.png';const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='shareshield-redacted'+extension;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),15000);message('Download created. Limited verification: '+(response.headers.get('X-ShareShield-Verification')||'selected findings')+'. Open and inspect the result before sharing.')}catch(e){message(e.message,true)}finally{redact.disabled=false}});
-document.querySelector('#reset').addEventListener('click',()=>{fileEl.value='';choose(null)});
+const $=id=>document.getElementById(id), file=$('file'), drop=$('drop'), scan=$('scan'), redact=$('redact');
+let original=null,analysis=null,manual=[],page=1,currentWidth=1,currentHeight=1,processed=null,afterFile=null;
+let beforeUrl=null,afterUrl=null,downloadUrl=null;
+const outputExt={'.pdf':'.pdf','.docx':'.docx','.pptx':'.pptx','.txt':'.txt'};
+function note(target,msg,problem=false){$(target).textContent=msg;$(target).className='status'+(problem?' error':'')}
+function clearObjectURLs(){for(const u of [beforeUrl,afterUrl,downloadUrl])if(u)URL.revokeObjectURL(u);beforeUrl=afterUrl=downloadUrl=null}
+function clearOutput(){processed=null;afterFile=null;redact.disabled=false;$('download').hidden=true;$('report').style.display='none';$('after-body').innerHTML='<div class="placeholder">Generate a redacted copy to preview it here.</div>';if(afterUrl)URL.revokeObjectURL(afterUrl);afterUrl=null;if(downloadUrl)URL.revokeObjectURL(downloadUrl);downloadUrl=null;note('process-status','')}
+function pick(f){original=f||null;analysis=null;manual=[];page=1;clearObjectURLs();$('workspace').style.display='none';scan.disabled=!f;$('file-label').textContent=f?f.name+' · '+(f.size/1048576).toFixed(2)+' MiB':'No file selected';note('status','')}
+file.addEventListener('change',()=>pick(file.files[0]));drop.addEventListener('click',()=>file.click());drop.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();file.click()}});
+for(const e of ['dragover','dragenter'])drop.addEventListener(e,x=>{x.preventDefault();drop.classList.add('over')});
+for(const e of ['dragleave','drop'])drop.addEventListener(e,x=>{x.preventDefault();drop.classList.remove('over')});
+drop.addEventListener('drop',e=>{if(e.dataTransfer.files.length)pick(e.dataTransfer.files[0])});
+function fd(f){const d=new FormData();d.append('file',f);return d}
+async function issue(r){try{let o=await r.json();return o.detail||'HTTP '+r.status}catch{return 'HTTP '+r.status}}
+function ids(){return [...$('findings').querySelectorAll('input:checked')].map(i=>Number(i.value))}
+function invalidate(){if(processed)clearOutput();if(analysis)redact.disabled=!ids().length&&!manual.length}
+async function previewOf(f,target,p){let d=fd(f);d.append('page',String(p));const response=await fetch('/preview',{method:'POST',body:d,cache:'no-store'});if(!response.ok)throw Error(await issue(response));const blob=await response.blob();const url=URL.createObjectURL(blob);if(target==='before'){if(beforeUrl)URL.revokeObjectURL(beforeUrl);beforeUrl=url;currentWidth=Number(response.headers.get('X-Document-Width'))||1;currentHeight=Number(response.headers.get('X-Document-Height'))||1}else{if(afterUrl)URL.revokeObjectURL(afterUrl);afterUrl=url}
+const parent=$(target+'-body');parent.replaceChildren();const stage=document.createElement('div');stage.className='stage';const img=document.createElement('img');img.alt=target==='before'?'Original file page':'Redacted file page';img.src=url;stage.append(img);parent.append(stage);
+if(target==='before'){const canvas=document.createElement('canvas');canvas.id='overlay';canvas.setAttribute('aria-label','Draw redaction boxes');stage.append(canvas);img.onload=()=>{resizeCanvas();drawOverlay()};canvas.addEventListener('pointerdown',beginDrag);canvas.addEventListener('pointermove',continueDrag);canvas.addEventListener('pointerup',endDrag);canvas.addEventListener('pointercancel',cancelDrag);}
+}
+let start=null,dragEnd=null;
+function position(evt){const r=$('overlay').getBoundingClientRect();return {x:Math.min(1,Math.max(0,(evt.clientX-r.left)/r.width)),y:Math.min(1,Math.max(0,(evt.clientY-r.top)/r.height))}}
+function beginDrag(e){start=position(e);dragEnd=start;$('overlay').setPointerCapture(e.pointerId);drawOverlay()}
+function continueDrag(e){if(!start)return;dragEnd=position(e);drawOverlay()}
+function endDrag(e){if(!start)return;dragEnd=position(e);const x=Math.min(start.x,dragEnd.x),y=Math.min(start.y,dragEnd.y),w=Math.abs(start.x-dragEnd.x),h=Math.abs(start.y-dragEnd.y);if(w>.005&&h>.005){manual.push({page,x,y,w,h});invalidate()}start=dragEnd=null;drawOverlay()}
+function cancelDrag(){start=dragEnd=null;drawOverlay()}
+function resizeCanvas(){const canvas=$('overlay');if(!canvas)return;const img=canvas.parentNode.querySelector('img');const r=img.getBoundingClientRect(),scale=window.devicePixelRatio||1;canvas.width=Math.round(r.width*scale);canvas.height=Math.round(r.height*scale);canvas.style.width=r.width+'px';canvas.style.height=r.height+'px';drawOverlay()}
+window.addEventListener('resize',()=>{if($('overlay'))resizeCanvas()});
+function drawOverlay(){const canvas=$('overlay');if(!canvas||!analysis)return;const ctx=canvas.getContext('2d'),sx=canvas.width,sy=canvas.height;ctx.clearRect(0,0,sx,sy);ctx.lineWidth=2*(window.devicePixelRatio||1);
+for(const f of analysis.findings){if(f.page!==page||!ids().includes(f.id))continue;for(const [x0,y0,x1,y1] of f.rectangles){const x=x0/currentWidth*sx,y=y0/currentHeight*sy,w=(x1-x0)/currentWidth*sx,h=(y1-y0)/currentHeight*sy;ctx.fillStyle='rgba(50,170,255,.23)';ctx.strokeStyle='#258dff';ctx.fillRect(x,y,w,h);ctx.strokeRect(x,y,w,h)}}
+for(const r of manual.filter(r=>r.page===page)){ctx.fillStyle='rgba(255,149,58,.28)';ctx.strokeStyle='#ff974d';ctx.fillRect(r.x*sx,r.y*sy,r.w*sx,r.h*sy);ctx.strokeRect(r.x*sx,r.y*sy,r.w*sx,r.h*sy)}
+if(start&&dragEnd){const x=Math.min(start.x,dragEnd.x),y=Math.min(start.y,dragEnd.y),w=Math.abs(start.x-dragEnd.x),h=Math.abs(start.y-dragEnd.y);ctx.fillStyle='rgba(255,149,58,.3)';ctx.strokeStyle='#ff974d';ctx.fillRect(x*sx,y*sy,w*sx,h*sy);ctx.strokeRect(x*sx,y*sy,w*sx,h*sy)}}
+async function displayPage(){if(!analysis||!analysis.preview_supported)return;$('page-nav').hidden=false;$('page-label').textContent='Page '+page+' / '+analysis.page_count;$('prev').disabled=page<=1;$('next').disabled=page>=analysis.page_count;try{await previewOf(original,'before',page);if(afterFile)await previewOf(afterFile,'after',page)}catch(e){note('process-status',e.message,true)}}
+$('prev').addEventListener('click',()=>{page--;displayPage()});$('next').addEventListener('click',()=>{page++;displayPage()});
+$('undo').addEventListener('click',()=>{for(let i=manual.length-1;i>=0;i--){if(manual[i].page===page){manual.splice(i,1);invalidate();drawOverlay();break}}});
+scan.addEventListener('click',async()=>{if(!original)return;scan.disabled=true;note('status','Scanning selected document…');try{const r=await fetch('/analyze',{method:'POST',body:fd(original),cache:'no-store'});if(!r.ok)throw Error(await issue(r));analysis=await r.json();manual=[];page=1;const chips=$('chips');chips.replaceChildren();for(const [name,n] of Object.entries(analysis.counts)){const label=document.createElement('span');label.className='chip'+(['pan_candidate','aadhaar_candidate'].includes(name)?' high':'');label.textContent=name.replaceAll('_',' ')+' · '+n;chips.append(label)}if(!analysis.findings.length){chips.innerHTML='<span class="chip">No configured patterns found</span>'}
+const findings=$('findings');findings.replaceChildren();for(const f of analysis.findings){const label=document.createElement('label');label.className='finding';const input=document.createElement('input');input.type='checkbox';input.value=f.id;input.checked=f.locatable;input.disabled=!f.locatable;input.addEventListener('change',()=>{invalidate();drawOverlay()});const desc=document.createElement('div');const strong=document.createElement('strong');strong.textContent=f.value;const small=document.createElement('small');small.textContent=f.category.replaceAll('_',' ')+' · '+f.severity+' priority · page '+f.page+(f.locatable?'':' · cannot locate');desc.append(strong,small);label.append(input,desc);findings.append(label)}
+if(!analysis.findings.length){const msg=document.createElement('p');msg.className='caption';msg.textContent='No supported pattern found. You can still draw boxes on images or PDFs. This does not mean the file is safe.';findings.append(msg)}
+const limitations=$('limitations');limitations.replaceChildren();const ul=document.createElement('ul');for(const item of analysis.limitations){const li=document.createElement('li');li.textContent=item;ul.append(li)}limitations.append(ul);$('workspace').style.display='grid';clearOutput();$('page-nav').hidden=!analysis.preview_supported;$('manual-help').hidden=!analysis.preview_supported;if(analysis.preview_supported)await displayPage();else{$('before-body').innerHTML='<div class="placeholder">Visual previews and manual boxes are available for images and PDFs. Review text findings at left.</div>';$('after-body').innerHTML='<div class="placeholder">This document type has no visual preview. Review exported file in its native editor.</div>'}redact.disabled=!ids().length&&!manual.length;note('status',analysis.findings.length+' possible sensitive item(s) found. Review before redacting.')}catch(e){note('status',e.message,true)}finally{scan.disabled=!original}});
+redact.addEventListener('click',async()=>{if(!analysis)return;const chosen=ids();if(!chosen.length&&!manual.length){note('process-status','Select items or draw boxes first.',true);return}redact.disabled=true;note('process-status','Redacting and checking output…');try{const body=fd(original);body.append('analysis_id',analysis.analysis_id);body.append('selected_ids',chosen.join(','));body.append('manual_regions',JSON.stringify(manual));const r=await fetch('/redact',{method:'POST',body,cache:'no-store'});if(!r.ok)throw Error(await issue(r));const blob=await r.blob(),ext=outputExt[analysis.format]||'.png';afterFile=new File([blob],'shareshield-redacted'+ext,{type:blob.type});processed=blob;
+const verification=new FormData();verification.append('file',original);verification.append('redacted',afterFile);verification.append('analysis_id',analysis.analysis_id);verification.append('selected_ids',chosen.join(','));verification.append('manual_count',String(manual.length));
+const vr=await fetch('/verify',{method:'POST',body:verification,cache:'no-store'});if(!vr.ok)throw Error(await issue(vr));const report=await vr.json();renderReport(report);
+if(report.status==='FLAG')throw Error('Verification flagged remaining sensitive information. Download disabled.');
+downloadUrl=URL.createObjectURL(blob);$('download').hidden=false;
+if(analysis.preview_supported)await previewOf(afterFile,'after',page);else $('after-body').innerHTML='<div class="placeholder">Redacted file generated. Inspect it in Word, PowerPoint or your text editor after downloading.</div>';
+note('process-status','Copy prepared. Verification: '+report.status.replace('_',' ')+'. Inspect before sharing.');
+}catch(e){$('download').hidden=true;note('process-status',e.message,true)}finally{redact.disabled=false}});
+function renderReport(report){$('report').style.display='block';const status=$('report-status');status.textContent=report.status.replace('_',' ')+' — '+report.selected_count+' detected item(s), '+report.manual_boxes+' manual box(es)';status.className=report.status==='FLAG'?'bad':report.status==='PASS_SCOPED'?'ok':'warn';$('report-details').textContent='Checks: '+report.checks.join(' · ')+'. Only these checks have been performed.';const ul=$('report-warnings');ul.replaceChildren();for(const s of report.unverified){const li=document.createElement('li');li.textContent=s;ul.append(li)}}
+$('download').addEventListener('click',()=>{if(!downloadUrl||!afterFile)return;const a=document.createElement('a');a.href=downloadUrl;a.download=afterFile.name;document.body.appendChild(a);a.click();a.remove()});
 </script></body></html>
