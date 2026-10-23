@@ -1,7 +1,8 @@
 FROM node:22-bookworm-slim AS web-build
 WORKDIR /src/frontend
 COPY frontend/package.json frontend/package-lock.json ./
-RUN npm ci --no-audit --no-fund
+RUN npm ci --no-audit --no-fund \
+ && npm install --no-save --no-package-lock --no-audit --no-fund lightningcss-linux-x64-gnu@1.33.0
 COPY frontend/ ./
 RUN npm run build
 
