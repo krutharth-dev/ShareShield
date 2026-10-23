@@ -138,6 +138,14 @@ function App() {
   }, [])
   useEffect(() => () => { if (resultUrl.current) URL.revokeObjectURL(resultUrl.current) }, [])
   useEffect(() => {
+    if (!sidebarOpen) return
+    const onEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setSidebarOpen(false)
+    }
+    window.addEventListener('keydown', onEscape)
+    return () => window.removeEventListener('keydown', onEscape)
+  }, [sidebarOpen])
+  useEffect(() => {
     const media = window.matchMedia('(prefers-color-scheme: dark)')
     const apply = () => {
       const resolved = appearance === 'system' ? (media.matches ? 'dark' : 'light') : appearance
@@ -399,6 +407,7 @@ function App() {
         setProblem(true); setMessage('Verification found selected information in the output. Download withheld.')
       } else {
         setResult(processed)
+        setViewMode('split')
         setMessage(checked.status === 'PASS_SCOPED'
           ? 'Selected identifiers passed scoped reinspection. Review the output before sharing.'
           : 'Output created, but verification is incomplete. Inspect every masked area before sharing.')
@@ -463,8 +472,8 @@ function App() {
         <p className="nav-heading nav-secondary">TOOLS & MORE</p>
         <nav className="side-nav" aria-label="Additional tools">
           <button title="Load fictional sample" className="nav-item" onClick={() => { sample(); navigateTo('upload') }}><Icon name="file" /><span>Fictional demo file</span></button>
-          <button title="Appearance settings" className={'nav-item ' + (showSettings ? 'active' : '')} onClick={() => { setShowSettings(x => !x); navigateTo('overview') }}><Icon name="settings" /><span>Appearance</span></button>
-          <button title="About ShareShield" className={'nav-item ' + (showAbout ? 'active' : '')} onClick={() => { setShowAbout(x => !x); navigateTo('overview') }}><Icon name="info" /><span>About project</span></button>
+          <button title="Appearance settings" className={'nav-item ' + (showSettings ? 'active' : '')} onClick={() => { setShowSettings(x => !x); navigateTo('settings') }}><Icon name="settings" /><span>Appearance</span></button>
+          <button title="About ShareShield" className={'nav-item ' + (showAbout ? 'active' : '')} onClick={() => { setShowAbout(x => !x); navigateTo('about') }}><Icon name="info" /><span>About project</span></button>
         </nav>
         <div className="sidebar-spacer" />
         <div className="sidebar-privacy">
