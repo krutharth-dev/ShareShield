@@ -1,17 +1,15 @@
-# ShareShield — multi-format local prototype
+# ShareShield local prototype v0.3
 
-## Mac setup
+This is the **ShareShield upload and privacy review website**, served locally at http://127.0.0.1:8000/. It is an educational prototype, not a guarantee against privacy leaks.
 
-Install the separate Tesseract OCR program:
+## Update the existing Mac clone
 
-~~~bash
-brew install tesseract
-~~~
-
-In Terminal, inside the ShareShield folder:
+Stop the server using Control+C, then run:
 
 ~~~bash
-python3 -m venv .venv
+cd ~/Desktop/ShareShield
+git switch backend/pdf-redaction-verification
+git pull origin backend/pdf-redaction-verification
 source .venv/bin/activate
 python -m pip install -r backend/requirements.txt
 python -m pip install pytest httpx
@@ -19,42 +17,48 @@ python -m pytest backend/tests -v
 python -m uvicorn backend.app:app --host 127.0.0.1 --port 8000
 ~~~
 
-**Open http://127.0.0.1:8000/ for the real upload page.** The old /docs API page remains available. After updating a branch, stop and restart the server. Python 3.10+ is recommended; on old Macs, compatibility depends on your installed macOS and package versions.
+Install system OCR separately with **brew install tesseract** and confirm **tesseract --version**. If Homebrew or pillow-heif fails on an older Intel macOS version, report your version and the error. Open http://127.0.0.1:8000/ and refresh your browser; /docs is for API debugging.
 
-## What files work?
+## Features
 
-| Input | Examined content | Redacted output |
-| --- | --- | --- |
-| JPG/JPEG, PNG, HEIC/HEIF, WEBP, BMP, TIFF | Visible OCR text | Flattened PNG with opaque black rectangles |
-| PDF, including scanned pages | Extracted PDF text, plus OCR on pages with little text | New redacted PDF |
-| Word DOCX | Editable paragraphs, tables and headers/footers | New DOCX |
-| PowerPoint PPTX | Editable slide text, groups and tables | New PPTX |
-| Plain UTF-8 TXT | Plain text | New TXT |
+| Feature | Implemented scope |
+| --- | --- |
+| Upload | JPG/JPEG, PNG, HEIC/HEIF, WEBP, BMP, TIFF, searchable/scanned PDF, DOCX, PPTX, UTF-8 TXT |
+| Detection | Email, Indian mobile candidates, PAN candidates, checksum-validated Aadhaar-format candidates, common UPI handles |
+| Review | Checkbox selection, category counts and higher-priority candidate count |
+| Image/PDF preview | Before/after images, selected finding overlays, page navigation |
+| Manual redaction | Draw opaque rectangles on images and PDF pages |
+| Output | Redacted PDF, flattened PNG, DOCX/PPTX or TXT copy |
+| Verification | Reopen output, rerun supported detectors, flag selected findings that remain |
 
-Unsupported: legacy Word DOC, spreadsheets, ZIP/RAR, videos, audio, animated/multipage images, password-protected PDFs and unknown formats. Convert DOC to DOCX first. Files are limited to 12 MiB, PDFs to 25 pages, and images to 25 megapixels.
+**DOCX/PPTX/TXT do not have rendered previews**, so review the exported file using the corresponding editor. Office run-level formatting may change.
 
-## Workflow
+## How to use
 
-1. Select or drag/drop a file.
-2. Click **Scan for sensitive data**.
-3. Review and select detected items (email and Indian mobile-number candidates currently).
-4. Click **Redact selected & download**.
-5. **Open and manually inspect** the new file before sharing.
+1. Upload a file and press **Scan file**.
+2. Review detected candidate identifiers and select the items to remove.
+3. For PDF/images, draw extra redaction boxes on anything the scanner missed.
+4. Generate the new copy and inspect the before/after pages if available.
+5. Read the verification report and manually open the output before sharing.
 
-The original remains unchanged by the application. HEIC/JPEG/etc. image output is PNG to avoid preserving original image metadata.
+The original file is not overwritten. Statuses have intentionally limited meanings:
 
-## API
+- **PASS_SCOPED:** selected recognized identifiers no longer found by configured checks; other sensitive information could remain.
+- **FLAG:** a selected identifier was still detected in the output; download is blocked.
+- **UNVERIFIED:** manual-only selections or no recognized items to independently verify; inspect the export carefully.
 
-- POST /analyze: multipart field file; returns findings, limitations, analysis_id.
-- POST /redact: same multipart file, analysis_id, selected_ids as comma-separated integers.
-- GET /health: status.
+## Endpoints
 
-The analysis_id is a SHA-256 fingerprint to prevent using selections from the wrong document. The verification header is **PASS-SELECTED-FINDINGS-ONLY**, not a declaration that the whole file is safe.
+- POST /analyze — multipart file; returns findings (including rectangles), category counts, page count and SHA-256 analysis_id.
+- POST /preview — multipart file and page number; PNG result and document dimensions; only images/PDFs.
+- POST /redact — original file, analysis_id, selected_ids as comma-separated integers, optional manual_regions JSON array with page/x/y/w/h normalized to [0,1].
+- POST /verify — original file, redacted output, analysis_id, selected_ids and manual_count; returns checks and warnings.
+- GET /health — status.
 
-## Security and accuracy limitations
+## Limits and privacy caveats
 
-This prototype uses deterministic patterns and OCR. It can miss text and produce false positives. It does **not** yet detect faces, images of ID cards as objects, handwritten text, or broad contextual personal information. It does not verify DOCX/PPTX embedded images, annotations, speaker notes, revision history, attachments, hidden content or metadata. Images embedded in otherwise searchable PDFs may be missed. Selected text redactions may modify formatting in DOCX/PPTX.
+This is not full-file sanitization. OCR can miss handwriting, faint text and complex layouts. Rules can yield false positives or miss sensitive items. PAN and UPI patterns are only syntactic candidates, and Aadhaar checksum validation does not establish an identity. Face detection/redaction has **not** been implemented. Some Office comments, revision history, embedded media and metadata, plus PDF attachments, hidden content and metadata remain unchecked.
 
-The local API should run on 127.0.0.1 only, not a public-facing server. Uploaded data is handled in memory by this implementation. Never use real personal files in tests without authorization.
+Limits: 12 MiB files, 25-page PDFs, 25-megapixel images, 60 manual rectangles. DOCX/PPTX have component-count and decompression checks. Legacy .doc, spreadsheets, ZIP, audio, video and encrypted PDFs are not supported. HEIC decoding needs pillow-heif, and image exports are flattened PNGs without original EXIF metadata.
 
-PyMuPDF has AGPL/commercial licensing requirements that must be reviewed before external distribution. The prototype is not production-ready and does not guarantee privacy.
+Keep the service bound to **127.0.0.1**, not a public address. Use synthetic test data and do not commit real IDs or private documents to GitHub. PyMuPDF AGPL/commercial licensing must be reviewed before redistribution.
