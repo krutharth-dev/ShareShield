@@ -4,120 +4,115 @@
 
 ### Detect · Review · Redact · Verify · Share
 
-**A local-first privacy review prototype for everyday files.**
+**A local-first privacy review prototype for documents, screenshots and photos.**
 
-**Status:** Multi-format backend and browser interface implemented for development testing · **Mini-project demo: 28 October 2026**
+**Mini-project demonstration: 28 October 2026** · **Current development branch: `backend/pdf-redaction-verification`**
 
 </div>
 
 ---
 
-## Overview
+## What ShareShield does
 
-ShareShield helps users review potentially sensitive text before sharing a document or photo. Upload a supported file through a browser interface hosted **on your own laptop**, review possible email/phone-number detections, select which values to hide, and download a separate redacted copy.
+ShareShield runs a browser interface against a **local FastAPI service on your laptop**. Upload a supported file, inspect potential private identifiers, approve selected redactions, draw manual boxes over overlooked details in images or PDFs, then check a new output file and download it.
 
-**Try the new UI at http://127.0.0.1:8000/** after starting the server. This is a prototype, not a security-certified privacy or complete file-sanitization tool.
+The engine looks for **email addresses, Indian mobile-number candidates, PAN-format identifiers, checksum-valid Aadhaar-format candidates and common UPI handles**. The matching rules indicate *possible private information*, not verified identities. No automatic detector can guarantee complete privacy protection.
 
-## Format support (prototype)
+### Supported content
 
-| Input | Detection | Output |
+| File | Detection | Export |
 | --- | --- | --- |
-| JPG, JPEG, PNG, HEIC, HEIF, WEBP, BMP, TIFF | OCR of visible text | Flattened redacted PNG |
-| Searchable and scanned PDFs | Text extraction; OCR on image-only pages | Redacted PDF |
-| Word DOCX | Editable paragraphs/tables/headers/footers | Modified DOCX |
-| PowerPoint PPTX | Editable slide text/shapes/tables | Modified PPTX |
-| UTF-8 TXT | Pattern matching | Redacted TXT |
+| JPG/JPEG, PNG, HEIC/HEIF, WEBP, BMP, TIFF | OCR of visible text | Flattened PNG |
+| Searchable/scanned PDF | Native text extraction and full-page OCR | Redacted PDF |
+| Word DOCX | Editable paragraphs, tables, headers/footers | Modified DOCX |
+| PowerPoint PPTX | Editable slide text, shapes and tables | Modified PPTX |
+| UTF-8 TXT | Text pattern matching | Modified TXT |
 
-Patterns currently target **email addresses and Indian mobile-number candidates**. Face detection, Aadhaar/PAN patterns, contextual NLP, handwriting, Office embedded media and some PDF hidden content remain future work. Legacy Word DOC, video, ZIP and arbitrary formats are **not** supported yet. See [backend limitations](backend/README.md).
+Older `.doc` files, video, archives, audio, spreadsheets, encrypted PDFs and arbitrary formats are not supported. Images and PDFs support visual before-and-after previews and manual masking; Office and TXT outputs must be inspected in their respective editors.
 
 ## User workflow
 
-~~~mermaid
+```mermaid
 flowchart TD
-    A([Choose an image or document]) --> B{Supported and readable?}
-    B -->|No| X[Explain unsupported format or OCR problem]
-    B -->|Yes| C[Extract editable text or use OCR]
-    C --> D[Find candidate email/mobile text]
-    D --> E[User reviews and selects findings]
-    E --> F[Create a NEW redacted copy]
-    F --> G[Reopen output and recheck selected findings]
-    G --> H{Selected content still detected?}
-    H -->|Yes| J[FLAG: do not download as verified]
-    H -->|No| K[Download with SCOPED verification warning]
-    K --> L([User manually checks output before sharing])
-~~~
+    A([Select a supported file]) --> B{File signature and limits valid?}
+    B -->|No| X[Explain the format or validation error]
+    B -->|Yes| C[Extract text + OCR images/PDF pages]
+    C --> D[Identify possible private text]
+    D --> E[Review findings and priority]
+    E --> M[Select findings + optional manual image/PDF boxes]
+    M --> F[Redact a separate copy]
+    F --> G[Reopen exported file and rescan]
+    G --> H{Recognized selected values remain?}
+    H -->|Yes| I[FLAG: withhold output]
+    H -->|No| J[PASS_SCOPED or UNVERIFIED + warnings]
+    J --> K[Inspect preview/output then download]
+```
 
-**Scoped verification is not a guarantee:** the app does not check all places information might be hidden, nor can OCR guarantee perfect recognition.
+**PASS_SCOPED** means selected recognized values were not found by supported rechecks, **not** that all personal data has been removed. **UNVERIFIED** warns when checks are insufficient (for example, manual-only boxes). Read warnings and inspect the exported file before sharing.
 
-## Local prototype architecture
+## Planned / current architecture
 
-~~~mermaid
+```mermaid
 flowchart LR
-    subgraph Laptop[Your laptop — local processing]
-        UI[Browser upload and review page] --> API[FastAPI local service]
-        API --> R[Text and pattern recognition]
-        API --> OCR[Tesseract OCR and Pillow / HEIC]
-        API --> PDF[PyMuPDF PDF redaction]
-        API --> DOC[python-docx and python-pptx]
-        PDF --> V[Saved-output verification]
-        DOC --> V
-        OCR --> V
-        V --> API
+    subgraph Device["Laptop - local processing"]
+      B[Browser UI] --> API[FastAPI]
+      API --> C[File validation / size and ZIP checks]
+      C --> PDF[PyMuPDF PDF parser/redaction]
+      C --> IMG[Pillow / HEIC + Tesseract]
+      C --> DOC[python-docx / python-pptx]
+      PDF --> PAT[PII rules + checksum]
+      IMG --> PAT
+      DOC --> PAT
+      PAT --> USER[User review + manual mask]
+      USER --> VERIFY[Saved-copy reinspection]
+      VERIFY --> B
     end
-~~~
+```
 
-No public-cloud upload is needed to use the development server on loopback. Do not expose the service to the internet.
+## Quick start on macOS
 
-## Install and start on macOS
+Stop any existing server with **Control+C**, then:
 
-Install the **Tesseract application** separately (requires Homebrew):
-
-~~~bash
-brew install tesseract
+```bash
 cd ~/Desktop/ShareShield
-python3 -m venv .venv
+git switch backend/pdf-redaction-verification
+git pull origin backend/pdf-redaction-verification
 source .venv/bin/activate
+brew install tesseract
 python -m pip install -r backend/requirements.txt
-python -m uvicorn backend.app:app --host 127.0.0.1 --port 8000
-~~~
-
-Open **http://127.0.0.1:8000/** in Chrome or Safari. For API debugging only, open **http://127.0.0.1:8000/docs**.
-
-To run tests:
-
-~~~bash
 python -m pip install pytest httpx
 python -m pytest backend/tests -v
-~~~
+python -m uvicorn backend.app:app --host 127.0.0.1 --port 8000
+```
 
-Python 3.10+ is recommended. HEIC decoding requires pillow-heif and platform-compatible libraries; compatibility with your exact older macOS installation must be checked.
+Open **http://127.0.0.1:8000/** for the upload interface or **http://127.0.0.1:8000/docs** for API debugging. Homebrew, HEIC decoding or dependency availability on older macOS hardware may require adaptation.
 
-## Project roadmap
+## Limitations and responsible use
 
-| Milestone | Scope |
-| --- | --- |
-| Mini-project prototype — October 2026 | Local browser UI, selected text detection, PDF/image/Office support, scoped verification |
-| Reliability work | More synthetic regression tests, unsupported-content warnings, accurate output inspection |
-| Later major-project concept | Opt-in Android/iOS share-sheet integrations, expanded language, face and visual-PII detection |
+- Text-only detection: handwriting, faces, visual IDs without recognizable text, obscure layouts and false negatives remain possible.
+- Redaction review is user-controlled, but DOCX/PPTX replacements may change text formatting and miss hidden structures.
+- Not all metadata, comments, revisions, embedded files, attachments, annotations or scripts are sanitized.
+- Test only with synthetic or explicitly authorized data. Never commit real documents or secrets to this public repository.
+- Run the local server on **127.0.0.1**, never a publicly accessible address, during development.
+- PyMuPDF has AGPL/commercial licensing terms that require review before distribution or commercialization.
 
-Android and iOS generally do not allow unrestricted silent monitoring of uploads in other apps. Future integration must be explicitly permissioned and platform compliant.
+The prototype has automated tests on GitHub Actions, but **full end-to-end QA on the target Mac, including HEIC handling, is still required**.
 
-## Project references
+## Documentation
 
-- [Backend setup, file formats and technical limits](backend/README.md)
+- [Backend details, installation and API](backend/README.md)
 - [Prerequisites](docs/PREREQUISITES.md)
 - [Project scope](docs/PROJECT_SCOPE.md)
 - [Contributing](CONTRIBUTING.md)
-- [Security](SECURITY.md)
+- [Security policy](SECURITY.md)
 - [IP and licensing](docs/IP_AND_LICENSING.md)
-
-This repository is public; **do not commit real IDs, private documents, exported files or secrets**. PyMuPDF's AGPL/commercial licensing obligations must be reviewed before release. No public project license has been selected, and ownership/redistribution terms must be confirmed before commercial use.
+- [Pull request for the updated prototype](https://github.com/krutharth-dev/ShareShield/pull/1)
 
 ---
 
 <div align="center">
 
-**ShareShield · Malnad College of Engineering · Prototype under development**
+**ShareShield · Malnad College of Engineering**
 
 *Detect. Redact. Verify. Then Share.*
 
