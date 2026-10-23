@@ -98,3 +98,23 @@ def test_pdf_image_embedded_on_searchable_page():
     follow=c.post("/analyze",files={"file":("redacted.pdf",red.content)})
     assert follow.status_code==200,follow.text
     assert not any(f["value"]=="demo@example.org" for f in follow.json()["findings"])
+
+
+def test_manual_pdf_rectangle_removes_overlap_and_reports_unverified():
+    doc=fitz.open()
+    page=doc.new_page(width=400,height=300)
+    page.insert_text((70,100),"Hide this section")
+    original=doc.tobytes()
+    doc.close()
+    analyzed=c.post("/analyze",files={"file":("manual.pdf",original)})
+    assert analyzed.status_code==200,analyzed.text
+    info=analyzed.json()
+    preview=c.post("/preview",files={"file":("manual.pdf",original)},data={"page":"1"})
+    assert preview.status_code==200
+    box=[{"page":1,"x":.15,"y":.25,"w":.50,"h":.20}]
+    response=c.post("/redact",files={"file":("manual.pdf",original)},
+                    data={"analysis_id":info["analysis_id"],"manual_regions":json.dumps(box)})
+    assert response.status_code==200,response.text
+    assert response.headers["X-ShareShield-Verification"]=="UNVERIFIED"
+    with fitz.open(stream=response.content,filetype="pdf") as out:
+        assert "Hide this section" not in out[0].get_text()
