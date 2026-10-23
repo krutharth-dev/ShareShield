@@ -16,7 +16,7 @@
 
 ShareShield runs a browser interface against a **local FastAPI service on your laptop**. Upload a supported file, inspect potential private identifiers, approve selected redactions, draw manual boxes over overlooked details in images or PDFs, then check a new output file and download it.
 
-The engine looks for **email addresses, Indian mobile-number candidates, PAN-format identifiers, checksum-valid Aadhaar-format candidates and common UPI handles**. The matching rules indicate *possible private information*, not verified identities. No automatic detector can guarantee complete privacy protection.
+The engine looks for **email addresses, Indian mobile-number candidates, PAN-format identifiers, checksum-valid Aadhaar-format candidates, IFSC-format bank codes, Luhn-valid payment-card candidates and common UPI handles**. The matching rules indicate *possible private information*, not verified identities. No automatic detector can guarantee complete privacy protection.
 
 ### Supported content
 
@@ -27,8 +27,10 @@ The engine looks for **email addresses, Indian mobile-number candidates, PAN-for
 | Word DOCX | Editable paragraphs, tables, headers/footers | Modified DOCX |
 | PowerPoint PPTX | Editable slide text, shapes and tables | Modified PPTX |
 | UTF-8 TXT | Text pattern matching | Modified TXT |
+| CSV | Bounded UTF-8 cell scanning (no preview) | Modified CSV |
+| Excel XLSX | Worksheet cell scanning, excluding formulas (no preview) | Modified XLSX |
 
-Older `.doc` files, video, archives, audio, spreadsheets, encrypted PDFs and arbitrary formats are not supported. Images and PDFs support visual before-and-after previews and manual masking; Office and TXT outputs must be inspected in their respective editors.
+Older `.doc` files, video, archives, audio, legacy XLS files, encrypted PDFs and arbitrary formats are not supported. Images and PDFs support visual before-and-after previews and manual masking; Office and TXT outputs must be inspected in their respective editors.
 
 ## User workflow
 
@@ -48,7 +50,7 @@ flowchart TD
     J --> K[Inspect preview/output then download]
 ```
 
-**PASS_SCOPED** means selected recognized values were not found by supported rechecks, **not** that all personal data has been removed. **UNVERIFIED** warns when checks are insufficient (for example, manual-only boxes). Read warnings and inspect the exported file before sharing.
+**PASS_SCOPED** means selected recognized values were not found by supported rechecks, **not** that all personal data has been removed. **UNVERIFIED** warns when checks are insufficient (for example, manual-only boxes). Read warnings and inspect the exported file before sharing. Downloadable JSON verification reports include original/output SHA-256 digests and explicit unverified checks.
 
 ## Planned / current architecture
 
@@ -60,9 +62,11 @@ flowchart LR
       C --> PDF[PyMuPDF PDF parser/redaction]
       C --> IMG[Pillow / HEIC + Tesseract]
       C --> DOC[python-docx / python-pptx]
+      C --> SHEET[openpyxl / CSV parser]
       PDF --> PAT[PII rules + checksum]
       IMG --> PAT
       DOC --> PAT
+      SHEET --> PAT
       PAT --> USER[User review + manual mask]
       USER --> VERIFY[Saved-copy reinspection]
       VERIFY --> B
@@ -91,6 +95,7 @@ Open **http://127.0.0.1:8000/** for the upload interface or **http://127.0.0.1:8
 
 - Text-only detection: handwriting, faces, visual IDs without recognizable text, obscure layouts and false negatives remain possible.
 - Redaction review is user-controlled, but DOCX/PPTX replacements may change text formatting and miss hidden structures.
+- Spreadsheet formulas, cached formula values, charts, comments and hidden workbook structures are not fully checked; exports must be inspected in Excel. Spreadsheet-like formula content in CSV may be interpreted when opened.
 - Not all metadata, comments, revisions, embedded files, attachments, annotations or scripts are sanitized.
 - Test only with synthetic or explicitly authorized data. Never commit real documents or secrets to this public repository.
 - Run the local server on **127.0.0.1**, never a publicly accessible address, during development.
