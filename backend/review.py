@@ -160,6 +160,24 @@ def _page_boxes(page_number: int, bounds: fitz.Rect,
     return boxes
 
 
+def _scrub_pdf_extras(doc: fitz.Document) -> None:
+    """Discard obvious PDF metadata and hidden payload containers.
+
+    This is a best-effort local safeguard, not a complete PDF sanitizer.
+    Hidden layers, forms, scripts and accessibility text may still need audit.
+    """
+    doc.set_metadata({})
+    if getattr(doc, "xml_metadata_xref", lambda: 0)():
+        doc.del_xml_metadata()
+    for name in list(doc.embfile_names()):
+        doc.embfile_del(name)
+    for page in doc:
+        for annotation in list(page.annots() or []):
+            page.delete_annot(annotation)
+        for link in list(page.get_links()):
+            page.delete_link(link)
+
+
 def redact_visual(data: bytes, ext: str, selected: list[engine.Finding],
                   manual: list[dict[str, float | int]],
                   mode: str = "blackout") -> tuple[bytes, str, str]:
@@ -193,7 +211,8 @@ def redact_visual(data: bytes, ext: str, selected: list[engine.Finding],
                 for rectangle, _ in boxes:
                     page.add_redact_annot(fitz.Rect(rectangle), fill=(0, 0, 0))
                 page.apply_redactions(images=fitz.PDF_REDACT_IMAGE_PIXELS)
-            # Full garbage collection removes previous redacted content streams.
+            # Remove metadata and extraneous attachments/annotations/links.
+            _scrub_pdf_extras(doc)
             result = doc.tobytes(garbage=4, deflate=True, clean=True)
         else:
             # Blur/pixelate PDFs ONLY after flattening every page. This prevents
