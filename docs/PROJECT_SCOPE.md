@@ -7,11 +7,11 @@
 ### Implemented on the development branch
 
 - Local browser-based upload and review UI.
-- Searchable/scanned PDF, common image formats including HEIC (subject to target-Mac compatibility), DOCX, PPTX and TXT.
-- Pattern-based email/mobile, PAN-format, checksum-valid Aadhaar-format and common UPI-handle detection.
+- Searchable/scanned PDF, common image formats including HEIC (subject to target-Mac compatibility), DOCX, PPTX, CSV, XLSX and TXT.
+- Pattern-based email/mobile, PAN-format, checksum-valid Aadhaar-format and common UPI-handle detection, IFSC-format codes and Luhn-valid card candidates.
 - Original and redacted preview for PDFs/images, including manual black-box selection.
 - File signature checks, document container limits, user selection and SHA-256 file binding.
-- Scoped reinspection and PASS_SCOPED / FLAG / UNVERIFIED reporting.
+- Scoped reinspection and PASS_SCOPED / FLAG / UNVERIFIED reporting, with downloadable JSON integrity report (SHA-256 checksums).
 - Synthetic regression tests and GitHub Actions.
 
 ### Demo acceptance criteria
@@ -27,7 +27,7 @@
 
 ### Known limitations
 
-This is an educational prototype, not a complete sanitization tool. Scanning can miss handwriting, complex layouts, embedded data, Office revisions and hidden content. Visual previews are limited to images/PDFs. No face detection or unrestricted monitoring of other apps is included.
+This is an educational prototype, not a complete sanitization tool. Scanning can miss handwriting, complex layouts, embedded data, Office revisions and hidden content. Visual previews are limited to images/PDFs; XLSX formulas, other workbook objects and CSV formula interpretation require careful review. No face detection or unrestricted monitoring of other apps is included.
 
 ## Phase 2 — Major project
 
