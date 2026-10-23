@@ -68,6 +68,13 @@ jobs:
           python -m pip install -r backend/requirements.txt
           python -m pip install pytest httpx
 
+      - name: Check local setup and demo scripts
+        run: |
+          bash -n scripts/setup-macos.sh
+          bash -n scripts/check-ready.sh
+          bash -n scripts/start-demo.sh
+          python -m py_compile scripts/generate-demo-files.py
+
       - name: Run backend and integration tests
         run: python -m pytest backend/tests -v --tb=short
 
