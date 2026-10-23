@@ -91,3 +91,34 @@ http://127.0.0.1:8000/health and check `ocr_available` and
 Do not use real identity documents as test fixtures or commit them to GitHub.
 Even a redacted sample screenshot may contain an unredacted VID, QR-like code,
 DOB, photo, name or address. Test with synthetic information first.
+
+## Final demonstration review controls
+
+- **Whole-export rescanning:** the exported file is reopened and scanned for
+  *all* recognized patterns, even categories the reviewer did not select.
+  Previously selected values or any remaining high-priority identifiers result
+  in a `FLAG` and the website withholds the export. Medium/low-priority
+  candidates remaining cause an `UNVERIFIED` result and must be inspected.
+- **Safer audit JSON:** the downloadable report includes counts, categories,
+  pages, selected count, output SHA-256, categories requested, warnings and
+  manual-review progress, but intentionally omits the original values of
+  detected identifiers.
+- **Editable manual masks:** after drawing a rectangle, choose its box number
+  to nudge it in four directions, enlarge/shrink it or delete it. Undo/redo
+  affects drawing and editing. Zoom up to 300% for small print.
+- **Before/after comparison:** adjust the reveal slider on each output page.
+  Check every page of the exported file and mark its review checkbox.
+- **Acknowledgement before download:** the browser disables export until each
+  image/PDF page is marked reviewed and the user acknowledges that automated
+  detection is incomplete. This is a front-end safeguard, not access control.
+- **PDF cleanup:** after native black-box redactions, the export attempts to
+  remove standard metadata, attached files, page annotations and links. PDF
+  scripts, form data, hidden content and accessibility text still need
+  specialist inspection. Blur/pixelate exports remain rasterized.
+
+## Important limits
+
+More OCR attempts and better candidate rules help, but **cannot guarantee
+that small, repeated, multilingual, handwritten or poorly scanned Aadhaar/VID
+content is detected**. Manual review and correction remain essential. Never
+treat `PASS_SCOPED` as certification that a real identity document is safe.
