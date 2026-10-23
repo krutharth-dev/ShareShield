@@ -28,3 +28,6 @@
 **/tmp
 **/*.log
 !.env.example
+
+# Keep generated samples out of container builds
+demo-output/
