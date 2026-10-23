@@ -68,6 +68,7 @@ function App() {
   const [result, setResult] = useState<File | null>(null)
   const [report, setReport] = useState<Report | null>(null)
   const [ocrAvailable, setOcrAvailable] = useState<boolean | null>(null)
+  const [serverStatus, setServerStatus] = useState<'checking' | 'online' | 'offline'>('checking')
   const input = useRef<HTMLInputElement>(null)
   const previewSurface = useRef<HTMLDivElement>(null)
   const requestId = useRef(0)
@@ -77,9 +78,10 @@ function App() {
 
   useEffect(() => {
     let active = true
-    fetch('/health', { cache: 'no-store' }).then(r => r.json())
-      .then(x => { if (active) setOcrAvailable(Boolean(x.ocr_available)) })
-      .catch(() => { if (active) setOcrAvailable(null) })
+    fetch('/health', { cache: 'no-store' })
+      .then(r => { if (!r.ok) throw Error('Server health check failed'); return r.json() })
+      .then(x => { if (active) { setOcrAvailable(Boolean(x.ocr_available)); setServerStatus('online') } })
+      .catch(() => { if (active) { setOcrAvailable(null); setServerStatus('offline') } })
     return () => { active = false }
   }, [])
   useEffect(() => () => { if (resultUrl.current) URL.revokeObjectURL(resultUrl.current) }, [])
@@ -307,14 +309,14 @@ function App() {
         <button className={'nav-item ' + (!recent ? 'active' : '')} onClick={() => setRecent(false)}>▤ <span>Document review</span></button>
         <button className={'nav-item ' + (recent ? 'active' : '')} onClick={() => setRecent(true)}>◷ <span>Session status</span></button>
         <div className="sidebar-bottom">
-          <span className="local-indicator" />
-          <div><strong>Local-first processing</strong><small>Use a trusted, self-hosted server</small></div>
+          <span className={"local-indicator " + (serverStatus === "offline" ? "indicator-unavailable" : "")} />
+          <div><strong>{serverStatus === 'online' ? 'Local backend connected' : serverStatus === 'checking' ? 'Checking local backend' : 'Backend unavailable'}</strong><small>{serverStatus === 'online' ? (ocrAvailable ? 'OCR ready · local processing' : 'OCR missing · text-only mode') : 'Start ShareShield on 127.0.0.1:8000'}</small></div>
         </div>
       </aside>
       <section className="main-content">
         <header className="topbar">
           <span>Workspace / {recent ? 'Session status' : 'Document review'}</span>
-          <span className="prototype-badge">SELF-HOSTED PROTOTYPE</span>
+          <div className="topbar-right"><span className={"server-pill " + serverStatus} role="status">{serverStatus === "online" ? "● Backend connected" : serverStatus === "checking" ? "◌ Checking server" : "● Backend disconnected"}</span><span className="prototype-badge">SELF-HOSTED PROTOTYPE</span></div>
         </header>
         {recent ? (
           <section className="upload-card status-dashboard">
@@ -326,7 +328,7 @@ function App() {
               <span><strong>{manual.length}</strong> manual masks</span>
             </div>
             <p className="caption">This page reflects your current browser session only. Close or reload to clear session state.</p>
-            <button className="primary-action" onClick={() => setRecent(false)}>Return to review</button>
+            <div className="action-row"><button className="primary-action" onClick={() => setRecent(false)}>Return to review</button><button className="secondary-action" onClick={() => choose(null)}>Clear session data</button></div>
           </section>
         ) : (
           <>
@@ -359,6 +361,7 @@ function App() {
                 <button className="secondary-action" onClick={sample} disabled={phase !== 'ready'}>Load fictional demo file</button>
                 <button className="primary-action" onClick={scan} disabled={!file || invalid || phase !== 'ready'}>{phase === 'scanning' ? 'Scanning…' : 'Scan file →'}</button>
               </div>
+              {serverStatus === "offline" && <p className="warning">The local backend is not responding. Start the server, then refresh this page.</p>}
               {ocrAvailable === false && <p className="warning">OCR is not installed on this server. Images and scanned PDFs cannot be automatically scanned; selectable PDF/Office text still works.</p>}
               <p className={problem ? 'warning' : 'notice'} role="status" aria-live="polite">{message}</p>
               <div className="privacy-note"><span>♧</span><p><strong>Privacy comes first.</strong><br />
@@ -414,7 +417,7 @@ function App() {
                   <button className="secondary-action" disabled={!result} onClick={download}>Download reviewed copy ↓</button></div>
                 {report && <div className={'report-card ' + statusColor}><h3>Verification: {report.status.replace('_', ' ')}</h3>
                   <p>{report.selected_count} recognized items selected · {report.manual_boxes} manual masks</p>
-                  <p className="report-digest">Output SHA-256: {report.output_sha256}</p>
+                  <p className="report-digest">Output SHA-256: {report.output_sha256}</p><p className="caption">{report.status === "PASS_SCOPED" ? "Only the selected recognized values were checked. Other hidden content may remain." : report.status === "UNVERIFIED" ? "Manual masking or incomplete checks require careful human review." : "At least one selected value remains detectable; download is blocked."}</p>
                   <details><summary>What was checked—and what wasn't</summary>
                     <strong>Completed checks</strong><ul>{report.checks.map((c, i) => <li key={i}>{c}</li>)}</ul>
                     <strong>Unverified</strong><ul>{report.unverified.map((c, i) => <li key={i}>{c}</li>)}</ul></details>
