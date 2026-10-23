@@ -33,6 +33,29 @@ The existing React + TypeScript dashboard is connected to a FastAPI backend, wit
 
 Old DOC/XLS, archives, audio, video and password-protected PDFs are **not** supported. Input limit is 12 MiB; other page, pixel and complexity limits apply.
 
+## Smart Redaction Preferences (image + PDF + document text)
+
+The full-stack integration includes an interactive **What would you like to
+protect?** panel. Choose Aadhaar/12-digit ID/VID, name, address, DOB,
+face/photo, phone/email, QR candidate, financial IDs, or other manual areas.
+Detected candidates are preselected by category, and a toggle requests
+redaction of all **recognized matching occurrences** across pages.
+
+For photos and manually drawn regions on images/PDFs, choose **blackout**,
+**blur** or **pixelate**. Automatically detected identity numbers, textual
+identifiers and QR regions are always blacked out. Blur/pixelation are visual
+effects and are *not guaranteed irreversible*. PDFs using these effects are
+flattened to prevent leaving the source text layer under an overlay.
+
+Automatic face and QR proposals use local OpenCV only, with no model downloads
+or cloud calls. Detection is best-effort; unusual barcodes, names without
+labels, multilingual content and small faces may be missed. Always review the
+original/export and draw manual boxes. The status `PASS_SCOPED` is **not**
+a certification that the whole document is anonymous.
+
+See [workflow, limitations and demo tests](docs/SMART_REDACTION.md).
+**Never upload real Aadhaar cards or personal data to a public prototype.**
+
 ## Quickest setup on your Intel Mac
 
 With the integration branch checked out, run:
