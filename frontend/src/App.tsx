@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import './App.css'
+import Icon from './Icon'
 
 type Finding = {
   id: number
@@ -37,6 +38,7 @@ type Report = {
   unverified: string[]
 }
 type RedactionMode = 'blackout' | 'blur' | 'pixelate'
+type Appearance = 'light' | 'dark' | 'system'
 const privacyOptions = [
   { id: 'identity', label: 'Aadhaar, 12-digit IDs & VID', categories: ['aadhaar_candidate', 'id12_candidate', 'vid_candidate'] },
   { id: 'name', label: 'Full name', categories: ['name_candidate'] },
@@ -106,6 +108,15 @@ function App() {
   const resultUrl = useRef<string | null>(null)
   const [dragging, setDragging] = useState(false)
   const [recent, setRecent] = useState(false)
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
+  const [sidebarOpen, setSidebarOpen] = useState(false)
+  const [showSettings, setShowSettings] = useState(false)
+  const [showAbout, setShowAbout] = useState(false)
+  const [drawMode, setDrawMode] = useState(true)
+  const [appearance, setAppearance] = useState<Appearance>(() => {
+    const current = document.documentElement.dataset.preference
+    return current === 'light' || current === 'dark' ? current : 'system'
+  })
 
   useEffect(() => {
     let active = true
@@ -116,6 +127,29 @@ function App() {
     return () => { active = false }
   }, [])
   useEffect(() => () => { if (resultUrl.current) URL.revokeObjectURL(resultUrl.current) }, [])
+  useEffect(() => {
+    const media = window.matchMedia('(prefers-color-scheme: dark)')
+    const apply = () => {
+      const resolved = appearance === 'system' ? (media.matches ? 'dark' : 'light') : appearance
+      document.documentElement.dataset.preference = appearance
+      document.documentElement.dataset.theme = resolved
+      document.documentElement.style.colorScheme = resolved
+    }
+    apply()
+    media.addEventListener('change', apply)
+    try { window.localStorage.setItem('shareshield-appearance', appearance) }
+    catch { /* storage may be blocked; theme remains available for this session */ }
+    return () => media.removeEventListener('change', apply)
+  }, [appearance])
+  function navigateTo(id: string) {
+    setRecent(false)
+    setSidebarOpen(false)
+    window.setTimeout(() => document.getElementById(id)?.scrollIntoView({
+      behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth',
+      block: 'start',
+    }), 0)
+  }
+
 
   function clearResult() {
     if (resultUrl.current) { URL.revokeObjectURL(resultUrl.current); resultUrl.current = null }
@@ -141,6 +175,7 @@ function App() {
     setPage(1)
     setRecent(false)
     setOriginalPreview('')
+    setDrawMode(true)
     clearResult()
     setProblem(false)
     setMessage('')
@@ -283,7 +318,7 @@ function App() {
     clearResult()
   }
   function onPointerDown(event: React.PointerEvent<HTMLDivElement>) {
-    if (!analysis?.preview_supported || phase !== 'ready') return
+    if (!analysis?.preview_supported || phase !== 'ready' || !drawMode) return
     const pos = point(event)
     initialPoint.current = pos
     setDraft({ page, ...pos, w: 0, h: 0 })
@@ -387,25 +422,71 @@ function App() {
   const chosen = analysis?.findings.filter(f => selected.includes(f.id)) || []
   const pagesComplete = Boolean(analysis && (!analysis.preview_supported || reviewedPages.length === analysis.page_count))
   const statusColor = report?.status === 'FLAG' ? 'failed' : report?.status === 'PASS_SCOPED' ? 'passed' : 'incomplete'
+  const workflowStage = report ? 5 : analysis ? (phase === 'processing' ? 4 : 3) : file ? (phase === 'scanning' ? 2 : 1) : 0
+  const workflowSteps = [
+    { icon: 'upload', label: 'Upload' }, { icon: 'privacy', label: 'Choose' },
+    { icon: 'scan', label: 'Analyze' }, { icon: 'eye', label: 'Review' },
+    { icon: 'lock', label: 'Redact' }, { icon: 'checkCircle', label: 'Verify' },
+  ]
   return (
     <main className="app-shell">
-      <aside className="sidebar">
-        <a className="brand" href="/">
-          <span className="brand-icon">S</span>
-          <span><strong>ShareShield</strong><small>PRIVACY WORKSPACE</small></span>
-        </a>
+      <aside className={'sidebar' + (sidebarCollapsed ? ' is-collapsed' : '') + (sidebarOpen ? ' mobile-open' : '')} aria-label="Main navigation">
+        <div className="sidebar-head">
+          <a className="brand" href="/" aria-label="ShareShield home">
+            <span className="brand-icon"><Icon name="shield" size={24} /></span>
+            <span className="brand-words"><strong>ShareShield<span className="brand-dot">.</span></strong><small>PRIVACY WORKSPACE</small></span>
+          </a>
+          <button className="sidebar-toggle icon-button" type="button" aria-label={sidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+            onClick={() => { setSidebarCollapsed(!sidebarCollapsed); setSidebarOpen(false) }}>
+            <Icon name={sidebarCollapsed ? 'expand' : 'collapse'} size={19} />
+          </button>
+        </div>
         <p className="nav-heading">WORKSPACE</p>
-        <button className={'nav-item ' + (!recent ? 'active' : '')} onClick={() => setRecent(false)}>▤ <span>Document review</span></button>
-        <button className={'nav-item ' + (recent ? 'active' : '')} onClick={() => setRecent(true)}>◷ <span>Session status</span></button>
+        <nav className="side-nav" aria-label="Workspace sections">
+          <button title="Dashboard" className={'nav-item ' + (!recent ? 'active' : '')} onClick={() => navigateTo('overview')}><Icon name="dashboard" /><span>Dashboard</span></button>
+          <button title="Redact document" className="nav-item" onClick={() => navigateTo('upload')}><Icon name="scan" /><span>Redact document</span></button>
+          <button title="Review workspace" className="nav-item" disabled={!analysis} onClick={() => navigateTo('review')}><Icon name="layers" /><span>Review workspace</span></button>
+          <button title="Verification report" className="nav-item" disabled={!report} onClick={() => navigateTo('verification')}><Icon name="report" /><span>Verification report</span></button>
+          <button title="Session status" className={'nav-item ' + (recent ? 'active' : '')} onClick={() => { setRecent(true); setSidebarOpen(false) }}><Icon name="bolt" /><span>Session status</span></button>
+        </nav>
+        <p className="nav-heading nav-secondary">TOOLS & MORE</p>
+        <nav className="side-nav" aria-label="Additional tools">
+          <button title="Load fictional sample" className="nav-item" onClick={() => { sample(); navigateTo('upload') }}><Icon name="file" /><span>Fictional demo file</span></button>
+          <button title="Appearance settings" className={'nav-item ' + (showSettings ? 'active' : '')} onClick={() => { setShowSettings(x => !x); navigateTo('overview') }}><Icon name="settings" /><span>Appearance</span></button>
+          <button title="About ShareShield" className={'nav-item ' + (showAbout ? 'active' : '')} onClick={() => { setShowAbout(x => !x); navigateTo('overview') }}><Icon name="info" /><span>About project</span></button>
+        </nav>
+        <div className="sidebar-spacer" />
+        <div className="sidebar-privacy">
+          <span className="sidebar-privacy-mark"><Icon name="lock" size={19}/></span>
+          <strong>Local-first by design</strong>
+          <span>Your selected files are processed by your configured server, not a third-party AI service.</span>
+        </div>
         <div className="sidebar-bottom">
-          <span className={"local-indicator " + (serverStatus === "offline" ? "indicator-unavailable" : "")} />
-          <div><strong>{serverStatus === 'online' ? 'Local backend connected' : serverStatus === 'checking' ? 'Checking local backend' : 'Backend unavailable'}</strong><small>{serverStatus === 'online' ? (ocrAvailable ? 'OCR ready · local processing' : 'OCR missing · text-only mode') : 'Start ShareShield on 127.0.0.1:8000'}</small></div>
+          <span className={'local-indicator ' + (serverStatus === 'offline' ? 'indicator-unavailable' : '')} />
+          <div><strong>{serverStatus === 'online' ? 'Backend connected' : serverStatus === 'checking' ? 'Checking service' : 'Backend unavailable'}</strong>
+            <small>{serverStatus === 'online' ? (ocrAvailable ? 'OCR ready · local processing' : 'OCR unavailable') : 'Start ShareShield locally'}</small></div>
         </div>
       </aside>
-      <section className="main-content">
+      {sidebarOpen && <button className="mobile-backdrop" onClick={() => setSidebarOpen(false)} aria-label="Close navigation" />}
+      <section className={'main-content' + (sidebarCollapsed ? ' expanded-content' : '')}>
         <header className="topbar">
-          <span>Workspace / {recent ? 'Session status' : 'Document review'}</span>
-          <div className="topbar-right"><span className={"server-pill " + serverStatus} role="status">{serverStatus === "online" ? "● Backend connected" : serverStatus === "checking" ? "◌ Checking server" : "● Backend disconnected"}</span><span className="prototype-badge">SELF-HOSTED PROTOTYPE</span></div>
+          <div className="breadcrumb">
+            <button className="mobile-menu icon-button" onClick={() => setSidebarOpen(true)} aria-label="Open navigation"><Icon name="menu" /></button>
+            <span className="breadcrumb-muted">Workspace</span><Icon name="chevronRight" size={14} />
+            <strong>{recent ? 'Session status' : 'Overview'}</strong>
+          </div>
+          <div className="topbar-right">
+            <div className="theme-switcher" role="group" aria-label="Appearance">
+              {([['light', 'sun', 'Light'], ['system', 'monitor', 'System'], ['dark', 'moon', 'Dark']] as const).map(([value, icon, label]) =>
+                <button key={value} type="button" className={appearance === value ? 'theme-option active' : 'theme-option'}
+                  aria-pressed={appearance === value} title={label + ' appearance'} onClick={() => setAppearance(value)}>
+                  <Icon name={icon} size={15}/><span>{label}</span>
+                </button>)}
+            </div>
+            <span className={'server-pill ' + serverStatus} role="status">
+              <span className="status-dot" />{serverStatus === 'online' ? 'System online' : serverStatus === 'checking' ? 'Checking' : 'Offline'}
+            </span>
+          </div>
         </header>
         {recent ? (
           <section className="upload-card status-dashboard">
