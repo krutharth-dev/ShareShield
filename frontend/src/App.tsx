@@ -34,7 +34,7 @@ type Report = {
 }
 type RedactionMode = 'blackout' | 'blur' | 'pixelate'
 const privacyOptions = [
-  { id: 'identity', label: 'Aadhaar number & VID', categories: ['aadhaar_candidate', 'vid_candidate'] },
+  { id: 'identity', label: 'Aadhaar, 12-digit IDs & VID', categories: ['aadhaar_candidate', 'id12_candidate', 'vid_candidate'] },
   { id: 'name', label: 'Full name', categories: ['name_candidate'] },
   { id: 'address', label: 'Residential address', categories: ['address_candidate'] },
   { id: 'dob', label: 'Date of birth', categories: ['dob_candidate'] },
