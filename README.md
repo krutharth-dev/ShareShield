@@ -33,6 +33,28 @@ The existing React + TypeScript dashboard is connected to a FastAPI backend, wit
 
 Old DOC/XLS, archives, audio, video and password-protected PDFs are **not** supported. Input limit is 12 MiB; other page, pixel and complexity limits apply.
 
+## Quickest setup on your Intel Mac
+
+With the integration branch checked out, run:
+
+~~~bash
+bash scripts/setup-macos.sh
+bash scripts/check-ready.sh
+bash scripts/start-demo.sh
+~~~
+
+Open http://127.0.0.1:8000/ and use **Load fictional demo file**.
+System Tesseract must be installed separately for OCR. Make sample PDFs,
+JPGs, DOCX, PPTX and spreadsheets using:
+
+~~~bash
+.venv/bin/python scripts/generate-demo-files.py
+open demo-output
+~~~
+
+See [all requirements and official download links](docs/PREREQUISITES.md)
+for the 2017/2019 Intel MacBook setup.
+
 ## Start on your own laptop
 
 **Option A — Docker Compose (simplest integrated demo):**
