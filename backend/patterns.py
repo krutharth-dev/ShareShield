@@ -13,6 +13,9 @@ MORE_RULES = (
     ("ifsc_candidate", re.compile(r"(?<![A-Za-z0-9])[A-Z]{4}0[A-Z0-9]{6}(?![A-Za-z0-9])")),
     ("payment_card_candidate", re.compile(r"(?<!\d)(?:\d[ -]?){12,18}\d(?!\d)")),
     ("aadhaar_candidate", re.compile(r"(?<!\d)[2-9]\d{3}[ -]?\d{4}[ -]?\d{4}(?!\d)")),
+    # OCR can misread one digit: flag as an unverified 12-digit candidate instead
+    # of silently declaring it harmless. Valid Aadhaar IDs use the stricter rule.
+    ("id12_candidate", re.compile(r"(?<!\d)[2-9]\d{3}[ -]?\d{4}[ -]?\d{4}(?!\d)")),
     ("pan_candidate", re.compile(r"(?<![A-Za-z0-9])[A-Z]{5}\d{4}[A-Z](?![A-Za-z0-9])")),
     ("upi_candidate", re.compile(
         r"(?<![\w.@-])[A-Za-z0-9._-]{2,}@(?!\.)"
@@ -74,13 +77,15 @@ def valid_luhn_card(value: str) -> bool:
 def valid_match(category: str, value: str) -> bool:
     if category == "aadhaar_candidate":
         return valid_aadhaar_format(value)
+    if category == "id12_candidate":
+        return not valid_aadhaar_format(value)
     if category == "payment_card_candidate":
         return valid_luhn_card(value)
     return True
 
 
 SEVERITY = {
-    "aadhaar_candidate": "high", "vid_candidate": "high", "dob_candidate": "high", "name_candidate": "medium", "address_candidate": "high", "face_candidate": "high", "qr_candidate": "high", "pan_candidate": "high",
+    "aadhaar_candidate": "high", "id12_candidate": "medium", "vid_candidate": "high", "dob_candidate": "high", "name_candidate": "medium", "address_candidate": "high", "face_candidate": "high", "qr_candidate": "high", "pan_candidate": "high",
     "upi_candidate": "medium", "ifsc_candidate": "medium",
     "payment_card_candidate": "high", "indian_mobile_candidate": "medium", "email": "medium",
 }
