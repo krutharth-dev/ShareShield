@@ -27,3 +27,14 @@ jobs:
           python -m pip install pytest httpx
       - name: Run synthetic tests
         run: python -m pytest backend/tests -v
+
+      - name: Check browser JavaScript syntax
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          html = Path('backend/static/index.html').read_text()
+          assert html.count('<script>') == 1
+          script = html.split('<script>',1)[1].split('</script>',1)[0]
+          Path('/tmp/shareshield-ui.js').write_text(script)
+          PY
+          node --check /tmp/shareshield-ui.js
