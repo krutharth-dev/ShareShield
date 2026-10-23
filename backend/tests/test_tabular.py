@@ -99,3 +99,13 @@ def test_manual_also_requires_unverified_even_with_selected_detection():
     audit = evaluate(selected, result.content, ".txt", manual_count=1)
     assert audit["status"] == "UNVERIFIED"
     assert audit["selected_count"] == 1
+
+
+def test_demo_controls_and_report_button_exist():
+    homepage = client.get("/")
+    assert homepage.status_code == 200
+    assert 'id="demo"' in homepage.text
+    assert 'id="report-export"' in homepage.text
+    assert 'id="select-all"' in homepage.text
+    assert 'id="select-none"' in homepage.text
+    assert ".xlsx,.csv" in homepage.text
