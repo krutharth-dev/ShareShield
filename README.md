@@ -33,6 +33,18 @@ The existing React + TypeScript dashboard is connected to a FastAPI backend, wit
 
 Old DOC/XLS, archives, audio, video and password-protected PDFs are **not** supported. Input limit is 12 MiB; other page, pixel and complexity limits apply.
 
+## Emerald Shield premium workspace
+
+The React application has a complete visual refresh with a collapsible premium
+dashboard sidebar, real session metrics, a six-stage privacy workflow, accessible
+upload/categories, and a dedicated wide document review workbench. It supports
+**Light / Dark / System** themes that follow the Mac automatically and persist
+the appearance choice only (never file contents). All icons are local SVG;
+subtle motion respects Reduce Motion.
+
+Read the [full UI blueprint, color tokens and Mac acceptance checklist](docs/EMERALD_SHIELD_UI.md).
+The local-first FastAPI/OCR/redaction/verification pipeline is unchanged.
+
 ## Smart Redaction Preferences (image + PDF + document text)
 
 The full-stack integration includes an interactive **What would you like to
