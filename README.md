@@ -2,11 +2,11 @@
 
 # 🛡️ ShareShield
 
-### Detect. Redact. Verify. Then Share.
+### Detect · Review · Redact · Verify · Share
 
-**A local-first system for sensitive-document detection, user-controlled redaction, and post-export privacy checks.**
+**A local-first privacy review prototype for everyday files.**
 
-**🟡 Planning & setup** · **🔒 Private development** · **📅 Mini-project demo: 28 October 2026**
+**Status:** Multi-format backend and browser interface implemented for development testing · **Mini-project demo: 28 October 2026**
 
 </div>
 
@@ -14,149 +14,110 @@
 
 ## Overview
 
-ShareShield is designed to help users **check documents before sharing them**. It aims to detect selected sensitive information, let users review and remove it from a new copy, and then **reopen the exported file** to check whether the selected information is still present.
+ShareShield helps users review potentially sensitive text before sharing a document or photo. Upload a supported file through a browser interface hosted **on your own laptop**, review possible email/phone-number detections, select which values to hide, and download a separate redacted copy.
 
-> **Why verification matters:** A black rectangle can make a student ID look hidden while its text remains searchable or copyable in a PDF. ShareShield focuses on checking the *saved file*, not just trusting how the preview looks.
+**Try the new UI at http://127.0.0.1:8000/** after starting the server. This is a prototype, not a security-certified privacy or complete file-sanitization tool.
 
-**Current status:** This repository contains project documentation and preparation material. Implementation starts **19 October 2026**. No working application, measured accuracy, or security certification is claimed yet.
+## Format support (prototype)
 
-## At a glance
-
-| | Mini project — October 2026 | Major project — future direction |
+| Input | Detection | Output |
 | --- | --- | --- |
-| **Experience** | Local browser-based document review | Android, iOS and web experiences |
-| **Input** | Searchable English PDFs; text-based PPTX as an extension | More documents, screenshots and images |
-| **Detection** | Selected ID and email patterns | Patterns, contextual recognition, OCR and visual detection |
-| **Redaction** | PDF content redaction; editable PPTX text replacement | Wider document and image support |
-| **Verification** | Reopen saved output and run documented checks | Expanded text, visual and file-structure checks |
-| **Sharing** | User downloads a reviewed copy | User-initiated system share sheets and authorized integrations |
+| JPG, JPEG, PNG, HEIC, HEIF, WEBP, BMP, TIFF | OCR of visible text | Flattened redacted PNG |
+| Searchable and scanned PDFs | Text extraction; OCR on image-only pages | Redacted PDF |
+| Word DOCX | Editable paragraphs/tables/headers/footers | Modified DOCX |
+| PowerPoint PPTX | Editable slide text/shapes/tables | Modified PPTX |
+| UTF-8 TXT | Pattern matching | Redacted TXT |
 
-**Delivery priority:** A dependable **PDF workflow** comes first. PPTX support is planned for the mini project but is **subject to testing** and must not jeopardize the PDF demonstration.
+Patterns currently target **email addresses and Indian mobile-number candidates**. Face detection, Aadhaar/PAN patterns, contextual NLP, handwriting, Office embedded media and some PDF hidden content remain future work. Legacy Word DOC, video, ZIP and arbitrary formats are **not** supported yet. See [backend limitations](backend/README.md).
 
-## Mini-project workflow
+## User workflow
 
-The following diagram describes the **planned** interaction, not a completed feature.
-
-```mermaid
+~~~mermaid
 flowchart TD
-    A(["Choose local PDF or PPTX"]) --> B{"Supported file and content?"}
-    B -->|No| U["Show unsupported / unverified warning"]
-    B -->|Yes| C["Extract supported text"]
-    C --> D["Detect possible IDs and emails"]
-    D --> E["User reviews and selects findings"]
-    E --> F["Redact a NEW copy; preserve the original"]
-    F --> G["Save and reopen the exported file"]
-    G --> H{"Required verification checks"}
-    H -->|Completed and passed| P["PASS: provide copy and check report"]
-    H -->|Sensitive data remains| X["FLAG: hold for review"]
-    H -->|Incomplete or unsupported| Y["UNVERIFIED: hold for review"]
-```
+    A([Choose an image or document]) --> B{Supported and readable?}
+    B -->|No| X[Explain unsupported format or OCR problem]
+    B -->|Yes| C[Extract editable text or use OCR]
+    C --> D[Find candidate email/mobile text]
+    D --> E[User reviews and selects findings]
+    E --> F[Create a NEW redacted copy]
+    F --> G[Reopen output and recheck selected findings]
+    G --> H{Selected content still detected?}
+    H -->|Yes| J[FLAG: do not download as verified]
+    H -->|No| K[Download with SCOPED verification warning]
+    K --> L([User manually checks output before sharing])
+~~~
 
-**PASS is scoped, not absolute.** It means no selected sensitive value was found by the required checks **actually completed**. A check that fails to run, or content that cannot be reliably inspected, must not be called safe.
+**Scoped verification is not a guarantee:** the app does not check all places information might be hidden, nor can OCR guarantee perfect recognition.
 
-## Planned architecture
+## Local prototype architecture
 
-The mini project is designed to run **locally on one laptop during the demo**. Its browser frontend communicates with a local backend; original documents do not need to be uploaded to a public cloud.
-
-```mermaid
+~~~mermaid
 flowchart LR
-    subgraph Device["User's laptop — local processing"]
-        UI["React + TypeScript<br/>Review interface"]
-        API["FastAPI<br/>Local API"]
-        PDF["PyMuPDF<br/>PDF operations"]
-        PPT["python-pptx<br/>PPTX text operations"]
-        DET["PII patterns<br/>Detection results"]
-        V["Export verification<br/>Reopen saved file"]
+    subgraph Laptop[Your laptop — local processing]
+        UI[Browser upload and review page] --> API[FastAPI local service]
+        API --> R[Text and pattern recognition]
+        API --> OCR[Tesseract OCR and Pillow / HEIC]
+        API --> PDF[PyMuPDF PDF redaction]
+        API --> DOC[python-docx and python-pptx]
+        PDF --> V[Saved-output verification]
+        DOC --> V
+        OCR --> V
+        V --> API
     end
-    UI <-->|"Upload, review, result"| API
-    API --> PDF
-    API --> PPT
-    PDF --> DET
-    PPT --> DET
-    DET --> API
-    PDF --> V
-    PPT --> V
-    V --> API
-```
+~~~
 
-### Intended stack
+No public-cloud upload is needed to use the development server on loopback. Do not expose the service to the internet.
 
-| Layer | Planned tools | Purpose |
-| --- | --- | --- |
-| User interface | React, TypeScript, Vite | Upload, findings review, results |
-| Local service | Python, FastAPI | File handling and coordination |
-| PDF | PyMuPDF | Text extraction and true content redaction |
-| Presentations | python-pptx | Editable text extraction and replacement |
-| Detection | Configurable patterns / regular expressions | Initial ID and email detection |
-| Verification | Independent saved-file checks | PASS / FLAG / UNVERIFIED reporting |
-| Collaboration | Git + private GitHub repository | Version history and reviews |
+## Install and start on macOS
 
-Tool choices may change following compatibility and license review. **PyMuPDF's AGPL/commercial licensing options require evaluation before distribution.**
+Install the **Tesseract application** separately (requires Homebrew):
 
-## Supported scope and limitations
+~~~bash
+brew install tesseract
+cd ~/Desktop/ShareShield
+python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install -r backend/requirements.txt
+python -m uvicorn backend.app:app --host 127.0.0.1 --port 8000
+~~~
 
-| Scenario | Mini-project target |
+Open **http://127.0.0.1:8000/** in Chrome or Safari. For API debugging only, open **http://127.0.0.1:8000/docs**.
+
+To run tests:
+
+~~~bash
+python -m pip install pytest httpx
+python -m pytest backend/tests -v
+~~~
+
+Python 3.10+ is recommended. HEIC decoding requires pillow-heif and platform-compatible libraries; compatibility with your exact older macOS installation must be checked.
+
+## Project roadmap
+
+| Milestone | Scope |
 | --- | --- |
-| Searchable English PDF containing fictional ID/email | **Core target** |
-| Editable text in a modern `.pptx` | **Planned extension** |
-| A PDF where a black shape merely covers copyable text | **Illustrative leak test** |
-| Scanned/image-only PDFs or text embedded in pictures | Not part of the initial guarantee |
-| Complex PPTX objects, speaker notes and embedded documents | Not automatically considered verified |
-| OCR, face redaction, multilingual support | Future work |
-| Monitoring every WhatsApp or Gmail upload silently | **Not supported** by an unrestricted third-party mobile app |
+| Mini-project prototype — October 2026 | Local browser UI, selected text detection, PDF/image/Office support, scoped verification |
+| Reliability work | More synthetic regression tests, unsupported-content warnings, accurate output inspection |
+| Later major-project concept | Opt-in Android/iOS share-sheet integrations, expanded language, face and visual-PII detection |
 
-Unrecognized formats, unsupported content and incomplete verification must be surfaced clearly to users rather than reported as passing.
+Android and iOS generally do not allow unrestricted silent monitoring of uploads in other apps. Future integration must be explicitly permissioned and platform compliant.
 
-## Roadmap
+## Project references
 
-| When | Planned deliverable |
-| --- | --- |
-| **16–18 Oct 2026** | Repository setup, prerequisites and fictional test cases |
-| **19–22 Oct** | Frontend, local API, PDF extraction, detection and user review |
-| **23–25 Oct** | PDF redaction and export checks; attempt PPTX support |
-| **26 Oct** | Test failures, edge cases and documentation |
-| **27 Oct** | Stable code freeze, backup and rehearsal |
-| **28 Oct** | **Mini-project demonstration** |
-| **After the demo** | Mobile architecture, expanded privacy checks, testing and release planning |
+- [Backend setup, file formats and technical limits](backend/README.md)
+- [Prerequisites](docs/PREREQUISITES.md)
+- [Project scope](docs/PROJECT_SCOPE.md)
+- [Contributing](CONTRIBUTING.md)
+- [Security](SECURITY.md)
+- [IP and licensing](docs/IP_AND_LICENSING.md)
 
-### Future major-project vision
-
-ShareShield may evolve into an **opt-in, on-device sharing assistant** for Android and iOS. Users would route files through a supported system sharing workflow, review recommended redactions, verify the exported file, and then choose where to share it.
-
-Native sharing capabilities and third-party integrations are **platform-dependent**. Android and iOS generally do not permit an ordinary application to inspect all WhatsApp, Gmail or other-app uploads invisibly in the background. App permissions and release policies must be evaluated before promising any integration.
-
-## Documentation
-
-| Document | What it covers |
-| --- | --- |
-| [Prerequisites](docs/PREREQUISITES.md) | Required tools and Mac-specific setup checks |
-| [Project scope](docs/PROJECT_SCOPE.md) | Acceptance criteria, milestones and limitations |
-| [Contributing](CONTRIBUTING.md) | Branches, pull requests and team workflow |
-| [Security policy](SECURITY.md) | Responsible testing and vulnerability handling |
-| [IP and licensing](docs/IP_AND_LICENSING.md) | Ownership, dependency obligations and patent considerations |
-
-There are **no app installation commands yet** because implementation has not started. Use the prerequisites document to prepare the development environment.
-
-## Responsible development
-
-- Use **fictional or expressly authorized test data**. Never commit real IDs, private user files, exports, credentials or sensitive logs.
-- Preserve original files and produce edited copies separately.
-- Report only the checks performed; do not claim universal leak prevention.
-- Keep research results evidence-based. **Patentability has not been established**; conduct a prior-art and ownership review before public technical disclosure.
-
-## Rights and licensing
-
-**Private repository · No public software license selected.**
-
-Copyright ownership and redistribution permissions still need clarification among contributors and under any applicable institutional policy. The lack of a `LICENSE` file does **not** authorize public reuse or redistribution. Third-party dependency licenses also require review before commercial release.
-
-For details, read [IP and licensing considerations](docs/IP_AND_LICENSING.md).
+This repository is public; **do not commit real IDs, private documents, exported files or secrets**. PyMuPDF's AGPL/commercial licensing obligations must be reviewed before release. No public project license has been selected, and ownership/redistribution terms must be confirmed before commercial use.
 
 ---
 
 <div align="center">
 
-**ShareShield** · Mini-project prototype in planning · **Malnad College of Engineering**
+**ShareShield · Malnad College of Engineering · Prototype under development**
 
 *Detect. Redact. Verify. Then Share.*
 
