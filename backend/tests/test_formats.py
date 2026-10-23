@@ -88,8 +88,7 @@ def test_txt_and_input_validation():
 @pytest.mark.skipif(not shutil.which('tesseract'), reason='system Tesseract missing')
 def test_png_ocr_and_redaction():
     image=Image.new('RGB',(900,230),'white');draw=ImageDraw.Draw(image)
-    try:font=ImageFont.truetype('/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf',36)
-    except OSError:font=ImageFont.load_default()
+    font=ImageFont.load_default(size=36)  # Scalable on macOS, Linux and CI
     draw.text((30,45),'Email: demo@example.org',fill='black',font=font)
     buf=io.BytesIO();image.save(buf,'PNG');data=buf.getvalue()
     report=request_analysis('image.png',data)
@@ -103,8 +102,7 @@ def test_png_ocr_and_redaction():
 @pytest.mark.skipif(not shutil.which('tesseract'), reason='system Tesseract missing')
 def test_scanned_pdf_ocr():
     image=Image.new('RGB',(900,230),'white');draw=ImageDraw.Draw(image)
-    try:font=ImageFont.truetype('/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf',36)
-    except OSError:font=ImageFont.load_default()
+    font=ImageFont.load_default(size=36)  # Scalable on macOS, Linux and CI
     draw.text((30,45),'demo@example.org',fill='black',font=font)
     raw=io.BytesIO();image.save(raw,'PNG')
     pdf=fitz.open();page=pdf.new_page(width=450,height=115);page.insert_image(fitz.Rect(0,0,450,115),stream=raw.getvalue());data=pdf.tobytes();pdf.close()
