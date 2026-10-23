@@ -20,6 +20,8 @@ from pptx import Presentation
 import pytesseract
 from pytesseract import Output
 
+from backend.patterns import MORE_RULES, SEVERITY, valid_match
+
 try:
     from pillow_heif import register_heif_opener
     register_heif_opener()
@@ -49,7 +51,8 @@ class Finding:
 
     def public(self, index: int) -> dict:
         return {"id": index, "category": self.category, "value": self.value,
-                "page": self.page, "locatable": bool(self.rectangles) or bool(self.location)}
+                "page": self.page, "locatable": bool(self.rectangles) or bool(self.location),
+                "severity": SEVERITY.get(self.category, "medium")}
 
 
 def extension(filename: str) -> str:
@@ -68,8 +71,10 @@ def validate_bytes(data: bytes) -> None:
 
 def scan_text(text: str, page: int, rectangles: Callable[[str, int, int], list[tuple[float,float,float,float]]] | None = None, location: str = "") -> list[Finding]:
     matches = []
-    for category, regex in RULES:
+    for category, regex in RULES + MORE_RULES:
         for match in regex.finditer(text):
+            if not valid_match(category, match.group(0)):
+                continue
             boxes = rectangles(match.group(0), match.start(), match.end()) if rectangles else []
             matches.append((match.start(), Finding(category, match.group(0), page, boxes, location)))
     return [m[1] for m in sorted(matches, key=lambda v: v[0])]
@@ -142,21 +147,36 @@ def open_pdf(data: bytes):
         raise HTTPException(422, "Unreadable or invalid PDF") from exc
 
 
-def _pdf_findings(pdf: fitz.Document) -> tuple[list[Finding],list[str]]:
-    findings = []
-    notes = ["PDF annotations, attachments, metadata and embedded content are not inspected."]
+def _pdf_findings(pdf: fitz.Document) -> tuple[list[Finding], list[str]]:
+    findings: list[Finding] = []
+    notes = [
+        "PDF annotations, attachments, file metadata and embedded content are not fully inspected.",
+        "OCR checks rendered PDF pages, but faint text, handwriting and unusual layouts may be missed.",
+    ]
     for number, page in enumerate(pdf, 1):
         text = page.get_text("text", sort=True)
-        findings.extend(scan_text(text, number, lambda value, a,b: [tuple(r) for r in page.search_for(value)]))
-        # OCR only when the page has little extractable text. Embedded images on
-        # otherwise textual pages may contain missed PII; report this limitation.
-        if len(text.strip()) < 12:
-            pix = page.get_pixmap(matrix=fitz.Matrix(2, 2), alpha=False)
-            if pix.width * pix.height > MAX_PIXELS:
-                raise HTTPException(413, "Rendered PDF page exceeds image limit")
-            image = Image.frombytes("RGB", (pix.width, pix.height), pix.samples)
-            findings.extend(ocr(image, number, scale=2))
-    notes.append("OCR is used on scanned/image-only PDF pages; pictures inside searchable pages may not be detected.")
+        native = scan_text(
+            text, number,
+            lambda value, a, b: [tuple(r) for r in page.search_for(value)]
+        )
+        # Every page is rendered, not just image-only pages, so that screenshots
+        # embedded in otherwise searchable PDFs can be detected as candidates.
+        pix = page.get_pixmap(matrix=fitz.Matrix(2, 2), alpha=False)
+        if pix.width * pix.height > MAX_PIXELS:
+            raise HTTPException(413, "Rendered PDF page exceeds 25-megapixel image limit")
+        image = Image.frombytes("RGB", (pix.width, pix.height), pix.samples)
+        visual = ocr(image, number, scale=2)
+        combined: dict[tuple[str,str,int], Finding] = {}
+        for finding in native + visual:
+            key = (finding.category, finding.value, finding.page)
+            if key not in combined:
+                combined[key] = finding
+            else:
+                prior = combined[key]
+                for rect in finding.rectangles:
+                    if rect not in prior.rectangles:
+                        prior.rectangles.append(rect)
+        findings.extend(combined.values())
     return findings, notes
 
 
