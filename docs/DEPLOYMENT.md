@@ -28,6 +28,24 @@ The service binds host port **127.0.0.1:8000** only and runs inside the
 container as a non-root user with a read-only root filesystem. Multipart file
 uploads can spool to the private ephemeral in-memory /tmp location.
 
+## One-command local demo on macOS (no Docker needed)
+
+See [requirements and official download links](PREREQUISITES.md). Once
+Python and Node are installed:
+
+~~~bash
+bash scripts/setup-macos.sh
+bash scripts/check-ready.sh
+bash scripts/start-demo.sh
+~~~
+
+The app stays at http://127.0.0.1:8000/ until you press Control+C.
+Generate harmless, synthetic test files with:
+
+~~~bash
+.venv/bin/python scripts/generate-demo-files.py
+~~~
+
 ## Local development without Docker
 
 Requires Python >=3.10, Node.js 22, npm, and optional external Tesseract OCR.
