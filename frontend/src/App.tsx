@@ -503,9 +503,10 @@ function App() {
                     </div>
                     <p className="pref-note">Text identifiers and QR codes are always blacked out. Blur/pixelation apply only to selected faces and manual boxes; PDF exports are flattened. Visual hiding is not guaranteed irreversible.</p>
                   </div>
+                  <div className="zoom-controls"><strong>Inspect fine details</strong><label>Zoom {zoom}% <input type="range" min="100" max="300" step="25" value={zoom} onChange={e => setZoom(Number(e.target.value))} /></label></div>
                   <div className="preview-pair">
                     <div><p className="preview-caption">Original · selected areas highlighted</p>
-                      <div className="page-frame" ref={previewSurface} onPointerDown={onPointerDown} onPointerMove={onPointerMove} onPointerUp={onPointerUp} onPointerCancel={() => { initialPoint.current = null; setDraft(null) }}>
+                      <div className="zoom-viewport"><div className="page-frame" style={{ width: zoom + '%' }} ref={previewSurface} onPointerDown={onPointerDown} onPointerMove={onPointerMove} onPointerUp={onPointerUp} onPointerCancel={() => { initialPoint.current = null; setDraft(null) }}>
                         {originalPreview ? <img src={originalPreview} alt={'Original page ' + page} draggable={false} /> : <span>Loading preview…</span>}
                         <svg className="mark-layer" viewBox="0 0 1000 1000" preserveAspectRatio="none" aria-hidden="true">
                           {chosen.filter(f => f.page === page).flatMap(f => f.rectangles.map((r, i) =>
@@ -514,23 +515,65 @@ function App() {
                           {[...manual.filter(m => m.page === page), ...(draft ? [draft] : [])].map((m, i) =>
                             <rect key={'mask:' + i} x={m.x * 1000} y={m.y * 1000} width={m.w * 1000} height={m.h * 1000} className="manual-mask" />)}
                         </svg>
-                      </div></div>
-                    <div><p className="preview-caption">Export preview</p><div className="page-frame after">
+                      </div></div></div>
+                    <div><p className="preview-caption">Export preview</p><div className="zoom-viewport"><div className="page-frame after" style={{ width: zoom + '%' }}>
                       {outputPreview ? <img src={outputPreview} alt={'Redacted page ' + page} /> : <span>Generate output to preview here</span>}
-                    </div></div>
+                    </div></div></div>
                   </div>
                   <div className="page-controls"><button onClick={() => setPage(x => Math.max(1, x - 1))} disabled={page === 1}>←</button>
                     <span>Page {page} of {analysis.page_count}</span><button onClick={() => setPage(x => Math.min(analysis.page_count, x + 1))} disabled={page === analysis.page_count}>→</button>
-                    <button onClick={undo} disabled={!manual.some(m => m.page === page)}>Undo box</button>
+                    <button onClick={undo} disabled={!history.length}>Undo edit</button>
+                    <button onClick={redo} disabled={!future.length}>Redo edit</button>
                     <span className="muted">{manual.length} manual masks</span>
                   </div>
+                  {manual.some(m => m.page === page) && <div className="mask-editor">
+                    <strong>Move, resize or delete a manual box</strong>
+                    <div className="mask-selector">
+                      {manual.map((m, i) => m.page === page && <button key={i} className={editIndex === i ? 'active' : ''} onClick={() => setEditIndex(i)}>Box {i + 1}</button>)}
+                    </div>
+                    <div className="mask-actions">
+                      <button disabled={editIndex === null} onClick={() => modifyManual(-.012, 0, 0)}>← Move</button>
+                      <button disabled={editIndex === null} onClick={() => modifyManual(.012, 0, 0)}>Move →</button>
+                      <button disabled={editIndex === null} onClick={() => modifyManual(0, -.012, 0)}>↑ Move</button>
+                      <button disabled={editIndex === null} onClick={() => modifyManual(0, .012, 0)}>Move ↓</button>
+                      <button disabled={editIndex === null} onClick={() => modifyManual(0, 0, .02)}>+ Enlarge</button>
+                      <button disabled={editIndex === null} onClick={() => modifyManual(0, 0, -.02)}>− Shrink</button>
+                      <button disabled={editIndex === null} onClick={deleteManual}>Delete box</button>
+                    </div>
+                    <p className="pref-note">Choose a box, then nudge or resize it. Draw on the original preview to add more.</p>
+                  </div>}
+                  {result && originalPreview && outputPreview && <div className="comparison-panel">
+                    <div className="pref-heading"><strong>Before / after comparison</strong><span>Drag to reveal the original</span></div>
+                    <div className="comparison-view">
+                      <img src={outputPreview} alt={'Redacted comparison page ' + page} />
+                      <img src={originalPreview} className="comparison-original" style={{ clipPath: 'inset(0 ' + (100 - compare) + '% 0 0)' }} alt={'Original comparison page ' + page} />
+                      <span className="comparison-rule" style={{ left: compare + '%' }} />
+                    </div>
+                    <label className="compare-slider">Original visible: {compare}% <input type="range" min="0" max="100" value={compare} onChange={e => setCompare(Number(e.target.value))} /></label>
+                  </div>}
+                  {result && <div className="page-review"><label><input type="checkbox" checked={reviewedPages.includes(page)}
+                    onChange={event => setReviewedPages(current => event.target.checked ? [...current, page] : current.filter(p => p !== page))} />
+                    I have visually checked page {page} of the exported copy</label>
+                    <small>{reviewedPages.length} / {analysis.page_count} pages reviewed. Inspect each page, including small IDs, signatures, photos and codes.</small>
+                  </div>}
                 </> : <p className="preview-placeholder">For Word, PowerPoint, Excel, CSV and TXT, recognized text is permanently replaced. Blur/photo masking is supported in images and PDFs only.</p>}
                 <div className="action-row"><button className="primary-action" disabled={phase !== 'ready' || (!selected.length && !manual.length)}
                   onClick={processFile}>{phase === 'processing' ? 'Processing…' : 'Generate & verify copy'}</button>
-                  <button className="secondary-action" disabled={!result} onClick={download}>Download reviewed copy ↓</button></div>
+                  <button className="secondary-action" disabled={!result || !acknowledged || !pagesComplete || report?.status === 'FLAG'} onClick={download}>Download reviewed copy ↓</button></div>
                 {report && <div className={'report-card ' + statusColor}><h3>Verification: {report.status.replace('_', ' ')}</h3>
                   <p>{report.selected_count} recognized items selected · {report.manual_boxes} manual masks</p>
-                  <p className="report-digest">Output SHA-256: {report.output_sha256}</p><p className="caption">{report.status === "PASS_SCOPED" ? "Only the selected recognized values were checked. Other hidden content may remain." : report.status === "UNVERIFIED" ? "Manual masking or incomplete checks require careful human review." : "At least one selected value remains detectable; download is blocked."}</p>
+                  <div className="metric-strip"><span><strong>{report.remaining_detected_count}</strong> remaining candidates</span><span><strong>{report.remaining_high_risk_count}</strong> high-risk remaining</span></div>
+                  {report.remaining_detected_count > 0 && <div className="remaining-list"><strong>Detected in exported file (values omitted from audit)</strong>
+                    <ul>{report.remaining_detected.map((item, i) => <li key={i}>{item.category.replaceAll('_', ' ')} · page {item.page} · {item.severity}</li>)}</ul>
+                    {report.remaining_detected_count > report.remaining_detected.length && <small>Showing first {report.remaining_detected.length} only.</small>}
+                  </div>}
+                  <p className="report-digest">Output SHA-256: {report.output_sha256}</p>
+                  <p className="caption">{report.status === 'PASS_SCOPED' ? 'The full output was rescanned for supported patterns, but unidentified private information may remain.' : report.status === 'UNVERIFIED' ? 'Some candidate information or visual masks remain unverified. Review every page.' : 'High-risk or previously selected values remain; download is blocked.'}</p>
+                  {report.status !== 'FLAG' && <label className="acknowledgement">
+                    <input type="checkbox" checked={acknowledged} onChange={event => setAcknowledged(event.target.checked)} />
+                    I have inspected the export and understand that automatic detection cannot guarantee complete privacy.
+                  </label>}
+                  {report.status !== 'FLAG' && !pagesComplete && <p className="warning">Review all {analysis.page_count} exported pages before downloading.</p>}
                   <details><summary>What was checked—and what wasn't</summary>
                     <strong>Completed checks</strong><ul>{report.checks.map((c, i) => <li key={i}>{c}</li>)}</ul>
                     <strong>Unverified</strong><ul>{report.unverified.map((c, i) => <li key={i}>{c}</li>)}</ul></details>
@@ -542,7 +585,7 @@ function App() {
               <div className="workflow-grid">
                 <article className="workflow-card"><span className="workflow-icon">⌕</span><span className="workflow-step">STEP 01</span><h3>Detect</h3><p>Scan chosen files for recognized identifier patterns.</p></article>
                 <article className="workflow-card"><span className="workflow-icon">✎</span><span className="workflow-step">STEP 02</span><h3>Review & redact</h3><p>Approve selected findings or draw manual masks on PDFs and images.</p></article>
-                <article className="workflow-card"><span className="workflow-icon">✓</span><span className="workflow-step">STEP 03</span><h3>Verify</h3><p>Check selected recognized data in the exported file and review warnings.</p></article>
+                <article className="workflow-card"><span className="workflow-icon">✓</span><span className="workflow-step">STEP 03</span><h3>Verify</h3><p>Rescan the entire exported document and manually inspect each page.</p></article>
               </div>
             </section>
           </>
