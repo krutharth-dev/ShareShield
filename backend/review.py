@@ -34,12 +34,12 @@ def check_file(data: bytes, ext: str) -> None:
     engine.validate_bytes(data)
     if ext in MAGIC and not MAGIC[ext](data):
         raise HTTPException(415, "The file content does not match its extension")
-    if ext == ".txt" and b"\x00" in data:
+    if ext in {".txt", ".csv"} and b"\x00" in data:
         raise HTTPException(422, "TXT must contain plain UTF-8 text, not binary data")
-    if ext in {".docx", ".pptx"}:
+    if ext in {".docx", ".pptx", ".xlsx"}:
         if not data.startswith(b"PK"):
             raise HTTPException(415, "Word/PowerPoint file is not a valid OpenXML ZIP container")
-        required = "word/document.xml" if ext==".docx" else "ppt/presentation.xml"
+        required = {"docx":"word/document.xml","pptx":"ppt/presentation.xml","xlsx":"xl/workbook.xml"}[ext.lstrip(".")]
         try:
             with zipfile.ZipFile(io.BytesIO(data)) as archive:
                 parts = archive.infolist()
@@ -167,10 +167,11 @@ def evaluate(selected: list[engine.Finding], redacted_data: bytes, ext: str,
     remaining={(f.category,f.value) for f in found}
     flagged=[{"category":f.category,"value":f.value} for f in selected
              if (f.category,f.value) in remaining]
-    status="FLAG" if flagged else "PASS_SCOPED" if selected else "UNVERIFIED"
+    status="FLAG" if flagged else "UNVERIFIED" if manual_count else "PASS_SCOPED" if selected else "UNVERIFIED"
     return {"status":status,"selected_count":len(selected),"manual_boxes":manual_count,
             "remaining_selected":flagged,
             "checks":["Reopened exported file","Reran configured text/OCR detectors","Compared selected detected values"],
+            "output_sha256":engine.fingerprint(redacted_data),
             "unverified":[
                 "Only recognized selected values were checked; other sensitive data may remain.",
                 "OCR and pattern recognition may miss sensitive content.",
