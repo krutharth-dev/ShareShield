@@ -2,33 +2,44 @@
 
 ## Phase 1 — Mini project (demo: 28 October 2026)
 
-**Core priority:** searchable English PDF upload, detection of selected IDs/emails, user approval, real PDF redaction, export, reopening, post-export text verification, and a meaningful PASS/FLAG/UNVERIFIED result.
+**Core demonstration:** run ShareShield locally, upload a supported image/document, detect selected PII candidates, review findings, redact to a separate copy, reopen/rescan the output, report limitations and download it.
 
-**Stretch goal:** detection and replacement/redaction of editable text in modern `.pptx` files, followed by saved-file verification. Slides may contain hidden or unsupported structures; these must be reported honestly, never silently accepted as safe.
+### Implemented on the development branch
 
-### Acceptance criteria
-- Run the frontend and backend locally on **one Mac** during the demo.
-- Preserve the original file; save a separate edited copy.
-- A user can choose which supported detections to redact.
-- Verification actually reopens the saved output and inspects it independently of the preview.
-- If required checks fail or cannot run, sharing/download is held for review, not labeled PASS.
-- Demonstrate a **fictional** PDF in which drawing a visual covering does not remove copyable text.
-- Record completed checks, limitations, and measured results; do not invent test accuracy.
+- Local browser-based upload and review UI.
+- Searchable/scanned PDF, common image formats including HEIC (subject to target-Mac compatibility), DOCX, PPTX and TXT.
+- Pattern-based email/mobile, PAN-format, checksum-valid Aadhaar-format and common UPI-handle detection.
+- Original and redacted preview for PDFs/images, including manual black-box selection.
+- File signature checks, document container limits, user selection and SHA-256 file binding.
+- Scoped reinspection and PASS_SCOPED / FLAG / UNVERIFIED reporting.
+- Synthetic regression tests and GitHub Actions.
 
-### Out of initial scope
-Native Android/iOS apps; unrestricted monitoring of third-party apps; scanned-image OCR; face recognition/redaction; Kannada language support; password-protected/encrypted documents; guaranteed inspection of every metadata/attachment/embedded structure.
+### Demo acceptance criteria
 
-## Phase 2 — Major project (post-demo)
+- Run locally on the target 2017 Intel MacBook Pro; verify OCR and HEIC availability.
+- Preserve original files and save new outputs.
+- Test true PDF content redaction (not merely a cosmetic black rectangle).
+- Show before/after previews and detection labels with synthetic example files.
+- If selected identifiers remain detectable, report FLAG rather than implying safety.
+- When checks are incomplete, clearly label limitations and UNVERIFIED areas.
+- Confirm no private test files, credentials or identifiable real-person content are committed.
+- Freeze a known-good version before the demo. Do not claim 100% privacy or measured detection accuracy without evidence.
 
-Investigate mobile-compatible on-device engines, OCR, visual redaction, verified sharing through Android share intents and iOS extensions, and authorized app-specific integrations. App-level enable/disable settings control ShareShield itself; they cannot grant universal access to other applications' uploads.
+### Known limitations
 
-## Dates
-- 16–18 October: Repo/readiness
-- 19–22 October: Foundations and detection
-- 23–25 October: Redaction and verification; PPTX attempt
-- 26 October: Tests and documentation
-- 27 October: Freeze and rehearse
-- 28 October: Demonstrate
+This is an educational prototype, not a complete sanitization tool. Scanning can miss handwriting, complex layouts, embedded data, Office revisions and hidden content. Visual previews are limited to images/PDFs. No face detection or unrestricted monitoring of other apps is included.
+
+## Phase 2 — Major project
+
+Explore mobile-compatible on-device processing, contextual/entity models, more language support, faces and other visual-PII detection, stronger metadata/content sanitization, and opt-in Android/iOS share-sheet integrations. App enable/disable controls cannot grant universal access to unrelated applications.
+
+## Development dates
+
+- 23–25 October: enhanced detection, preview, manual selection and verification
+- 26 October: synthetic tests, security review, target-Mac compatibility
+- 27 October: code freeze and demonstration rehearsal
+- 28 October: mini-project demo
 
 ## Research focus
-Evaluate whether **independent reinspection of exported documents** catches residual leaks missed by an otherwise comparable redaction-only workflow. Measure leak-detection rate, false positives, detection quality and processing time with fictional data. Novelty or patentability has not been established.
+
+Evaluate whether independent reinspection of exported files detects residual sensitive information that a redaction-only pipeline misses. Compare false positives, missed detections, output integrity and latency using synthetic examples. Novelty or patentability has not been established.
