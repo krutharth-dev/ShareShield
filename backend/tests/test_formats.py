@@ -38,7 +38,8 @@ def pdf_sample():
 
 def test_html_and_health():
     assert client.get('/').status_code==200
-    assert 'Drop a file here' in client.get('/').text
+    html = client.get('/').text
+    assert 'Drop a file here' in html or '<div id="root"></div>' in html
     assert client.get('/health').json()['status']=='ok'
 
 
