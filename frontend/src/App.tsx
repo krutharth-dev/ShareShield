@@ -469,7 +469,7 @@ function App() {
                     <button onClick={undo} disabled={!manual.some(m => m.page === page)}>Undo box</button>
                     <span className="muted">{manual.length} manual masks</span>
                   </div>
-                </> : <p className="preview-placeholder">For Word, PowerPoint, Excel, CSV and TXT, recognized text is permanently replaced. Blur/photo masking is supported in images and PDFs only.</p>
+                </> : <p className="preview-placeholder">For Word, PowerPoint, Excel, CSV and TXT, recognized text is permanently replaced. Blur/photo masking is supported in images and PDFs only.</p>}
                 <div className="action-row"><button className="primary-action" disabled={phase !== 'ready' || (!selected.length && !manual.length)}
                   onClick={processFile}>{phase === 'processing' ? 'Processing…' : 'Generate & verify copy'}</button>
                   <button className="secondary-action" disabled={!result} onClick={download}>Download reviewed copy ↓</button></div>
