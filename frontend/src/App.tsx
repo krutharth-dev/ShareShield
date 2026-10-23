@@ -167,7 +167,7 @@ function App() {
     const controller = new AbortController()
     async function load() {
       const response = await fetch('/preview', {
-        method: 'POST', body: dataFor(result, { page: String(page) }), signal: controller.signal, cache: 'no-store',
+        method: 'POST', body: dataFor(result!, { page: String(page) }), signal: controller.signal, cache: 'no-store',
       })
       if (!response.ok) throw Error(await errorFrom(response))
       const blob = await response.blob()
