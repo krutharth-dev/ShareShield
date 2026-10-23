@@ -331,7 +331,6 @@ function App() {
     setTimeout(() => URL.revokeObjectURL(url), 1000)
   }
   const chosen = analysis?.findings.filter(f => selected.includes(f.id)) || []
-  const currentMode = analysis && !analysis.preview_supported ? 'blackout' : redactionMode
   const statusColor = report?.status === 'FLAG' ? 'failed' : report?.status === 'PASS_SCOPED' ? 'passed' : 'incomplete'
   return (
     <main className="app-shell">
