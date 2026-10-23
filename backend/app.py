@@ -23,7 +23,9 @@ def index():
 
 @app.get("/health")
 def health():
-    return {"status": "ok", "mode": "local-privacy-review-v0.4"}
+    return {"status": "ok", "mode": "local-privacy-review-v0.4",
+            "ocr_available": engine.ocr_available(),
+            "ocr_setup": None if engine.ocr_available() else "Install Tesseract with brew install tesseract; restart server"}
 
 
 async def _upload(file: UploadFile) -> tuple[bytes, str]:
