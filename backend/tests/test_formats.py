@@ -47,7 +47,7 @@ def test_searchable_pdf():
     assert [f['category'] for f in report['findings']]==['email','indian_mobile_candidate']
     r=request_redaction('test.pdf',data,report)
     assert r.status_code==200,r.text
-    assert r.headers['X-ShareShield-Verification']=='PASS-SELECTED-FINDINGS-ONLY'
+    assert r.headers['X-ShareShield-Verification']=='PASS_SCOPED'
     with fitz.open(stream=r.content,filetype='pdf') as pdf:
         assert 'demo@example.org' not in pdf[0].get_text()
         assert '9876543210' not in pdf[0].get_text()
