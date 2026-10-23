@@ -34,7 +34,7 @@ MAX_PIXELS = 25_000_000
 MAX_PAGES = 25
 Image.MAX_IMAGE_PIXELS = MAX_PIXELS
 
-EXTENSIONS = {".pdf", ".docx", ".pptx", ".txt", ".jpg", ".jpeg", ".png", ".webp", ".bmp", ".tif", ".tiff", ".heic", ".heif"}
+EXTENSIONS = {".pdf", ".docx", ".pptx", ".txt", ".jpg", ".jpeg", ".png", ".webp", ".bmp", ".tif", ".tiff", ".heic", ".heif", ".csv", ".xlsx"}
 IMAGE_EXTENSIONS = {".jpg", ".jpeg", ".png", ".webp", ".bmp", ".tif", ".tiff", ".heic", ".heif"}
 EMAIL = re.compile(r"(?<![\w.+-])[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}(?![\w.-])")
 PHONE = re.compile(r"(?<!\d)(?:\+91[ -]?)?[6-9]\d{9}(?!\d)")
@@ -59,7 +59,7 @@ class Finding:
 def extension(filename: str) -> str:
     ext = Path(filename or "").suffix.lower()
     if ext not in EXTENSIONS:
-        raise HTTPException(415, f"Unsupported format: {ext or 'unknown'}. Use PDF, DOCX, PPTX, TXT, JPG, PNG, HEIC, TIFF, BMP or WEBP. Legacy .doc is not supported; save it as .docx.")
+        raise HTTPException(415, f"Unsupported format: {ext or 'unknown'}. Use PDF, DOCX, PPTX, XLSX, CSV, TXT, JPG, PNG, HEIC, TIFF, BMP or WEBP. Legacy .doc is not supported; save it as .docx.")
     if ext in {".heic", ".heif"} and not HEIC_AVAILABLE:
         raise HTTPException(503, "HEIC requires pillow-heif. Install backend/requirements.txt in the active virtual environment.")
     return ext
@@ -250,6 +250,9 @@ def inspect(data: bytes, ext: str) -> tuple[list[Finding], list[str]]:
             return _pdf_findings(pdf)
     if ext in {".docx", ".pptx"}:
         return _office_findings(data, ext)
+    if ext in {".csv", ".xlsx"}:
+        from backend import tabular
+        return tabular.inspect(data, ext)
     try:
         text = data.decode("utf-8-sig")
     except UnicodeError as exc:
@@ -258,6 +261,9 @@ def inspect(data: bytes, ext: str) -> tuple[list[Finding], list[str]]:
 
 
 def redact(data: bytes, ext: str, selected: list[Finding]) -> tuple[bytes,str,str]:
+    if ext in {".csv", ".xlsx"}:
+        from backend import tabular
+        return tabular.redact(data, ext, selected)
     if ext in IMAGE_EXTENSIONS:
         image = read_image(data)
         draw = ImageDraw.Draw(image)
