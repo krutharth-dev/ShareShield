@@ -48,7 +48,7 @@ def test_preview_and_manual_image_mask_without_auto_detections():
     info=analyze.json()
     r=c.post("/preview",files={"file":("image.png",source)},data={"page":"1"})
     assert r.status_code==200 and r.content.startswith(b"\x89PNG")
-    assert r.headers["X-Document-Width"]=="600.0"
+    assert float(r.headers["X-Document-Width"])==600.0
     boxes=[{"page":1,"x":0.05,"y":0.1,"w":0.7,"h":0.7}]
     out=c.post("/redact",files={"file":("image.png",source)},
                data={"analysis_id":info["analysis_id"],"manual_regions":json.dumps(boxes)})
