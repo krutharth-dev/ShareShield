@@ -24,6 +24,24 @@ FRONTEND_DIST = Path(os.environ.get("SHARESHIELD_WEB_DIST", str(Path(__file__).r
 
 @app.middleware("http")
 async def security_headers(request, call_next):
+    # Fail early when the client declares an excessive multipart body. The
+    # upload reader also enforces per-file limits, including unknown lengths.
+    if request.method == "POST" and request.url.path in {
+        "/analyze", "/preview", "/redact", "/verify"
+    }:
+        header = request.headers.get("content-length")
+        if header is not None:
+            try:
+                declared = int(header)
+            except ValueError:
+                return JSONResponse({"detail": "Invalid Content-Length header"}, status_code=400)
+            # /verify uploads both the original and an exported copy.
+            max_body = engine.MAX_BYTES * (2 if request.url.path == "/verify" else 1) + 1024 * 1024
+            if declared < 0 or declared > max_body:
+                return JSONResponse(
+                    {"detail": "Upload request too large for this local demo"},
+                    status_code=413,
+                )
     if request.method not in {"GET", "HEAD", "OPTIONS"}:
         origin = request.headers.get("origin")
         permitted = {
