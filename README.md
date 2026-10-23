@@ -2,135 +2,111 @@
 
 # 🛡️ ShareShield
 
-### Detect · Review · Redact · Verify · Share
+### Detect → Review → Redact → Verify → Share
 
-**A local-first privacy review prototype for documents, screenshots and photos.**
+**A locally hosted privacy-review workspace for PDFs, screenshots and common documents.**
 
-**Mini-project demonstration: 28 October 2026** · **Current development branch: `backend/pdf-redaction-verification`**
+**Integrated demo deployment branch:** `integration/deployable-web-app` · **28 October 2026 mini-project**
 
 </div>
 
----
+## Working full-stack application
 
-## What ShareShield does
+The existing React + TypeScript dashboard is connected to a FastAPI backend, with OCR and file-format-specific redaction. **One container serves both frontend and API at the same origin**; no cloud account is required for the demo.
 
-ShareShield runs a browser interface against a **local FastAPI service on your laptop**. Upload a supported file, inspect potential private identifiers, approve selected redactions, draw manual boxes over overlooked details in images or PDFs, then check a new output file and download it.
+| Area | Implemented |
+| --- | --- |
+| React frontend (team) | Original light/green dashboard, file uploads, progress/errors, findings checklist, preview and manual masks |
+| Backend | FastAPI OCR/text detection, selected redactions, PDF/image/Office/tabular outputs |
+| Detection | Email, Indian phones, format/checksum candidates for Aadhaar, PAN, IFSC, UPI and payment cards |
+| Images and PDFs | Before/after preview, page navigation, user-drawn masking |
+| Documents and sheets | DOCX, PPTX, XLSX, CSV and TXT inspection/export (no visual previews) |
+| Verification | Independent output reinspection, PASS_SCOPED / FLAG / UNVERIFIED with JSON report and SHA-256 |
+| Deployment | Multi-stage Dockerfile + localhost-bound Compose + GitHub Actions frontend/backend/container checks |
 
-The engine looks for **email addresses, Indian mobile-number candidates, PAN-format identifiers, checksum-valid Aadhaar-format candidates, IFSC-format bank codes, Luhn-valid payment-card candidates and common UPI handles**. The matching rules indicate *possible private information*, not verified identities. No automatic detector can guarantee complete privacy protection.
+### Supported file formats
 
-### Supported content
+- **Images:** JPG/JPEG, PNG, HEIC/HEIF, WEBP, BMP and TIFF (output PNG)
+- **PDFs:** selectable or scanned text (output PDF; OCR requires Tesseract)
+- **Office:** DOCX and PPTX, Excel XLSX
+- **Text/tabular:** CSV and UTF-8 TXT
 
-| File | Detection | Export |
-| --- | --- | --- |
-| JPG/JPEG, PNG, HEIC/HEIF, WEBP, BMP, TIFF | OCR of visible text | Flattened PNG |
-| Searchable/scanned PDF | Native text extraction and full-page OCR | Redacted PDF |
-| Word DOCX | Editable paragraphs, tables, headers/footers | Modified DOCX |
-| PowerPoint PPTX | Editable slide text, shapes and tables | Modified PPTX |
-| UTF-8 TXT | Text pattern matching | Modified TXT |
-| CSV | Bounded UTF-8 cell scanning (no preview) | Modified CSV |
-| Excel XLSX | Worksheet cell scanning, excluding formulas (no preview) | Modified XLSX |
+Old DOC/XLS, archives, audio, video and password-protected PDFs are **not** supported. Input limit is 12 MiB; other page, pixel and complexity limits apply.
 
-Older `.doc` files, video, archives, audio, legacy XLS files, encrypted PDFs and arbitrary formats are not supported. Images and PDFs support visual before-and-after previews and manual masking; Office and TXT outputs must be inspected in their respective editors.
+## Start on your own laptop
 
-## User workflow
+**Option A — Docker Compose (simplest integrated demo):**
 
-```mermaid
-flowchart TD
-    A([Select a supported file]) --> B{File signature and limits valid?}
-    B -->|No| X[Explain the format or validation error]
-    B -->|Yes| C[Extract text + OCR images/PDF pages]
-    C --> D[Identify possible private text]
-    D --> E[Review findings and priority]
-    E --> M[Select findings + optional manual image/PDF boxes]
-    M --> F[Redact a separate copy]
-    F --> G[Reopen exported file and rescan]
-    G --> H{Recognized selected values remain?}
-    H -->|Yes| I[FLAG: withhold output]
-    H -->|No| J[PASS_SCOPED or UNVERIFIED + warnings]
-    J --> K[Inspect preview/output then download]
-```
+~~~bash
+docker compose up --build -d
+docker compose ps
+~~~
 
-**PASS_SCOPED** means selected recognized values were not found by supported rechecks, **not** that all personal data has been removed. **UNVERIFIED** warns when checks are insufficient (for example, manual-only boxes). Read warnings and inspect the exported file before sharing. Downloadable JSON verification reports include original/output SHA-256 digests and explicit unverified checks.
+Open **http://127.0.0.1:8000/**. Use **Load fictional demo file**.
+Stop with `docker compose down`.
 
-## Planned / current architecture
+**Option B — without Docker:**
 
-```mermaid
-flowchart LR
-    subgraph Device["Laptop - local processing"]
-      B[Browser UI] --> API[FastAPI]
-      API --> C[File validation / size and ZIP checks]
-      C --> PDF[PyMuPDF PDF parser/redaction]
-      C --> IMG[Pillow / HEIC + Tesseract]
-      C --> DOC[python-docx / python-pptx]
-      C --> SHEET[openpyxl / CSV parser]
-      PDF --> PAT[PII rules + checksum]
-      IMG --> PAT
-      DOC --> PAT
-      SHEET --> PAT
-      PAT --> USER[User review + manual mask]
-      USER --> VERIFY[Saved-copy reinspection]
-      VERIFY --> B
-    end
-```
+Terminal 1:
 
-## Quick start on macOS
-
-Stop any existing server with **Control+C**, then:
-
-```bash
-cd ~/Desktop/ShareShield
-git switch backend/pdf-redaction-verification
-git pull origin backend/pdf-redaction-verification
+~~~bash
+python3 -m venv .venv
 source .venv/bin/activate
-brew install tesseract
 python -m pip install -r backend/requirements.txt
-python -m pip install pytest httpx
-python -m pytest backend/tests -v
 python -m uvicorn backend.app:app --host 127.0.0.1 --port 8000
-```
+~~~
 
-Open **http://127.0.0.1:8000/** for the upload interface or **http://127.0.0.1:8000/docs** for API debugging. Homebrew, HEIC decoding or dependency availability on older macOS hardware may require adaptation.
+Install the external Tesseract program if you need image/scanned-PDF OCR (macOS: `brew install tesseract`).
 
+Terminal 2:
 
-## If Tesseract OCR is missing on macOS
+~~~bash
+cd frontend
+npm ci
+npm run dev
+~~~
 
-The Python package `pytesseract` is **not** the OCR executable. Install the system program:
+Open **http://127.0.0.1:5173/**. The Vite dev proxy sends API calls to the Python server. For a single server without Docker, build the React app using `npm run build` from frontend/ and restart FastAPI; it then serves the compiled app at port 8000.
 
-```bash
-brew install tesseract
-which tesseract
-tesseract --version
-```
+## Architecture
 
-After installation, **stop and restart** the ShareShield server. The `GET /health` endpoint includes an `ocr_available` boolean. Without Tesseract, the app can still scan selectable PDF text and DOCX/PPTX/CSV/XLSX/TXT data. It can also generate **UNVERIFIED manual-only image/PDF masks**, but cannot automatically read image text or scanned-PDF text; the website displays an explicit warning. A partial text-only scan does not establish that the whole document is safe.
+~~~mermaid
+flowchart LR
+    Browser["Existing React dashboard"] -->|Same origin| API["FastAPI"]
+    API --> Parser["PDF, image, Office, spreadsheet parsers"]
+    Parser --> OCR["Tesseract OCR (when available)"]
+    Parser --> PII["Format/checksum candidate detection"]
+    OCR --> PII
+    PII --> Review["Human review + manual masks"]
+    Review --> Export["Redacted output"]
+    Export --> Verify["Reopen and rescan selected values"]
+    Verify --> Browser
+~~~
 
-## Limitations and responsible use
+## Verification and privacy
 
-- Text-only detection: handwriting, faces, visual IDs without recognizable text, obscure layouts and false negatives remain possible.
-- Redaction review is user-controlled, but DOCX/PPTX replacements may change text formatting and miss hidden structures.
-- Spreadsheet formulas, cached formula values, charts, comments and hidden workbook structures are not fully checked; exports must be inspected in Excel. Spreadsheet-like formula content in CSV may be interpreted when opened.
-- Not all metadata, comments, revisions, embedded files, attachments, annotations or scripts are sanitized.
-- Test only with synthetic or explicitly authorized data. Never commit real documents or secrets to this public repository.
-- Run the local server on **127.0.0.1**, never a publicly accessible address, during development.
-- PyMuPDF has AGPL/commercial licensing terms that require review before distribution or commercialization.
+A **PASS_SCOPED** result means that recognized *selected* strings were not found during the checks performed. It is **not a statement that all private data has been eliminated**. **UNVERIFIED** covers manual-only masks and incomplete coverage; **FLAG** indicates recognized selected data was still found. Review every export before sharing.
 
-The prototype has automated tests on GitHub Actions, but **full end-to-end QA on the target Mac, including HEIC handling, is still required**.
+Files are uploaded only to the server you configure. The bundled Docker configuration binds to **127.0.0.1** on your own computer. Do not publicly expose this prototype with real personal data. The app has no authentication, user isolation, anti-malware scanning or public HTTPS configuration. Upload frameworks can temporarily spool document contents. It is not end-to-end encrypted or certified for sensitive records.
 
-## Documentation
+The team should review the PyMuPDF AGPL/commercial terms and all third-party licenses before distribution.
 
-- [Backend details, installation and API](backend/README.md)
-- [Prerequisites](docs/PREREQUISITES.md)
-- [Project scope](docs/PROJECT_SCOPE.md)
-- [Contributing](CONTRIBUTING.md)
+## Project resources
+
+- [Frontend setup](frontend/README.md)
+- [Backend setup and limitations](backend/README.md)
+- [Self-hosted deployment runbook](docs/DEPLOYMENT.md)
+- [Scope and milestones](docs/PROJECT_SCOPE.md)
 - [Security policy](SECURITY.md)
 - [IP and licensing](docs/IP_AND_LICENSING.md)
-- [Pull request for the updated prototype](https://github.com/krutharth-dev/ShareShield/pull/1)
+
+**Team demo goal:** Run the full scan → select → redact → verify → download journey using *fictional examples* and honestly explain remaining limitations.
 
 ---
 
 <div align="center">
 
-**ShareShield · Malnad College of Engineering**
+**ShareShield — Student mini-project prototype**
 
 *Detect. Redact. Verify. Then Share.*
 
