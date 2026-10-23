@@ -167,7 +167,7 @@ def _scrub_pdf_extras(doc: fitz.Document) -> None:
     Hidden layers, forms, scripts and accessibility text may still need audit.
     """
     doc.set_metadata({})
-    if getattr(doc, "xml_metadata_xref", lambda: 0)():
+    if doc.xref_xml_metadata():
         doc.del_xml_metadata()
     for name in list(doc.embfile_names()):
         doc.embfile_del(name)
