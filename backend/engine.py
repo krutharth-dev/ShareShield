@@ -33,6 +33,8 @@ except ImportError:
 MAX_BYTES = 12 * 1024 * 1024
 MAX_PIXELS = 25_000_000
 MAX_PAGES = 25
+MAX_FINDINGS = 500
+OCR_TIMEOUT_SECONDS = 20
 Image.MAX_IMAGE_PIXELS = MAX_PIXELS
 
 EXTENSIONS = {".pdf", ".docx", ".pptx", ".txt", ".jpg", ".jpeg", ".png", ".webp", ".bmp", ".tif", ".tiff", ".heic", ".heif", ".csv", ".xlsx"}
@@ -79,6 +81,8 @@ def scan_text(text: str, page: int, rectangles: Callable[[str, int, int], list[t
                 continue
             boxes = rectangles(match.group(0), match.start(), match.end()) if rectangles else []
             matches.append((match.start(), Finding(category, match.group(0), page, boxes, location)))
+            if len(matches) > MAX_FINDINGS:
+                raise HTTPException(413, "Too many detected identifiers in one text section; split the document")
     return [m[1] for m in sorted(matches, key=lambda v: v[0])]
 
 
@@ -90,10 +94,15 @@ def ocr_available() -> bool:
 def ocr(image: Image.Image, page: int, scale: float = 1.0) -> list[Finding]:
     """Locate matches in OCR lines; return rectangles in original image/page units."""
     try:
-        result = pytesseract.image_to_data(image.convert("RGB"), output_type=Output.DICT, config="--psm 11")
+        result = pytesseract.image_to_data(
+            image.convert("RGB"), output_type=Output.DICT,
+            config="--psm 11", timeout=OCR_TIMEOUT_SECONDS)
     except (pytesseract.TesseractNotFoundError, OSError) as exc:
         raise HTTPException(503, "OCR unavailable: install the Tesseract application (macOS: brew install tesseract), then restart ShareShield") from exc
-    except pytesseract.TesseractError as exc:
+    except RuntimeError as exc:
+        # pytesseract raises RuntimeError if its subprocess times out.
+        if "timeout" in str(exc).lower():
+            raise HTTPException(504, "OCR timed out on this page. Try a smaller or clearer document") from exc
         raise HTTPException(422, "OCR failed on this image; try a clearer file") from exc
     lines: dict[tuple[int,int,int,int], list[tuple[str, tuple[float,float,float,float]]]] = {}
     for i, word in enumerate(result["text"]):
@@ -251,7 +260,7 @@ def _office_findings(data: bytes, ext: str) -> tuple[list[Finding],list[str]]:
                       "Embedded images, comments, tracked changes, notes, hidden content and file metadata remain unverified."]
 
 
-def inspect(data: bytes, ext: str) -> tuple[list[Finding], list[str]]:
+def _inspect_document(data: bytes, ext: str) -> tuple[list[Finding], list[str]]:
     validate_bytes(data)
     if ext in IMAGE_EXTENSIONS:
         image = read_image(data)  # Validate image even when OCR is unavailable.
@@ -279,6 +288,16 @@ def inspect(data: bytes, ext: str) -> tuple[list[Finding], list[str]]:
     except UnicodeError as exc:
         raise HTTPException(422, "TXT must be UTF-8") from exc
     return scan_text(text,1,location="plain-text"), ["Plain UTF-8 text only."]
+
+
+def inspect(data: bytes, ext: str) -> tuple[list[Finding], list[str]]:
+    """Bound findings so huge files cannot create unbounded UI payloads."""
+    findings, notes = _inspect_document(data, ext)
+    if len(findings) > MAX_FINDINGS:
+        raise HTTPException(
+            413, "More than 500 sensitive-data candidates detected; split the input into smaller files"
+        )
+    return findings, notes
 
 
 def redact(data: bytes, ext: str, selected: list[Finding]) -> tuple[bytes,str,str]:
