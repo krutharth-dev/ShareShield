@@ -9,18 +9,31 @@ from typing import Annotated
 from fastapi import FastAPI, File, Form, HTTPException, UploadFile
 from fastapi.responses import FileResponse, Response
 from fastapi.staticfiles import StaticFiles
-from starlette.middleware.base import BaseHTTPMiddleware
+from starlette.middleware.trustedhost import TrustedHostMiddleware
+from fastapi.responses import JSONResponse
 
 from backend import engine, review
 from backend.patterns import SEVERITY
 
 app = FastAPI(title="ShareShield local privacy review API", version="0.4.0")
+# Demo deployment only: reject hostile Host headers / DNS-rebinding requests.
+app.add_middleware(TrustedHostMiddleware, allowed_hosts=["127.0.0.1", "localhost", "testserver"])
 STATIC = Path(__file__).parent / "static" / "index.html"
 FRONTEND_DIST = Path(os.environ.get("SHARESHIELD_WEB_DIST", str(Path(__file__).resolve().parent.parent / "frontend" / "dist")))
 
 
 @app.middleware("http")
 async def security_headers(request, call_next):
+    if request.method not in {"GET", "HEAD", "OPTIONS"}:
+        origin = request.headers.get("origin")
+        permitted = {
+            str(request.base_url).rstrip("/"),
+            "http://127.0.0.1:5173", "http://localhost:5173",
+        }
+        if origin and origin not in permitted:
+            return JSONResponse({"detail": "Cross-origin upload blocked on this local demo server"}, status_code=403)
+        if request.headers.get("sec-fetch-site", "").lower() == "cross-site":
+            return JSONResponse({"detail": "Cross-site request blocked"}, status_code=403)
     response = await call_next(request)
     response.headers["Cache-Control"] = "no-store"
     response.headers["X-Content-Type-Options"] = "nosniff"
