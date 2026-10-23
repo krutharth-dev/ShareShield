@@ -3,21 +3,54 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
+import os
 from typing import Annotated
 
 from fastapi import FastAPI, File, Form, HTTPException, UploadFile
 from fastapi.responses import FileResponse, Response
+from fastapi.staticfiles import StaticFiles
+from starlette.middleware.base import BaseHTTPMiddleware
 
 from backend import engine, review
 from backend.patterns import SEVERITY
 
 app = FastAPI(title="ShareShield local privacy review API", version="0.4.0")
 STATIC = Path(__file__).parent / "static" / "index.html"
+FRONTEND_DIST = Path(os.environ.get("SHARESHIELD_WEB_DIST", str(Path(__file__).resolve().parent.parent / "frontend" / "dist")))
+
+
+@app.middleware("http")
+async def security_headers(request, call_next):
+    response = await call_next(request)
+    response.headers["Cache-Control"] = "no-store"
+    response.headers["X-Content-Type-Options"] = "nosniff"
+    response.headers["Referrer-Policy"] = "no-referrer"
+    response.headers["X-Frame-Options"] = "DENY"
+    response.headers["Permissions-Policy"] = "camera=(), microphone=(), geolocation=()"
+    if FRONTEND_DIST.is_dir():
+        response.headers["Content-Security-Policy"] = (
+            "default-src 'self'; script-src 'self'; style-src 'self'; "
+            "img-src 'self' blob: data:; connect-src 'self'; font-src 'self'; "
+            "object-src 'none'; base-uri 'none'; frame-ancestors 'none'; form-action 'self'"
+        )
+    return response
+
+
+if FRONTEND_DIST.is_dir():
+    app.mount("/assets", StaticFiles(directory=FRONTEND_DIST / "assets"), name="built-assets")
+
+
+@app.get("/favicon.svg", include_in_schema=False)
+def favicon():
+    path = FRONTEND_DIST / "favicon.svg"
+    if path.is_file():
+        return FileResponse(path, media_type="image/svg+xml")
+    raise HTTPException(404, "Favicon not found")
 
 
 @app.get("/", include_in_schema=False)
 def index():
-    return FileResponse(STATIC, media_type="text/html",
+    return FileResponse(FRONTEND_DIST / "index.html" if (FRONTEND_DIST / "index.html").is_file() else STATIC, media_type="text/html",
                         headers={"Cache-Control": "no-store"})
 
 
