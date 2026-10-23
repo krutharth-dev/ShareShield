@@ -79,8 +79,7 @@ def test_file_signature_and_manual_box_validation():
 def test_pdf_image_embedded_on_searchable_page():
     img=Image.new("RGB",(760,140),"white")
     draw=ImageDraw.Draw(img)
-    try:font=ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",35)
-    except OSError:font=ImageFont.load_default()
+    font=ImageFont.load_default(size=35)  # Cross-platform, sized for reliable OCR
     draw.text((15,35),"demo@example.org",fill="black",font=font)
     buf=io.BytesIO();img.save(buf,"PNG")
     pdf=fitz.open();p=pdf.new_page()
