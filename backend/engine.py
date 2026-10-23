@@ -52,7 +52,8 @@ class Finding:
     def public(self, index: int) -> dict:
         return {"id": index, "category": self.category, "value": self.value,
                 "page": self.page, "locatable": bool(self.rectangles) or bool(self.location),
-                "severity": SEVERITY.get(self.category, "medium")}
+                "severity": SEVERITY.get(self.category, "medium"),
+                "rectangles": self.rectangles}
 
 
 def extension(filename: str) -> str:
