@@ -54,11 +54,11 @@ def test_unselected_medium_risk_requires_ack_and_report_leaks_no_values():
 
 
 def test_selected_leak_holds_export_and_hides_raw_values():
-    chosen = [engine.Finding("aadhaar_candidate", "234567890123", 1, [], "plain-text")]
-    report = review.evaluate(chosen, b"234567890123", ".txt")
+    chosen = [engine.Finding("email", "demo@example.org", 1, [], "plain-text")]
+    report = review.evaluate(chosen, b"demo@example.org", ".txt")
     assert report["status"] == "FLAG"
     assert report["remaining_selected_count"] == 1
-    assert "234567890123" not in str(report)
+    assert "demo@example.org" not in str(report)
 
 
 def test_all_redacted_can_pass_scoped_but_never_claims_sanitized():
