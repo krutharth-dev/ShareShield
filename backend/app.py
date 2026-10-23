@@ -1,141 +1,70 @@
-"""ShareShield's local-only, searchable-PDF prototype API.
-
-No uploaded document is written to disk by this module.
-Only fictional/consented documents should be used during development.
-"""
+"""ShareShield local-only UI and API: use uvicorn backend.app:app --host 127.0.0.1."""
 from __future__ import annotations
 
-import io
-import re
+from pathlib import Path
 from typing import Annotated
 
-import fitz
 from fastapi import FastAPI, File, Form, HTTPException, UploadFile
-from fastapi.responses import Response
+from fastapi.responses import FileResponse, Response
 
-MAX_BYTES = 10 * 1024 * 1024
-EMAIL = re.compile(r"(?<![\w.+-])[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}(?![\w.-])")
-PHONE = re.compile(r"(?<!\d)(?:\+91[ -]?)?[6-9]\d{9}(?!\d)")
-PATTERNS = (("email", EMAIL), ("indian_mobile_candidate", PHONE))
+from backend.engine import MAX_BYTES, extension, fingerprint, inspect, redact
 
-app = FastAPI(title="ShareShield local PDF API", version="0.1.0")
+app = FastAPI(title="ShareShield local privacy review API", version="0.2.0")
+STATIC = Path(__file__).parent / "static" / "index.html"
 
 
-def _open_pdf(data: bytes) -> fitz.Document:
-    if not data or len(data) > MAX_BYTES:
-        raise HTTPException(413, "PDF must be nonempty and at most 10 MiB")
-    try:
-        doc = fitz.open(stream=data, filetype="pdf")
-        if doc.needs_pass or doc.is_encrypted:
-            doc.close()
-            raise HTTPException(422, "Password-protected PDFs are unsupported")
-        if not doc.page_count:
-            doc.close()
-            raise HTTPException(422, "PDF has no pages")
-        return doc
-    except HTTPException:
-        raise
-    except (RuntimeError, ValueError) as exc:
-        raise HTTPException(422, "Unreadable or invalid PDF") from exc
-
-
-async def _read_upload(file: UploadFile) -> bytes:
-    if not file.filename or not file.filename.lower().endswith(".pdf"):
-        raise HTTPException(415, "Upload a .pdf file")
-    data = await file.read(MAX_BYTES + 1)
-    if len(data) > MAX_BYTES:
-        raise HTTPException(413, "PDF exceeds 10 MiB")
-    return data
-
-
-def _findings(doc: fitz.Document) -> list[dict]:
-    findings = []
-    for page_num, page in enumerate(doc):
-        plain_text = page.get_text("text", sort=True)
-        for category, pattern in PATTERNS:
-            for match in pattern.finditer(plain_text):
-                value = match.group(0)
-                # PyMuPDF may not locate a text match crossing PDF layout boundaries.
-                rectangles = page.search_for(value)
-                findings.append({
-                    "id": len(findings),
-                    "page": page_num + 1,
-                    "category": category,
-                    "value": value,
-                    "locatable": bool(rectangles),
-                })
-    return findings
+@app.get("/", include_in_schema=False)
+def index():
+    return FileResponse(STATIC, media_type="text/html", headers={"Cache-Control": "no-store"})
 
 
 @app.get("/health")
-def health() -> dict:
-    return {"status": "ok", "mode": "local-pdf-prototype"}
+def health():
+    return {"status": "ok", "mode": "local-multiformat-prototype"}
+
+
+async def _upload(file: UploadFile) -> tuple[bytes,str]:
+    ext = extension(file.filename or "")
+    data = await file.read(MAX_BYTES+1)
+    if len(data) > MAX_BYTES or not data:
+        raise HTTPException(413,"File must be nonempty and under 12 MiB")
+    return data,ext
 
 
 @app.post("/analyze")
-async def analyze(file: Annotated[UploadFile, File()]) -> dict:
-    data = await _read_upload(file)
-    with _open_pdf(data) as doc:
-        findings = _findings(doc)
-        return {
-            "page_count": doc.page_count,
-            "findings": findings,
-            "limitations": [
-                "Searchable text only; no OCR",
-                "Patterns can miss sensitive information or produce false positives",
-                "Embedded files, annotations, metadata, images and other hidden content are not inspected",
-            ],
-        }
+async def analyze(file: Annotated[UploadFile, File()]):
+    data,ext = await _upload(file)
+    findings,limits = inspect(data,ext)
+    return {"filename": file.filename, "format": ext, "analysis_id": fingerprint(data),
+            "findings": [f.public(i) for i,f in enumerate(findings)],
+            "limitations": limits,
+            "message": "Review each finding. Undetected and unsupported sensitive content may remain."}
 
 
 @app.post("/redact")
-async def redact(
+async def redact_selected(
     file: Annotated[UploadFile, File()],
-    selected_ids: Annotated[str, Form(description="Comma-separated finding IDs from /analyze")],
-) -> Response:
+    selected_ids: Annotated[str, Form(description="Comma-separated IDs returned by /analyze")],
+    analysis_id: Annotated[str, Form(description="SHA-256 analysis_id returned by /analyze")],
+):
+    data,ext = await _upload(file)
+    if fingerprint(data) != analysis_id:
+        raise HTTPException(409,"File differs from the one analyzed; please analyze again")
     try:
-        requested = [int(part.strip()) for part in selected_ids.split(",") if part.strip()]
+        ids = [int(i.strip()) for i in selected_ids.split(",") if i.strip()]
     except ValueError as exc:
-        raise HTTPException(422, "selected_ids must contain integers") from exc
-    if not requested or len(requested) != len(set(requested)) or any(i < 0 for i in requested):
-        raise HTTPException(422, "Select one or more unique finding IDs")
-
-    data = await _read_upload(file)
-    with _open_pdf(data) as doc:
-        findings = _findings(doc)
-        if any(i >= len(findings) for i in requested):
-            raise HTTPException(422, "Finding IDs do not match this PDF")
-        selected = [findings[i] for i in requested]
-        if any(not finding["locatable"] for finding in selected):
-            raise HTTPException(422, "Selected text cannot be located for safe redaction")
-
-        # Page search locates all copies of an approved value on that page.
-        for finding in selected:
-            page = doc[finding["page"] - 1]
-            for rect in page.search_for(finding["value"]):
-                page.add_redact_annot(rect, fill=(0, 0, 0))
-        for page in doc:
-            page.apply_redactions(images=fitz.PDF_REDACT_IMAGE_PIXELS)
-        output = doc.tobytes(garbage=4, deflate=True, clean=True)
-
-    # Verify the written file, rather than the preview or the in-memory original.
-    with _open_pdf(output) as saved:
-        remaining = [
-            f for f in selected
-            if saved[f["page"] - 1].search_for(f["value"])
-            or f["value"] in saved[f["page"] - 1].get_text("text")
-        ]
-    if remaining:
-        raise HTTPException(409, "FLAG: selected text remains in exported PDF")
-
-    # This result is scoped to extracted page text only; not a whole-file security audit.
-    return Response(
-        content=output,
-        media_type="application/pdf",
-        headers={
-            "Content-Disposition": 'attachment; filename="shareshield-redacted.pdf"',
-            "X-ShareShield-Verification": "PASS-SCOPED-TEXT-ONLY",
-            "X-ShareShield-Selected-Count": str(len(selected)),
-            "Cache-Control": "no-store",
-        },
-    )
+        raise HTTPException(422,"selected_ids must be comma-separated integers") from exc
+    if not ids or len(ids) != len(set(ids)) or any(i<0 for i in ids):
+        raise HTTPException(422,"Select one or more unique finding IDs")
+    findings,_ = inspect(data,ext)
+    if any(i>=len(findings) for i in ids):
+        raise HTTPException(422,"Finding IDs do not match file")
+    selected = [findings[i] for i in ids]
+    if any(not f.rectangles and not f.location for f in selected):
+        raise HTTPException(422,"One or more selected findings cannot be located")
+    result,mimetype,output_name = redact(data,ext,selected)
+    return Response(content=result,media_type=mimetype,
+                    headers={"Content-Disposition":f'attachment; filename="{output_name}"',
+                             "X-ShareShield-Verification":"PASS-SELECTED-FINDINGS-ONLY",
+                             "X-ShareShield-Selected-Count":str(len(selected)),
+                             "Cache-Control":"no-store", "X-Content-Type-Options":"nosniff"})
