@@ -5,6 +5,11 @@ Candidates are always user-reviewed. A format match is not proof of identity.
 import re
 
 MORE_RULES = (
+    # Context-marked candidates: intentionally conservative, not full NLP/NER.
+    ("vid_candidate", re.compile(r"(?i)\bVID[\s.:-]*(?:\d{4}[\s-]?){3}\d{4}(?!\d)")),
+    ("dob_candidate", re.compile(r"(?i)\b(?:DOB|D\.O\.B\.|Date of Birth)[\s.:-]*\d{1,2}[/.-]\d{1,2}[/.-]\d{4}\b")),
+    ("name_candidate", re.compile(r"(?im)\b(?:Full Name|Name)\s*:\s*[A-Za-z][A-Za-z. ]{2,75}(?=\n|$)")),
+    ("address_candidate", re.compile(r"(?im)\bAddress\s*:\s*[^\r\n]{4,110}")),
     ("ifsc_candidate", re.compile(r"(?<![A-Za-z0-9])[A-Z]{4}0[A-Z0-9]{6}(?![A-Za-z0-9])")),
     ("payment_card_candidate", re.compile(r"(?<!\d)(?:\d[ -]?){12,18}\d(?!\d)")),
     ("aadhaar_candidate", re.compile(r"(?<!\d)[2-9]\d{3}[ -]?\d{4}[ -]?\d{4}(?!\d)")),
@@ -75,7 +80,7 @@ def valid_match(category: str, value: str) -> bool:
 
 
 SEVERITY = {
-    "aadhaar_candidate": "high", "pan_candidate": "high",
+    "aadhaar_candidate": "high", "vid_candidate": "high", "dob_candidate": "high", "name_candidate": "medium", "address_candidate": "high", "face_candidate": "high", "qr_candidate": "high", "pan_candidate": "high",
     "upi_candidate": "medium", "ifsc_candidate": "medium",
     "payment_card_candidate": "high", "indian_mobile_candidate": "medium", "email": "medium",
 }
