@@ -10,8 +10,8 @@ if command -v git >/dev/null 2>&1; then
 else echo "FAIL: Git missing"; errors=$((errors+1)); fi
 if [[ -x .venv/bin/python ]]; then
   .venv/bin/python --version
-  if .venv/bin/python -c 'import fastapi,fitz,PIL,pytesseract,docx,pptx,openpyxl,pillow_heif' 2>/dev/null; then
-    echo "Backend dependencies: OK"
+  if .venv/bin/python -c 'import fastapi,fitz,PIL,pytesseract,docx,pptx,openpyxl,pillow_heif,cv2,numpy' 2>/dev/null; then
+    echo "Backend, OCR adapter and visual detector dependencies: OK"
   else echo "FAIL: Backend packages missing. Run scripts/setup-macos.sh"; errors=$((errors+1)); fi
 else echo "FAIL: .venv missing. Run scripts/setup-macos.sh"; errors=$((errors+1)); fi
 if command -v node >/dev/null 2>&1 && command -v npm >/dev/null 2>&1; then
