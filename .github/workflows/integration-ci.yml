@@ -1,0 +1,41 @@
+name: Full-stack integration checks
+
+on:
+  push:
+    branches:
+      - integration/deployable-web-app
+  pull_request:
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+      - name: Node 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - name: Install and validate frontend
+        working-directory: frontend
+        run: |
+          npm ci --no-audit --no-fund
+          npm run build
+          npm run lint
+      - name: Install Tesseract
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y tesseract-ocr fonts-dejavu-core
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install backend dependencies
+        run: |
+          python -m pip install -r backend/requirements.txt
+          python -m pip install pytest httpx
+      - name: Run full-stack and backend tests
+        run: python -m pytest backend/tests -v
+      - name: Validate container build
+        run: docker build --tag shareshield:ci .
