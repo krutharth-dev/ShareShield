@@ -15,7 +15,9 @@ def test_friendly_guide_responds_to_real_workflow_states():
     assert "Hey, I'm Shieldy!" in source
     assert "guide-progress" in source
     assert "blocked" in source and "Export is blocked" in source
-    assert "not" in source.lower() and "complete privacy" not in source.lower()
+    assert "automated detection has limits" in source.lower()
+    assert "export is blocked" in source.lower()
+    assert "completely secure" not in source.lower()
     for cue in ("guideStage", "pagesComplete && acknowledged",
                 "report?.status === 'FLAG'", "phase !== 'ready'",
                 "setToast(", "setDrawMode"):
@@ -46,7 +48,7 @@ def test_privacy_disclosure_does_not_claim_perfect_detection_or_remote_on_device
     ):
         assert phrase.lower() in (source + notice).lower(), phrase
     assert "does not" in notice
-    assert "not a legally" in notice
+    assert "not** a legally" in notice
     assert "does not" in source
     assert "shareshield-appearance" in notice
     assert "perfect protection" not in source.lower()
