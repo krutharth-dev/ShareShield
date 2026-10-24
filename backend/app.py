@@ -14,7 +14,7 @@ from starlette.middleware.trustedhost import TrustedHostMiddleware
 from fastapi.responses import JSONResponse
 from starlette.concurrency import run_in_threadpool
 
-from backend import engine, review, smart
+from backend import engine, review, smart, snapshots
 from backend.patterns import SEVERITY
 
 DEPLOYMENT_MODE = os.environ.get("SHARESHIELD_DEPLOYMENT_MODE", "local").lower()
@@ -202,24 +202,39 @@ DOCUMENT_WORK_SLOT = asyncio.Semaphore(1)
 PROCESSOR_WAIT_SECONDS = 5.0
 
 
-async def document_job(function, *args):
-    """Wait briefly for an active job before reporting a retryable busy state.
+MAX_PENDING_JOBS = 2
+_pending_jobs = 0
 
-    The semaphore is released even on cancellations and validation errors.
-    This is intentionally bounded: a single Render instance should not
-    accumulate a queue of large, private documents.
-    """
+
+async def document_job(function, *args):
+    """Bound queue memory and retain the worker slot after caller cancellation."""
+    global _pending_jobs
+    if _pending_jobs >= MAX_PENDING_JOBS:
+        raise HTTPException(503, "Document processor queue is full. Retry shortly.",
+                            headers={"Retry-After": "3"})
+    _pending_jobs += 1
     try:
-        await asyncio.wait_for(DOCUMENT_WORK_SLOT.acquire(), timeout=PROCESSOR_WAIT_SECONDS)
-    except asyncio.TimeoutError as exc:
-        raise HTTPException(
-            503, "Document processor is handling another file. Retrying is safe.",
-            headers={"Retry-After": "3"},
-        ) from exc
-    try:
-        return await run_in_threadpool(function, *args)
+        try:
+            await asyncio.wait_for(DOCUMENT_WORK_SLOT.acquire(), timeout=PROCESSOR_WAIT_SECONDS)
+        except asyncio.TimeoutError as exc:
+            raise HTTPException(503, "Document processor is handling another file. Retrying is safe.",
+                                headers={"Retry-After": "3"}) from exc
     finally:
-        DOCUMENT_WORK_SLOT.release()
+        _pending_jobs -= 1
+
+    async def run():
+        try:
+            return await run_in_threadpool(function, *args)
+        finally:
+            DOCUMENT_WORK_SLOT.release()
+    job = asyncio.create_task(run())
+    # A disconnected/cancelled HTTP caller must not allow another CPU job to
+    # start while its uninterruptible worker thread is still running.
+    def consume_error(done):
+        if not done.cancelled():
+            done.exception()
+    job.add_done_callback(consume_error)
+    return await asyncio.shield(job)
 
 
 @app.post("/analyze")
@@ -237,7 +252,9 @@ async def analyze(file: Annotated[UploadFile, File()]):
     return {
         "filename": file.filename,
         "format": ext,
-        "analysis_id": engine.fingerprint(data),
+        "analysis_id": snapshots.save(data, ext, findings, limitations),
+        "source_sha256": engine.fingerprint(data),
+        "review_expires_in": snapshots.TTL_SECONDS,
         "findings": [f.public(i) for i, f in enumerate(findings)],
         "counts": counts,
         "high_risk_count": sum(1 for f in findings if SEVERITY.get(f.category) == "high"),
@@ -280,9 +297,7 @@ async def redact_selected(
     if redaction_mode not in {"blackout", "blur", "pixelate"}:
         raise HTTPException(422, "Invalid redaction mode")
     data, ext = await _upload(file)
-    if engine.fingerprint(data) != analysis_id:
-        raise HTTPException(409, "File differs from the analyzed copy. Reanalyze the file.")
-    findings, original_notes = await document_job(engine.inspect, data, ext)
+    findings, original_notes = snapshots.get(analysis_id, data, ext)
     chosen = _expand_ids(findings, _ids(selected_ids, len(findings)), redact_all)
     if any(not f.rectangles and not f.location for f in chosen):
         raise HTTPException(422, "One or more selected findings could not be located")
@@ -323,13 +338,11 @@ async def verify_result(
     if redaction_mode not in {"blackout", "blur", "pixelate"}:
         raise HTTPException(422, "Invalid redaction mode")
     original, ext = await _upload(file)
-    if engine.fingerprint(original) != analysis_id:
-        raise HTTPException(409, "Original file differs from the analyzed copy")
+    initial, original_notes = snapshots.get(analysis_id, original, ext)
     output, out_ext = await _upload(redacted)
     valid_outputs = {".png"} if ext in engine.IMAGE_EXTENSIONS else {ext}
     if out_ext not in valid_outputs:
         raise HTTPException(422, "The redacted output has an unexpected format")
-    initial, original_notes = await document_job(engine.inspect, original, ext)
     chosen = _expand_ids(initial, _ids(selected_ids, len(initial)), redact_all)
     if manual_count < 0 or manual_count > 60:
         raise HTTPException(422, "Invalid manual redaction count")

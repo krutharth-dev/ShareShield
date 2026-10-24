@@ -26,9 +26,9 @@ def test_approved_logo_is_a_real_binary_file_referenced_in_ui():
     assert 'media_type="image/webp"' in backend
 
 
-def test_cloudflare_custom_hostname_is_exact_and_requires_demo_password(monkeypatch):
+def test_cloudflare_public_hostname_is_exact(monkeypatch):
     from backend import app as backend_app
-    monkeypatch.setenv("SHARESHIELD_DEPLOYMENT_MODE", "protected-demo")
+    monkeypatch.setenv("SHARESHIELD_DEPLOYMENT_MODE", "public-demo")
     monkeypatch.setenv("SHARESHIELD_DEMO_USER", "demo")
     monkeypatch.setenv("SHARESHIELD_DEMO_PASSWORD", PASSWORD)
     monkeypatch.setenv("SHARESHIELD_PUBLIC_HOSTNAME", HOST)
@@ -39,7 +39,7 @@ def test_cloudflare_custom_hostname_is_exact_and_requires_demo_password(monkeypa
         client = TestClient(m.app)
         headers = {"host": HOST}
         auth = "Basic " + base64.b64encode(("demo:" + PASSWORD).encode()).decode()
-        assert client.get("/", headers=headers).status_code == 401
+        assert client.get("/", headers=headers).status_code == 200
         authorized = {**headers, "authorization": auth}
         assert client.get("/", headers=authorized).status_code == 200
         # The image is served under the protected same-origin path too.
@@ -49,7 +49,7 @@ def test_cloudflare_custom_hostname_is_exact_and_requires_demo_password(monkeypa
             assert img.headers["content-type"].startswith("image/webp")
         else:
             assert img.status_code == 404
-        assert client.get("/shareshield-mark.webp", headers=headers).status_code == 401
+        assert client.get("/shareshield-mark.webp", headers=headers).status_code == img.status_code
         assert client.get("/", headers={"host": "some-other.trycloudflare.com",
                                        "authorization": auth}).status_code == 400
         assert client.get("/", headers={"host": "malicious.onrender.com",

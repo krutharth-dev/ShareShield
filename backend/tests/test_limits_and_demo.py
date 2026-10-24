@@ -57,8 +57,9 @@ def test_ocr_runtime_timeout_returned_cleanly(monkeypatch):
     data = io.BytesIO()
     img.save(data, format="PNG")
     response = client.post("/analyze", files={"file": ("image.png", data.getvalue())})
-    assert response.status_code == 504, response.text
-    assert "timed out" in response.json()["detail"].lower()
+    assert response.status_code == 200, response.text
+    assert response.json()["findings"] == []
+    assert any(note.startswith("UNVERIFIED:") for note in response.json()["limitations"])
 
 
 def test_generate_fictional_demo_files(tmp_path: Path):

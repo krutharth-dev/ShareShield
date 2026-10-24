@@ -21,7 +21,7 @@ from pptx import Presentation
 import pytesseract
 from pytesseract import Output
 
-from backend.patterns import MORE_RULES, SEVERITY, valid_match
+from backend.patterns import MORE_RULES, SEVERITY, CONFIDENCE, valid_match
 
 try:
     from pillow_heif import register_heif_opener
@@ -57,6 +57,8 @@ class Finding:
         return {"id": index, "category": self.category, "value": self.value,
                 "page": self.page, "locatable": bool(self.rectangles) or bool(self.location),
                 "severity": SEVERITY.get(self.category, "medium"),
+                "confidence": CONFIDENCE.get(self.category, .65),
+                "auto_select": CONFIDENCE.get(self.category, .65) >= .85,
                 "rectangles": self.rectangles, "location": self.location}
 
 
@@ -226,7 +228,7 @@ def ocr(image: Image.Image, page: int, scale: float = 1.0, warnings: list[str] |
         # Retry a smaller contrast-enhanced image when large-image OCR stalls.
         if warnings is not None:
             warnings.append("UNVERIFIED: OCR timed out at full resolution; a lower-resolution fallback was used.")
-        factor = min(1.0, 1300 / max(source.width, source.height))
+        factor = min(1.0, 900 / max(source.width, source.height))
         reduced = source.resize((
             max(1, round(source.width * factor)),
             max(1, round(source.height * factor)),
@@ -325,6 +327,13 @@ def _pdf_findings(pdf: fitz.Document) -> tuple[list[Finding], list[str]]:
     for number, page in enumerate(pdf, 1):
         text = page.get_text("text", sort=True)
         native = scan_text(text, number, lambda value, a, b: [tuple(r) for r in page.search_for(value)])
+        from backend.ocr_fields import inferred_identity_fields
+        rows = []
+        for block in page.get_text("dict")["blocks"]:
+            for line in block.get("lines", []):
+                label = " ".join(span["text"] for span in line["spans"])
+                rows.append((label, tuple(line["bbox"])))
+        native.extend(inferred_identity_fields(rows, number))
         visual: list[Finding] = []
         # Pages containing raster images require OCR even if they have native text.
         # Native text-only pages do not need expensive rasterization/Tesseract.

@@ -270,7 +270,7 @@ def evaluate(selected: list[engine.Finding], redacted_data: bytes, ext: str,
     # sanitized. Never represent a scoped text check as comprehensive safety.
     office_unverified = ext in {".docx", ".pptx", ".xlsx"}
     scan_incomplete = original_incomplete or office_unverified or any(
-        "OCR timed out" in note or "OCR is unavailable" in note
+        note.startswith("UNVERIFIED:") or "OCR timed out" in note or "OCR is unavailable" in note
         or "Tesseract OCR is unavailable" in note for note in warnings
     )
     status = (

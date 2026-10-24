@@ -5,6 +5,12 @@ Candidates are always user-reviewed. A format match is not proof of identity.
 import re
 
 MORE_RULES = (
+    ("passport_candidate", re.compile(r"(?i)\bPassport(?:\s+(?:No\.?|Number))?\s*[:#-]\s*[A-Z][0-9]{7}\b")),
+    ("voter_candidate", re.compile(r"(?i)\b(?:EPIC|Voter\s+ID)(?:\s+(?:No\.?|Number))?\s*[:#-]\s*[A-Z]{3}[0-9]{7}\b")),
+    ("licence_candidate", re.compile(r"(?i)\b(?:DL|Driving\s+Licen[cs]e)(?:\s+(?:No\.?|Number))?\s*[:#-]\s*[A-Z]{2}[- ]?[0-9]{2}[- ]?[0-9]{4}[- ]?[0-9]{7}\b")),
+    ("bank_account_candidate", re.compile(r"(?i)\b(?:Bank\s+Account|Account|A/c)(?:\s+(?:No\.?|Number))?\s*[:#-]\s*[0-9][0-9 -]{7,24}[0-9]\b")),
+    ("patient_id_candidate", re.compile(r"(?i)\b(?:MRN|Patient\s+ID|Medical\s+Record\s+Number)\s*[:#-]\s*[A-Z0-9][A-Z0-9-]{3,24}\b")),
+    ("credential_candidate", re.compile(r"(?im)\b(?:password|api[_ -]?key|access[_ -]?token|secret[_ -]?key)\s*[:=]\s*[^\s]{4,200}")),
     # Context-marked candidates: intentionally conservative, not full NLP/NER.
     ("vid_candidate", re.compile(r"(?i)\bVID[\s.:-]*(?:\d{4}[\s-]?){3}\d{4}(?!\d)")),
     ("dob_candidate", re.compile(r"(?i)\b(?:DOB|D\.O\.B\.|Date of Birth)[\s.:-]*\d{1,2}[/.-]\d{1,2}[/.-]\d{4}\b")),
@@ -85,7 +91,22 @@ def valid_match(category: str, value: str) -> bool:
 
 
 SEVERITY = {
+    "passport_candidate": "high", "voter_candidate": "high", "licence_candidate": "high",
+    "bank_account_candidate": "high", "patient_id_candidate": "high", "credential_candidate": "high",
     "aadhaar_candidate": "high", "id12_candidate": "medium", "vid_candidate": "high", "dob_candidate": "high", "name_candidate": "medium", "address_candidate": "high", "face_candidate": "high", "qr_candidate": "high", "text_region_candidate": "medium", "pan_candidate": "high",
     "upi_candidate": "medium", "ifsc_candidate": "medium",
     "payment_card_candidate": "high", "indian_mobile_candidate": "medium", "email": "medium",
+}
+
+
+# Rule confidence is distinct from impact/severity; these are heuristic scores,
+# not calibrated probabilities. Generic 12-digit strings need human selection.
+CONFIDENCE = {
+    "email": .98, "indian_mobile_candidate": .87, "aadhaar_candidate": .98,
+    "id12_candidate": .65, "vid_candidate": .96, "dob_candidate": .96,
+    "name_candidate": .86, "address_candidate": .86, "pan_candidate": .92,
+    "payment_card_candidate": .97, "upi_candidate": .90, "ifsc_candidate": .75,
+    "face_candidate": .80, "qr_candidate": .80,
+    "passport_candidate": .95, "voter_candidate": .95, "licence_candidate": .95,
+    "bank_account_candidate": .92, "patient_id_candidate": .90, "credential_candidate": .95,
 }

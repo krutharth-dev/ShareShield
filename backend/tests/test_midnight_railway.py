@@ -61,5 +61,6 @@ def test_railway_docker_port_and_documented_security_configuration():
         assert token.lower() in guide.lower(), token
     assert 'RAILWAY_PUBLIC_DOMAIN' in api
     assert 'healthcheck.railway.app' in api
-    assert 'hmac.compare_digest' in api
+    assert 'TrustedHostMiddleware' in api
+    assert 'Cross-origin' in api or 'cross-origin' in api
     assert "HTTPException(409" in api

@@ -22,32 +22,10 @@ def load_api(monkeypatch, mode, user="", password=""):
     return importlib.reload(app_module)
 
 
-def test_protected_demo_fails_closed_without_credentials(monkeypatch):
-    with pytest.raises(RuntimeError, match="requires"):
-        load_api(monkeypatch, "protected-demo")
-
-
-def test_protected_demo_requires_basic_auth_and_health_stays_available(monkeypatch):
-    password = "synthetic-demo-password-at-least-20"
-    user = "reviewer"
-    m = load_api(monkeypatch, "protected-demo", user=user, password=password)
+def test_removed_protected_mode_is_rejected(monkeypatch):
     try:
-        client = TestClient(m.app)
-        assert client.get("/health", headers={"host": "shareshield-demo.onrender.com"}).status_code == 200
-        unauth = client.get("/", headers={"host": "shareshield-demo.onrender.com"})
-        assert unauth.status_code == 401
-        assert "WWW-Authenticate" in unauth.headers
-        basic = "Basic " + base64.b64encode((user + ":" + password).encode()).decode()
-        ok = client.get("/", headers={"host": "shareshield-demo.onrender.com", "authorization": basic})
-        assert ok.status_code == 200
-        assert client.get("/", headers={"host": "evil.example.net", "authorization": basic}).status_code == 400
-        invalid = "Basic " + base64.b64encode(b"reviewer:wrong").decode()
-        assert client.get("/", headers={"host": "shareshield-demo.onrender.com", "authorization": invalid}).status_code == 401
-        origin_headers = {"host": "shareshield-demo.onrender.com", "authorization": basic}
-        cross = client.post("/analyze", headers={**origin_headers, "origin": "https://evil.example.net"})
-        assert cross.status_code == 403
-        insecure = client.post("/analyze", headers={**origin_headers, "origin": "http://shareshield-demo.onrender.com"})
-        assert insecure.status_code == 403
+        with pytest.raises(RuntimeError, match="Unknown SHARESHIELD_DEPLOYMENT_MODE"):
+            load_api(monkeypatch, "protected-demo")
     finally:
         load_api(monkeypatch, "local")
 
@@ -57,19 +35,20 @@ def test_local_deployment_remains_unchanged(monkeypatch):
     assert TestClient(m.app).get("/").status_code == 200
 
 
-def test_railway_protected_demo_uses_exact_service_host(monkeypatch):
+def test_railway_public_demo_uses_exact_service_host(monkeypatch):
+    monkeypatch.setenv("SHARESHIELD_PUBLIC_HOSTNAME", "shareshield-demo.up.railway.app")
     monkeypatch.setenv("RAILWAY_PROJECT_ID", "synthetic-project")
     monkeypatch.setenv("RAILWAY_PUBLIC_DOMAIN", "shareshield-demo.up.railway.app")
     try:
-        m = load_api(monkeypatch, "protected-demo", user="demo",
+        m = load_api(monkeypatch, "public-demo", user="demo",
                      password="fictional-long-demo-password-2026")
         client = TestClient(m.app)
         host = "shareshield-demo.up.railway.app"
         auth = "Basic " + base64.b64encode(
             b"demo:fictional-long-demo-password-2026").decode()
         assert client.get("/health", headers={"host": "healthcheck.railway.app"}).status_code == 200
-        assert client.get("/", headers={"host": host}).status_code == 401
-        assert client.get("/", headers={"host": host, "authorization": "Basic ???"}).status_code == 401
+        assert client.get("/", headers={"host": host}).status_code == 200
+        assert client.get("/", headers={"host": host, "authorization": "Basic ???"}).status_code == 200
         assert client.get("/", headers={"host": host, "authorization": auth}).status_code == 200
         # Another Railway customer's Host must not be trusted.
         assert client.get("/", headers={"host": "someone-else.up.railway.app",
@@ -89,10 +68,11 @@ def test_railway_protected_demo_uses_exact_service_host(monkeypatch):
 
 
 def test_railway_rejects_malformed_domain(monkeypatch):
+    monkeypatch.setenv("SHARESHIELD_PUBLIC_HOSTNAME", "shareshield-demo.up.railway.app")
     monkeypatch.setenv("RAILWAY_PROJECT_ID", "synthetic-project")
     monkeypatch.setenv("RAILWAY_PUBLIC_DOMAIN", "evil.example.com")
     with pytest.raises(RuntimeError, match="Invalid RAILWAY_PUBLIC_DOMAIN"):
-        load_api(monkeypatch, "protected-demo", user="demo",
+        load_api(monkeypatch, "public-demo", user="demo",
                  password="fictional-long-demo-password-2026")
     monkeypatch.delenv("RAILWAY_PROJECT_ID", raising=False)
     monkeypatch.delenv("RAILWAY_PUBLIC_DOMAIN", raising=False)

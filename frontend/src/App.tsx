@@ -11,6 +11,8 @@ type Finding = {
   id: number
   category: string
   severity: string
+  confidence: number
+  auto_select: boolean
   value: string
   page: number
   location?: string
@@ -19,6 +21,7 @@ type Finding = {
 }
 type Analysis = {
   analysis_id: string
+  source_sha256: string
   filename: string
   format: string
   findings: Finding[]
@@ -45,15 +48,15 @@ type Report = {
 type RedactionMode = 'blackout' | 'blur' | 'pixelate'
 type Appearance = 'light' | 'dark' | 'system'
 const privacyOptions = [
-  { id: 'identity', label: 'Aadhaar, 12-digit IDs & VID', categories: ['aadhaar_candidate', 'id12_candidate', 'vid_candidate'] },
+  { id: 'identity', label: 'Identity & patient IDs', categories: ['aadhaar_candidate', 'id12_candidate', 'vid_candidate', 'passport_candidate', 'voter_candidate', 'licence_candidate', 'patient_id_candidate'] },
   { id: 'name', label: 'Full name', categories: ['name_candidate'] },
   { id: 'address', label: 'Residential address', categories: ['address_candidate'] },
   { id: 'dob', label: 'Date of birth', categories: ['dob_candidate'] },
   { id: 'photo', label: 'Face / photograph', categories: ['face_candidate'] },
   { id: 'contacts', label: 'Phone and email', categories: ['email', 'indian_mobile_candidate'] },
   { id: 'codes', label: 'QR codes (barcode: manual)', categories: ['qr_candidate'] },
-  { id: 'financial', label: 'PAN, UPI, cards and IFSC', categories: ['pan_candidate', 'upi_candidate', 'payment_card_candidate', 'ifsc_candidate'] },
-  { id: 'other', label: 'Other areas (manual only)', categories: [] },
+  { id: 'financial', label: 'Bank accounts, PAN, UPI & cards', categories: ['pan_candidate', 'upi_candidate', 'payment_card_candidate', 'ifsc_candidate', 'bank_account_candidate'] },
+  { id: 'other', label: 'Credentials & manual areas', categories: ['credential_candidate'] },
 ]
 const privacyIcons: Record<string, string> = {
   identity: 'shield', name: 'file', address: 'privacy', dob: 'report',
@@ -66,7 +69,7 @@ const privacyNotes: Record<string, string> = {
 }
 function defaultFindingIds(findings: Finding[], wanted: string[]) {
   const categories = new Set(privacyOptions.filter(option => wanted.includes(option.id)).flatMap(option => option.categories))
-  return findings.filter(f => f.locatable && f.category !== 'text_region_candidate' && categories.has(f.category)).map(f => f.id)
+  return findings.filter(f => f.locatable && f.auto_select && f.category !== 'text_region_candidate' && categories.has(f.category)).map(f => f.id)
 }
 const allowed = new Set(['pdf', 'docx', 'pptx', 'xlsx', 'csv', 'txt', 'jpg', 'jpeg', 'png', 'heic', 'heif', 'webp', 'bmp', 'tif', 'tiff'])
 const outputExt: Record<string, string> = { '.pdf': '.pdf', '.docx': '.docx', '.pptx': '.pptx', '.xlsx': '.xlsx', '.csv': '.csv', '.txt': '.txt' }
@@ -589,7 +592,7 @@ function App() {
   function downloadReport() {
     if (!report || !analysis) return
     const payload = {
-      ...report, original_sha256: analysis.analysis_id, original_format: analysis.format,
+      ...report, original_sha256: analysis.source_sha256, original_format: analysis.format,
       review_pages_marked: reviewedPages.length, review_page_total: analysis.page_count,
       categories_requested: privacyCategories, acknowledged,
       generated_at: new Date().toISOString(), disclaimer: 'Best-effort scan only; not a certificate of complete sanitization.'
@@ -853,7 +856,7 @@ function App() {
                   {analysis.findings.length === 0 && <p className="muted">No supported patterns found. This does not mean the file is safe.</p>}
                   {analysis.findings.map(f => <label key={f.id} className="finding-row">
                     <input type="checkbox" checked={selected.includes(f.id)} disabled={!f.locatable} onChange={() => changeSelected(f.id)} />
-                    <span className="finding-text"><strong>{f.value}</strong><small>{f.category.replaceAll('_', ' ')} · {analysis.preview_supported ? 'page ' + f.page : f.location || 'text'}</small></span><span className={'severity-tag ' + f.severity}>{f.severity}</span>
+                    <span className="finding-text"><strong>{f.value}</strong><small>{f.category.replaceAll('_', ' ')} · {Math.round(f.confidence * 100)}% rule confidence · {f.auto_select ? 'recommended' : 'review suggestion'} · {analysis.preview_supported ? 'page ' + f.page : f.location || 'text'}</small></span><span className={'severity-tag ' + f.severity}>{f.severity}</span>
                   </label>)}
                 </div>
                 {analysis.limitations.some(note => note.includes('UNVERIFIED:')) && <div className="scan-caveat" role="alert">
