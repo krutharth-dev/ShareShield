@@ -4,6 +4,7 @@ import Icon from './Icon'
 import PlayfulGuide from './PlayfulGuide'
 import PrivacyPanel from './PrivacyPanel'
 import HeroVisual from './HeroVisual'
+import ShieldyAssistant from './ShieldyAssistant'
 import CommandPalette, { type CommandAction } from './CommandPalette'
 
 type Finding = {
@@ -667,7 +668,7 @@ function App() {
                 <div className="file-details"><strong>{file.name}</strong><small>{MB(file.size)}</small></div>
                 <span className="file-state">{invalid ? 'Unsupported' : 'Selected'}</span>
                 <button className="remove-button" onClick={() => choose(null)} aria-label="Remove selected file">×</button></div>}
-              {file && <div className="privacy-preferences">
+              {file && <div className="privacy-preferences" id="privacy-preferences">
                 <div className="pref-heading"><div><span className="section-kicker">02 / PRIVACY PREFERENCES</span><strong>What would you like to protect?</strong></div><span>{privacyCategories.length} selected · Choose your categories</span></div>
                 <div className="privacy-presets" role="group" aria-label="Quick privacy selection">
                   <button type="button" className={privacyCategories.length === privacyOptions.length ? 'preset-chip active' : 'preset-chip'}
@@ -812,7 +813,7 @@ function App() {
                     </div>
                     <label className="compare-slider">Original visible: {compare}% <input type="range" min="0" max="100" value={compare} onChange={e => setCompare(Number(e.target.value))} /></label>
                   </div>}
-                  {result && <div className="page-review"><label><input type="checkbox" checked={reviewedPages.includes(page)}
+                  {result && <div className="page-review" id="export-review"><label><input type="checkbox" checked={reviewedPages.includes(page)}
                     onChange={event => setReviewedPages(current => event.target.checked ? [...current, page] : current.filter(p => p !== page))} />
                     I have visually checked page {page} of the exported copy</label>
                     <small>{reviewedPages.length} / {analysis.page_count} pages reviewed. Inspect each page, including small IDs, signatures, photos and codes.</small>
@@ -828,7 +829,7 @@ function App() {
                   {!pagesComplete && <button className="guide-inline-link" onClick={() => navigateTo('review')}>Review pages <Icon name="arrowRight" size={14}/></button>}
                 </div>}
                 {report?.status === 'FLAG' && <p className="warning" role="alert"><Icon name="alert" size={15}/> This export is blocked until remaining high-risk candidates are addressed. Please adjust your masks and try again.</p>}
-                <div className="action-row export-actions"><button className="primary-action" disabled={phase !== 'ready' || (!selected.length && !manual.length)}
+                <div className="action-row export-actions" id="export-actions"><button className="primary-action" disabled={phase !== 'ready' || (!selected.length && !manual.length)}
                   onClick={processFile}>{phase === 'processing' ? <><span className="mini-spinner"/> Processing…</> : <><Icon name="lock" size={17}/> Generate &amp; verify <Icon name="arrowRight" size={17}/></>}</button>
                   <button className="secondary-action" disabled={!result || !acknowledged || !pagesComplete || report?.status === 'FLAG'} onClick={download}><Icon name="download" size={17}/> Download reviewed copy</button></div>
                 {report && <div id="verification" className={'report-card ' + statusColor}><h3><Icon name={report.status === 'FLAG' ? 'alert' : 'checkCircle'} size={19}/> Verification: {report.status.replace('_', ' ')}</h3>
@@ -865,6 +866,20 @@ function App() {
           <span><button className="footer-privacy" onClick={() => { setShowPrivacy(true); navigateTo('privacy') }}><Icon name="lock" size={14}/> Privacy &amp; safety</button> · Detect · Review · Redact · Verify</span></footer>
       </section>
       <CommandPalette open={commandOpen} onClose={() => setCommandOpen(false)} actions={commandActions}/>
+      <ShieldyAssistant
+        hasFile={Boolean(file)} hasAnalysis={Boolean(analysis)} hasResult={Boolean(result)}
+        findingCount={analysis?.findings.length ?? 0}
+        reviewedPages={reviewedPages.length} pageCount={analysis?.page_count ?? 0}
+        pagesComplete={pagesComplete} acknowledged={acknowledged} phase={phase}
+        verificationStatus={report?.status ?? null}
+        onNavigate={id => {
+          if (id === 'privacy') setShowPrivacy(true)
+          if (id === 'settings') setShowSettings(true)
+          navigateTo(id)
+        }}
+        onChooseFile={() => { navigateTo('upload'); input.current?.click() }}
+        onDemo={sample}
+      />
       {toast && <div className="delight-toast" role="status" aria-live="polite"><Icon name="sparkle" size={18}/><span>{toast}</span>
         <button aria-label="Dismiss notification" onClick={() => setToast('')}><Icon name="close" size={14}/></button></div>}
     </main>
