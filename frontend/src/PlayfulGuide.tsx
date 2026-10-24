@@ -6,7 +6,7 @@ type GuideStage = 'pick' | 'scan' | 'working' | 'review' | 'check' | 'download' 
 const stages: Record<GuideStage, { eyebrow: string; headline: string; message: string; button: string; icon: string }> = {
   pick: { eyebrow: 'YOUR PRIVACY SIDEKICK', headline: "Hey, I'm Shieldy!", message: 'Start with a fictional demo file or pick your own. Three easy moments: pick it, cover it, check it.', button: 'Choose a file', icon: 'upload' },
   scan: { eyebrow: 'NICE START!', headline: 'Your file is ready.', message: 'Choose what to look for, then scan. You can always review and change the suggestions.', button: 'Go to scan', icon: 'scan' },
-  working: { eyebrow: 'IN PROGRESS', headline: 'Working on your document…', message: 'The local ShareShield server is doing its thing. No made-up progress percentages here.', button: '', icon: 'scan' },
+  working: { eyebrow: 'IN PROGRESS', headline: 'Working on your document…', message: 'Your configured ShareShield server is processing the document. Please keep this tab open.', button: '', icon: 'scan' },
   review: { eyebrow: 'YOUR TURN', headline: 'Spot, select, protect.', message: 'Check the highlighted findings. Missing something? Draw a mask over that region yourself.', button: 'Review findings', icon: 'eye' },
   check: { eyebrow: 'ALMOST THERE', headline: 'One last look matters.', message: 'Check every exported page and acknowledge the limits. We will guide you to the remaining steps.', button: 'Finish review', icon: 'checkCircle' },
   download: { eyebrow: 'READY FOR YOUR DECISION', headline: 'Your reviewed copy is ready.', message: 'The required page review is complete. Save your copy, and remember: automated detection has limits.', button: 'Go to download', icon: 'download' },

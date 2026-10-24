@@ -176,7 +176,7 @@ function App() {
       if (!active || checking) return
       checking = true
       try {
-        const response = await fetch('/health', { cache: 'no-store', credentials: 'same-origin' })
+        const response = await fetch('/api/status', { cache: 'no-store', credentials: 'same-origin' })
         if (!response.ok) throw Error('Health check returned ' + response.status)
         const status = await response.json()
         if (status?.status !== 'ok') throw Error('Invalid server health response')
@@ -350,7 +350,7 @@ function App() {
     // Keep the user's selected file and manual work: a full reload loses both.
     setServerStatus('checking')
     try {
-      const response = await fetch('/health', { cache: 'no-store', credentials: 'same-origin' })
+      const response = await fetch('/api/status', { cache: 'no-store', credentials: 'same-origin' })
       if (!response.ok) throw Error('Health check unsuccessful')
       const health = await response.json()
       if (health?.status !== 'ok') throw Error('Unexpected health response')

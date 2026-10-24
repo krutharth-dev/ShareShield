@@ -148,6 +148,7 @@ def index():
                         headers={"Cache-Control": "no-store"})
 
 
+@app.get("/api/status")
 @app.get("/health")
 def health():
     return {"status": "ok", "mode": "local-privacy-review-v0.6",

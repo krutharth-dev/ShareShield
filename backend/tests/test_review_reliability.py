@@ -98,3 +98,11 @@ def test_cancelled_caller_keeps_worker_busy():
 def test_card_is_not_also_a_partial_aadhaar():
     found = engine.scan_text('Card: 4111 1111 1111 1111', 1)
     assert {f.category for f in found} == {'payment_card_candidate'}
+
+
+def test_browser_status_and_platform_health_agree():
+    health = client.get('/health')
+    status = client.get('/api/status')
+    assert status.status_code == 200
+    assert status.json() == health.json()
+    assert status.headers['Cache-Control'] == 'no-store'

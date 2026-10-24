@@ -14,6 +14,7 @@ export default defineConfig({
       '/preview': 'http://127.0.0.1:8000',
       '/redact': 'http://127.0.0.1:8000',
       '/verify': 'http://127.0.0.1:8000',
+      '/api/status': 'http://127.0.0.1:8000',
       '/health': 'http://127.0.0.1:8000',
     },
   },
