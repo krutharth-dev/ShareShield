@@ -1695,3 +1695,37 @@ html[data-theme="light"] .shieldy-primary,html[data-theme="light"] .shieldy-star
   .welcome{padding:28px 22px;}
   .hero-showcase{min-height:235px;}
 }
+
+
+/* Approved ShareShield identity from the generated logo:
+   actual transparent mark + accessible text split for dark/light contrast. */
+.sidebar .brand-icon.brand-icon-approved {
+  display:grid;place-items:center;flex:0 0 51px;
+  width:51px;height:51px;padding:0;border:0;border-radius:11px;
+  background:transparent;box-shadow:none;overflow:visible;
+}
+.sidebar .brand-icon.brand-icon-approved img {
+  display:block;width:51px;height:51px;object-fit:contain;
+  filter:drop-shadow(0 3px 7px rgba(13,134,220,.18));
+}
+.sidebar .brand:hover .brand-icon.brand-icon-approved {
+  box-shadow:none;transform:translateY(-2px) rotate(-3deg);
+}
+.brand-words strong.brand-wordmark {
+  display:flex;align-items:baseline;gap:0;letter-spacing:-.75px;
+  font-weight:850;font-size:19px;line-height:1.12;
+}
+.brand-wordmark span:first-child {color:var(--sh-ink);}
+.brand-wordmark span:last-child {color:var(--sh-green);}
+html[data-theme="dark"] .brand-wordmark span:first-child {color:#E5F3FF;}
+html[data-theme="dark"] .brand-wordmark span:last-child {color:#55D7FF;}
+.brand .brand-words small {letter-spacing:1.45px;}
+.mobile-brand-mark {display:none;flex:0 0 auto;object-fit:contain;}
+@media(max-width:720px) {
+  .mobile-brand-mark {display:block;}
+  .sidebar .brand-icon.brand-icon-approved {width:48px;height:48px;flex-basis:48px;}
+  .sidebar .brand-icon.brand-icon-approved img {width:48px;height:48px;}
+}
+@media (prefers-reduced-motion:reduce) {
+  .sidebar .brand:hover .brand-icon.brand-icon-approved {transform:none;}
+}
