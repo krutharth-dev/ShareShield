@@ -150,7 +150,8 @@ def index():
 
 @app.get("/health")
 def health():
-    return {"status": "ok", "mode": "local-privacy-review-v0.5",
+    return {"status": "ok", "mode": "local-privacy-review-v0.6",
+            "processor_busy": DOCUMENT_WORK_SLOT.locked(),
             "ocr_available": engine.ocr_available(),
             "vision_available": smart.available(),
             "redaction_modes": ["blackout", "blur", "pixelate"],
@@ -198,13 +199,27 @@ def _expand_ids(findings: list[engine.Finding], ids: list[int], all_occurrences:
 
 # Bound expensive OCR/image jobs so concurrent uploads cannot starve /health.
 DOCUMENT_WORK_SLOT = asyncio.Semaphore(1)
+PROCESSOR_WAIT_SECONDS = 5.0
 
 
 async def document_job(function, *args):
-    if DOCUMENT_WORK_SLOT.locked():
-        raise HTTPException(503, "Document processor is busy. Please retry in a moment.")
-    async with DOCUMENT_WORK_SLOT:
+    """Wait briefly for an active job before reporting a retryable busy state.
+
+    The semaphore is released even on cancellations and validation errors.
+    This is intentionally bounded: a single Render instance should not
+    accumulate a queue of large, private documents.
+    """
+    try:
+        await asyncio.wait_for(DOCUMENT_WORK_SLOT.acquire(), timeout=PROCESSOR_WAIT_SECONDS)
+    except asyncio.TimeoutError as exc:
+        raise HTTPException(
+            503, "Document processor is handling another file. Retrying is safe.",
+            headers={"Retry-After": "3"},
+        ) from exc
+    try:
         return await run_in_threadpool(function, *args)
+    finally:
+        DOCUMENT_WORK_SLOT.release()
 
 
 @app.post("/analyze")

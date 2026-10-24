@@ -82,6 +82,28 @@ async function errorFrom(response: Response) {
     return typeof json.detail === 'string' ? json.detail : 'Request failed (' + response.status + ')'
   } catch { return 'Request failed (' + response.status + ')' }
 }
+/**
+ * Retry only explicit temporary server-busy responses (HTTP 503).
+ * Recreate the multipart body on each attempt and never silently retry
+ * invalid documents, failed verifications, or permanent server errors.
+ */
+async function postWithBusyRetry(
+  endpoint: string,
+  makeBody: () => FormData,
+  onRetry?: (attempt: number) => void,
+): Promise<Response> {
+  for (let attempt = 0; attempt < 4; attempt += 1) {
+    const response = await fetch(endpoint, { method: 'POST', body: makeBody(), cache: 'no-store' })
+    if (response.status !== 503 || attempt === 3) return response
+    onRetry?.(attempt + 1)
+    const retryAfter = Number(response.headers.get('Retry-After'))
+    const delay = Number.isFinite(retryAfter) && retryAfter > 0
+      ? Math.min(8000, retryAfter * 1000 + attempt * 1000)
+      : 2500 + attempt * 2000
+    await new Promise<void>(resolve => window.setTimeout(resolve, delay))
+  }
+  throw Error('Document processor could not complete this request. Please retry.')
+}
 function formatType(name: string) {
   return name.split('.').pop()?.toUpperCase() || 'FILE'
 }
@@ -118,6 +140,7 @@ function App() {
   const [redactionMode, setRedactionMode] = useState<RedactionMode>('blackout')
   const [allOccurrences, setAllOccurrences] = useState(true)
   const [serverStatus, setServerStatus] = useState<'checking' | 'online' | 'offline'>('checking')
+  const [processorBusy, setProcessorBusy] = useState(false)
   const [logoUnavailable, setLogoUnavailable] = useState(false)
   const input = useRef<HTMLInputElement>(null)
   const previewSurface = useRef<HTMLDivElement>(null)
@@ -157,6 +180,7 @@ function App() {
         failures = 0
         setOcrAvailable(Boolean(status.ocr_available))
         setVisionAvailable(Boolean(status.vision_available))
+        setProcessorBusy(Boolean(status.processor_busy))
         setServerStatus('online')
       } catch {
         if (!active) return
@@ -303,6 +327,7 @@ function App() {
       setServerStatus('online')
       setOcrAvailable(Boolean(health.ocr_available))
       setVisionAvailable(Boolean(health.vision_available))
+      setProcessorBusy(Boolean(health.processor_busy))
       setToast('Connected! Your selected file and settings are preserved.')
     } catch {
       setServerStatus('offline')
@@ -314,14 +339,24 @@ function App() {
     if (!file || invalid) return
     const id = ++requestId.current
     setPhase('scanning'); setProblem(false); setMessage('Scanning file for supported identifiers…')
-    setAnalysis(null); setSelected([]); setManual([]); setHistory([]); setFuture([]); setEditIndex(null); clearResult()
+    // Keep the previous review available if a temporary 503 blocks rescan.
     try {
-      const response = await fetch('/analyze', { method: 'POST', body: dataFor(file), cache: 'no-store' })
+      const response = await postWithBusyRetry(
+        '/analyze', () => dataFor(file),
+        attempt => {
+          if (id !== requestId.current) return
+          setServerStatus('online')
+          setProcessorBusy(true)
+          setMessage('Processor is occupied. Retrying automatically (' + attempt + ' of 3)…')
+        },
+      )
       if (!response.ok) throw Error(await errorFrom(response))
       const data: Analysis = await response.json()
       if (id !== requestId.current) return
       setServerStatus('online')
+      setProcessorBusy(false)
       setAnalysis(data)
+      setSelected([]); setManual([]); setHistory([]); setFuture([]); setEditIndex(null); clearResult()
       const incomplete = data.limitations.some(note => note.includes('UNVERIFIED:'))
       setToast(incomplete ? 'Partial scan: manually review unverified content.' : data.findings.length ? 'Scan finished! Check the suggestions below.' : 'Scan finished. Check for anything the scanner missed.')
       setSelected(defaultFindingIds(data.findings, privacyCategories))
@@ -334,6 +369,7 @@ function App() {
       setProblem(false)
     } catch (error) {
       if (id !== requestId.current) return
+      setProcessorBusy(false)
       setProblem(true); setMessage(error instanceof Error ? error.message : 'Unable to analyze file.')
     } finally { if (id === requestId.current) setPhase('ready') }
   }
@@ -487,7 +523,13 @@ function App() {
         redact_all: String(allOccurrences),
         redaction_mode: analysis.preview_supported ? redactionMode : 'blackout',
       })
-      const response = await fetch('/redact', { method: 'POST', body: request, cache: 'no-store' })
+      const response = await postWithBusyRetry(
+        '/redact', () => request,
+        attempt => {
+          setServerStatus('online')
+          setMessage('Processor is occupied. Retrying redaction (' + attempt + ' of 3)…')
+        },
+      )
       if (!response.ok) throw Error(await errorFrom(response))
       const bytes = await response.blob()
       const ext = outputExt[analysis.format] || '.png'
@@ -500,7 +542,13 @@ function App() {
       verify.append('manual_count', String(manual.length))
       verify.append('redact_all', String(allOccurrences))
       verify.append('redaction_mode', analysis.preview_supported ? redactionMode : 'blackout')
-      const check = await fetch('/verify', { method: 'POST', body: verify, cache: 'no-store' })
+      const check = await postWithBusyRetry(
+        '/verify', () => verify,
+        attempt => {
+          setServerStatus('online')
+          setMessage('Processor is occupied. Retrying verification (' + attempt + ' of 3)…')
+        },
+      )
       if (!check.ok) throw Error(await errorFrom(check))
       const checked: Report = await check.json()
       if (id !== requestId.current) return
@@ -602,8 +650,8 @@ function App() {
         </div>
         <div className="sidebar-bottom">
           <span className={'local-indicator ' + (serverStatus === 'offline' ? 'indicator-unavailable' : '')} />
-          <div><strong>{phase !== 'ready' ? 'Processing document' : serverStatus === 'online' ? 'Backend connected' : serverStatus === 'checking' ? 'Checking service' : 'Reconnecting to server'}</strong>
-            <small>{phase !== 'ready' ? 'Document processing in progress' : serverStatus === 'online' ? (ocrAvailable ? (isHosted ? 'OCR ready · server processing' : 'OCR ready · local processing') : 'OCR unavailable') : (isHosted ? 'Check connection or retry' : 'Start ShareShield locally')}</small></div>
+          <div><strong>{phase !== 'ready' ? 'Processing document' : serverStatus === 'online' ? (processorBusy ? 'Processor busy' : 'Backend connected') : serverStatus === 'checking' ? 'Checking service' : 'Reconnecting to server'}</strong>
+            <small>{phase !== 'ready' ? 'Document processing in progress' : serverStatus === 'online' ? (processorBusy ? 'The server is processing a document' : ocrAvailable ? (isHosted ? 'OCR ready · server processing' : 'OCR ready · local processing') : 'OCR unavailable') : (isHosted ? 'Check connection or retry' : 'Start ShareShield locally')}</small></div>
         </div>
       </aside>
       {sidebarOpen && <button className="mobile-backdrop" onClick={() => setSidebarOpen(false)} aria-label="Close navigation" />}
@@ -632,7 +680,7 @@ function App() {
                 </button>)}
             </div>
             <span className={'server-pill ' + (phase !== 'ready' ? 'checking' : serverStatus)} role="status">
-              <span className="status-dot" />{phase !== 'ready' ? 'Processing' : serverStatus === 'online' ? 'System online' : serverStatus === 'checking' ? 'Connecting' : 'Reconnecting'}
+              <span className="status-dot" />{phase !== 'ready' ? 'Processing' : serverStatus === 'online' ? (processorBusy ? 'Processor busy' : 'System online') : serverStatus === 'checking' ? 'Connecting' : 'Reconnecting'}
             </span>
           </div>
         </header>

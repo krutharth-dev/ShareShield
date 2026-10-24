@@ -34,8 +34,8 @@ MAX_BYTES = 12 * 1024 * 1024
 MAX_PIXELS = 25_000_000
 MAX_PAGES = 25
 MAX_FINDINGS = 500
-OCR_TIMEOUT_SECONDS = 20
-OCR_MAX_SIDE = 2100  # Resize before CPU-intensive OCR on small hosting instances
+OCR_TIMEOUT_SECONDS = 14
+OCR_MAX_SIDE = 1850  # Bound Tesseract time/memory on single-instance cloud hosting
 Image.MAX_IMAGE_PIXELS = MAX_PIXELS
 
 EXTENSIONS = {".pdf", ".docx", ".pptx", ".txt", ".jpg", ".jpeg", ".png", ".webp", ".bmp", ".tif", ".tiff", ".heic", ".heif", ".csv", ".xlsx"}

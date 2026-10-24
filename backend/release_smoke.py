@@ -118,21 +118,37 @@ def main() -> None:
     else:
         raise AssertionError("Invalid Office upload accepted")
 
-    # CPU saturation must return a retryable status, not silently queue work.
-    from backend.app import DOCUMENT_WORK_SLOT, document_job
+    # Bounded work-slot queue must avoid immediate 503, remain responsive to
+    # /health, and still reject jobs that exceed the allowed wait.
+    from backend.app import DOCUMENT_WORK_SLOT, document_job, health
     async def busy_check():
+        assert health()["processor_busy"] is False
         await DOCUMENT_WORK_SLOT.acquire()
         try:
+            assert health()["processor_busy"] is True
             try:
                 await document_job(lambda: 1)
             except HTTPException as exc:
                 assert exc.status_code == 503, "Busy status must be 503"
+                assert exc.headers.get("Retry-After") == "3"
             else:
-                raise AssertionError("Busy worker admitted another job")
+                raise AssertionError("Busy worker exceeded waiting limit")
         finally:
             DOCUMENT_WORK_SLOT.release()
+        assert health()["processor_busy"] is False
+
+        await DOCUMENT_WORK_SLOT.acquire()
+        task = asyncio.create_task(document_job(lambda: 42))
+        try:
+            await asyncio.sleep(.08)
+            assert not task.done(), "Queued work should wait for the first job"
+        finally:
+            DOCUMENT_WORK_SLOT.release()
+        assert await task == 42, "Queued work did not run after release"
+        assert health()["processor_busy"] is False
+
     asyncio.run(busy_check())
-    print("RELEASE CHECK PASSED: PDF API, DOCX/PPTX detect-redact-verify, manual masks, invalid uploads, busy-worker response")
+    print("RELEASE CHECK PASSED: PDF/Office APIs, invalid uploads, bounded busy-worker queue and responsive health")
 
 
 if __name__ == "__main__":
