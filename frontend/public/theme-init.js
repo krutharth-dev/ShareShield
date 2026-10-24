@@ -1,12 +1,12 @@
 /* Runs before React/CSS to prevent a flash of the wrong saved theme.
    Stores ONLY visual preference, never file content or detection data. */
 (function () {
-  var preference = 'system'
+  var preference = 'dark'
   try {
     var saved = window.localStorage.getItem('shareshield-appearance')
     if (saved === 'light' || saved === 'dark' || saved === 'system') preference = saved
   } catch (_error) {
-    // Private browsing may block storage. System mode still works.
+    // Private browsing may block storage. Dark mode remains a safe default.
   }
   var dark = false
   try {
