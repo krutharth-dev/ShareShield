@@ -85,7 +85,7 @@ def valid_match(category: str, value: str) -> bool:
 
 
 SEVERITY = {
-    "aadhaar_candidate": "high", "id12_candidate": "medium", "vid_candidate": "high", "dob_candidate": "high", "name_candidate": "medium", "address_candidate": "high", "face_candidate": "high", "qr_candidate": "high", "pan_candidate": "high",
+    "aadhaar_candidate": "high", "id12_candidate": "medium", "vid_candidate": "high", "dob_candidate": "high", "name_candidate": "medium", "address_candidate": "high", "face_candidate": "high", "qr_candidate": "high", "text_region_candidate": "medium", "pan_candidate": "high",
     "upi_candidate": "medium", "ifsc_candidate": "medium",
     "payment_card_candidate": "high", "indian_mobile_candidate": "medium", "email": "medium",
 }

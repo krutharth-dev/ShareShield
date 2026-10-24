@@ -73,7 +73,25 @@ def main() -> None:
         "Fallback missed sensitive fields: " + repr(sorted(recovered_categories))
     )
     assert any("UNVERIFIED:" in note for note in recovered_warnings), "Fallback must remain unverified"
-    print("OCR CHECK PASSED: image & scanned PDF fields, export masks, timeout recovery")
+    # Simulate persistent timeouts: a privacy review must still provide
+    # visible text regions, not just a face finding.
+    all_failed_notes = []
+    with patch.object(engine.pytesseract, "image_to_data",
+                      side_effect=RuntimeError("OCR process timeout")):
+        proposals = engine.ocr(card, 1, warnings=all_failed_notes)
+    regions = [f for f in proposals if f.category == "text_region_candidate"]
+    assert len(regions) >= 5, "OCR failure left no meaningful text-mask suggestions"
+    assert all("UNVERIFIED:" in note for note in all_failed_notes), "OCR fallback must disclose uncertainty"
+    assert all(f.rectangles for f in regions), "Visual suggestions missing redaction coordinates"
+    fallback_output, _, _ = review.redact_visual(image_bytes, ".png", regions, [], "blackout")
+    with Image.open(io.BytesIO(fallback_output)) as protected:
+        for f in regions[:5]:
+            x0, y0, x1, y1 = f.rectangles[0]
+            midpoint = (min(protected.width - 1, round((x0 + x1)/2)),
+                        min(protected.height - 1, round((y0 + y1)/2)))
+            assert protected.getpixel(midpoint) == (0, 0, 0), "Fallback region not redacted"
+
+    print("OCR CHECK PASSED: normal OCR, timeout recovery, OCR-independent text masks, export")
 
 
 if __name__ == "__main__":

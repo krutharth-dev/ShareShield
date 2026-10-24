@@ -248,9 +248,9 @@ def evaluate(selected: list[engine.Finding], redacted_data: bytes, ext: str,
     check_file(redacted_data, ext)
     found, warnings = engine.inspect(redacted_data, ext)
     selected_values = {(f.category, f.value) for f in selected
-                       if f.category not in {"face_candidate", "qr_candidate"}}
+                       if f.category not in {"face_candidate", "qr_candidate", "text_region_candidate"}}
     remaining_values = {(f.category, f.value) for f in found
-                        if f.category not in {"face_candidate", "qr_candidate"}}
+                        if f.category not in {"face_candidate", "qr_candidate", "text_region_candidate"}}
     leaked = selected_values.intersection(remaining_values)
     remaining_selected = [
         {"category": f.category, "page": f.page, "severity": engine.SEVERITY.get(f.category, "medium")}
@@ -265,7 +265,7 @@ def evaluate(selected: list[engine.Finding], redacted_data: bytes, ext: str,
          "severity": engine.SEVERITY.get(f.category, "medium")}
         for f in found
     ]
-    contains_visual = any(f.category in {"face_candidate", "qr_candidate"} for f in selected)
+    contains_visual = any(f.category in {"face_candidate", "qr_candidate", "text_region_candidate"} for f in selected)
     # Office file internals and workbook metadata are not completely
     # sanitized. Never represent a scoped text check as comprehensive safety.
     office_unverified = ext in {".docx", ".pptx", ".xlsx"}

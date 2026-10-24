@@ -34,8 +34,8 @@ MAX_BYTES = 12 * 1024 * 1024
 MAX_PIXELS = 25_000_000
 MAX_PAGES = 25
 MAX_FINDINGS = 500
-OCR_TIMEOUT_SECONDS = 14
-OCR_MAX_SIDE = 1850  # Bound Tesseract time/memory on single-instance cloud hosting
+OCR_TIMEOUT_SECONDS = 6
+OCR_MAX_SIDE = 1250  # Bound time for dense identity scans
 Image.MAX_IMAGE_PIXELS = MAX_PIXELS
 
 EXTENSIONS = {".pdf", ".docx", ".pptx", ".txt", ".jpg", ".jpeg", ".png", ".webp", ".bmp", ".tif", ".tiff", ".heic", ".heif", ".csv", ".xlsx"}
@@ -100,6 +100,7 @@ def ocr(image: Image.Image, page: int, scale: float = 1.0, warnings: list[str] |
     pass asserts full identity/document coverage.
     """
     from backend.ocr_fields import inferred_identity_fields
+    from backend.visual_fallback import suggest_regions
     from PIL import ImageEnhance, ImageFilter
 
     shrink = min(1.0, OCR_MAX_SIDE / max(image.width, image.height))
@@ -110,6 +111,36 @@ def ocr(image: Image.Image, page: int, scale: float = 1.0, warnings: list[str] |
             max(1, round(image.height * shrink)),
         ), Image.Resampling.LANCZOS)
     coordinate_scale = scale * shrink
+    visual_suggestions = suggest_regions(image, page, scale=scale)
+    # Avoid feeding dense encoded squares to Tesseract. QR-like blocks can
+    # cause multi-second segmentation hangs on modest hosting instances.
+    # The original image remains untouched and a code mask is still offered.
+    code_proposals = [f for f in visual_suggestions if f.category == "qr_candidate"]
+    if code_proposals:
+        clean = ImageDraw.Draw(source)
+        for code in code_proposals:
+            for x0, y0, x1, y1 in code.rectangles:
+                clean.rectangle(
+                    (x0 * coordinate_scale, y0 * coordinate_scale,
+                     x1 * coordinate_scale, y1 * coordinate_scale),
+                    fill="white",
+                )
+
+
+    def with_visual_fallback(found: list[Finding]) -> list[Finding]:
+        # Only offer generic image-text masks when semantic OCR coverage is sparse.
+        # They are reviewable candidates and never treated as verified PII.
+        extras = [f for f in visual_suggestions if f.category == "qr_candidate"]
+        if len(found) < 3:
+            extras.extend(f for f in visual_suggestions
+                          if f.category == "text_region_candidate")
+            if warnings is not None:
+                warnings.append(
+                    "UNVERIFIED: OCR did not reliably identify document text. "
+                    "Visible text regions are suggested for manual review and masking."
+                )
+        return (found + extras)[:MAX_FINDINGS]
+
 
     def inspect_pass(frame: Image.Image, segmentation: int, pass_scale: float) -> tuple[list[Finding], int]:
         try:
@@ -165,7 +196,7 @@ def ocr(image: Image.Image, page: int, scale: float = 1.0, warnings: list[str] |
         return findings, word_count
 
     try:
-        primary, count = inspect_pass(source, 11, coordinate_scale)
+        primary, count = inspect_pass(source, 6, coordinate_scale)
     except HTTPException as error:
         if error.status_code != 504:
             raise
@@ -179,14 +210,19 @@ def ocr(image: Image.Image, page: int, scale: float = 1.0, warnings: list[str] |
         ), Image.Resampling.LANCZOS) if factor < 1 else source
         enhanced = ImageOps.autocontrast(ImageOps.grayscale(reduced), cutoff=1)
         enhanced = ImageEnhance.Contrast(enhanced).enhance(1.5)
-        recovered, _ = inspect_pass(enhanced, 6, coordinate_scale * factor)
-        return recovered[:MAX_FINDINGS]
+        try:
+            recovered, _ = inspect_pass(enhanced, 11, coordinate_scale * factor)
+            return with_visual_fallback(recovered)
+        except HTTPException:
+            if warnings is not None:
+                warnings.append('UNVERIFIED: Both OCR passes failed; all visible text masks require review.')
+            return with_visual_fallback([])
     important = {"aadhaar_candidate", "id12_candidate", "vid_candidate",
                  "dob_candidate", "indian_mobile_candidate", "pan_candidate"}
     needs_fallback = (count < 12 or len(primary) < 3 or
                       not any(f.category in important for f in primary))
     if not needs_fallback:
-        return primary[:MAX_FINDINGS]
+        return with_visual_fallback(primary)
 
     # Adaptive contrast and sharpening help uneven illumination and blurred
     # ID-card scans. Bounded to one extra pass to prevent runaway processing.
@@ -194,11 +230,11 @@ def ocr(image: Image.Image, page: int, scale: float = 1.0, warnings: list[str] |
     enhanced = ImageEnhance.Contrast(enhanced).enhance(1.5)
     enhanced = enhanced.filter(ImageFilter.UnsharpMask(radius=1.0, percent=160, threshold=2))
     try:
-        secondary, _ = inspect_pass(enhanced, 6, coordinate_scale)
+        secondary, _ = inspect_pass(enhanced, 11, coordinate_scale)
     except HTTPException:
         if warnings is not None:
             warnings.append("UNVERIFIED: Secondary OCR enhancement did not complete; manually inspect missed fields.")
-        return primary[:MAX_FINDINGS]
+        return with_visual_fallback(primary)
 
     combined = list(primary)
     for proposed in secondary:
@@ -217,7 +253,7 @@ def ocr(image: Image.Image, page: int, scale: float = 1.0, warnings: list[str] |
                     break
         if not duplicate:
             combined.append(proposed)
-    return combined[:MAX_FINDINGS]
+    return with_visual_fallback(combined)
 
 
 def read_image(data: bytes) -> Image.Image:

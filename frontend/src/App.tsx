@@ -53,7 +53,7 @@ const privacyOptions = [
   { id: 'contacts', label: 'Phone and email', categories: ['email', 'indian_mobile_candidate'] },
   { id: 'codes', label: 'QR codes (barcode: manual)', categories: ['qr_candidate'] },
   { id: 'financial', label: 'PAN, UPI, cards and IFSC', categories: ['pan_candidate', 'upi_candidate', 'payment_card_candidate', 'ifsc_candidate'] },
-  { id: 'other', label: 'Other areas (draw manually)', categories: [] },
+  { id: 'other', label: 'Other areas (auto + manual)', categories: ['text_region_candidate'] },
 ]
 const privacyIcons: Record<string, string> = {
   identity: 'shield', name: 'file', address: 'privacy', dob: 'report',
@@ -141,6 +141,7 @@ function App() {
   const [allOccurrences, setAllOccurrences] = useState(true)
   const [serverStatus, setServerStatus] = useState<'checking' | 'online' | 'offline'>('checking')
   const [processorBusy, setProcessorBusy] = useState(false)
+  const lastBackendResponse = useRef(0)
   const [logoUnavailable, setLogoUnavailable] = useState(false)
   const input = useRef<HTMLInputElement>(null)
   const previewSurface = useRef<HTMLDivElement>(null)
@@ -178,6 +179,7 @@ function App() {
         if (status?.status !== 'ok') throw Error('Invalid server health response')
         if (!active) return
         failures = 0
+        lastBackendResponse.current = Date.now()
         setOcrAvailable(Boolean(status.ocr_available))
         setVisionAvailable(Boolean(status.vision_available))
         setProcessorBusy(Boolean(status.processor_busy))
@@ -187,7 +189,11 @@ function App() {
         setOcrAvailable(null)
         setVisionAvailable(null)
         failures += 1
-        if (failures < 4) {
+        // A working upload/preview is evidence that the server is online.
+        // Do not turn a single transient health-probe miss into "Offline".
+        if (Date.now() - lastBackendResponse.current < 60000) {
+          setServerStatus('online')
+        } else if (failures < 4) {
           setServerStatus('checking')
           timer = setTimeout(checkHealth, failures * 2500)
         } else {
@@ -325,6 +331,7 @@ function App() {
       const health = await response.json()
       if (health?.status !== 'ok') throw Error('Unexpected health response')
       setServerStatus('online')
+      lastBackendResponse.current = Date.now()
       setOcrAvailable(Boolean(health.ocr_available))
       setVisionAvailable(Boolean(health.vision_available))
       setProcessorBusy(Boolean(health.processor_busy))
@@ -353,6 +360,7 @@ function App() {
       if (!response.ok) throw Error(await errorFrom(response))
       const data: Analysis = await response.json()
       if (id !== requestId.current) return
+      lastBackendResponse.current = Date.now()
       setServerStatus('online')
       setProcessorBusy(false)
       setAnalysis(data)
@@ -384,6 +392,7 @@ function App() {
       if (!response.ok) throw Error(await errorFrom(response))
       const blob = await response.blob()
       if (!active) return
+      lastBackendResponse.current = Date.now()
       setPreviewWidth(Number(response.headers.get('X-Document-Width')) || 1)
       setPreviewHeight(Number(response.headers.get('X-Document-Height')) || 1)
       const url = URL.createObjectURL(blob)
@@ -552,6 +561,7 @@ function App() {
       if (!check.ok) throw Error(await errorFrom(check))
       const checked: Report = await check.json()
       if (id !== requestId.current) return
+      lastBackendResponse.current = Date.now()
       setServerStatus('online')
       setReport(checked)
       if (checked.status === 'FLAG') {
