@@ -166,3 +166,70 @@ but visual evaluation on the actual Intel Mac is still necessary.
 - `frontend/index.html` — loads bootstrap before application.
 - `backend/app.py` — serves secure first-party bootstrap.
 - `backend/tests/test_theme_dashboard.py` — focused regression coverage.
+
+
+## Aurora Edition — advanced visual and motion update (24 October 2026)
+
+The design now includes an advanced but self-contained command-center aesthetic,
+with **no networked fonts, icon libraries, chart services or tracking**.
+
+### Signature visual: illustrative document scan console
+
+The emerald hero features a CSS/SVG-layered, **fictional** privacy document,
+a soft aurora grid, floating review badges and animated blackout bars. This
+is an illustration only; it never displays actual uploaded data.
+
+When the user performs a real analysis or redaction request, the document
+visualizer activates a bounded scanning beam and the upload area shows an
+indeterminate scan treatment. These animations indicate activity **only**;
+they do not fake an estimated completion percentage or claim that a document
+is completely safe.
+
+### Power-user command menu
+
+Press **⌘K** on macOS or **Ctrl+K** on Windows/Linux, or select the magnifying
+glass in the top bar. Search for these working actions:
+
+- Open file upload or load the fictional demo.
+- Open the editor and verification report when those sections are available.
+- Open Privacy & safety or Appearance settings.
+- Switch to Light, Dark or System appearance.
+
+The keyboard menu supports arrow selection, Enter, Escape, Tab focus trapping,
+focus restoration on close and disabled unavailable actions. It is entirely
+client-side; typing into it triggers no network requests.
+
+### Motion control and macOS compatibility
+
+- Aurora pulse, hover effects, shield mascot, document float, small glints,
+  contextual scan transitions and subtle dialog opening effects.
+- A top-bar sparkle button and an appearance-panel switch allow users to
+  pause/re-enable decorative animation **for the current browser tab**.
+- When macOS Reduce Motion is enabled, that OS preference **always overrides**
+  the app's animation setting.
+- Avoid heavy canvas loops, video wallpaper and large per-frame blur operations.
+  Animate mainly transform and opacity so the 2017 Intel MacBook stays responsive.
+- Visuals are not evidence of successful verification. Backend status remains
+  the authoritative signal.
+
+### Updated implementation map
+
+- `frontend/src/HeroVisual.tsx` — decorative fictional live-state scan console.
+- `frontend/src/CommandPalette.tsx` — keyboard command search.
+- `frontend/src/App.tsx` — theme, animation and navigation commands with real state.
+- `frontend/src/App.css` — emerald aurora design, motion and mobile breakpoints.
+- `backend/tests/test_aurora_ui.py` — UI, privacy and reduced-motion regressions.
+
+### Real-device acceptance checks
+
+1. Verify hero is beautiful in light **and** dark mode; no real content is
+   shown in the fictional hero preview.
+2. Press ⌘K, type "demo", choose the sample; use arrows and Enter.
+3. Press Escape; keyboard focus returns to the previous control.
+4. Open Settings, turn effects off; motion pauses without blocking workflow.
+5. Enable macOS Reduce Motion; confirm no animations play even if app effects
+   are on.
+6. Scan a fictional file; the beam runs **during** actual processing and
+   stops when the operation finishes.
+7. Confirm blocked or unverified reports still demand appropriate inspection.
+8. Check 1280×800, 1440×900, tablet and phone widths for overflow.
