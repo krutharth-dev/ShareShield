@@ -49,7 +49,41 @@ def main() -> None:
     matches, _ = engine.inspect(buffer.getvalue(), ".pptx")
     assert any(f.value == TEST_EMAIL for f in matches), "PPTX parsing failed"
 
-    print("RELEASE CHECK PASSED: PDF scan/redact/verify, DOCX scan, PPTX scan")
+    # Call the actual ASGI endpoint functions with in-memory UploadFiles.
+    # This verifies async upload decoding and threaded document processing.
+    import asyncio
+    from fastapi import UploadFile
+    from backend.app import analyze, redact_selected, verify_result
+
+    async def endpoint_roundtrip() -> None:
+        def upload(data: bytes, filename: str) -> UploadFile:
+            return UploadFile(file=io.BytesIO(data), filename=filename)
+
+        analysis = await analyze(upload(pdf_bytes, "fictional.pdf"))
+        ids = [f["id"] for f in analysis["findings"] if f["value"] == TEST_EMAIL]
+        assert ids, "Analyze endpoint did not return PDF finding"
+        redacted_response = await redact_selected(
+            upload(pdf_bytes, "fictional.pdf"),
+            analysis_id=analysis["analysis_id"],
+            selected_ids=",".join(str(i) for i in ids),
+            manual_regions="[]",
+            redact_all=False,
+            redaction_mode="blackout",
+        )
+        assert redacted_response.body.startswith(b"%PDF-"), "Redact endpoint did not output PDF"
+        verification = await verify_result(
+            upload(pdf_bytes, "fictional.pdf"),
+            upload(redacted_response.body, "fictional-redacted.pdf"),
+            analysis_id=analysis["analysis_id"],
+            selected_ids=",".join(str(i) for i in ids),
+            manual_count=0,
+            redact_all=False,
+            redaction_mode="blackout",
+        )
+        assert verification["status"] in {"PASS_SCOPED", "UNVERIFIED"}, verification["status"]
+
+    asyncio.run(endpoint_roundtrip())
+    print("RELEASE CHECK PASSED: PDF analyze/redact/verify API, DOCX scan, PPTX scan")
 
 
 if __name__ == "__main__":

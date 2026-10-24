@@ -304,12 +304,15 @@ function App() {
       if (id !== requestId.current) return
       setServerStatus('online')
       setAnalysis(data)
-      setToast(data.findings.length ? 'Scan finished! Check the suggestions below.' : 'Scan finished. Check for anything the scanner missed.')
+      const incomplete = data.limitations.some(note => note.includes('UNVERIFIED:'))
+      setToast(incomplete ? 'Partial scan: manually review unverified content.' : data.findings.length ? 'Scan finished! Check the suggestions below.' : 'Scan finished. Check for anything the scanner missed.')
       setSelected(defaultFindingIds(data.findings, privacyCategories))
       setPage(1)
-      setMessage(data.findings.length
-        ? data.findings.length + ' candidate(s) found. Review them before redacting.'
-        : 'No configured patterns detected. The file is NOT certified safe; use manual redaction for images and PDFs.')
+      setMessage(incomplete
+        ? 'Scan finished with incomplete coverage. Inspect every page and mask missed details manually.'
+        : data.findings.length
+          ? data.findings.length + ' candidate(s) found. Review them before redacting.'
+          : 'No configured patterns detected. The file is NOT certified safe; use manual redaction for images and PDFs.')
       setProblem(false)
     } catch (error) {
       if (id !== requestId.current) return
@@ -777,7 +780,11 @@ function App() {
                     <span className="finding-text"><strong>{f.value}</strong><small>{f.category.replaceAll('_', ' ')} · {analysis.preview_supported ? 'page ' + f.page : f.location || 'text'}</small></span><span className={'severity-tag ' + f.severity}>{f.severity}</span>
                   </label>)}
                 </div>
-                <details className="limitations"><summary>What might the scanner miss?</summary>
+                {analysis.limitations.some(note => note.includes('UNVERIFIED:')) && <div className="scan-caveat" role="alert">
+                  <Icon name="alert" size={18}/>
+                  <div><strong>Manual review required</strong><p>Parts of this document could not be automatically inspected. Review every page, check images and QR codes, and cover missed details before export. The report will remain unverified.</p></div>
+                </div>}
+                <details className="limitations" open={analysis.limitations.some(note => note.includes('UNVERIFIED:'))}><summary>What might the scanner miss?</summary>
                   <ul>{analysis.limitations.map((x, i) => <li key={i}>{x}</li>)}</ul>
                 </details>
               </article>

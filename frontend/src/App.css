@@ -1755,3 +1755,21 @@ html[data-theme="dark"] .brand-wordmark span:last-child {color:#55D7FF;}
  .server-pill {white-space:nowrap;}
  .mobile-brand-mark {height:28px;width:28px;object-fit:contain;}
 }
+
+/* Review-first warning for documents where automatic inspection was incomplete. */
+.scan-caveat {
+  display:flex; align-items:flex-start; gap:11px; margin:14px 0;
+  padding:15px 16px; border:1px solid #D7A854; border-radius:12px;
+  background:rgba(211,161,65,.095); color:var(--sh-ink); line-height:1.5;
+}
+.scan-caveat > svg {flex-shrink:0; color:#BD861F;margin-top:2px;}
+.scan-caveat strong {font-size:13px; font-weight:800;}
+.scan-caveat p {margin:5px 0 0; color:var(--sh-ink-soft); font-size:12px;}
+@media(max-width:720px) {
+  /* Keep assistant accessible without masking controls or reading content. */
+  .shieldy-nudge {display:none;}
+  .shieldy-container {right:max(12px,env(safe-area-inset-right));bottom:calc(13px + env(safe-area-inset-bottom));}
+  .shieldy-launcher {width:50px;height:50px;}
+  .shieldy-panel {bottom:64px;}
+  .scan-caveat {padding:12px;}
+}
