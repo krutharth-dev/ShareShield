@@ -19,6 +19,8 @@ COPY backend/requirements.txt /app/backend/requirements.txt
 RUN python -m pip install --no-cache-dir -r /app/backend/requirements.txt
 COPY backend/ /app/backend/
 COPY --from=web-build /src/frontend/dist/ /app/frontend/dist/
+# Fail the image build if the logo is missing from the shipped website.
+RUN test -s /app/frontend/dist/shareshield-mark.webp
 RUN useradd --uid 10001 --create-home --shell /usr/sbin/nologin appuser \
     && chown -R appuser:appuser /app
 USER appuser
