@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from 'react'
 import './App.css'
 import Icon from './Icon'
+import PlayfulGuide from './PlayfulGuide'
+import PrivacyPanel from './PrivacyPanel'
 
 type Finding = {
   id: number
@@ -122,6 +124,8 @@ function App() {
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [showSettings, setShowSettings] = useState(false)
   const [showAbout, setShowAbout] = useState(false)
+  const [showPrivacy, setShowPrivacy] = useState(false)
+  const [toast, setToast] = useState('')
   const [drawMode, setDrawMode] = useState(true)
   const [appearance, setAppearance] = useState<Appearance>(() => {
     const current = document.documentElement.dataset.preference
@@ -145,6 +149,11 @@ function App() {
     window.addEventListener('keydown', onEscape)
     return () => window.removeEventListener('keydown', onEscape)
   }, [sidebarOpen])
+  useEffect(() => {
+    if (!toast) return
+    const timeout = window.setTimeout(() => setToast(''), 3000)
+    return () => window.clearTimeout(timeout)
+  }, [toast])
   useEffect(() => {
     const media = window.matchMedia('(prefers-color-scheme: dark)')
     const apply = () => {
@@ -198,6 +207,7 @@ function App() {
     clearResult()
     setProblem(false)
     setMessage('')
+    setToast(next ? 'Nice pick! Choose what to protect, then scan.' : '')
     if (next && (!allowed.has(next.name.split('.').pop()?.toLowerCase() || '') || next.size > 12 * 1048576)) {
       setProblem(true)
       setMessage(next.size > 12 * 1048576 ? 'File exceeds the 12 MiB limit.' : 'Unsupported file extension. Convert it to a supported format.')
@@ -225,6 +235,7 @@ function App() {
       const data: Analysis = await response.json()
       if (id !== requestId.current) return
       setAnalysis(data)
+      setToast(data.findings.length ? 'Scan finished! Check the suggestions below.' : 'Scan finished. Check for anything the scanner missed.')
       setSelected(defaultFindingIds(data.findings, privacyCategories))
       setPage(1)
       setMessage(data.findings.length
@@ -358,6 +369,7 @@ function App() {
       w: Math.abs(end.x - start.x), h: Math.abs(end.y - start.y) }
     if (box.w > .005 && box.h > .005 && manual.length < 60) {
       commitManual([...manual, box])
+      setToast('Manual mask added. Nice catch!')
       setEditIndex(manual.length)
     }
     initialPoint.current = null
@@ -442,6 +454,9 @@ function App() {
   const chosen = analysis?.findings.filter(f => selected.includes(f.id)) || []
   const pagesComplete = Boolean(analysis && (!analysis.preview_supported || reviewedPages.length === analysis.page_count))
   const statusColor = report?.status === 'FLAG' ? 'failed' : report?.status === 'PASS_SCOPED' ? 'passed' : 'incomplete'
+  const guideStage = report?.status === 'FLAG' ? 'blocked' :
+    result ? (pagesComplete && acknowledged ? 'download' : 'check') :
+    phase !== 'ready' ? 'working' : analysis ? 'review' : file ? 'scan' : 'pick'
   const workflowStage = report ? 5 : analysis ? (phase === 'processing' ? 4 : 3) : file ? (phase === 'scanning' ? 2 : 1) : 0
   const workflowSteps = [
     { icon: 'upload', label: 'Upload' }, { icon: 'privacy', label: 'Choose' },
