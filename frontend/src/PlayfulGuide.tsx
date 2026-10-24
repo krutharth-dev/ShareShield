@@ -1,4 +1,5 @@
 import Icon from './Icon'
+import ShieldyRobot from './ShieldyRobot'
 
 type GuideStage = 'pick' | 'scan' | 'working' | 'review' | 'check' | 'download' | 'blocked'
 
@@ -17,9 +18,8 @@ export default function PlayfulGuide({ stage, onAction }: { stage: GuideStage; o
   const currentStep = stage === 'pick' || stage === 'scan' ? 1 : stage === 'working' || stage === 'review' || stage === 'blocked' ? 2 : 3
   return (
     <section className={'playful-guide guide-' + stage} aria-label="Your next step">
-      <div className="guide-mascot" aria-hidden="true">
-        <span className="mascot-shape"><Icon name={stage === 'blocked' ? 'alert' : 'shield'} size={43}/></span>
-        <span className="mascot-orb orb-left"/><span className="mascot-orb orb-right"/>
+      <div className="guide-mascot guide-robot" aria-hidden="true">
+        <ShieldyRobot size={96} mood={stage === 'blocked' ? 'alert' : stage === 'working' ? 'thinking' : 'happy'}/>
       </div>
       <div className="guide-copy">
         <span className="guide-kicker"><Icon name="sparkle" size={14}/>{content.eyebrow}</span>
