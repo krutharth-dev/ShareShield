@@ -3,6 +3,8 @@ import './App.css'
 import Icon from './Icon'
 import PlayfulGuide from './PlayfulGuide'
 import PrivacyPanel from './PrivacyPanel'
+import HeroVisual from './HeroVisual'
+import CommandPalette, { type CommandAction } from './CommandPalette'
 
 type Finding = {
   id: number
@@ -126,6 +128,8 @@ function App() {
   const [showAbout, setShowAbout] = useState(false)
   const [showPrivacy, setShowPrivacy] = useState(false)
   const [toast, setToast] = useState('')
+  const [commandOpen, setCommandOpen] = useState(false)
+  const [motionEnabled, setMotionEnabled] = useState(true)
   const [drawMode, setDrawMode] = useState(true)
   const [appearance, setAppearance] = useState<Appearance>(() => {
     const current = document.documentElement.dataset.preference
@@ -149,6 +153,20 @@ function App() {
     window.addEventListener('keydown', onEscape)
     return () => window.removeEventListener('keydown', onEscape)
   }, [sidebarOpen])
+  useEffect(() => {
+    document.documentElement.dataset.motion = motionEnabled ? 'on' : 'off'
+  }, [motionEnabled])
+  useEffect(() => {
+    const onShortcut = (event: KeyboardEvent) => {
+      if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'k') {
+        event.preventDefault()
+        setCommandOpen(open => !open)
+      }
+      if (event.key === 'Escape') setCommandOpen(false)
+    }
+    window.addEventListener('keydown', onShortcut)
+    return () => window.removeEventListener('keydown', onShortcut)
+  }, [])
   useEffect(() => {
     if (!toast) return
     const timeout = window.setTimeout(() => setToast(''), 3000)
@@ -457,6 +475,18 @@ function App() {
   const guideStage = report?.status === 'FLAG' ? 'blocked' :
     result ? (pagesComplete && acknowledged ? 'download' : 'check') :
     phase !== 'ready' ? 'working' : analysis ? 'review' : file ? 'scan' : 'pick'
+  const commandActions: CommandAction[] = [
+    { id: 'upload', title: 'Open file upload', description: 'Pick a document and choose what to protect', icon: 'upload', hint: '01', run: () => navigateTo('upload') },
+    { id: 'demo', title: 'Load fictional demo', description: 'Try the sample without exposing real personal data', icon: 'file', disabled: phase !== 'ready', hint: '02',
+      run: () => { sample(); navigateTo('upload') } },
+    { id: 'review', title: 'Open document editor', description: 'Inspect findings and draw manual masks', icon: 'layers', disabled: !analysis, hint: '03', run: () => navigateTo('review') },
+    { id: 'verification', title: 'View verification report', description: 'Read remaining risks and export status', icon: 'report', disabled: !report, hint: '04', run: () => navigateTo('verification') },
+    { id: 'privacy', title: 'Privacy and safety', description: 'Understand file processing and limitations', icon: 'lock', run: () => { setShowPrivacy(true); navigateTo('privacy') } },
+    { id: 'appearance', title: 'Appearance preferences', description: 'Light / Dark / System and motion effects', icon: 'settings', run: () => { setShowSettings(true); navigateTo('settings') } },
+    { id: 'light', title: 'Switch to light mode', description: 'Bright, clean emerald theme', icon: 'sun', run: () => setAppearance('light') },
+    { id: 'dark', title: 'Switch to dark mode', description: 'Deep emerald command center', icon: 'moon', run: () => setAppearance('dark') },
+    { id: 'system', title: 'Follow system appearance', description: 'Use the current macOS appearance', icon: 'monitor', run: () => setAppearance('system') },
+  ]
   const workflowStage = report ? 5 : analysis ? (phase === 'processing' ? 4 : 3) : file ? (phase === 'scanning' ? 2 : 1) : 0
   const workflowSteps = [
     { icon: 'upload', label: 'Upload' }, { icon: 'privacy', label: 'Choose' },
@@ -512,6 +542,14 @@ function App() {
             <strong>{recent ? 'Session status' : 'Overview'}</strong>
           </div>
           <div className="topbar-right">
+            <button className="command-trigger" type="button" onClick={() => setCommandOpen(true)}
+              aria-label="Open command search" title="Open command search (⌘K)">
+              <Icon name="search" size={16}/><span>Search anything</span><kbd>⌘ K</kbd>
+            </button>
+            <button className={'motion-trigger ' + (motionEnabled ? 'motion-on' : '')} type="button"
+              title={motionEnabled ? 'Pause decorative animations' : 'Enable decorative animations'}
+              aria-label={motionEnabled ? 'Pause decorative animations' : 'Enable decorative animations'}
+              aria-pressed={motionEnabled} onClick={() => setMotionEnabled(x => !x)}><Icon name="sparkle" size={16}/></button>
             <div className="theme-switcher" role="group" aria-label="Appearance">
               {([['light', 'sun', 'Light'], ['system', 'monitor', 'System'], ['dark', 'moon', 'Dark']] as const).map(([value, icon, label]) =>
                 <button key={value} type="button" className={appearance === value ? 'theme-option active' : 'theme-option'}
@@ -549,14 +587,7 @@ function App() {
                 </div>
                 <p className="hero-footnote"><Icon name="lock" size={14}/> Designed for local processing · Your choice, every step</p>
               </div>
-              <div className="hero-art" aria-hidden="true">
-                <div className="hero-orbit orbit-one"/>
-                <div className="hero-orbit orbit-two"/>
-                <div className="hero-emblem"><Icon name="shield" size={82}/></div>
-                <div className="hero-floating floating-top"><Icon name="checkCircle" size={17}/> Review before sharing</div>
-                <div className="hero-floating floating-bottom"><Icon name="lock" size={16}/> Privacy first</div>
-                <span className="hero-spark spark-a"/><span className="hero-spark spark-b"/>
-              </div>
+              <HeroVisual busy={phase !== 'ready'} findings={analysis?.findings.length ?? 0} hasAnalysis={Boolean(analysis)} />
             </section>
             <PlayfulGuide stage={guideStage} onAction={() => {
               const section = guideStage === 'pick' || guideStage === 'scan' ? 'upload' :
@@ -585,7 +616,13 @@ function App() {
                     <Icon name={icon} size={19}/><span>{label}</span>{appearance === value && <Icon name="check" size={17}/>}
                   </button>)}
               </div>
-              <p className="pref-note">Only the appearance preference is saved in this browser. Documents and analysis results are not stored by this control.</p>
+              <div className="motion-settings">
+                <span className="motion-settings-icon"><Icon name="sparkle" size={19}/></span>
+                <div><strong>Interface motion</strong><small>Ambient lighting, transitions and lightweight motion details. System Reduce Motion always takes priority.</small></div>
+                <button className={'motion-toggle ' + (motionEnabled ? 'active' : '')} role="switch" aria-checked={motionEnabled}
+                  onClick={() => setMotionEnabled(enabled => !enabled)} aria-label="Toggle decorative interface animations"><span/></button>
+              </div>
+              <p className="pref-note">Only the appearance preference is saved in this browser. Animation preference is for this tab only. Documents and analysis results are not stored by these controls.</p>
             </section>}
             {showPrivacy && <PrivacyPanel onClose={() => setShowPrivacy(false)} />}
             {showAbout && <section className="about-panel surface-card" id="about">
@@ -822,6 +859,7 @@ function App() {
         <footer><span><Icon name="shield" size={15}/> ShareShield · Educational local-first prototype</span>
           <span><button className="footer-privacy" onClick={() => { setShowPrivacy(true); navigateTo('privacy') }}><Icon name="lock" size={14}/> Privacy &amp; safety</button> · Detect · Review · Redact · Verify</span></footer>
       </section>
+      <CommandPalette open={commandOpen} onClose={() => setCommandOpen(false)} actions={commandActions}/>
       {toast && <div className="delight-toast" role="status" aria-live="polite"><Icon name="sparkle" size={18}/><span>{toast}</span>
         <button aria-label="Dismiss notification" onClick={() => setToast('')}><Icon name="close" size={14}/></button></div>}
     </main>
