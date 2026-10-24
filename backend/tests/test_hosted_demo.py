@@ -97,3 +97,32 @@ def test_railway_rejects_malformed_domain(monkeypatch):
     monkeypatch.delenv("RAILWAY_PROJECT_ID", raising=False)
     monkeypatch.delenv("RAILWAY_PUBLIC_DOMAIN", raising=False)
     load_api(monkeypatch, "local")
+
+def test_public_demo_requires_explicit_hostname_and_no_credentials(monkeypatch):
+    monkeypatch.delenv("SHARESHIELD_PUBLIC_HOSTNAME", raising=False)
+    with pytest.raises(RuntimeError, match="Public demo requires"):
+        load_api(monkeypatch, "public-demo")
+    load_api(monkeypatch, "local")
+
+
+def test_public_render_demo_has_no_login_but_retains_origin_and_host_checks(monkeypatch):
+    host = "shareshield-demo.onrender.com"
+    monkeypatch.setenv("SHARESHIELD_PUBLIC_HOSTNAME", host)
+    try:
+        m = load_api(monkeypatch, "public-demo")
+        client = TestClient(m.app)
+        headers = {"host": host}
+        homepage = client.get("/", headers=headers)
+        assert homepage.status_code == 200
+        assert "WWW-Authenticate" not in homepage.headers
+        assert client.get("/health", headers=headers).status_code == 200
+        assert client.get("/", headers={"host": "someone-else.onrender.com"}).status_code == 400
+        assert client.post("/analyze", headers={**headers,
+                   "origin": "https://evil.example.net"}).status_code == 403
+        assert client.post("/analyze", headers={**headers,
+                   "origin": "http://" + host}).status_code == 403
+        assert client.post("/analyze", headers={**headers,
+                   "origin": "https://" + host}).status_code == 422
+    finally:
+        monkeypatch.delenv("SHARESHIELD_PUBLIC_HOSTNAME", raising=False)
+        load_api(monkeypatch, "local")
