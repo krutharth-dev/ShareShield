@@ -89,6 +89,24 @@ installed. GitHub Actions builds the frontend, runs Python tests and attempts
 a Docker image build. A green CI status is required before merge.
 
 
+## Chosen provider: Railway — protected educational demo
+
+**Railway is now the preferred deployment target** following the team's
+hosting decision. Use [RAILWAY_DEPLOYMENT.md](RAILWAY_DEPLOYMENT.md) for the
+current step-by-step instructions, including configuring secrets inside
+Railway, selecting the integration branch, setting `/health`, generating the
+Railway HTTPS domain and redeploying to register its hostname.
+
+The site **has not been deployed to Railway**. Only the repo is prepared. A
+verified Railway account, chosen hosting plan and service creation are still
+needed. Keep `SHARESHIELD_DEPLOYMENT_MODE=protected-demo` and an original
+20+ character secret in Railway. Never upload genuine personal documents to
+the public educational demo. The React app now explicitly distinguishes local
+from hosted processing in its UI.
+
+The existing Render configuration below remains as an alternative, but it is
+not our selected deployment provider.
+
 ## Protected hosted demo — Render (preparation, not yet deployed)
 
 A Render Docker Blueprint is supplied at `render.yaml`. It uses the existing
