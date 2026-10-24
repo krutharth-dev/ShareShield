@@ -92,7 +92,7 @@ def ocr_available() -> bool:
     return shutil.which(pytesseract.pytesseract.tesseract_cmd) is not None
 
 
-def ocr(image: Image.Image, page: int, scale: float = 1.0) -> list[Finding]:
+def ocr(image: Image.Image, page: int, scale: float = 1.0, warnings: list[str] | None = None) -> list[Finding]:
     """Read small text on photographed identity cards with bounded OCR passes.
 
     Keep all proposal rectangles in original coordinates. The second, enhanced
@@ -111,7 +111,7 @@ def ocr(image: Image.Image, page: int, scale: float = 1.0) -> list[Finding]:
         ), Image.Resampling.LANCZOS)
     coordinate_scale = scale * shrink
 
-    def inspect_pass(frame: Image.Image, segmentation: int) -> tuple[list[Finding], int]:
+    def inspect_pass(frame: Image.Image, segmentation: int, pass_scale: float) -> tuple[list[Finding], int]:
         try:
             result = pytesseract.image_to_data(
                 frame, output_type=Output.DICT, lang="eng",
@@ -129,7 +129,7 @@ def ocr(image: Image.Image, page: int, scale: float = 1.0) -> list[Finding]:
             if not word:
                 continue
             key = tuple(int(result[k][i]) for k in ("page_num", "block_num", "par_num", "line_num"))
-            x, y, w, h = (float(result[k][i]) / coordinate_scale for k in ("left", "top", "width", "height"))
+            x, y, w, h = (float(result[k][i]) / pass_scale for k in ("left", "top", "width", "height"))
             by_line.setdefault(key, []).append((word, (x, y, x+w, y+h)))
 
         findings: list[Finding] = []
@@ -164,7 +164,23 @@ def ocr(image: Image.Image, page: int, scale: float = 1.0) -> list[Finding]:
         findings.extend(inferred_identity_fields(line_rows, page))
         return findings, word_count
 
-    primary, count = inspect_pass(source, 11)
+    try:
+        primary, count = inspect_pass(source, 11, coordinate_scale)
+    except HTTPException as error:
+        if error.status_code != 504:
+            raise
+        # Retry a smaller contrast-enhanced image when large-image OCR stalls.
+        if warnings is not None:
+            warnings.append("UNVERIFIED: OCR timed out at full resolution; a lower-resolution fallback was used.")
+        factor = min(1.0, 1300 / max(source.width, source.height))
+        reduced = source.resize((
+            max(1, round(source.width * factor)),
+            max(1, round(source.height * factor)),
+        ), Image.Resampling.LANCZOS) if factor < 1 else source
+        enhanced = ImageOps.autocontrast(ImageOps.grayscale(reduced), cutoff=1)
+        enhanced = ImageEnhance.Contrast(enhanced).enhance(1.5)
+        recovered, _ = inspect_pass(enhanced, 6, coordinate_scale * factor)
+        return recovered[:MAX_FINDINGS]
     important = {"aadhaar_candidate", "id12_candidate", "vid_candidate",
                  "dob_candidate", "indian_mobile_candidate", "pan_candidate"}
     needs_fallback = (count < 12 or len(primary) < 3 or
@@ -178,10 +194,10 @@ def ocr(image: Image.Image, page: int, scale: float = 1.0) -> list[Finding]:
     enhanced = ImageEnhance.Contrast(enhanced).enhance(1.5)
     enhanced = enhanced.filter(ImageFilter.UnsharpMask(radius=1.0, percent=160, threshold=2))
     try:
-        secondary, _ = inspect_pass(enhanced, 6)
+        secondary, _ = inspect_pass(enhanced, 6, coordinate_scale)
     except HTTPException:
-        # The first pass is still useful; coverage is never represented as a
-        # comprehensive guarantee by the UI or verification report.
+        if warnings is not None:
+            warnings.append("UNVERIFIED: Secondary OCR enhancement did not complete; manually inspect missed fields.")
         return primary[:MAX_FINDINGS]
 
     combined = list(primary)
@@ -264,7 +280,7 @@ def _pdf_findings(pdf: fitz.Document) -> tuple[list[Finding], list[str]]:
             image = Image.frombytes("RGB", (pix.width, pix.height), pix.samples)
             if has_ocr:
                 try:
-                    visual.extend(ocr(image, number, scale=render_scale))
+                    visual.extend(ocr(image, number, scale=render_scale, warnings=notes))
                 except HTTPException as exc:
                     if exc.status_code not in (503, 504):
                         raise
@@ -366,7 +382,7 @@ def _inspect_document(data: bytes, ext: str) -> tuple[list[Finding], list[str]]:
         else:
             limits.append("Face/QR recognition is best-effort. Review every photograph and 2D code manually.")
         try:
-            recognized = ocr(image, 1)
+            recognized = ocr(image, 1, warnings=limits)
         except HTTPException as exc:
             if exc.status_code not in (503, 504):
                 raise

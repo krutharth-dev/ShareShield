@@ -53,7 +53,27 @@ def main() -> None:
     assert {"id12_candidate", "vid_candidate"} <= actual, "Image-based PDF text not recognized"
     assert all(item.rectangles for item in pdf_found), "Scanned PDF masks lack locations"
 
-    print("OCR CHECK PASSED: synthetic ID number, VID, DOB, phone, name, address, image redaction & scanned PDF")
+    # Simulate a full-size Tesseract timeout; lower-resolution fallback must
+    # recover usable regions and carry an explicit unverified warning.
+    from unittest.mock import patch
+    real_ocr = engine.pytesseract.image_to_data
+    calls = [0]
+
+    def timeout_once(*args, **kwargs):
+        calls[0] += 1
+        if calls[0] == 1:
+            raise RuntimeError("OCR process timeout")
+        return real_ocr(*args, **kwargs)
+
+    recovered_warnings = []
+    with patch.object(engine.pytesseract, "image_to_data", side_effect=timeout_once):
+        recovered = engine.ocr(card, 1, warnings=recovered_warnings)
+    recovered_categories = {item.category for item in recovered}
+    assert {"id12_candidate", "vid_candidate", "name_candidate", "address_candidate"} <= recovered_categories, (
+        "Fallback missed sensitive fields: " + repr(sorted(recovered_categories))
+    )
+    assert any("UNVERIFIED:" in note for note in recovered_warnings), "Fallback must remain unverified"
+    print("OCR CHECK PASSED: image & scanned PDF fields, export masks, timeout recovery")
 
 
 if __name__ == "__main__":
