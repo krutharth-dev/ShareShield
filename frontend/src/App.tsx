@@ -502,8 +502,8 @@ function App() {
       <aside className={'sidebar' + (sidebarCollapsed ? ' is-collapsed' : '') + (sidebarOpen ? ' mobile-open' : '')} aria-label="Main navigation">
         <div className="sidebar-head">
           <a className="brand" href="/" aria-label="ShareShield home">
-            <span className="brand-icon"><Icon name="shield" size={24} /></span>
-            <span className="brand-words"><strong>ShareShield<span className="brand-dot">.</span></strong><small>PRIVACY WORKSPACE</small></span>
+            <span className="brand-icon brand-icon-approved"><img src="/shareshield-mark.webp" alt="" width="48" height="48" /></span>
+            <span className="brand-words"><strong className="brand-wordmark"><span>Share</span><span>Shield</span></strong><small>PRIVACY WORKSPACE</small></span>
           </a>
           <button className="sidebar-toggle icon-button" type="button" aria-label={sidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
             onClick={() => { setSidebarCollapsed(!sidebarCollapsed); setSidebarOpen(false) }}>
@@ -542,6 +542,7 @@ function App() {
         <header className="topbar">
           <div className="breadcrumb">
             <button className="mobile-menu icon-button" onClick={() => setSidebarOpen(true)} aria-label="Open navigation"><Icon name="menu" /></button>
+             <img className="mobile-brand-mark" src="/shareshield-mark.webp" alt="ShareShield" width="28" height="28" />
             <span className="breadcrumb-muted">Workspace</span><Icon name="chevronRight" size={14} />
             <strong>{recent ? 'Session status' : 'Overview'}</strong>
           </div>
