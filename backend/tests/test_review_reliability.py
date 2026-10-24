@@ -93,3 +93,8 @@ def test_cancelled_caller_keeps_worker_busy():
             await asyncio.sleep(.01)
         assert not api.DOCUMENT_WORK_SLOT.locked()
     asyncio.run(scenario())
+
+
+def test_card_is_not_also_a_partial_aadhaar():
+    found = engine.scan_text('Card: 4111 1111 1111 1111', 1)
+    assert {f.category for f in found} == {'payment_card_candidate'}

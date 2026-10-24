@@ -18,10 +18,10 @@ MORE_RULES = (
     ("address_candidate", re.compile(r"(?im)\bAddress\s*:\s*[^\r\n]{4,110}")),
     ("ifsc_candidate", re.compile(r"(?<![A-Za-z0-9])[A-Z]{4}0[A-Z0-9]{6}(?![A-Za-z0-9])")),
     ("payment_card_candidate", re.compile(r"(?<!\d)(?:\d[ -]?){12,18}\d(?!\d)")),
-    ("aadhaar_candidate", re.compile(r"(?<!\d)[2-9]\d{3}[ -]?\d{4}[ -]?\d{4}(?!\d)")),
+    ("aadhaar_candidate", re.compile(r"(?<!\d)(?<!\d[ -])[2-9]\d{3}[ -]?\d{4}[ -]?\d{4}(?![ -]?\d)")),
     # OCR can misread one digit: flag as an unverified 12-digit candidate instead
     # of silently declaring it harmless. Valid Aadhaar IDs use the stricter rule.
-    ("id12_candidate", re.compile(r"(?<!\d)[2-9]\d{3}[ -]?\d{4}[ -]?\d{4}(?!\d)")),
+    ("id12_candidate", re.compile(r"(?<!\d)(?<!\d[ -])[2-9]\d{3}[ -]?\d{4}[ -]?\d{4}(?![ -]?\d)")),
     ("pan_candidate", re.compile(r"(?<![A-Za-z0-9])[A-Z]{5}\d{4}[A-Z](?![A-Za-z0-9])")),
     ("upi_candidate", re.compile(
         r"(?<![\w.@-])[A-Za-z0-9._-]{2,}@(?!\.)"

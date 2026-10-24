@@ -187,7 +187,8 @@ function App() {
         setVisionAvailable(Boolean(status.vision_available))
         setProcessorBusy(Boolean(status.processor_busy))
         setServerStatus('online')
-      } catch {
+      } catch (error) {
+        console.warn("ShareShield health probe failed", error)
         if (!active) return
         setOcrAvailable(null)
         setVisionAvailable(null)
@@ -325,6 +326,26 @@ function App() {
       'shareshield-sample.txt', { type: 'text/plain' }
     ))
   }
+  function identitySample() {
+    const canvas = document.createElement('canvas')
+    canvas.width = 1100; canvas.height = 900
+    const ctx = canvas.getContext('2d')
+    if (!ctx) return
+    ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, 1100, 900)
+    ctx.fillStyle = '#111'; ctx.font = '32px sans-serif'
+    const rows = ['Government of India', 'SAMPLE STUDENT', 'S/O SAMPLE PARENT',
+      'Flat 14, Example Street', '3rd Main Example Nagar', 'Fiction City 560001',
+      'Mobile: 98765 43210', 'Your Aadhaar No:', '2345 6789 0123',
+      'VID: 1111 2222 3333 4444', 'DOB: 08/08/2006']
+    rows.forEach((line, i) => ctx.fillText(line, 70, 60 + i * 68))
+    ctx.fillStyle = '#174e72'; ctx.fillRect(790, 50, 230, 65)
+    ctx.fillStyle = '#fff'; ctx.font = '19px sans-serif'; ctx.fillText('FICTIONAL TEST', 818, 90)
+    ctx.fillStyle = '#dceaf1'; ctx.fillRect(800, 180, 210, 250)
+    ctx.fillStyle = '#7597aa'; ctx.beginPath(); ctx.arc(905, 260, 48, 0, Math.PI * 2); ctx.fill()
+    ctx.fillRect(845, 320, 120, 85)
+    ctx.fillStyle = '#333'; ctx.font = '18px sans-serif'; ctx.fillText('Manual-mask example', 800, 460)
+    canvas.toBlob(blob => { if (blob) choose(new File([blob], 'fictional-identity.png', {type:'image/png'})) }, 'image/png')
+  }
   async function reconnect() {
     // Keep the user's selected file and manual work: a full reload loses both.
     setServerStatus('checking')
@@ -339,7 +360,8 @@ function App() {
       setVisionAvailable(Boolean(health.vision_available))
       setProcessorBusy(Boolean(health.processor_busy))
       setToast('Connected! Your selected file and settings are preserved.')
-    } catch {
+    } catch (error) {
+      console.warn("ShareShield connection retry failed", error)
       setServerStatus('offline')
       setToast('Still reconnecting. Your selected file is safe in this browser session.')
     }
@@ -834,6 +856,7 @@ function App() {
               </div>}
               <div className="action-row upload-actions">
                 <button className="secondary-action" onClick={sample} disabled={phase !== 'ready'}><Icon name="file" size={17}/> Use fictional sample</button>
+                <button className="secondary-action" onClick={identitySample} disabled={phase !== 'ready'}>Use fictional ID image</button>
                 <button className="primary-action" onClick={scan} disabled={!file || invalid || phase !== 'ready'}>{phase === 'scanning' ? <><span className="mini-spinner"/> Analyzing…</> : <><Icon name="scan" size={18}/> Analyze document <Icon name="arrowRight" size={17}/></>}</button>
               </div>
               {serverStatus === 'offline' && phase === 'ready' && <p className="connection-notice" role="status"><Icon name="alert" size={15}/><span>{isHosted ? 'The server did not answer its last connection check. It may be waking up; retry when ready.' : 'Your local backend is not responding. Check that ShareShield is running.'}</span><button className="connection-retry" type="button" onClick={() => { void reconnect() }}>Retry connection</button></p>}
