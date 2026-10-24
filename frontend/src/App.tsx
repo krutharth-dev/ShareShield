@@ -593,7 +593,8 @@ function App() {
               <p>ShareShield is a student-built, local-first prototype for reviewing and redacting files you explicitly choose. It does not silently inspect other applications or certify complete anonymization.</p>
               <p className="pref-note">Always examine the exported file. Automatic OCR, face proposals, and other detections can miss sensitive information.</p>
             </section>}
-            <section className="journey-panel" aria-label="Document protection process">
+            <details className="journey-panel" aria-label="Document protection process">
+              <summary className="journey-summary"><Icon name="layers" size={17}/> See the full six-step workflow <span>Optional details</span></summary>
               <div className="journey-heading"><div><span className="eyebrow">YOUR WORKFLOW</span><h2>One clear path to a safer share.</h2></div>
                 <span className="journey-progress">{report ? 'Review generated' : phase === 'scanning' ? 'Analyzing file' : phase === 'processing' ? 'Creating export' : analysis ? 'Ready for review' : 'Ready when you are'}</span></div>
               <div className="workflow-stepper">
@@ -602,7 +603,7 @@ function App() {
                   <span><small>{String(index+1).padStart(2,'0')}</small><strong>{step.label}</strong></span>
                 </div>)}
               </div>
-            </section>
+            </details>
             <section className="upload-card surface-card" id="upload">
               <div className="section-title"><div><span className="section-kicker">01 / GET STARTED</span><h2>Start with your document</h2>
                 <p>PDF, photos, Word, Excel, PowerPoint, CSV and text · up to 12 MiB</p></div>
