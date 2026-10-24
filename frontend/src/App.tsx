@@ -292,6 +292,24 @@ function App() {
       'shareshield-sample.txt', { type: 'text/plain' }
     ))
   }
+  async function reconnect() {
+    // Keep the user's selected file and manual work: a full reload loses both.
+    setServerStatus('checking')
+    try {
+      const response = await fetch('/health', { cache: 'no-store', credentials: 'same-origin' })
+      if (!response.ok) throw Error('Health check unsuccessful')
+      const health = await response.json()
+      if (health?.status !== 'ok') throw Error('Unexpected health response')
+      setServerStatus('online')
+      setOcrAvailable(Boolean(health.ocr_available))
+      setVisionAvailable(Boolean(health.vision_available))
+      setToast('Connected! Your selected file and settings are preserved.')
+    } catch {
+      setServerStatus('offline')
+      setToast('Still reconnecting. Your selected file is safe in this browser session.')
+    }
+  }
+
   async function scan() {
     if (!file || invalid) return
     const id = ++requestId.current
@@ -757,7 +775,7 @@ function App() {
                 <button className="secondary-action" onClick={sample} disabled={phase !== 'ready'}><Icon name="file" size={17}/> Use fictional sample</button>
                 <button className="primary-action" onClick={scan} disabled={!file || invalid || phase !== 'ready'}>{phase === 'scanning' ? <><span className="mini-spinner"/> Analyzing…</> : <><Icon name="scan" size={18}/> Analyze document <Icon name="arrowRight" size={17}/></>}</button>
               </div>
-              {serverStatus === 'offline' && phase === 'ready' && <p className="connection-notice" role="status"><Icon name="alert" size={15}/><span>{isHosted ? 'The server did not answer its last connection check. It may be waking up; retry when ready.' : 'Your local backend is not responding. Check that ShareShield is running.'}</span><button className="connection-retry" type="button" onClick={() => { setServerStatus('checking'); window.location.reload() }}>Reconnect</button></p>}
+              {serverStatus === 'offline' && phase === 'ready' && <p className="connection-notice" role="status"><Icon name="alert" size={15}/><span>{isHosted ? 'The server did not answer its last connection check. It may be waking up; retry when ready.' : 'Your local backend is not responding. Check that ShareShield is running.'}</span><button className="connection-retry" type="button" onClick={() => { void reconnect() }}>Retry connection</button></p>}
               {ocrAvailable === false && <p className="warning">OCR isn't available. Images and scanned PDFs cannot be text-scanned automatically.</p>}
               {visionAvailable === false && <p className="warning">Face/QR auto-detection is unavailable; manually draw masks over photos and codes.</p>}
               <p className={problem ? 'warning' : 'notice'} role="status" aria-live="polite">{phase === 'scanning' && <span className="mini-spinner"/>}{message}</p>

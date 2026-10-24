@@ -37,7 +37,8 @@ def main() -> None:
     word.add_paragraph(f"Email: {TEST_EMAIL}")
     buffer = io.BytesIO()
     word.save(buffer)
-    matches, _ = engine.inspect(buffer.getvalue(), ".docx")
+    word_bytes = buffer.getvalue()
+    matches, _ = engine.inspect(word_bytes, ".docx")
     assert any(f.value == TEST_EMAIL for f in matches), "DOCX parsing failed"
 
     slides = Presentation()
@@ -46,7 +47,8 @@ def main() -> None:
     shape.text = f"Email: {TEST_EMAIL}"
     buffer = io.BytesIO()
     slides.save(buffer)
-    matches, _ = engine.inspect(buffer.getvalue(), ".pptx")
+    slide_bytes = buffer.getvalue()
+    matches, _ = engine.inspect(slide_bytes, ".pptx")
     assert any(f.value == TEST_EMAIL for f in matches), "PPTX parsing failed"
 
     # Call the actual ASGI endpoint functions with in-memory UploadFiles.
@@ -83,7 +85,54 @@ def main() -> None:
         assert verification["status"] in {"PASS_SCOPED", "UNVERIFIED"}, verification["status"]
 
     asyncio.run(endpoint_roundtrip())
-    print("RELEASE CHECK PASSED: PDF analyze/redact/verify API, DOCX scan, PPTX scan")
+
+    # Editable Office redaction must actually remove the selected text,
+    # while still marking uninspectable embedded content as UNVERIFIED.
+    for original, ext in ((word_bytes, ".docx"), (slide_bytes, ".pptx")):
+        selected, _ = engine.inspect(original, ext)
+        selected = [f for f in selected if f.value == TEST_EMAIL]
+        assert selected, f"{ext} finding missing before redaction"
+        sanitized, _, _ = engine.redact(original, ext, selected)
+        remaining, _ = engine.inspect(sanitized, ext)
+        assert not any(f.value == TEST_EMAIL for f in remaining), f"{ext} redaction ineffective"
+        verdict = review.evaluate(selected, sanitized, ext)
+        assert verdict["status"] == "UNVERIFIED", f"{ext} should never claim full sanitization"
+
+    # Pixel masking permanently replaces the selected source pixels.
+    from PIL import Image
+    image = Image.new("RGB", (180, 120), "white")
+    image_bytes = io.BytesIO()
+    image.save(image_bytes, "PNG")
+    mask = [{"page": 1, "x": .2, "y": .2, "w": .4, "h": .4}]
+    masked, _, _ = review.redact_visual(image_bytes.getvalue(), ".png", [], mask)
+    with Image.open(io.BytesIO(masked)) as output_image:
+        assert output_image.getpixel((65, 46)) == (0, 0, 0), "Manual mask failed"
+        assert output_image.getpixel((170, 110)) == (255, 255, 255), "Mask exceeded selection"
+
+    # Corrupt OpenXML uploads and unexpected output sources are rejected.
+    from fastapi import HTTPException
+    try:
+        review.check_file(b"not a ZIP", ".docx")
+    except HTTPException as exc:
+        assert exc.status_code == 415
+    else:
+        raise AssertionError("Invalid Office upload accepted")
+
+    # CPU saturation must return a retryable status, not silently queue work.
+    from backend.app import DOCUMENT_WORK_SLOT, document_job
+    async def busy_check():
+        await DOCUMENT_WORK_SLOT.acquire()
+        try:
+            try:
+                await document_job(lambda: 1)
+            except HTTPException as exc:
+                assert exc.status_code == 503, "Busy status must be 503"
+            else:
+                raise AssertionError("Busy worker admitted another job")
+        finally:
+            DOCUMENT_WORK_SLOT.release()
+    asyncio.run(busy_check())
+    print("RELEASE CHECK PASSED: PDF API, DOCX/PPTX detect-redact-verify, manual masks, invalid uploads, busy-worker response")
 
 
 if __name__ == "__main__":

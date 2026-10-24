@@ -55,24 +55,27 @@ signals—not merely decorative cyan.
 This is a visual update, **not** a change to the OCR, redaction or
 verification engine. Reduced-motion support remains available.
 
-## Cloudflare deployment — protected temporary demonstration
+## Live ShareShield website — Render
 
-**Cloudflare is now our preferred demonstration route.** The bundled
-[Cloudflare guide](docs/CLOUDFLARE_DEPLOYMENT.md) explains a temporary
-`trycloudflare.com` URL using Cloudflare Tunnel. The complete React +
-FastAPI/OCR app continues running **on the team's Mac**, secured with the
-existing password-protected `protected-demo` mode and a strict exact
-hostname allowlist. No paid Cloudflare plan or domain is required for a
-Quick Tunnel, but the Mac and both processes must remain running.
+The publicly accessible project workspace is deployed at
+**https://shareshield-demo.onrender.com** using a single Docker container
+for the React UI, FastAPI, Tesseract OCR, and document-redaction engine.
+No password or account is required. Render processes uploaded documents
+remotely, **not on the user's device**. Use fictional or synthetic samples
+only; this educational deployment has not been certified to handle real
+identity documents or sensitive private files.
 
-Cloudflare Pages alone can host the React UI, **not** the native Python
-Tesseract/OpenCV processing stack. A genuine always-online Cloudflare
-deployment is possible later using **Cloudflare Containers** (Workers Paid,
-metered resources, and additional integration work). We have not purchased
-hosting, created a live URL, or approved the prototype for real PII.
+A successful `/health` response confirms that the service is responsive,
+but it does **not** certify the accuracy of automatic redaction. The Docker
+build executes `python -m backend.release_smoke` before deploying and fails
+if its synthetic processing tests regress. Office and spreadsheet exports
+remain `UNVERIFIED` because embedded/hidden content and metadata are not
+fully sanitized.
 
-Railway remains a documented **alternative** rather than the selected
-platform: [Railway guide](docs/RAILWAY_DEPLOYMENT.md).
+Local macOS/Linux running remains available through the project setup
+instructions. Cloudflare and Railway guides in `docs/` describe alternative
+deployment paths and may reflect historical prototypes; neither is the live
+Render production configuration.
 
 ## Emerald Shield premium workspace
 

@@ -2,9 +2,7 @@
 from __future__ import annotations
 
 import json
-import base64
-import binascii
-import hmac
+import asyncio
 from pathlib import Path
 import os
 from typing import Annotated
@@ -20,14 +18,9 @@ from backend import engine, review, smart
 from backend.patterns import SEVERITY
 
 DEPLOYMENT_MODE = os.environ.get("SHARESHIELD_DEPLOYMENT_MODE", "local").lower()
-CLOUD_DEMO = DEPLOYMENT_MODE == "protected-demo"
-HOSTED_DEMO = DEPLOYMENT_MODE in {"protected-demo", "public-demo"}
-if DEPLOYMENT_MODE not in {"local", "protected-demo", "public-demo"}:
+HOSTED_DEMO = DEPLOYMENT_MODE == "public-demo"
+if DEPLOYMENT_MODE not in {"local", "public-demo"}:
     raise RuntimeError("Unknown SHARESHIELD_DEPLOYMENT_MODE")
-DEMO_USER = os.environ.get("SHARESHIELD_DEMO_USER", "")
-DEMO_PASSWORD = os.environ.get("SHARESHIELD_DEMO_PASSWORD", "")
-if CLOUD_DEMO and (not DEMO_USER or len(DEMO_PASSWORD) < 20):
-    raise RuntimeError("Protected demo requires SHARESHIELD_DEMO_USER and a password of at least 20 characters")
 if DEPLOYMENT_MODE == "public-demo" and not os.environ.get("SHARESHIELD_PUBLIC_HOSTNAME", "").strip():
     raise RuntimeError("Public demo requires an exact SHARESHIELD_PUBLIC_HOSTNAME")
 HOSTS = ["127.0.0.1", "localhost", "testserver"]
@@ -45,47 +38,23 @@ if HOSTED_DEMO:
                     or not all(c.isascii() and (c.isalnum() or c in ".-") for c in railway_host)):
                 raise RuntimeError("Invalid RAILWAY_PUBLIC_DOMAIN")
             HOSTS.append(railway_host)
-    # Custom host for Cloudflare Tunnel or another externally secured edge.
-    # Render compatibility is retained only when no custom hostname is set.
+    # Exact public hostname; wildcard hosts are intentionally disallowed.
     custom_host = os.environ.get("SHARESHIELD_PUBLIC_HOSTNAME", "").strip().lower()
-    if not on_railway and not custom_host and CLOUD_DEMO:
-        HOSTS.append("*.onrender.com")
     if custom_host:
         if ("://" in custom_host or "/" in custom_host or "*" in custom_host
                 or ":" in custom_host or " " in custom_host):
             raise RuntimeError("SHARESHIELD_PUBLIC_HOSTNAME must be a plain hostname")
         HOSTS.append(custom_host)
-app = FastAPI(title="ShareShield privacy review demo API", version="0.5.0")
+app = FastAPI(title="ShareShield privacy review API", version="0.6.0")
 app.add_middleware(TrustedHostMiddleware, allowed_hosts=HOSTS)
 
 
-def _valid_demo_auth(header: str | None) -> bool:
-    if not CLOUD_DEMO:
-        return True
-    if not header or not header.startswith("Basic "):
-        return False
-    try:
-        decoded = base64.b64decode(header[6:], validate=True).decode("utf-8")
-    except (ValueError, UnicodeError, binascii.Error):
-        return False
-    supplied_user, separator, supplied_password = decoded.partition(":")
-    return bool(separator) and hmac.compare_digest(supplied_user, DEMO_USER) and hmac.compare_digest(supplied_password, DEMO_PASSWORD)
 STATIC = Path(__file__).parent / "static" / "index.html"
 FRONTEND_DIST = Path(os.environ.get("SHARESHIELD_WEB_DIST", str(Path(__file__).resolve().parent.parent / "frontend" / "dist")))
 
 
 @app.middleware("http")
 async def security_headers(request, call_next):
-    # This is a shared-password *demo gate*, not per-user authentication.
-    # Health is publicly readable for the hosting platform.
-    if CLOUD_DEMO and request.url.path not in {"/health"}:
-        if not _valid_demo_auth(request.headers.get("authorization")):
-            return Response(
-                status_code=401, content="ShareShield demo: access code required",
-                media_type="text/plain",
-                headers={"WWW-Authenticate": 'Basic realm="ShareShield educational demo"',
-                         "Cache-Control": "no-store", "X-Content-Type-Options": "nosniff"},
-            )
     # Fail early when the client declares an excessive multipart body. The
     # upload reader also enforces per-file limits, including unknown lengths.
     if request.method == "POST" and request.url.path in {
@@ -227,11 +196,22 @@ def _expand_ids(findings: list[engine.Finding], ids: list[int], all_occurrences:
     return [findings[i] for i in sorted(expanded)]
 
 
+# Bound expensive OCR/image jobs so concurrent uploads cannot starve /health.
+DOCUMENT_WORK_SLOT = asyncio.Semaphore(1)
+
+
+async def document_job(function, *args):
+    if DOCUMENT_WORK_SLOT.locked():
+        raise HTTPException(503, "Document processor is busy. Please retry in a moment.")
+    async with DOCUMENT_WORK_SLOT:
+        return await run_in_threadpool(function, *args)
+
+
 @app.post("/analyze")
 async def analyze(file: Annotated[UploadFile, File()]):
     data, ext = await _upload(file)
     # OCR and OpenCV must not block the ASGI event loop and /health.
-    findings, limitations = await run_in_threadpool(engine.inspect, data, ext)
+    findings, limitations = await document_job(engine.inspect, data, ext)
     page_count = 1
     if ext == ".pdf":
         with engine.open_pdf(data) as doc:
@@ -259,7 +239,7 @@ async def preview_file(
     page: Annotated[int, Form()] = 1,
 ):
     data, ext = await _upload(file)
-    image = await run_in_threadpool(review.preview, data, ext, page)
+    image = await document_job(review.preview, data, ext, page)
     if ext == ".pdf":
         with engine.open_pdf(data) as doc:
             bounds = doc[page - 1].rect
@@ -287,7 +267,7 @@ async def redact_selected(
     data, ext = await _upload(file)
     if engine.fingerprint(data) != analysis_id:
         raise HTTPException(409, "File differs from the analyzed copy. Reanalyze the file.")
-    findings, _ = await run_in_threadpool(engine.inspect, data, ext)
+    findings, _ = await document_job(engine.inspect, data, ext)
     chosen = _expand_ids(findings, _ids(selected_ids, len(findings)), redact_all)
     if any(not f.rectangles and not f.location for f in chosen):
         raise HTTPException(422, "One or more selected findings could not be located")
@@ -295,12 +275,12 @@ async def redact_selected(
     if not chosen and not manual:
         raise HTTPException(422, "Select a finding or draw a manual redaction box")
     if ext in engine.IMAGE_EXTENSIONS or ext == ".pdf":
-        result, mime, name = await run_in_threadpool(review.redact_visual, data, ext, chosen, manual, redaction_mode)
+        result, mime, name = await document_job(review.redact_visual, data, ext, chosen, manual, redaction_mode)
         result_ext = ".png" if ext in engine.IMAGE_EXTENSIONS else ".pdf"
     else:
-        result, mime, name = await run_in_threadpool(engine.redact, data, ext, chosen)
+        result, mime, name = await document_job(engine.redact, data, ext, chosen)
         result_ext = ext
-    report = await run_in_threadpool(review.evaluate, chosen, result, result_ext, len(manual), redaction_mode)
+    report = await document_job(review.evaluate, chosen, result, result_ext, len(manual), redaction_mode)
     if report["status"] == "FLAG":
         raise HTTPException(409, "FLAG: selected information is still detectable in the output")
     return Response(content=result, media_type=mime,
@@ -333,8 +313,8 @@ async def verify_result(
     valid_outputs = {".png"} if ext in engine.IMAGE_EXTENSIONS else {ext}
     if out_ext not in valid_outputs:
         raise HTTPException(422, "The redacted output has an unexpected format")
-    initial, _ = await run_in_threadpool(engine.inspect, original, ext)
+    initial, _ = await document_job(engine.inspect, original, ext)
     chosen = _expand_ids(initial, _ids(selected_ids, len(initial)), redact_all)
     if manual_count < 0 or manual_count > 60:
         raise HTTPException(422, "Invalid manual redaction count")
-    return await run_in_threadpool(review.evaluate, chosen, output, out_ext, manual_count, redaction_mode)
+    return await document_job(review.evaluate, chosen, output, out_ext, manual_count, redaction_mode)
