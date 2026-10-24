@@ -35,13 +35,13 @@ MAX_PIXELS = 25_000_000
 MAX_PAGES = 25
 MAX_FINDINGS = 500
 OCR_TIMEOUT_SECONDS = 20
-OCR_MAX_SIDE = 1500  # Resize before CPU-intensive OCR on small hosting instances
+OCR_MAX_SIDE = 2100  # Resize before CPU-intensive OCR on small hosting instances
 Image.MAX_IMAGE_PIXELS = MAX_PIXELS
 
 EXTENSIONS = {".pdf", ".docx", ".pptx", ".txt", ".jpg", ".jpeg", ".png", ".webp", ".bmp", ".tif", ".tiff", ".heic", ".heif", ".csv", ".xlsx"}
 IMAGE_EXTENSIONS = {".jpg", ".jpeg", ".png", ".webp", ".bmp", ".tif", ".tiff", ".heic", ".heif"}
 EMAIL = re.compile(r"(?<![\w.+-])[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}(?![\w.-])")
-PHONE = re.compile(r"(?<!\d)(?:\+91[ -]?)?[6-9]\d{9}(?!\d)")
+PHONE = re.compile(r"(?<!\d)(?:\+91[ -]?)?[6-9](?:[ -]?\d){9}(?!\d)")
 RULES = (("email", EMAIL), ("indian_mobile_candidate", PHONE))
 
 
@@ -93,52 +93,115 @@ def ocr_available() -> bool:
 
 
 def ocr(image: Image.Image, page: int, scale: float = 1.0) -> list[Finding]:
-    """Locate matches in OCR lines; return rectangles in original image/page units."""
+    """Read small text on photographed identity cards with bounded OCR passes.
+
+    Keep all proposal rectangles in original coordinates. The second, enhanced
+    pass runs only when the first failed to detect enough identifiers. Neither
+    pass asserts full identity/document coverage.
+    """
+    from backend.ocr_fields import inferred_identity_fields
+    from PIL import ImageEnhance, ImageFilter
+
+    shrink = min(1.0, OCR_MAX_SIDE / max(image.width, image.height))
+    source = image.convert("RGB")
+    if shrink < 1:
+        source = source.resize((
+            max(1, round(image.width * shrink)),
+            max(1, round(image.height * shrink)),
+        ), Image.Resampling.LANCZOS)
+    coordinate_scale = scale * shrink
+
+    def inspect_pass(frame: Image.Image, segmentation: int) -> tuple[list[Finding], int]:
+        try:
+            result = pytesseract.image_to_data(
+                frame, output_type=Output.DICT, lang="eng",
+                config=f"--psm {segmentation}", timeout=OCR_TIMEOUT_SECONDS)
+        except (pytesseract.TesseractNotFoundError, OSError) as exc:
+            raise HTTPException(503, "OCR unavailable; Tesseract must be installed on the processing server") from exc
+        except RuntimeError as exc:
+            if "timeout" in str(exc).lower():
+                raise HTTPException(504, "OCR timed out on this image; try a smaller or clearer document") from exc
+            raise HTTPException(422, "OCR failed on this image; try a clearer file") from exc
+
+        by_line: dict[tuple[int, int, int, int], list[tuple[str, tuple[float, float, float, float]]]] = {}
+        for i, raw in enumerate(result["text"]):
+            word = str(raw).strip()
+            if not word:
+                continue
+            key = tuple(int(result[k][i]) for k in ("page_num", "block_num", "par_num", "line_num"))
+            x, y, w, h = (float(result[k][i]) / coordinate_scale for k in ("left", "top", "width", "height"))
+            by_line.setdefault(key, []).append((word, (x, y, x+w, y+h)))
+
+        findings: list[Finding] = []
+        line_rows: list[tuple[str, tuple[float, float, float, float]]] = []
+        word_count = 0
+        for words in by_line.values():
+            pieces, spans, cursor = [], [], 0
+            word_count += len(words)
+            for word, box in words:
+                if pieces:
+                    cursor += 1
+                start = cursor
+                pieces.append(word)
+                cursor += len(word)
+                spans.append((start, cursor, box))
+            text = " ".join(pieces)
+
+            def locate(_value: str, begin: int, end: int):
+                touching = [rect for a, b, rect in spans if b > begin and a < end]
+                if not touching:
+                    return []
+                return [(min(r[0] for r in touching), min(r[1] for r in touching),
+                         max(r[2] for r in touching), max(r[3] for r in touching))]
+
+            rect = locate(text, 0, len(text))
+            if rect:
+                line_rows.append((text, rect[0]))
+            findings.extend(scan_text(text, page, locate))
+
+        # Aadhaar layouts often omit "Name:" and "Address:". Infer conservative,
+        # user-reviewable field boxes only if the OCR text signals an identity card.
+        findings.extend(inferred_identity_fields(line_rows, page))
+        return findings, word_count
+
+    primary, count = inspect_pass(source, 11)
+    important = {"aadhaar_candidate", "id12_candidate", "vid_candidate",
+                 "dob_candidate", "indian_mobile_candidate", "pan_candidate"}
+    needs_fallback = (count < 12 or len(primary) < 3 or
+                      not any(f.category in important for f in primary))
+    if not needs_fallback:
+        return primary[:MAX_FINDINGS]
+
+    # Adaptive contrast and sharpening help uneven illumination and blurred
+    # ID-card scans. Bounded to one extra pass to prevent runaway processing.
+    enhanced = ImageOps.autocontrast(ImageOps.grayscale(source), cutoff=1)
+    enhanced = ImageEnhance.Contrast(enhanced).enhance(1.5)
+    enhanced = enhanced.filter(ImageFilter.UnsharpMask(radius=1.0, percent=160, threshold=2))
     try:
-        shrink = min(1.0, OCR_MAX_SIDE / max(image.width, image.height))
-        source = image.convert("RGB")
-        if shrink < 1:
-            source = source.resize(
-                (max(1, round(image.width * shrink)), max(1, round(image.height * shrink))),
-                Image.Resampling.LANCZOS,
-            )
-        result = pytesseract.image_to_data(
-            source, output_type=Output.DICT,
-            config="--psm 11", timeout=OCR_TIMEOUT_SECONDS)
-        scale *= shrink
-    except (pytesseract.TesseractNotFoundError, OSError) as exc:
-        raise HTTPException(503, "OCR unavailable: install the Tesseract application (macOS: brew install tesseract), then restart ShareShield") from exc
-    except RuntimeError as exc:
-        # pytesseract raises RuntimeError if its subprocess times out.
-        if "timeout" in str(exc).lower():
-            raise HTTPException(504, "OCR timed out on this page. Try a smaller or clearer document") from exc
-        raise HTTPException(422, "OCR failed on this image; try a clearer file") from exc
-    lines: dict[tuple[int,int,int,int], list[tuple[str, tuple[float,float,float,float]]]] = {}
-    for i, word in enumerate(result["text"]):
-        word = word.strip()
-        if not word:
-            continue
-        key = tuple(int(result[k][i]) for k in ("page_num", "block_num", "par_num", "line_num"))
-        x,y,w,h = (float(result[k][i]) / scale for k in ("left", "top", "width", "height"))
-        lines.setdefault(key, []).append((word, (x,y,x+w,y+h)))
-    findings = []
-    for words in lines.values():
-        pieces, spans, cursor = [], [], 0
-        for word, box in words:
-            if pieces:
-                cursor += 1
-            start = cursor
-            pieces.append(word)
-            cursor += len(word)
-            spans.append((start, cursor, box))
-        full = " ".join(pieces)
-        def locate(_value: str, start: int, end: int) -> list[tuple[float,float,float,float]]:
-            touching = [r for s,e,r in spans if e > start and s < end]
-            if not touching:
-                return []
-            return [(min(r[0] for r in touching), min(r[1] for r in touching), max(r[2] for r in touching), max(r[3] for r in touching))]
-        findings.extend(scan_text(full, page, locate))
-    return findings
+        secondary, _ = inspect_pass(enhanced, 6)
+    except HTTPException:
+        # The first pass is still useful; coverage is never represented as a
+        # comprehensive guarantee by the UI or verification report.
+        return primary[:MAX_FINDINGS]
+
+    combined = list(primary)
+    for proposed in secondary:
+        box = proposed.rectangles[0] if proposed.rectangles else None
+        duplicate = False
+        if box:
+            cx, cy = (box[0] + box[2])/2, (box[1] + box[3])/2
+            for found in combined:
+                if found.category != proposed.category or not found.rectangles:
+                    continue
+                other = found.rectangles[0]
+                mid_x, mid_y = (other[0] + other[2])/2, (other[1] + other[3])/2
+                if (abs(cx-mid_x) < max(12, (box[2]-box[0])*.27)
+                        and abs(cy-mid_y) < max(10, (box[3]-box[1])*.5)):
+                    duplicate = True
+                    break
+        if not duplicate:
+            combined.append(proposed)
+    return combined[:MAX_FINDINGS]
 
 
 def read_image(data: bytes) -> Image.Image:
@@ -208,6 +271,8 @@ def _pdf_findings(pdf: fitz.Document) -> tuple[list[Finding], list[str]]:
                     notes.append(f"UNVERIFIED: OCR timed out or was unavailable on page {number}. Manually inspect and mask image text.")
             if has_vision:
                 visual.extend(smart.regions(image, number, scale=render_scale))
+        if any(f.category in {"name_candidate", "address_candidate"} for f in visual):
+            notes.append(f"Name and address boxes on page {number} are heuristic. Manually inspect the document before sharing.")
         combined: dict[tuple[str, str, int], Finding] = {}
         for finding in native + visual:
             key = (finding.category, finding.value, finding.page)
@@ -307,6 +372,10 @@ def _inspect_document(data: bytes, ext: str) -> tuple[list[Finding], list[str]]:
                 raise
             recognized = []
             limits.append("UNVERIFIED: OCR timed out or was unavailable. Image text is NOT verified; inspect and mask it manually.")
+        if not recognized:
+            limits.append("UNVERIFIED: OCR returned no sensitive-text candidates. Manually review all written fields and add masks.")
+        if any(f.category in {"name_candidate", "address_candidate"} for f in recognized):
+            limits.append("Name and address regions are heuristic proposals. Check every selected rectangle and every missed line.")
         return recognized + smart.regions(image, 1), limits
     if ext == ".pdf":
         with open_pdf(data) as pdf:

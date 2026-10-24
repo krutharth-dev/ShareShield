@@ -19,7 +19,7 @@ COPY backend/requirements.txt /app/backend/requirements.txt
 RUN python -m pip install --no-cache-dir -r /app/backend/requirements.txt
 COPY backend/ /app/backend/
 # Fail the release before publication if core PDF/Office workflows regress.
-RUN python -m backend.release_smoke
+RUN python -m backend.release_smoke && python -m backend.ocr_smoke
 COPY --from=web-build /src/frontend/dist/ /app/frontend/dist/
 # Fail the image build if the logo is missing from the shipped website.
 RUN test -s /app/frontend/dist/shareshield-mark.webp

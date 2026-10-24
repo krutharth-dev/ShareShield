@@ -267,7 +267,7 @@ async def redact_selected(
     data, ext = await _upload(file)
     if engine.fingerprint(data) != analysis_id:
         raise HTTPException(409, "File differs from the analyzed copy. Reanalyze the file.")
-    findings, _ = await document_job(engine.inspect, data, ext)
+    findings, original_notes = await document_job(engine.inspect, data, ext)
     chosen = _expand_ids(findings, _ids(selected_ids, len(findings)), redact_all)
     if any(not f.rectangles and not f.location for f in chosen):
         raise HTTPException(422, "One or more selected findings could not be located")
@@ -280,7 +280,8 @@ async def redact_selected(
     else:
         result, mime, name = await document_job(engine.redact, data, ext, chosen)
         result_ext = ext
-    report = await document_job(review.evaluate, chosen, result, result_ext, len(manual), redaction_mode)
+    original_incomplete = any(note.startswith("UNVERIFIED:") for note in original_notes)
+    report = await document_job(review.evaluate, chosen, result, result_ext, len(manual), redaction_mode, original_incomplete)
     if report["status"] == "FLAG":
         raise HTTPException(409, "FLAG: selected information is still detectable in the output")
     return Response(content=result, media_type=mime,
@@ -313,8 +314,9 @@ async def verify_result(
     valid_outputs = {".png"} if ext in engine.IMAGE_EXTENSIONS else {ext}
     if out_ext not in valid_outputs:
         raise HTTPException(422, "The redacted output has an unexpected format")
-    initial, _ = await document_job(engine.inspect, original, ext)
+    initial, original_notes = await document_job(engine.inspect, original, ext)
     chosen = _expand_ids(initial, _ids(selected_ids, len(initial)), redact_all)
     if manual_count < 0 or manual_count > 60:
         raise HTTPException(422, "Invalid manual redaction count")
-    return await document_job(review.evaluate, chosen, output, out_ext, manual_count, redaction_mode)
+    original_incomplete = any(note.startswith("UNVERIFIED:") for note in original_notes)
+    return await document_job(review.evaluate, chosen, output, out_ext, manual_count, redaction_mode, original_incomplete)

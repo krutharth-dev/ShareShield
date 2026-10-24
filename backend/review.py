@@ -237,7 +237,8 @@ def redact_visual(data: bytes, ext: str, selected: list[engine.Finding],
 
 
 def evaluate(selected: list[engine.Finding], redacted_data: bytes, ext: str,
-             manual_count: int=0, mode: str = "blackout") -> dict[str,Any]:
+             manual_count: int=0, mode: str = "blackout",
+             original_incomplete: bool = False) -> dict[str,Any]:
     """Rescan the *entire* export, not only previously selected values.
 
     Never claim full privacy: undetected visual content, OCR errors and
@@ -268,7 +269,7 @@ def evaluate(selected: list[engine.Finding], redacted_data: bytes, ext: str,
     # Office file internals and workbook metadata are not completely
     # sanitized. Never represent a scoped text check as comprehensive safety.
     office_unverified = ext in {".docx", ".pptx", ".xlsx"}
-    scan_incomplete = office_unverified or any(
+    scan_incomplete = original_incomplete or office_unverified or any(
         "OCR timed out" in note or "OCR is unavailable" in note
         or "Tesseract OCR is unavailable" in note for note in warnings
     )
@@ -300,6 +301,7 @@ def evaluate(selected: list[engine.Finding], redacted_data: bytes, ext: str,
         "output_sha256": engine.fingerprint(redacted_data),
         "unverified": [
             "Only recognized patterns were checked; undetected text, images and identity numbers may remain.",
+            *(["UNVERIFIED: The original image/PDF was not completely scanned, so the exported document cannot receive a scoped pass."] if original_incomplete else []),
             *(["Office and spreadsheet internal content is not completely sanitized; output is UNVERIFIED."] if office_unverified else []),
             "OCR and visual recognition can miss small or noisy text, Kannada, handwritten fields and unusual codes.",
             "Document metadata, embedded/hidden content and Office revision history are not fully sanitized.",
