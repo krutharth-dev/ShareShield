@@ -17,6 +17,8 @@
 **/*.heic
 **/*.heif
 **/*.webp
+# Required public brand asset: keep it in the Docker build context.
+!frontend/public/shareshield-mark.webp
 **/*.tif
 **/*.tiff
 **/*.zip
