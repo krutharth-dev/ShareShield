@@ -1397,3 +1397,120 @@ html[data-theme="dark"] .shieldy-start-tour,html[data-theme="dark"] .shieldy-pri
 @media (prefers-reduced-motion: reduce) {
   .shieldy-panel,.shieldy-answer,.shieldy-launcher-spark { animation:none!important; }
 }
+
+
+/* =====================================================================
+   SHIELDY BOT 2.0 — first-party illustrated robot, not a shield icon.
+   The SVG is intentionally rendered in the launcher, greeting, tour and
+   dashboard, with no external image, font, Lottie or remote animation CDN.
+   ===================================================================== */
+.shieldy-robot { display:block; flex:none; overflow:visible; user-select:none; -webkit-user-select:none; pointer-events:none; }
+.shieldy-robot .bot-antenna { transform-origin:80px 30px; }
+.shieldy-robot .bot-antenna-core { animation:sh-bot-glow 3s ease-in-out infinite; }
+.shieldy-robot .bot-wave-arm { transform-origin:122px 130px; animation:sh-bot-wave 4.5s ease-in-out infinite; }
+.shieldy-robot .bot-eye { transform-box:fill-box; transform-origin:center; animation:sh-bot-blink 6.5s ease-in-out infinite; }
+.shieldy-robot .bot-chest-led { animation:sh-bot-glow 3.2s ease-in-out infinite; }
+.shieldy-robot .bot-sparkles { animation:sh-bot-twinkle 5s ease-in-out infinite; transform-origin:80px 75px; }
+.shieldy-robot-thinking .bot-antenna-core { animation-duration:.7s; }
+.shieldy-robot-thinking .bot-eye { animation-duration:8s; }
+.shieldy-robot-alert .bot-chest-led,.shieldy-robot-alert .bot-antenna-core { fill:#FFC875; animation-duration:1.3s; }
+@keyframes sh-bot-wave {
+  0%,12%,35%,100%{transform:rotate(0deg)}
+  18%,28%{transform:rotate(-16deg)}
+  23%,32%{transform:rotate(6deg)}
+}
+@keyframes sh-bot-blink {
+  0%,42%,45%,100%{transform:scaleY(1)}
+  43%,44%{transform:scaleY(.12)}
+}
+@keyframes sh-bot-glow { 0%,100%{opacity:.76} 50%{opacity:1} }
+@keyframes sh-bot-twinkle { 0%,100%{opacity:.65;transform:scale(.96)} 50%{opacity:1;transform:scale(1.09)} }
+
+/* Permanent visibility: the real robot fills the entire launcher rather
+   than relying on a 27px generic shield icon. */
+.shieldy-launcher.robot-launcher {
+  width:78px; height:78px; border-radius:25px; overflow:visible;
+  background:linear-gradient(144deg,#D8FFE9,#4BC58E 75%,#126A4D);
+  border:2px solid #B6FFDC; padding:0; color:#0A5D41;
+  box-shadow:0 15px 32px rgba(3,56,31,.33),inset 0 2px 0 #FFFFFF7D;
+}
+.robot-launcher .shieldy-robot {
+  width:76px; height:auto;
+  filter:drop-shadow(0 2px 2px rgba(5,52,34,.2));
+  transform-origin:center bottom;
+  animation:sh-bot-bob 4s ease-in-out infinite;
+}
+@keyframes sh-bot-bob { 0%,100%{transform:translateY(1px)} 50%{transform:translateY(-4px)} }
+.shieldy-launcher.robot-launcher:hover { border-radius:27px; transform:translateY(-3px) scale(1.03); }
+.robot-launcher.is-open { border-color:var(--sh-green-border); background:var(--sh-surface); box-shadow:0 10px 25px rgba(7,61,35,.25); }
+.robot-launcher-close {
+  position:absolute; display:grid; place-items:center; right:-6px; top:-6px;
+  width:24px; height:24px; border-radius:50%; color:#FFFFFF;
+  background:#115C43; border:2px solid var(--sh-surface);
+  box-shadow:0 2px 7px rgba(0,0,0,.25);
+}
+.shieldy-launcher.robot-launcher .shieldy-launcher-spark { right:-9px; top:2px; }
+.shieldy-nudge { right:93px; bottom:22px; }
+.shieldy-panel { bottom:95px; }
+.shieldy-head .robot-avatar { width:52px; height:52px; flex-basis:52px; display:grid; place-items:center; padding:0; border:1px solid #DAFFE998; background:#FFFFFF26; border-radius:15px; }
+.shieldy-head .robot-avatar .shieldy-robot { width:47px; height:auto; }
+.shieldy-head .shieldy-identity strong { font-size:17px; }
+.shieldy-welcome.robot-welcome {
+  display:flex; align-items:center; justify-content:space-between; gap:4px;
+  min-height:154px; padding:14px 10px 10px 15px;
+  background:linear-gradient(125deg,var(--sh-green-light),var(--sh-surface-2));
+  overflow:hidden;
+}
+.shieldy-welcome-copy { min-width:0; flex:1; position:relative; z-index:1; }
+.shieldy-welcome-eyebrow {
+  display:inline-flex; gap:5px; align-items:center; font-size:8px;
+  letter-spacing:.6px; font-weight:850; color:var(--sh-green);
+  margin-bottom:8px;
+}
+.robot-welcome .shieldy-welcome-copy h3 { font-size:14px; max-width:195px; }
+.robot-welcome .shieldy-welcome-copy p { font-size:10.5px; max-width:190px; }
+.shieldy-welcome-robot {
+  position:relative; display:grid; place-items:center; width:116px; flex:0 0 116px;
+  align-self:flex-end; margin-right:-10px; margin-bottom:-14px;
+}
+.shieldy-welcome-robot::before {
+  content:""; position:absolute; width:110px; height:110px; border-radius:50%;
+  background:radial-gradient(circle,#80EAB455,transparent 71%); pointer-events:none;
+}
+.shieldy-welcome-robot .shieldy-robot { position:relative; filter:drop-shadow(0 6px 6px #07462C2A); }
+.shieldy-tour .shieldy-tour-card { min-height:240px; }
+.shieldy-tour-robot {
+  background:radial-gradient(circle,var(--sh-surface) 8%,var(--sh-green-light) 70%);
+  width:104px; height:116px; border:1px solid var(--sh-green-border); border-radius:19px;
+  display:grid; place-items:center; margin-bottom:12px; overflow:hidden;
+}
+.shieldy-tour-robot .shieldy-robot { width:92px; height:auto; margin-top:8px; }
+.guide-mascot.guide-robot { flex-basis:103px; min-width:103px; height:124px; display:grid; place-items:center; }
+.guide-robot .shieldy-robot { width:96px; height:auto; filter:drop-shadow(0 7px 8px #07502A27); animation:sh-bot-bob 4.2s ease-in-out infinite; }
+.playful-guide.guide-blocked .guide-robot .bot-face .bot-eye { fill:#FFE2A0; }
+.playful-guide .guide-copy { position:relative; z-index:1; }
+@media (max-width:1100px) { .playful-guide .guide-action { margin-left:121px; } }
+@media (max-width:720px) {
+  .shieldy-launcher.robot-launcher { width:66px; height:66px; border-radius:21px; }
+  .robot-launcher .shieldy-robot { width:64px; }
+  .shieldy-nudge { right:77px; bottom:14px; }
+  .shieldy-panel { bottom:79px; max-height:calc(100dvh - 104px); }
+  .guide-mascot.guide-robot { flex-basis:71px; min-width:71px; height:89px; }
+  .guide-robot .shieldy-robot { width:68px; }
+  .playful-guide .guide-action { margin-left:0; }
+}
+@media (max-width:380px) {
+  .robot-welcome .shieldy-welcome-copy p { font-size:10px; }
+  .shieldy-welcome-robot { flex-basis:94px; width:94px; margin-right:-12px; }
+  .shieldy-welcome-robot .shieldy-robot { width:98px; height:auto; }
+  .shieldy-panel { right:0; }
+}
+@media (prefers-reduced-motion:reduce) {
+  .shieldy-robot .bot-antenna-core,
+  .shieldy-robot .bot-wave-arm,
+  .shieldy-robot .bot-eye,
+  .shieldy-robot .bot-chest-led,
+  .shieldy-robot .bot-sparkles,
+  .shieldy-launcher.robot-launcher .shieldy-robot,
+  .guide-robot .shieldy-robot { animation:none!important; }
+}
