@@ -1,0 +1,21 @@
+services:
+  shareshield:
+    build:
+      context: .
+    image: shareshield:demo
+    ports:
+      - "127.0.0.1:8000:8000"
+    environment:
+      PYTHONDONTWRITEBYTECODE: "1"
+      TMPDIR: /tmp
+    user: "10001:10001"
+    read_only: true
+    tmpfs:
+      - /tmp:rw,nosuid,noexec,size=128m
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    pids_limit: 128
+    mem_limit: 2g
+    restart: unless-stopped

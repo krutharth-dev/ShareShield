@@ -1,0 +1,15 @@
+fastapi>=0.115,<1
+uvicorn>=0.30,<1
+python-multipart>=0.0.9,<1
+PyMuPDF>=1.24,<2
+Pillow>=10,<13
+pytesseract>=0.3.10,<1
+pillow-heif>=0.18,<2
+python-docx>=1.1,<2
+python-pptx>=0.6.23,<2
+openpyxl>=3.1,<4
+
+# Known-good macOS Ventura Intel x86_64 wheel and Linux Docker support.
+# OpenCV 4.13+ requires newer macOS for Intel (avoid source builds).
+opencv-python-headless==4.10.0.84
+numpy>=1.26,<2  # Stable OpenCV ABI on Ventura Intel and Linux

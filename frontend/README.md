@@ -1,75 +1,49 @@
-# React + TypeScript + Vite
+# ShareShield frontend — integrated React workspace
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+The original light-themed React dashboard has been connected to the privacy
+review backend. File selection, finding review, manual masking, output
+verification and downloads all work through the local API.
 
-Currently, two official plugins are available:
+## Local development
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+From the repository root in Terminal 1:
 
-## React Compiler
+~~~bash
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r backend/requirements.txt
+python -m uvicorn backend.app:app --host 127.0.0.1 --port 8000
+~~~
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+Install system Tesseract to enable OCR on images and scanned PDFs.
+On macOS: brew install tesseract.
 
-## Expanding the ESLint configuration
+Terminal 2:
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+~~~bash
+cd frontend
+npm ci
+npm run dev
+~~~
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+Open http://127.0.0.1:5173/. Vite proxies /analyze, /preview, /redact,
+/verify and /health to the local backend.
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+## Build
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+~~~bash
+npm ci
+npm run lint
+npm run build
+~~~
 
-```
+FastAPI serves frontend/dist if it exists when the server starts. Alternatively,
+run docker compose up --build from the repository root and open
+http://127.0.0.1:8000/.
 
-You can also install [eslint-plugin-react-x](https://npmx.dev/package/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://npmx.dev/package/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-
-```
+Demo controls:
+- Load fictional demo file for synthetic identifiers.
+- Preview and manual masks are for images/PDFs only.
+- Review and redaction do not overwrite the original file.
+- PASS_SCOPED does not guarantee complete sanitization.
+- Do not upload real private documents to a publicly hosted prototype.

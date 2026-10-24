@@ -2,161 +2,261 @@
 
 # 🛡️ ShareShield
 
-### Detect. Redact. Verify. Then Share.
+### Detect → Review → Redact → Verify → Share
 
-**A local-first system for sensitive-document detection, user-controlled redaction, and post-export privacy checks.**
+**A locally hosted privacy-review workspace for PDFs, screenshots and common documents.**
 
-**🟡 Planning & setup** · **🔒 Private development** · **📅 Mini-project demo: 28 October 2026**
+**Integrated demo deployment branch:** `integration/deployable-web-app` · **28 October 2026 mini-project**
 
 </div>
 
----
+## Working full-stack application
 
-## Overview
+The existing React + TypeScript dashboard is connected to a FastAPI backend, with OCR and file-format-specific redaction. **One container serves both frontend and API at the same origin**; no cloud account is required for the demo.
 
-ShareShield is designed to help users **check documents before sharing them**. It aims to detect selected sensitive information, let users review and remove it from a new copy, and then **reopen the exported file** to check whether the selected information is still present.
+| Area | Implemented |
+| --- | --- |
+| React frontend (team) | Midnight Cyan responsive dashboard, Light/Dark/System themes, friendly guide, quick category presets, file uploads, findings checklist, preview and manual masks |
+| Backend | FastAPI OCR/text detection, selected redactions, PDF/image/Office/tabular outputs |
+| Detection | Email, Indian phones, format/checksum candidates for Aadhaar, PAN, IFSC, UPI and payment cards |
+| Images and PDFs | Before/after preview, page navigation, user-drawn masking |
+| Documents and sheets | DOCX, PPTX, XLSX, CSV and TXT inspection/export (no visual previews) |
+| Verification | Independent output reinspection, PASS_SCOPED / FLAG / UNVERIFIED with JSON report and SHA-256 |
+| Deployment | Multi-stage Dockerfile + localhost-bound Compose + GitHub Actions frontend/backend/container checks |
 
-> **Why verification matters:** A black rectangle can make a student ID look hidden while its text remains searchable or copyable in a PDF. ShareShield focuses on checking the *saved file*, not just trusting how the preview looks.
+### Supported file formats
 
-**Current status:** This repository contains project documentation and preparation material. Implementation starts **19 October 2026**. No working application, measured accuracy, or security certification is claimed yet.
+- **Images:** JPG/JPEG, PNG, HEIC/HEIF, WEBP, BMP and TIFF (output PNG)
+- **PDFs:** selectable or scanned text (output PDF; OCR requires Tesseract)
+- **Office:** DOCX and PPTX, Excel XLSX
+- **Text/tabular:** CSV and UTF-8 TXT
 
-## At a glance
+Old DOC/XLS, archives, audio, video and password-protected PDFs are **not** supported. Input limit is 12 MiB; other page, pixel and complexity limits apply.
 
-| | Mini project — October 2026 | Major project — future direction |
-| --- | --- | --- |
-| **Experience** | Local browser-based document review | Android, iOS and web experiences |
-| **Input** | Searchable English PDFs; text-based PPTX as an extension | More documents, screenshots and images |
-| **Detection** | Selected ID and email patterns | Patterns, contextual recognition, OCR and visual detection |
-| **Redaction** | PDF content redaction; editable PPTX text replacement | Wider document and image support |
-| **Verification** | Reopen saved output and run documented checks | Expanded text, visual and file-structure checks |
-| **Sharing** | User downloads a reviewed copy | User-initiated system share sheets and authorized integrations |
+## Approved ShareShield logo (integrated)
 
-**Delivery priority:** A dependable **PDF workflow** comes first. PPTX support is planned for the mini project but is **subject to testing** and must not jeopardize the PDF demonstration.
+The website now uses the **approved image-generated ShareShield icon**, optimized
+as a small transparent `frontend/public/shareshield-mark.webp` asset. The
+sidebar and mobile header render the actual mark beside a responsive
+"Share" + cyan "Shield" wordmark. It uses the same asset in Light and Dark
+themes. The source image is also available to the team separately for
+presentations and future high-resolution brand exports.
 
-## Mini-project workflow
+## Midnight Cyan privacy command center (selected design A)
 
-The following diagram describes the **planned** interaction, not a completed feature.
+ShareShield now uses a cohesive **Midnight Blue + Electric Cyan** palette:
+midnight `#0B1426`, deep-slate cards, electric cyan `#43C9F5`,
+periwinkle accents and ice-blue text. **Light / Dark / System** appearance
+preferences remain supported, with a coordinated pale-blue light mode.
+Shieldy's animated robot and the browser favicon use the same identity.
+Success (teal-green), warning (amber) and failure (rose) are separate
+signals—not merely decorative cyan.
 
-```mermaid
-flowchart TD
-    A(["Choose local PDF or PPTX"]) --> B{"Supported file and content?"}
-    B -->|No| U["Show unsupported / unverified warning"]
-    B -->|Yes| C["Extract supported text"]
-    C --> D["Detect possible IDs and emails"]
-    D --> E["User reviews and selects findings"]
-    E --> F["Redact a NEW copy; preserve the original"]
-    F --> G["Save and reopen the exported file"]
-    G --> H{"Required verification checks"}
-    H -->|Completed and passed| P["PASS: provide copy and check report"]
-    H -->|Sensitive data remains| X["FLAG: hold for review"]
-    H -->|Incomplete or unsupported| Y["UNVERIFIED: hold for review"]
-```
+This is a visual update, **not** a change to the OCR, redaction or
+verification engine. Reduced-motion support remains available.
 
-**PASS is scoped, not absolute.** It means no selected sensitive value was found by the required checks **actually completed**. A check that fails to run, or content that cannot be reliably inspected, must not be called safe.
+## Cloudflare deployment — protected temporary demonstration
 
-## Planned architecture
+**Cloudflare is now our preferred demonstration route.** The bundled
+[Cloudflare guide](docs/CLOUDFLARE_DEPLOYMENT.md) explains a temporary
+`trycloudflare.com` URL using Cloudflare Tunnel. The complete React +
+FastAPI/OCR app continues running **on the team's Mac**, secured with the
+existing password-protected `protected-demo` mode and a strict exact
+hostname allowlist. No paid Cloudflare plan or domain is required for a
+Quick Tunnel, but the Mac and both processes must remain running.
 
-The mini project is designed to run **locally on one laptop during the demo**. Its browser frontend communicates with a local backend; original documents do not need to be uploaded to a public cloud.
+Cloudflare Pages alone can host the React UI, **not** the native Python
+Tesseract/OpenCV processing stack. A genuine always-online Cloudflare
+deployment is possible later using **Cloudflare Containers** (Workers Paid,
+metered resources, and additional integration work). We have not purchased
+hosting, created a live URL, or approved the prototype for real PII.
 
-```mermaid
+Railway remains a documented **alternative** rather than the selected
+platform: [Railway guide](docs/RAILWAY_DEPLOYMENT.md).
+
+## Emerald Shield premium workspace
+
+The React application has a complete visual refresh with a collapsible premium
+dashboard sidebar, real session metrics, a six-stage privacy workflow, accessible
+upload/categories, and a dedicated wide document review workbench. It supports
+**Light / Dark / System** themes that follow the Mac automatically and persist
+the appearance choice only (never file contents). All icons are local SVG;
+subtle motion respects Reduce Motion.
+
+### Shieldy — built-in beginner helper
+
+The bottom-right **Shieldy** bubble offers an offline FAQ, a "Start guided
+tour" option, and contextual advice. It highlights the real upload, review,
+page-check and export sections as users progress. Unlike a generic chat bot,
+it only uses the current stage and safe counts (never document contents or
+detected identity values), never calls third-party APIs, and never clicks
+redact/download/acknowledgement for users.
+
+- **Ask:** "How do I hide a face?", "What does UNVERIFIED mean?",
+  "Why is download disabled?" or use the suggested question buttons.
+- **Guide:** Choose file → configure & analyze → review/redact →
+  inspect & acknowledge → save reviewed export.
+- **Skip or close:** Both are supported at any point. The tour follows real
+  application state, not fake progress.
+- **No stored chats:** Replies are from a bundled FAQ; users are warned not
+  to paste real personal information.
+
+See the [Shieldy assistant documentation and acceptance checklist](docs/EMERALD_SHIELD_UI.md#shieldy-assistant--context-aware-offline-help-24-october-2026).
+
+### Aurora Edition — more advanced, still lightweight
+
+ShareShield now has a **premium animated document command center** with an
+illustrative redaction preview, actual-processing scan glow, responsive aurora
+lighting, improved hover interactions, and **⌘K / Ctrl+K** searchable commands.
+The command menu opens upload, fictional demo files, the editor, verification,
+privacy information and appearance controls—actual working actions, not just
+decoration.
+
+A top-bar **motion toggle** pauses decorative effects for the current tab.
+macOS **Reduce Motion** always overrides animations. The hero uses entirely
+fictional placeholder content; no uploaded file data appears in it. Privacy
+checks and manual acknowledgement still govern downloads.
+
+See the [Aurora design/interaction acceptance notes](docs/EMERALD_SHIELD_UI.md#aurora-edition--advanced-visual-and-motion-update-24-october-2026).
+
+### Fun and simple, without skipping privacy checks
+
+- **Shieldy companion:** friendly, context-aware three-step guidance that uses
+  actual file/verification state—not invented success scores or analytics.
+- **One-tap privacy selection:** All categories or clear selection, with
+  detailed options tucked away until needed. Redaction still requires review.
+- **Polished document comparison:** clearly labeled ORIGINAL / REDACTED views,
+  simple next-step guidance, compact review/download checklist and lightweight
+  feedback messages.
+- **Privacy & safety screen:** available from sidebar or footer. It explains
+  the local processing model, limits and downloaded-file handling; read the
+  [prototype privacy notice](docs/PRIVACY_NOTICE.md).
+- **Honest safety states:** high-risk leftovers stay blocked; the visual
+  guide never calls an unverified export "completely secure".
+
+Read the [full UI blueprint, color tokens and Mac acceptance checklist](docs/EMERALD_SHIELD_UI.md).
+The local-first FastAPI/OCR/redaction/verification pipeline is unchanged.
+
+## Smart Redaction Preferences (image + PDF + document text)
+
+The full-stack integration includes an interactive **What would you like to
+protect?** panel. Choose Aadhaar/12-digit ID/VID, name, address, DOB,
+face/photo, phone/email, QR candidate, financial IDs, or other manual areas.
+Detected candidates are preselected by category, and a toggle requests
+redaction of all **recognized matching occurrences** across pages.
+
+For photos and manually drawn regions on images/PDFs, choose **blackout**,
+**blur** or **pixelate**. Automatically detected identity numbers, textual
+identifiers and QR regions are always blacked out. Blur/pixelation are visual
+effects and are *not guaranteed irreversible*. PDFs using these effects are
+flattened to prevent leaving the source text layer under an overlay.
+
+Automatic face and QR proposals use local OpenCV only, with no model downloads
+or cloud calls. Detection is best-effort; unusual barcodes, names without
+labels, multilingual content and small faces may be missed. Always review the
+original/export and draw manual boxes. The status `PASS_SCOPED` is **not**
+a certification that the whole document is anonymous.
+
+See [workflow, limitations and demo tests](docs/SMART_REDACTION.md).
+**Never upload real Aadhaar cards or personal data to a public prototype.**
+
+## Quickest setup on your Intel Mac
+
+With the integration branch checked out, run:
+
+~~~bash
+bash scripts/setup-macos.sh
+bash scripts/check-ready.sh
+bash scripts/start-demo.sh
+~~~
+
+Open http://127.0.0.1:8000/ and use **Load fictional demo file**.
+System Tesseract must be installed separately for OCR. Make sample PDFs,
+JPGs, DOCX, PPTX and spreadsheets using:
+
+~~~bash
+.venv/bin/python scripts/generate-demo-files.py
+open demo-output
+~~~
+
+See [all requirements and official download links](docs/PREREQUISITES.md)
+for the 2017/2019 Intel MacBook setup.
+
+## Start on your own laptop
+
+**Option A — Docker Compose (simplest integrated demo):**
+
+~~~bash
+docker compose up --build -d
+docker compose ps
+~~~
+
+Open **http://127.0.0.1:8000/**. Use **Load fictional demo file**.
+Stop with `docker compose down`.
+
+**Option B — without Docker:**
+
+Terminal 1:
+
+~~~bash
+python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install -r backend/requirements.txt
+python -m uvicorn backend.app:app --host 127.0.0.1 --port 8000
+~~~
+
+Install the external Tesseract program if you need image/scanned-PDF OCR (macOS: `brew install tesseract`).
+
+Terminal 2:
+
+~~~bash
+cd frontend
+npm ci
+npm run dev
+~~~
+
+Open **http://127.0.0.1:5173/**. The Vite dev proxy sends API calls to the Python server. For a single server without Docker, build the React app using `npm run build` from frontend/ and restart FastAPI; it then serves the compiled app at port 8000.
+
+## Architecture
+
+~~~mermaid
 flowchart LR
-    subgraph Device["User's laptop — local processing"]
-        UI["React + TypeScript<br/>Review interface"]
-        API["FastAPI<br/>Local API"]
-        PDF["PyMuPDF<br/>PDF operations"]
-        PPT["python-pptx<br/>PPTX text operations"]
-        DET["PII patterns<br/>Detection results"]
-        V["Export verification<br/>Reopen saved file"]
-    end
-    UI <-->|"Upload, review, result"| API
-    API --> PDF
-    API --> PPT
-    PDF --> DET
-    PPT --> DET
-    DET --> API
-    PDF --> V
-    PPT --> V
-    V --> API
-```
+    Browser["Existing React dashboard"] -->|Same origin| API["FastAPI"]
+    API --> Parser["PDF, image, Office, spreadsheet parsers"]
+    Parser --> OCR["Tesseract OCR (when available)"]
+    Parser --> PII["Format/checksum candidate detection"]
+    OCR --> PII
+    PII --> Review["Human review + manual masks"]
+    Review --> Export["Redacted output"]
+    Export --> Verify["Reopen and rescan selected values"]
+    Verify --> Browser
+~~~
 
-### Intended stack
+## Verification and privacy
 
-| Layer | Planned tools | Purpose |
-| --- | --- | --- |
-| User interface | React, TypeScript, Vite | Upload, findings review, results |
-| Local service | Python, FastAPI | File handling and coordination |
-| PDF | PyMuPDF | Text extraction and true content redaction |
-| Presentations | python-pptx | Editable text extraction and replacement |
-| Detection | Configurable patterns / regular expressions | Initial ID and email detection |
-| Verification | Independent saved-file checks | PASS / FLAG / UNVERIFIED reporting |
-| Collaboration | Git + private GitHub repository | Version history and reviews |
+A **PASS_SCOPED** result means that recognized *selected* strings were not found during the checks performed. It is **not a statement that all private data has been eliminated**. **UNVERIFIED** covers manual-only masks and incomplete coverage; **FLAG** indicates recognized selected data was still found. Review every export before sharing.
 
-Tool choices may change following compatibility and license review. **PyMuPDF's AGPL/commercial licensing options require evaluation before distribution.**
+Files are uploaded only to the server you configure. The bundled Docker configuration binds to **127.0.0.1** on your own computer. Do not publicly expose this prototype with real personal data. The default local app has no per-user accounts, user isolation, anti-malware scanning or complete public-production security hardening. Optional hosted-demo mode adds shared-password access gating, which is not equivalent to audited authentication or upload isolation. Upload frameworks can temporarily spool document contents. It is not end-to-end encrypted or certified for sensitive records.
 
-## Supported scope and limitations
+The team should review the PyMuPDF AGPL/commercial terms and all third-party licenses before distribution.
 
-| Scenario | Mini-project target |
-| --- | --- |
-| Searchable English PDF containing fictional ID/email | **Core target** |
-| Editable text in a modern `.pptx` | **Planned extension** |
-| A PDF where a black shape merely covers copyable text | **Illustrative leak test** |
-| Scanned/image-only PDFs or text embedded in pictures | Not part of the initial guarantee |
-| Complex PPTX objects, speaker notes and embedded documents | Not automatically considered verified |
-| OCR, face redaction, multilingual support | Future work |
-| Monitoring every WhatsApp or Gmail upload silently | **Not supported** by an unrestricted third-party mobile app |
+## Project resources
 
-Unrecognized formats, unsupported content and incomplete verification must be surfaced clearly to users rather than reported as passing.
+- [Frontend setup](frontend/README.md)
+- [Backend setup and limitations](backend/README.md)
+- [Cloudflare Tunnel/Containers deployment guide](docs/CLOUDFLARE_DEPLOYMENT.md)
+- [Self-hosted deployment runbook](docs/DEPLOYMENT.md)
+- [Scope and milestones](docs/PROJECT_SCOPE.md)
+- [Security policy](SECURITY.md)
+- [IP and licensing](docs/IP_AND_LICENSING.md)
 
-## Roadmap
-
-| When | Planned deliverable |
-| --- | --- |
-| **16–18 Oct 2026** | Repository setup, prerequisites and fictional test cases |
-| **19–22 Oct** | Frontend, local API, PDF extraction, detection and user review |
-| **23–25 Oct** | PDF redaction and export checks; attempt PPTX support |
-| **26 Oct** | Test failures, edge cases and documentation |
-| **27 Oct** | Stable code freeze, backup and rehearsal |
-| **28 Oct** | **Mini-project demonstration** |
-| **After the demo** | Mobile architecture, expanded privacy checks, testing and release planning |
-
-### Future major-project vision
-
-ShareShield may evolve into an **opt-in, on-device sharing assistant** for Android and iOS. Users would route files through a supported system sharing workflow, review recommended redactions, verify the exported file, and then choose where to share it.
-
-Native sharing capabilities and third-party integrations are **platform-dependent**. Android and iOS generally do not permit an ordinary application to inspect all WhatsApp, Gmail or other-app uploads invisibly in the background. App permissions and release policies must be evaluated before promising any integration.
-
-## Documentation
-
-| Document | What it covers |
-| --- | --- |
-| [Prerequisites](docs/PREREQUISITES.md) | Required tools and Mac-specific setup checks |
-| [Project scope](docs/PROJECT_SCOPE.md) | Acceptance criteria, milestones and limitations |
-| [Contributing](CONTRIBUTING.md) | Branches, pull requests and team workflow |
-| [Security policy](SECURITY.md) | Responsible testing and vulnerability handling |
-| [IP and licensing](docs/IP_AND_LICENSING.md) | Ownership, dependency obligations and patent considerations |
-
-There are **no app installation commands yet** because implementation has not started. Use the prerequisites document to prepare the development environment.
-
-## Responsible development
-
-- Use **fictional or expressly authorized test data**. Never commit real IDs, private user files, exports, credentials or sensitive logs.
-- Preserve original files and produce edited copies separately.
-- Report only the checks performed; do not claim universal leak prevention.
-- Keep research results evidence-based. **Patentability has not been established**; conduct a prior-art and ownership review before public technical disclosure.
-
-## Rights and licensing
-
-**Private repository · No public software license selected.**
-
-Copyright ownership and redistribution permissions still need clarification among contributors and under any applicable institutional policy. The lack of a `LICENSE` file does **not** authorize public reuse or redistribution. Third-party dependency licenses also require review before commercial release.
-
-For details, read [IP and licensing considerations](docs/IP_AND_LICENSING.md).
+**Team demo goal:** Run the full scan → select → redact → verify → download journey using *fictional examples* and honestly explain remaining limitations.
 
 ---
 
 <div align="center">
 
-**ShareShield** · Mini-project prototype in planning · **Malnad College of Engineering**
+**ShareShield — Student mini-project prototype**
 
 *Detect. Redact. Verify. Then Share.*
 

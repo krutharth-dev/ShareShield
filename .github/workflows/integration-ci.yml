@@ -1,0 +1,180 @@
+name: ShareShield full-stack CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-and-test:
+    name: React + API + OCR + Docker
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    env:
+      PYTHONDONTWRITEBYTECODE: "1"
+      PYTHONUNBUFFERED: "1"
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install frontend dependencies
+        working-directory: frontend
+        run: npm ci --no-audit --no-fund
+
+      - name: Lint frontend
+        working-directory: frontend
+        run: npm run lint
+
+      - name: Build TypeScript and React frontend
+        working-directory: frontend
+        run: npm run build
+
+      - name: Install OCR system dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends tesseract-ocr fonts-dejavu-core
+          tesseract --version
+
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: backend/requirements.txt
+
+      - name: Install backend and test dependencies
+        run: |
+          python -m pip install -r backend/requirements.txt
+          python -m pip install pytest httpx
+
+      - name: Check local setup and demo scripts
+        run: |
+          bash -n scripts/setup-macos.sh
+          bash -n scripts/check-ready.sh
+          bash -n scripts/start-demo.sh
+          python -m py_compile scripts/generate-demo-files.py
+
+      - name: Run backend and integration tests
+        run: python -m pytest backend/tests -v --tb=short
+
+      - name: Build deployable Docker image
+        run: docker build --tag shareshield:ci .
+
+      - name: Run Docker with local-only demo restrictions
+        run: |
+          docker run --detach --rm --name shareshield-ci \
+            --read-only \
+            --tmpfs /tmp:rw,nosuid,noexec,size=128m \
+            --cap-drop ALL \
+            --security-opt no-new-privileges:true \
+            --memory 2g \
+            --publish 127.0.0.1:8765:8000 \
+            shareshield:ci
+
+      - name: Verify running website, OCR and redaction round-trip
+        run: |
+          python - <<'PY'
+          import hashlib
+          import time
+          import httpx
+
+          base = "http://127.0.0.1:8765"
+          with httpx.Client(timeout=20.0) as client:
+              for attempt in range(30):
+                  try:
+                      health = client.get(base + "/health")
+                      health.raise_for_status()
+                      break
+                  except (httpx.HTTPError, OSError):
+                      time.sleep(2)
+              else:
+                  raise AssertionError("Container API was not healthy within 60 seconds")
+
+              health_data = health.json()
+              assert health_data["status"] == "ok", health_data
+              assert health_data["ocr_available"] is True, health_data
+
+              page = client.get(base + "/")
+              page.raise_for_status()
+              assert '<div id="root"></div>' in page.text, "React application not served"
+
+              original = b"Fictional ShareShield demo: demo@example.org\n"
+              file_part = ("sample.txt", original, "text/plain")
+              analysis = client.post(
+                  base + "/analyze", files={"file": file_part}
+              )
+              analysis.raise_for_status()
+              findings = analysis.json()["findings"]
+              ids = ",".join(str(item["id"]) for item in findings
+                             if item["value"] == "demo@example.org")
+              assert ids, analysis.text
+
+              redact = client.post(
+                  base + "/redact",
+                  files={"file": file_part},
+                  data={
+                      "analysis_id": analysis.json()["analysis_id"],
+                      "selected_ids": ids,
+                  },
+              )
+              redact.raise_for_status()
+              assert b"demo@example.org" not in redact.content, "Redaction failed"
+              assert b"[REDACTED]" in redact.content, "Redaction replacement missing"
+
+              verification = client.post(
+                  base + "/verify",
+                  files={
+                      "file": file_part,
+                      "redacted": ("shareshield-redacted.txt", redact.content, "text/plain"),
+                  },
+                  data={
+                      "analysis_id": analysis.json()["analysis_id"],
+                      "selected_ids": ids,
+                  },
+              )
+              verification.raise_for_status()
+              report = verification.json()
+              assert report["status"] == "PASS_SCOPED", report
+              assert report["output_sha256"] == hashlib.sha256(redact.content).hexdigest()
+              print("PASS: React homepage, OCR health, analysis, redaction, verification")
+          PY
+
+      - name: Print container logs if a check failed
+        if: failure()
+        run: docker logs shareshield-ci --tail 150 || true
+
+      - name: Stop test container
+        if: always()
+        run: docker stop shareshield-ci || true
+
+      - name: Publish CI summary
+        if: always()
+        run: |
+          {
+            echo "## ShareShield full-stack check"
+            echo "- React: lint + TypeScript/Vite build"
+            echo "- Backend: synthetic pytest suite with Tesseract"
+            echo "- Container: Docker build + localhost smoke test"
+            echo "- Scope: self-hosted educational demo, **not** a security certification"
+          } >> "$GITHUB_STEP_SUMMARY"

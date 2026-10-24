@@ -1,0 +1,335 @@
+"""ShareShield: offline-first browser application and local API."""
+from __future__ import annotations
+
+import json
+import base64
+import binascii
+import hmac
+from pathlib import Path
+import os
+from typing import Annotated
+
+from fastapi import FastAPI, File, Form, HTTPException, UploadFile
+from fastapi.responses import FileResponse, Response
+from fastapi.staticfiles import StaticFiles
+from starlette.middleware.trustedhost import TrustedHostMiddleware
+from fastapi.responses import JSONResponse
+
+from backend import engine, review, smart
+from backend.patterns import SEVERITY
+
+DEPLOYMENT_MODE = os.environ.get("SHARESHIELD_DEPLOYMENT_MODE", "local").lower()
+CLOUD_DEMO = DEPLOYMENT_MODE == "protected-demo"
+if DEPLOYMENT_MODE not in {"local", "protected-demo"}:
+    raise RuntimeError("Unknown SHARESHIELD_DEPLOYMENT_MODE")
+DEMO_USER = os.environ.get("SHARESHIELD_DEMO_USER", "")
+DEMO_PASSWORD = os.environ.get("SHARESHIELD_DEMO_PASSWORD", "")
+if CLOUD_DEMO and (not DEMO_USER or len(DEMO_PASSWORD) < 20):
+    raise RuntimeError("Protected demo requires SHARESHIELD_DEMO_USER and a password of at least 20 characters")
+HOSTS = ["127.0.0.1", "localhost", "testserver"]
+if CLOUD_DEMO:
+    # Keep host validation explicit for Railway's service domain.
+    # healthcheck.railway.app is the host header used by its deployment probe.
+    railway_host = os.environ.get("RAILWAY_PUBLIC_DOMAIN", "").strip().lower()
+    on_railway = bool(os.environ.get("RAILWAY_PROJECT_ID") or railway_host)
+    if on_railway:
+        HOSTS.append("healthcheck.railway.app")
+        if railway_host:
+            if (not railway_host.endswith(".up.railway.app")
+                    or railway_host == ".up.railway.app"
+                    or any(c in railway_host for c in ("/", ":", "*", " "))
+                    or not all(c.isascii() and (c.isalnum() or c in ".-") for c in railway_host)):
+                raise RuntimeError("Invalid RAILWAY_PUBLIC_DOMAIN")
+            HOSTS.append(railway_host)
+    # Custom host for Cloudflare Tunnel or another externally secured edge.
+    # Render compatibility is retained only when no custom hostname is set.
+    custom_host = os.environ.get("SHARESHIELD_PUBLIC_HOSTNAME", "").strip().lower()
+    if not on_railway and not custom_host:
+        HOSTS.append("*.onrender.com")
+    if custom_host:
+        if ("://" in custom_host or "/" in custom_host or "*" in custom_host
+                or ":" in custom_host or " " in custom_host):
+            raise RuntimeError("SHARESHIELD_PUBLIC_HOSTNAME must be a plain hostname")
+        HOSTS.append(custom_host)
+app = FastAPI(title="ShareShield privacy review demo API", version="0.5.0")
+app.add_middleware(TrustedHostMiddleware, allowed_hosts=HOSTS)
+
+
+def _valid_demo_auth(header: str | None) -> bool:
+    if not CLOUD_DEMO:
+        return True
+    if not header or not header.startswith("Basic "):
+        return False
+    try:
+        decoded = base64.b64decode(header[6:], validate=True).decode("utf-8")
+    except (ValueError, UnicodeError, binascii.Error):
+        return False
+    supplied_user, separator, supplied_password = decoded.partition(":")
+    return bool(separator) and hmac.compare_digest(supplied_user, DEMO_USER) and hmac.compare_digest(supplied_password, DEMO_PASSWORD)
+STATIC = Path(__file__).parent / "static" / "index.html"
+FRONTEND_DIST = Path(os.environ.get("SHARESHIELD_WEB_DIST", str(Path(__file__).resolve().parent.parent / "frontend" / "dist")))
+
+
+@app.middleware("http")
+async def security_headers(request, call_next):
+    # This is a shared-password *demo gate*, not per-user authentication.
+    # Health is publicly readable for the hosting platform.
+    if CLOUD_DEMO and request.url.path not in {"/health"}:
+        if not _valid_demo_auth(request.headers.get("authorization")):
+            return Response(
+                status_code=401, content="ShareShield demo: access code required",
+                media_type="text/plain",
+                headers={"WWW-Authenticate": 'Basic realm="ShareShield educational demo"',
+                         "Cache-Control": "no-store", "X-Content-Type-Options": "nosniff"},
+            )
+    # Fail early when the client declares an excessive multipart body. The
+    # upload reader also enforces per-file limits, including unknown lengths.
+    if request.method == "POST" and request.url.path in {
+        "/analyze", "/preview", "/redact", "/verify"
+    }:
+        header = request.headers.get("content-length")
+        if header is not None:
+            try:
+                declared = int(header)
+            except ValueError:
+                return JSONResponse({"detail": "Invalid Content-Length header"}, status_code=400)
+            # /verify uploads both the original and an exported copy.
+            max_body = engine.MAX_BYTES * (2 if request.url.path == "/verify" else 1) + 1024 * 1024
+            if declared < 0 or declared > max_body:
+                return JSONResponse(
+                    {"detail": "Upload request too large for this local demo"},
+                    status_code=413,
+                )
+    if request.method not in {"GET", "HEAD", "OPTIONS"}:
+        origin = request.headers.get("origin")
+        permitted = {
+            str(request.base_url).rstrip("/"),
+            "http://127.0.0.1:5173", "http://localhost:5173",
+        }
+        if CLOUD_DEMO:
+            # The hosting platform terminates TLS at its trusted edge.
+            # Validate Origin hostname against Host instead of blindly trusting
+            # forwarded-scheme headers from arbitrary browser requests.
+            from urllib.parse import urlsplit
+            from_host = urlsplit(origin).netloc.lower() if origin else ""
+            request_host = request.headers.get("host", "").lower()
+            if origin and (urlsplit(origin).scheme != "https" or from_host != request_host):
+                return JSONResponse({"detail": "Cross-origin upload blocked"}, status_code=403)
+        elif origin and origin not in permitted:
+            return JSONResponse({"detail": "Cross-origin upload blocked on this local demo server"}, status_code=403)
+        if request.headers.get("sec-fetch-site", "").lower() == "cross-site":
+            return JSONResponse({"detail": "Cross-site request blocked"}, status_code=403)
+    response = await call_next(request)
+    response.headers["Cache-Control"] = "no-store"
+    response.headers["X-Content-Type-Options"] = "nosniff"
+    response.headers["Referrer-Policy"] = "no-referrer"
+    response.headers["X-Frame-Options"] = "DENY"
+    response.headers["Permissions-Policy"] = "camera=(), microphone=(), geolocation=()"
+    if FRONTEND_DIST.is_dir():
+        response.headers["Content-Security-Policy"] = (
+            "default-src 'self'; script-src 'self'; style-src 'self'; "
+            "img-src 'self' blob: data:; connect-src 'self'; font-src 'self'; "
+            "object-src 'none'; base-uri 'none'; frame-ancestors 'none'; form-action 'self'"
+        )
+    return response
+
+
+if FRONTEND_DIST.is_dir():
+    app.mount("/assets", StaticFiles(directory=FRONTEND_DIST / "assets"), name="built-assets")
+
+
+@app.get("/theme-init.js", include_in_schema=False)
+def theme_init():
+    """Serve a tiny local startup script under the existing strict CSP.
+
+    Do not put this logic in inline JavaScript; the application intentionally
+    rejects inline scripts to reduce injection risk.
+    """
+    script = FRONTEND_DIST / "theme-init.js"
+    if script.is_file():
+        return FileResponse(script, media_type="application/javascript",
+                            headers={"Cache-Control": "no-store"})
+    raise HTTPException(404, "Theme bootstrap not found")
+
+
+@app.get("/favicon.svg", include_in_schema=False)
+def favicon():
+    path = FRONTEND_DIST / "favicon.svg"
+    if path.is_file():
+        return FileResponse(path, media_type="image/svg+xml")
+    raise HTTPException(404, "Favicon not found")
+
+
+@app.get("/shareshield-mark.webp", include_in_schema=False)
+def brand_mark():
+    """Serve the approved logo under the same-origin restrictive CSP."""
+    path = FRONTEND_DIST / "shareshield-mark.webp"
+    if path.is_file():
+        return FileResponse(path, media_type="image/webp")
+    raise HTTPException(404, "ShareShield logo not built")
+
+
+@app.get("/", include_in_schema=False)
+def index():
+    return FileResponse(FRONTEND_DIST / "index.html" if (FRONTEND_DIST / "index.html").is_file() else STATIC, media_type="text/html",
+                        headers={"Cache-Control": "no-store"})
+
+
+@app.get("/health")
+def health():
+    return {"status": "ok", "mode": "local-privacy-review-v0.5",
+            "ocr_available": engine.ocr_available(),
+            "vision_available": smart.available(),
+            "redaction_modes": ["blackout", "blur", "pixelate"],
+            "ocr_setup": None if engine.ocr_available() else "Install Tesseract with brew install tesseract; restart server"}
+
+
+async def _upload(file: UploadFile) -> tuple[bytes, str]:
+    ext = engine.extension(file.filename or "")
+    data = await file.read(engine.MAX_BYTES + 1)
+    if not data or len(data) > engine.MAX_BYTES:
+        raise HTTPException(413, "File must be nonempty and at most 12 MiB")
+    review.check_file(data, ext)
+    return data, ext
+
+
+def _ids(raw: str, count: int) -> list[int]:
+    try:
+        ids = [int(v.strip()) for v in raw.split(",") if v.strip()]
+    except ValueError as exc:
+        raise HTTPException(422, "selected_ids must be comma-separated integers") from exc
+    if len(ids) != len(set(ids)) or any(n < 0 or n >= count for n in ids):
+        raise HTTPException(422, "Invalid or duplicate finding IDs")
+    return ids
+
+
+def _expand_ids(findings: list[engine.Finding], ids: list[int], all_occurrences: bool) -> list[engine.Finding]:
+    """Select the same recognized identifier on every page/line.
+
+    Visual candidates (faces/QR codes) are not merged by their generated
+    captions: the user should select individual rectangles or the category.
+    """
+    if not all_occurrences:
+        return [findings[i] for i in ids]
+    import re
+
+    def key(f: engine.Finding):
+        if f.category in {"aadhaar_candidate", "vid_candidate", "payment_card_candidate", "indian_mobile_candidate"}:
+            return f.category, re.sub(r"\D", "", f.value)
+        return f.category, f.value.casefold().strip()
+    keys = {key(findings[i]) for i in ids if findings[i].category not in {"face_candidate", "qr_candidate"}}
+    expanded = {i for i, f in enumerate(findings) if key(f) in keys}
+    expanded.update(ids)
+    return [findings[i] for i in sorted(expanded)]
+
+
+@app.post("/analyze")
+async def analyze(file: Annotated[UploadFile, File()]):
+    data, ext = await _upload(file)
+    findings, limitations = engine.inspect(data, ext)
+    page_count = 1
+    if ext == ".pdf":
+        with engine.open_pdf(data) as doc:
+            page_count = doc.page_count
+    counts: dict[str, int] = {}
+    for f in findings:
+        counts[f.category] = counts.get(f.category, 0) + 1
+    return {
+        "filename": file.filename,
+        "format": ext,
+        "analysis_id": engine.fingerprint(data),
+        "findings": [f.public(i) for i, f in enumerate(findings)],
+        "counts": counts,
+        "high_risk_count": sum(1 for f in findings if SEVERITY.get(f.category) == "high"),
+        "page_count": page_count,
+        "preview_supported": ext in engine.IMAGE_EXTENSIONS or ext == ".pdf",
+        "limitations": limitations,
+        "message": "Review results; no findings does not mean the file contains no sensitive data.",
+    }
+
+
+@app.post("/preview")
+async def preview_file(
+    file: Annotated[UploadFile, File()],
+    page: Annotated[int, Form()] = 1,
+):
+    data, ext = await _upload(file)
+    image = review.preview(data, ext, page)
+    if ext == ".pdf":
+        with engine.open_pdf(data) as doc:
+            bounds = doc[page - 1].rect
+            width, height = bounds.width, bounds.height
+    else:
+        source = engine.read_image(data)
+        width, height = source.width, source.height
+    return Response(content=image, media_type="image/png",
+                    headers={"Cache-Control": "no-store",
+                             "X-Document-Width": str(width),
+                             "X-Document-Height": str(height)})
+
+
+@app.post("/redact")
+async def redact_selected(
+    file: Annotated[UploadFile, File()],
+    analysis_id: Annotated[str, Form()],
+    selected_ids: Annotated[str, Form()] = "",
+    manual_regions: Annotated[str, Form()] = "[]",
+    redact_all: Annotated[bool, Form()] = False,
+    redaction_mode: Annotated[str, Form()] = "blackout",
+):
+    if redaction_mode not in {"blackout", "blur", "pixelate"}:
+        raise HTTPException(422, "Invalid redaction mode")
+    data, ext = await _upload(file)
+    if engine.fingerprint(data) != analysis_id:
+        raise HTTPException(409, "File differs from the analyzed copy. Reanalyze the file.")
+    findings, _ = engine.inspect(data, ext)
+    chosen = _expand_ids(findings, _ids(selected_ids, len(findings)), redact_all)
+    if any(not f.rectangles and not f.location for f in chosen):
+        raise HTTPException(422, "One or more selected findings could not be located")
+    manual = review.parse_regions(manual_regions, ext)
+    if not chosen and not manual:
+        raise HTTPException(422, "Select a finding or draw a manual redaction box")
+    if ext in engine.IMAGE_EXTENSIONS or ext == ".pdf":
+        result, mime, name = review.redact_visual(data, ext, chosen, manual, redaction_mode)
+        result_ext = ".png" if ext in engine.IMAGE_EXTENSIONS else ".pdf"
+    else:
+        result, mime, name = engine.redact(data, ext, chosen)
+        result_ext = ext
+    report = review.evaluate(chosen, result, result_ext, len(manual), redaction_mode)
+    if report["status"] == "FLAG":
+        raise HTTPException(409, "FLAG: selected information is still detectable in the output")
+    return Response(content=result, media_type=mime,
+                    headers={
+                        "Content-Disposition": f'attachment; filename="{name}"',
+                        "X-ShareShield-Verification": report["status"],
+                        "X-ShareShield-Selected-Count": str(len(chosen)),
+                        "X-ShareShield-Manual-Count": str(len(manual)),
+                        "Cache-Control": "no-store",
+                        "X-Content-Type-Options": "nosniff",
+                    })
+
+
+@app.post("/verify")
+async def verify_result(
+    file: Annotated[UploadFile, File()],
+    redacted: Annotated[UploadFile, File()],
+    analysis_id: Annotated[str, Form()],
+    selected_ids: Annotated[str, Form()] = "",
+    manual_count: Annotated[int, Form()] = 0,
+    redact_all: Annotated[bool, Form()] = False,
+    redaction_mode: Annotated[str, Form()] = "blackout",
+):
+    if redaction_mode not in {"blackout", "blur", "pixelate"}:
+        raise HTTPException(422, "Invalid redaction mode")
+    original, ext = await _upload(file)
+    if engine.fingerprint(original) != analysis_id:
+        raise HTTPException(409, "Original file differs from the analyzed copy")
+    output, out_ext = await _upload(redacted)
+    valid_outputs = {".png"} if ext in engine.IMAGE_EXTENSIONS else {ext}
+    if out_ext not in valid_outputs:
+        raise HTTPException(422, "The redacted output has an unexpected format")
+    initial, _ = engine.inspect(original, ext)
+    chosen = _expand_ids(initial, _ids(selected_ids, len(initial)), redact_all)
+    if manual_count < 0 or manual_count > 60:
+        raise HTTPException(422, "Invalid manual redaction count")
+    return review.evaluate(chosen, output, out_ext, manual_count, redaction_mode)
