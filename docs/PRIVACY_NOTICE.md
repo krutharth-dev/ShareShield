@@ -52,6 +52,12 @@ separate security, hosting, privacy and legal review.
   are maintained in the current browser session; reloading/closing the tab
   clears ordinary in-memory application state. Downloads are files on
   the user's computer and remain there until deleted.
+- Shieldy, the optional in-app helper, uses **locally bundled, rule-based FAQ**
+  responses and only receives workflow status/counts (not file bytes,
+  extracted personal details or previews). Typed help questions and answers
+  remain in the current browser component memory; the helper does not send
+  chat prompts to an external AI API or store a chat history. Avoid entering
+  real personal identifiers or document content into its question field.
 - The only deliberate localStorage setting in this frontend is
   `shareshield-appearance` (`light`, `dark`, `system`).
 - The FastAPI server responds with `Cache-Control: no-store` and a
