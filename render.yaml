@@ -12,7 +12,7 @@ services:
     healthCheckPath: /health
     envVars:
       - key: PORT
-        value: "8000"
+        value: "10000"
       - key: SHARESHIELD_DEPLOYMENT_MODE
         value: public-demo
       - key: SHARESHIELD_PUBLIC_HOSTNAME
