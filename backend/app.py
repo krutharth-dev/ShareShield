@@ -41,10 +41,11 @@ if CLOUD_DEMO:
                     or not all(c.isascii() and (c.isalnum() or c in ".-") for c in railway_host)):
                 raise RuntimeError("Invalid RAILWAY_PUBLIC_DOMAIN")
             HOSTS.append(railway_host)
-    else:
-        # Backwards compatibility for the previously prepared Render Blueprint.
-        HOSTS.append("*.onrender.com")
+    # Custom host for Cloudflare Tunnel or another externally secured edge.
+    # Render compatibility is retained only when no custom hostname is set.
     custom_host = os.environ.get("SHARESHIELD_PUBLIC_HOSTNAME", "").strip().lower()
+    if not on_railway and not custom_host:
+        HOSTS.append("*.onrender.com")
     if custom_host:
         if ("://" in custom_host or "/" in custom_host or "*" in custom_host
                 or ":" in custom_host or " " in custom_host):
@@ -157,6 +158,15 @@ def favicon():
     if path.is_file():
         return FileResponse(path, media_type="image/svg+xml")
     raise HTTPException(404, "Favicon not found")
+
+
+@app.get("/shareshield-mark.webp", include_in_schema=False)
+def brand_mark():
+    """Serve the approved logo under the same-origin restrictive CSP."""
+    path = FRONTEND_DIST / "shareshield-mark.webp"
+    if path.is_file():
+        return FileResponse(path, media_type="image/webp")
+    raise HTTPException(404, "ShareShield logo not built")
 
 
 @app.get("/", include_in_schema=False)
