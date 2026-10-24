@@ -89,10 +89,25 @@ installed. GitHub Actions builds the frontend, runs Python tests and attempts
 a Docker image build. A green CI status is required before merge.
 
 
-## Chosen provider: Railway — protected educational demo
+## Selected demonstration path: Cloudflare Tunnel
 
-**Railway is now the preferred deployment target** following the team's
-hosting decision. Use [RAILWAY_DEPLOYMENT.md](RAILWAY_DEPLOYMENT.md) for the
+The user-selected platform is **Cloudflare** for a protected, temporary
+student demo. Follow [CLOUDFLARE_DEPLOYMENT.md](CLOUDFLARE_DEPLOYMENT.md).
+
+This keeps React, FastAPI, Tesseract OCR and OpenCV running together on the
+Mac, while a Cloudflare Quick Tunnel provides an HTTPS `trycloudflare.com`
+link. The tunnel does not make the app permanently hosted or fully isolated.
+The launcher requires an exact hostname and 20+ character shared password;
+only fictional files are appropriate. No Cloudflare service is live yet.
+
+Cloudflare Pages **alone** cannot run the Python OCR backend. Cloudflare
+Containers could host the complete stack later, with Workers Paid pricing
+and new deployment integration. Railway and Render instructions below are
+retained as alternatives.
+
+## Alternative provider: Railway — protected educational demo
+
+**Railway is an alternative deployment target**, not the selected Cloudflare route. Use [RAILWAY_DEPLOYMENT.md](RAILWAY_DEPLOYMENT.md) for the
 current step-by-step instructions, including configuring secrets inside
 Railway, selecting the integration branch, setting `/health`, generating the
 Railway HTTPS domain and redeploying to register its hostname.
