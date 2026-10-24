@@ -119,3 +119,7 @@ def test_address_masks_do_not_bridge_portrait_column():
     assert addresses
     assert all(r[2] <= 240 for f in addresses for r in f.rectangles)
     assert all(' O ' not in f.value for f in addresses)
+
+
+def test_explicit_vid_is_not_a_payment_card():
+    assert {f.category for f in engine.scan_text('VID: 1111 2222 3333 4444', 1)} == {'vid_candidate'}

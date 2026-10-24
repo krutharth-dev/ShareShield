@@ -1025,7 +1025,7 @@ function App() {
           <span><button className="footer-privacy" onClick={() => { setShowPrivacy(true); navigateTo('privacy') }}><Icon name="lock" size={14}/> Privacy &amp; safety</button> · Detect · Review · Redact · Verify</span></footer>
       </section>
       <CommandPalette open={commandOpen} onClose={() => setCommandOpen(false)} actions={commandActions}/>
-      <ShieldyAssistant
+      {!Boolean(analysis) && <ShieldyAssistant
         hasFile={Boolean(file)} hasAnalysis={Boolean(analysis)} hasResult={Boolean(result)}
         findingCount={analysis?.findings.length ?? 0}
         reviewedPages={reviewedPages.length} pageCount={analysis?.page_count ?? 0}
@@ -1038,7 +1038,7 @@ function App() {
         }}
         onChooseFile={() => { navigateTo('upload'); input.current?.click() }}
         onDemo={sample}
-      />
+      />}
       {toast && <div className="delight-toast" role="status" aria-live="polite"><Icon name="sparkle" size={18}/><span>{toast}</span>
         <button aria-label="Dismiss notification" onClick={() => setToast('')}><Icon name="close" size={14}/></button></div>}
     </main>

@@ -86,7 +86,12 @@ def scan_text(text: str, page: int, rectangles: Callable[[str, int, int], list[t
             matches.append((match.start(), Finding(category, match.group(0), page, boxes, location)))
             if len(matches) > MAX_FINDINGS:
                 raise HTTPException(413, "Too many detected identifiers in one text section; split the document")
-    return [m[1] for m in sorted(matches, key=lambda v: v[0])]
+    # Explicit VID context takes precedence over a coincidental card checksum.
+    return [finding for start, finding in sorted(matches, key=lambda v: v[0])
+            if not (finding.category == "payment_card_candidate" and any(
+                other.category == "vid_candidate" and begin <= start
+                and begin + len(other.value) >= start + len(finding.value)
+                for begin, other in matches))]
 
 
 def ocr_available() -> bool:

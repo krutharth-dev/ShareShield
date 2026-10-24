@@ -34,3 +34,23 @@ Build the frontend before running server asset tests. Tests use fictional values
 - Office support covers editable text structures; embedded images, revisions, notes and hidden content are not comprehensively sanitized.
 - A free Render service can cold-start and has limited processing capacity. No paid plan changes are made by this release.
 - Mobile viewport testing is not equivalent to physical iPhone/Safari or Android testing.
+
+## Hosted validation, 24 October 2026
+
+| Fixture | Export/reinspection | Outcome |
+| --- | --- | --- |
+| Searchable PDF | Completed | PASS_SCOPED |
+| Scanned PDF | Completed | PASS_SCOPED |
+| PNG / JPG | Completed | UNVERIFIED (best-effort OCR coverage) |
+| DOCX / PPTX / XLSX | Completed | UNVERIFIED (Office limitations) |
+| CSV / TXT | Completed | PASS_SCOPED |
+
+Browser checks used connected Chrome at 1440×1000, 768×1024 and 390×844, with light/dark themes. No horizontal document overflow was observed. Built-in fictional image detected the name, parent, address, DOB, phone, 12-digit ID and VID. Export preserved the public header and test badge. Large OCR gaps are split before localization, and addresses use individual line masks.
+
+Manual-mask drawing, undo and redo, category selection, original/export comparison, review acknowledgement and download-button activation were exercised. The browser download action was invoked; saved OS file completion could not be independently confirmed because download-event capture timed out and browser policy blocks the downloads-history page. Export bytes and reopening were independently verified through the hosted API.
+
+A browser-specific fetch failure for `/health` was reproduced while direct navigation and API processing worked. The browser now polls `/api/status`, backed by the same health function; fresh-page status and OCR readiness succeeded. Render continues to probe `/health`. The underlying browser/network filter causing the path-specific failure is not identified.
+
+The helper launcher is hidden during active review so it cannot obscure document masks or export controls. Explicit VID context takes precedence over coincidental payment-card checksum matches.
+
+Physical Safari/iOS/Android and universal device compatibility are not certified. General NER, Kannada OCR, complete hidden-content sanitization and a guarantee of all sensitive-data detection remain outside this release. The current service stays on the existing free plan.
