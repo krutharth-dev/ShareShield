@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import json
 import base64
+import binascii
 import hmac
 from pathlib import Path
 import os
@@ -27,11 +28,26 @@ if CLOUD_DEMO and (not DEMO_USER or len(DEMO_PASSWORD) < 20):
     raise RuntimeError("Protected demo requires SHARESHIELD_DEMO_USER and a password of at least 20 characters")
 HOSTS = ["127.0.0.1", "localhost", "testserver"]
 if CLOUD_DEMO:
-    # Render creates a unique *.onrender.com host; reject unrelated hostnames.
-    HOSTS.append("*.onrender.com")
+    # Keep host validation explicit for Railway's service domain.
+    # healthcheck.railway.app is the host header used by its deployment probe.
+    railway_host = os.environ.get("RAILWAY_PUBLIC_DOMAIN", "").strip().lower()
+    on_railway = bool(os.environ.get("RAILWAY_PROJECT_ID") or railway_host)
+    if on_railway:
+        HOSTS.append("healthcheck.railway.app")
+        if railway_host:
+            if (not railway_host.endswith(".up.railway.app")
+                    or railway_host == ".up.railway.app"
+                    or any(c in railway_host for c in ("/", ":", "*", " "))
+                    or not all(c.isascii() and (c.isalnum() or c in ".-") for c in railway_host)):
+                raise RuntimeError("Invalid RAILWAY_PUBLIC_DOMAIN")
+            HOSTS.append(railway_host)
+    else:
+        # Backwards compatibility for the previously prepared Render Blueprint.
+        HOSTS.append("*.onrender.com")
     custom_host = os.environ.get("SHARESHIELD_PUBLIC_HOSTNAME", "").strip().lower()
     if custom_host:
-        if "://" in custom_host or "/" in custom_host or "*" in custom_host:
+        if ("://" in custom_host or "/" in custom_host or "*" in custom_host
+                or ":" in custom_host or " " in custom_host):
             raise RuntimeError("SHARESHIELD_PUBLIC_HOSTNAME must be a plain hostname")
         HOSTS.append(custom_host)
 app = FastAPI(title="ShareShield privacy review demo API", version="0.5.0")
@@ -45,7 +61,7 @@ def _valid_demo_auth(header: str | None) -> bool:
         return False
     try:
         decoded = base64.b64decode(header[6:], validate=True).decode("utf-8")
-    except (ValueError, UnicodeError):
+    except (ValueError, UnicodeError, binascii.Error):
         return False
     supplied_user, separator, supplied_password = decoded.partition(":")
     return bool(separator) and hmac.compare_digest(supplied_user, DEMO_USER) and hmac.compare_digest(supplied_password, DEMO_PASSWORD)
@@ -90,9 +106,9 @@ async def security_headers(request, call_next):
             "http://127.0.0.1:5173", "http://localhost:5173",
         }
         if CLOUD_DEMO:
-            # Render terminates TLS at its trusted edge. Validate the Origin
-            # hostname against the actual Host instead of trusting forwarded
-            # scheme/proxy headers from an arbitrary browser.
+            # The hosting platform terminates TLS at its trusted edge.
+            # Validate Origin hostname against Host instead of blindly trusting
+            # forwarded-scheme headers from arbitrary browser requests.
             from urllib.parse import urlsplit
             from_host = urlsplit(origin).netloc.lower() if origin else ""
             request_host = request.headers.get("host", "").lower()
