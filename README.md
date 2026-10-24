@@ -16,7 +16,7 @@ The existing React + TypeScript dashboard is connected to a FastAPI backend, wit
 
 | Area | Implemented |
 | --- | --- |
-| React frontend (team) | Original light/green dashboard, file uploads, progress/errors, findings checklist, preview and manual masks |
+| React frontend (team) | Emerald Shield responsive dashboard, Light/Dark/System themes, friendly guide, quick category presets, file uploads, findings checklist, preview and manual masks |
 | Backend | FastAPI OCR/text detection, selected redactions, PDF/image/Office/tabular outputs |
 | Detection | Email, Indian phones, format/checksum candidates for Aadhaar, PAN, IFSC, UPI and payment cards |
 | Images and PDFs | Before/after preview, page navigation, user-drawn masking |
@@ -41,6 +41,21 @@ upload/categories, and a dedicated wide document review workbench. It supports
 **Light / Dark / System** themes that follow the Mac automatically and persist
 the appearance choice only (never file contents). All icons are local SVG;
 subtle motion respects Reduce Motion.
+
+### Fun and simple, without skipping privacy checks
+
+- **Shieldy companion:** friendly, context-aware three-step guidance that uses
+  actual file/verification state—not invented success scores or analytics.
+- **One-tap privacy selection:** All categories or clear selection, with
+  detailed options tucked away until needed. Redaction still requires review.
+- **Polished document comparison:** clearly labeled ORIGINAL / REDACTED views,
+  simple next-step guidance, compact review/download checklist and lightweight
+  feedback messages.
+- **Privacy & safety screen:** available from sidebar or footer. It explains
+  the local processing model, limits and downloaded-file handling; read the
+  [prototype privacy notice](docs/PRIVACY_NOTICE.md).
+- **Honest safety states:** high-risk leftovers stay blocked; the visual
+  guide never calls an unverified export "completely secure".
 
 Read the [full UI blueprint, color tokens and Mac acceptance checklist](docs/EMERALD_SHIELD_UI.md).
 The local-first FastAPI/OCR/redaction/verification pipeline is unchanged.
