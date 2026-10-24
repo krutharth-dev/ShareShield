@@ -233,3 +233,66 @@ client-side; typing into it triggers no network requests.
    stops when the operation finishes.
 7. Confirm blocked or unverified reports still demand appropriate inspection.
 8. Check 1280×800, 1440×900, tablet and phone widths for overflow.
+
+
+## Shieldy Assistant — context-aware offline help (24 October 2026)
+
+ShareShield includes a **small collapsible helper in the lower-right corner**.
+It is a deterministic, in-browser FAQ and guided tour, **not** a cloud chatbot
+or large language model. Its content is maintained in
+`frontend/src/shieldyKnowledge.ts`.
+
+### Beginner experience
+
+- Click the shield bubble ("Need a hand?") to open **Ask Shieldy** or
+  **Guided tour**. It never opens a full-screen welcome modal by default.
+- Ask general questions such as "How do I draw a mask?", "Which method is
+  safest?", "Can I hide a face?", "Why can't I download?", and "What does
+  UNVERIFIED mean?". Contextual FAQ shortcuts update as the user progresses.
+- Replies are selected from reviewed, local help topics. Unrecognized questions
+  get a clear explanation of the supported topics instead of a fabricated AI
+  answer. Obvious email/ID/phone-like inputs receive a do-not-share warning
+  and are **not repeated in the answer**.
+- Start Guided Mode for a highlighted five-step flow:
+  1. Choose a file or use a fictional sample
+  2. Choose privacy categories, then analyze
+  3. Review findings and draw masks as needed
+  4. Inspect every exported page and acknowledge limitations
+  5. Download the reviewed file
+- Progress is derived from **actual React state**: file, analysis, output,
+  verification status, reviewed page count and acknowledgement. Buttons focus
+  relevant sections; they never secretly submit files or perform redaction.
+- **Skip tour** returns to regular help immediately. The helper can be closed
+  without stopping a guided session; its button remains accessible.
+
+### Trust, security and privacy
+
+- Questions and answers remain in the current browser component state.
+  No chat transcript is stored in localStorage or posted to a remote model.
+- Only non-sensitive status **counts and booleans** pass from the application to
+  Shieldy; it is not given the uploaded file, finding values or previews.
+- If output is `FLAG`, Shieldy explicitly says export is blocked. It never
+  turns an `UNVERIFIED` or `PASS_SCOPED` report into a guarantee of safety.
+- Manually selected findings, actual redaction, page-review checkboxes and
+  download acknowledgement remain in the existing React/FastAPI workflow.
+- The helper works without network access; data processing still depends on
+  the configured ShareShield server when the user analyzes a file.
+- Keyboard support: Escape closes the helper and focuses the launcher;
+  visible focus states, polite answer announcements, reduced-motion styling,
+  and narrow mobile sizing are included.
+
+### Acceptance checklist
+
+- [ ] On a new visit, the small helper is collapsed; click to open.
+- [ ] Ask "how do I blur a face?" and "why is export blocked?"; review advice.
+- [ ] Paste a fictional ID/phone value into the question; Shieldy warns
+      against sharing details without repeating that value in its answer.
+- [ ] Start Guided Mode; the upload section is highlighted.
+- [ ] Load the fictional demo; verify the step changes to category selection.
+- [ ] Analyze; verify the step advances to detection review.
+- [ ] Check the export and mark pages; ensure verification and acknowledgment
+      are still required before download.
+- [ ] Skip the tour, reopen it, switch theme and test macOS Reduce Motion.
+- [ ] Test `FLAG` and `UNVERIFIED` states with synthetic test documents.
+- [ ] Confirm Ctrl/Command+K command menu and Shieldy coexist without
+      keyboard-focus problems on desktop and mobile.
