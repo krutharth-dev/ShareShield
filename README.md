@@ -42,6 +42,22 @@ upload/categories, and a dedicated wide document review workbench. It supports
 the appearance choice only (never file contents). All icons are local SVG;
 subtle motion respects Reduce Motion.
 
+### Aurora Edition — more advanced, still lightweight
+
+ShareShield now has a **premium animated document command center** with an
+illustrative redaction preview, actual-processing scan glow, responsive aurora
+lighting, improved hover interactions, and **⌘K / Ctrl+K** searchable commands.
+The command menu opens upload, fictional demo files, the editor, verification,
+privacy information and appearance controls—actual working actions, not just
+decoration.
+
+A top-bar **motion toggle** pauses decorative effects for the current tab.
+macOS **Reduce Motion** always overrides animations. The hero uses entirely
+fictional placeholder content; no uploaded file data appears in it. Privacy
+checks and manual acknowledgement still govern downloads.
+
+See the [Aurora design/interaction acceptance notes](docs/EMERALD_SHIELD_UI.md#aurora-edition--advanced-visual-and-motion-update-24-october-2026).
+
 ### Fun and simple, without skipping privacy checks
 
 - **Shieldy companion:** friendly, context-aware three-step guidance that uses
