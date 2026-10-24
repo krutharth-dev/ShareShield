@@ -22,7 +22,8 @@ COPY --from=web-build /src/frontend/dist/ /app/frontend/dist/
 RUN useradd --uid 10001 --create-home --shell /usr/sbin/nologin appuser \
     && chown -R appuser:appuser /app
 USER appuser
-EXPOSE 8000
+EXPOSE 10000
+# On Render, PORT=10000; local compose keeps PORT unset and uses port 8000.
 HEALTHCHECK --interval=30s --timeout=5s --start-period=30s --retries=3 \
  CMD ["python", "-c", "import os,urllib.request;urllib.request.urlopen('http://127.0.0.1:'+os.getenv('PORT','8000')+'/health',timeout=3).read()"]
 CMD ["sh", "-c", "exec uvicorn backend.app:app --host 0.0.0.0 --port \"${PORT:-8000}\" --workers 1"]
