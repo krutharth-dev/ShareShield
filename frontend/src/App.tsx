@@ -136,7 +136,7 @@ function App() {
   const [drawMode, setDrawMode] = useState(true)
   const [appearance, setAppearance] = useState<Appearance>(() => {
     const current = document.documentElement.dataset.preference
-    return current === 'light' || current === 'dark' ? current : 'system'
+    return current === 'light' || current === 'dark' || current === 'system' ? current : 'dark'
   })
 
   useEffect(() => {
@@ -487,8 +487,8 @@ function App() {
     { id: 'verification', title: 'View verification report', description: 'Read remaining risks and export status', icon: 'report', disabled: !report, hint: '04', run: () => navigateTo('verification') },
     { id: 'privacy', title: 'Privacy and safety', description: 'Understand file processing and limitations', icon: 'lock', run: () => { setShowPrivacy(true); navigateTo('privacy') } },
     { id: 'appearance', title: 'Appearance preferences', description: 'Light / Dark / System and motion effects', icon: 'settings', run: () => { setShowSettings(true); navigateTo('settings') } },
-    { id: 'light', title: 'Switch to light mode', description: 'Bright, clean emerald theme', icon: 'sun', run: () => setAppearance('light') },
-    { id: 'dark', title: 'Switch to dark mode', description: 'Deep emerald command center', icon: 'moon', run: () => setAppearance('dark') },
+    { id: 'light', title: 'Switch to light mode', description: 'Ice-blue light theme', icon: 'sun', run: () => setAppearance('light') },
+    { id: 'dark', title: 'Switch to dark mode', description: 'Midnight blue and electric cyan command center', icon: 'moon', run: () => setAppearance('dark') },
     { id: 'system', title: 'Follow system appearance', description: 'Use the current macOS appearance', icon: 'monitor', run: () => setAppearance('system') },
   ]
   const workflowStage = report ? 5 : analysis ? (phase === 'processing' ? 4 : 3) : file ? (phase === 'scanning' ? 2 : 1) : 0
