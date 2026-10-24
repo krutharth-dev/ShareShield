@@ -88,6 +88,69 @@ python -m pytest backend/tests -v from the root with backend requirements
 installed. GitHub Actions builds the frontend, runs Python tests and attempts
 a Docker image build. A green CI status is required before merge.
 
+
+## Protected hosted demo — Render (preparation, not yet deployed)
+
+A Render Docker Blueprint is supplied at `render.yaml`. It uses the existing
+single-service Dockerfile to run the React UI, FastAPI backend, Tesseract and
+OpenCV at the same origin. This section is for an **educational demonstration
+with fictional files**, NOT a public production document-privacy service.
+
+### Set up in Render
+
+1. Push/keep `integration/deployable-web-app` up to date and do **not** merge
+   prematurely.
+2. Sign into [Render](https://dashboard.render.com/), create **New →
+   Blueprint**, connect GitHub and select `krutharth-dev/ShareShield`.
+   Configure it from the **integration/deployable-web-app** branch; Render
+   must be configured to deploy that exact branch, not the old `main`.
+3. Render should detect `render.yaml`, Docker runtime, Starter instance,
+   port 8000 and HTTP health check `/health`. Check pricing and billing
+   before confirming any paid service. If Render does not recognize the
+   Blueprint in that branch, use **New → Web Service** from GitHub with
+   Docker runtime, the integration branch, and environment settings matching
+   `render.yaml`.
+4. During Blueprint creation set **SHARESHIELD_DEMO_PASSWORD** in Render
+   secrets to a unique, randomly generated **20+ character** password.
+   Do not paste that password into GitHub, ChatGPT, screenshots or
+   presentation materials. The username defaults to `demo` (or change
+   `SHARESHIELD_DEMO_USER` in Render). This is a shared demo login, not
+   individual accounts.
+5. After the build, open your assigned `https://<service>.onrender.com/`
+   URL, enter the username/password through the browser's built-in dialog
+   and check that the dashboard, Shieldy, sample upload, scan, preview,
+   redaction, verification and download all work.
+6. Open the URL in a private/incognito browser to confirm that anonymous
+   requests receive `401` and the actual document endpoints are gated.
+7. Disable/remove the demo service after the presentation. Turn off
+   unnecessary auto-deploys if edits might break your review.
+
+### Protection and critical limitations
+
+- `SHARESHIELD_DEPLOYMENT_MODE=protected-demo` requires a username and a
+  20+ character password to **start**. All app routes are protected except
+  `/health`, used by Render. HTTP Basic Auth should only be used over
+  the platform's HTTPS URL. Credentials are not stored in the repository.
+- In cloud mode, the API accepts HTTPS same-origin writes from the assigned
+  host. Host headers are restricted to `*.onrender.com` and localhost
+  (plus a separately configured plain `SHARESHIELD_PUBLIC_HOSTNAME`
+  for a custom domain).
+- In local mode, auth and allowed-origin behavior remain unchanged. Keep
+  Mac development at `http://127.0.0.1:8000/`.
+- This password gate is **not** tenant isolation, an authenticated
+  user/account system, CSRF-proof authentication, rate limiting, malware
+  isolation, DoS protection, privacy certification or a security audit.
+  Host resource caps, memory use, processing timeouts, concurrent requests,
+  uploaded files and upstream caching must still be reviewed.
+- Uploaded documents go to Render servers. Hosting **is not on-device**;
+  never suggest that it is. Use **only synthetic files** for demos.
+- Treat the full public-facing service as **unapproved for real personal or
+  regulated data**. Keep password sharing restricted to the project reviewers.
+
+For a truly public launch handling real sensitive documents, implement the
+additional security blockers listed in the next section before enabling
+anonymous uploads or sharing the site widely.
+
 ## Limits and public release blockers
 
 The public-cloud release is **not completed**. The prototype has no login,
