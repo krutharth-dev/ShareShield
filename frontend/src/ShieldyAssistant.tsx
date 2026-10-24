@@ -47,6 +47,7 @@ export default function ShieldyAssistant(props: Props) {
   const closeButton = useRef<HTMLButtonElement>(null)
   const stepIndex = getStep(props)
   const step = tourSteps[stepIndex]
+  const target = stepIndex === 3 ? (props.pagesComplete ? 'verification' : 'export-review') : stepIndex === 4 ? 'export-actions' : step.target
   const busy = props.phase !== 'ready'
   const statusMessage = props.verificationStatus === 'FLAG'
     ? 'Verification found remaining sensitive data. Download is blocked. Please review the selected regions and regenerate.'
@@ -62,10 +63,10 @@ export default function ShieldyAssistant(props: Props) {
 
   useEffect(() => {
     if (!tourActive) return
-    const node = document.getElementById(step.target)
+    const node = document.getElementById(target)
     node?.setAttribute('data-shieldy-focus', 'true')
     return () => node?.removeAttribute('data-shieldy-focus')
-  }, [tourActive, step.target])
+  }, [tourActive, target])
 
   useEffect(() => {
     if (!open) return
@@ -87,12 +88,12 @@ export default function ShieldyAssistant(props: Props) {
   function startTour() {
     setTourActive(true)
     setMode('tour')
-    props.onNavigate(step.target)
+    props.onNavigate(target)
   }
   function goToStep() {
     if (busy) return
     if (stepIndex === 0) props.onChooseFile()
-    else props.onNavigate(step.target)
+    else props.onNavigate(target)
   }
   function ask(text: string) {
     const response = answerHelpQuestion(text)
@@ -133,7 +134,7 @@ export default function ShieldyAssistant(props: Props) {
           <div className="shieldy-context"><span><Icon name={props.verificationStatus === 'FLAG' ? 'alert' : 'bolt'} size={15}/> Current step</span><p>{statusMessage}</p></div>
           <p className="shieldy-subhead">POPULAR QUESTIONS</p>
           <div className="shieldy-questions">
-            {quickTopics.map(topic => <button type="button" key={topic.id} onClick={() => ask(topic.label)}><span>{topic.label}</span><Icon name="chevronRight" size={14}/></button>)}
+            {quickTopics.map(topic => <button type="button" key={topic.id} onClick={() => { setReply({ title: topic.label, response: topic.answer, id: topic.id }); setQuestion('') }}><span>{topic.label}</span><Icon name="chevronRight" size={14}/></button>)}
           </div>
           <button type="button" className="shieldy-start-tour" onClick={startTour}><Icon name="layers" size={17}/> Start guided tour <Icon name="arrowRight" size={16}/></button>
         </div> : <div className="shieldy-body shieldy-tour">
