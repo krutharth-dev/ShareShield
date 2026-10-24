@@ -488,6 +488,7 @@ function App() {
         <nav className="side-nav" aria-label="Additional tools">
           <button title="Load fictional sample" className="nav-item" onClick={() => { sample(); navigateTo('upload') }}><Icon name="file" /><span>Fictional demo file</span></button>
           <button title="Appearance settings" className={'nav-item ' + (showSettings ? 'active' : '')} onClick={() => { setShowSettings(x => !x); navigateTo('settings') }}><Icon name="settings" /><span>Appearance</span></button>
+          <button title="Privacy and safety" className={'nav-item ' + (showPrivacy ? 'active' : '')} onClick={() => { setShowPrivacy(true); navigateTo('privacy') }}><Icon name="lock"/><span>Privacy &amp; safety</span></button>
           <button title="About ShareShield" className={'nav-item ' + (showAbout ? 'active' : '')} onClick={() => { setShowAbout(x => !x); navigateTo('about') }}><Icon name="info" /><span>About project</span></button>
         </nav>
         <div className="sidebar-spacer" />
@@ -557,6 +558,11 @@ function App() {
                 <span className="hero-spark spark-a"/><span className="hero-spark spark-b"/>
               </div>
             </section>
+            <PlayfulGuide stage={guideStage} onAction={() => {
+              const section = guideStage === 'pick' || guideStage === 'scan' ? 'upload' :
+                guideStage === 'review' || guideStage === 'blocked' ? 'review' : 'verification'
+              navigateTo(section)
+            }} />
             <section className="dashboard-metrics" aria-label="Current privacy workspace status">
               {[
                 { icon: 'layers', label: 'Supported formats', value: String(allowed.size), note: 'Documents and images' },
@@ -581,6 +587,7 @@ function App() {
               </div>
               <p className="pref-note">Only the appearance preference is saved in this browser. Documents and analysis results are not stored by this control.</p>
             </section>}
+            {showPrivacy && <PrivacyPanel onClose={() => setShowPrivacy(false)} />}
             {showAbout && <section className="about-panel surface-card" id="about">
               <div className="section-title"><div><h2><Icon name="info" size={19}/> About ShareShield</h2><p>Intelligent on-device privacy leak detection and automatic redaction system.</p></div></div>
               <p>ShareShield is a student-built, local-first prototype for reviewing and redacting files you explicitly choose. It does not silently inspect other applications or certify complete anonymization.</p>
@@ -619,14 +626,35 @@ function App() {
                 <button className="remove-button" onClick={() => choose(null)} aria-label="Remove selected file">×</button></div>}
               {file && <div className="privacy-preferences">
                 <div className="pref-heading"><div><span className="section-kicker">02 / PRIVACY PREFERENCES</span><strong>What would you like to protect?</strong></div><span>{privacyCategories.length} selected · Choose your categories</span></div>
+                <div className="privacy-presets" role="group" aria-label="Quick privacy selection">
+                  <button type="button" className={privacyCategories.length === privacyOptions.length ? 'preset-chip active' : 'preset-chip'}
+                    disabled={phase !== 'ready'} onClick={() => {
+                      const all = privacyOptions.map(item => item.id)
+                      setPrivacyCategories(all)
+                      if (analysis) setSelected(defaultFindingIds(analysis.findings, all))
+                      clearResult()
+                      setToast('All supported categories selected. You can still adjust them.')
+                    }}><Icon name="sparkle" size={14}/> All categories</button>
+                  <button type="button" className={privacyCategories.length === 0 ? 'preset-chip active' : 'preset-chip'}
+                    disabled={phase !== 'ready'} onClick={() => {
+                      setPrivacyCategories([])
+                      if (analysis) setSelected([])
+                      clearResult()
+                      setToast('No categories preselected. You must still review the output.')
+                    }}>Clear selection</button>
+                </div>
                 <div className="privacy-checkboxes">
                   {privacyOptions.map(item => <label key={item.id} className={"privacy-option " + (privacyCategories.includes(item.id) ? "is-selected" : "")}>
                     <input type="checkbox" checked={privacyCategories.includes(item.id)} disabled={phase !== 'ready'} onChange={() => toggleCategory(item.id)} />
                     <span className="privacy-option-icon"><Icon name={privacyIcons[item.id]} size={18}/></span><span className="privacy-option-copy"><strong>{item.label}</strong><small>{privacyNotes[item.id]}</small></span><span className="privacy-option-check"><Icon name="check" size={13}/></span>
                   </label>)}
                 </div>
-                <label className="repeat-option"><input type="checkbox" checked={allOccurrences} onChange={event => { setAllOccurrences(event.target.checked); clearResult() }} /> Protect every recognized occurrence of a selected identifier, including other pages</label>
-                <p className="pref-note">Names, addresses, dates and images are detected on a best-effort basis. Check every page and draw manual boxes for anything missed.</p>
+                <p className="pref-note"><Icon name="info" size={14}/> Categories preselect suggestions, not guaranteed findings. Review every page for anything missed.</p>
+                <details className="advanced-settings">
+                  <summary><Icon name="settings" size={15}/> Extra scan options <span>Optional</span></summary>
+                  <label className="repeat-option"><input type="checkbox" checked={allOccurrences} onChange={event => { setAllOccurrences(event.target.checked); clearResult() }} /> Protect every recognized occurrence of a selected identifier, including other pages</label>
+                  <p className="pref-note">Repeated-value protection is on by default. Detection can still miss information; use manual masks for PDFs and images.</p>
+                </details>
               </div>}
               <div className="action-row upload-actions">
                 <button className="secondary-action" onClick={sample} disabled={phase !== 'ready'}><Icon name="file" size={17}/> Use fictional sample</button>
@@ -655,7 +683,7 @@ function App() {
                     <span className="finding-text"><strong>{f.value}</strong><small>{f.category.replaceAll('_', ' ')} · {analysis.preview_supported ? 'page ' + f.page : f.location || 'text'}</small></span><span className={'severity-tag ' + f.severity}>{f.severity}</span>
                   </label>)}
                 </div>
-                <details className="limitations" open><summary>Unverified areas and limits</summary>
+                <details className="limitations"><summary>What might the scanner miss?</summary>
                   <ul>{analysis.limitations.map((x, i) => <li key={i}>{x}</li>)}</ul>
                 </details>
               </article>
@@ -672,6 +700,8 @@ function App() {
                     <span className="toolbar-spacer" />
                     <span className="toolbar-tip">Select regions on the original document</span>
                   </div>
+                  <details className="mask-style-details">
+                    <summary><Icon name="settings" size={16}/> Mask style <strong>{redactionMode === 'blackout' ? 'Blackout (recommended)' : redactionMode === 'blur' ? 'Blur (visual only)' : 'Pixelate (visual only)'}</strong></summary>
                   <div className="redaction-method" role="group" aria-label="Preferred masking method">
                     <strong><Icon name="lock" size={16}/> Mask appearance</strong>
                     <div className="effect-options">
@@ -683,6 +713,7 @@ function App() {
                     </div>
                     <p className="pref-note">Text identifiers and QR codes are always blacked out. Blur/pixelation apply only to selected faces and manual boxes; PDF exports are flattened. Visual hiding is not guaranteed irreversible.</p>
                   </div>
+                  </details>
                   <div className="view-toolbar" role="group" aria-label="Document view">
                     {([['split', 'Compare both'], ['original', 'Original focus'], ['export', 'Export focus']] as const).map(([value, label]) =>
                       <button key={value} className={viewMode === value ? 'view-button active' : 'view-button'}
@@ -733,6 +764,8 @@ function App() {
                       <img src={outputPreview} alt={'Redacted comparison page ' + page} />
                       <img src={originalPreview} className="comparison-original" style={{ clipPath: 'inset(0 ' + (100 - compare) + '% 0 0)' }} alt={'Original comparison page ' + page} />
                       <span className="comparison-rule" style={{ left: compare + '%' }} />
+                      <span className="comparison-label original-label">Original</span>
+                      <span className="comparison-label export-label">Redacted</span>
                     </div>
                     <label className="compare-slider">Original visible: {compare}% <input type="range" min="0" max="100" value={compare} onChange={e => setCompare(Number(e.target.value))} /></label>
                   </div>}
@@ -742,6 +775,16 @@ function App() {
                     <small>{reviewedPages.length} / {analysis.page_count} pages reviewed. Inspect each page, including small IDs, signatures, photos and codes.</small>
                   </div>}
                 </> : <p className="preview-placeholder">For Word, PowerPoint, Excel, CSV and TXT, recognized text is permanently replaced. Blur/photo masking is supported in images and PDFs only.</p>}
+                {result && <div className={'download-guide ' + (pagesComplete && acknowledged ? 'download-ready' : '')} role="status">
+                  <Icon name={pagesComplete && acknowledged ? 'checkCircle' : 'info'} size={18}/>
+                  <div><strong>{pagesComplete && acknowledged ? 'Review steps completed — download enabled' :
+                    !pagesComplete ? 'Almost ready: check ' + (analysis.page_count - reviewedPages.length) + ' more page(s)' :
+                    'One final checkbox: acknowledge the limits below'}</strong>
+                    <span>{pagesComplete && acknowledged ? 'Inspect the downloaded file once more before sharing.' :
+                      'This keeps the export deliberate. It does not certify complete privacy.'}</span></div>
+                  {!pagesComplete && <button className="guide-inline-link" onClick={() => navigateTo('review')}>Review pages <Icon name="arrowRight" size={14}/></button>}
+                </div>}
+                {report?.status === 'FLAG' && <p className="warning" role="alert"><Icon name="alert" size={15}/> This export is blocked until remaining high-risk candidates are addressed. Please adjust your masks and try again.</p>}
                 <div className="action-row export-actions"><button className="primary-action" disabled={phase !== 'ready' || (!selected.length && !manual.length)}
                   onClick={processFile}>{phase === 'processing' ? <><span className="mini-spinner"/> Processing…</> : <><Icon name="lock" size={17}/> Generate &amp; verify <Icon name="arrowRight" size={17}/></>}</button>
                   <button className="secondary-action" disabled={!result || !acknowledged || !pagesComplete || report?.status === 'FLAG'} onClick={download}><Icon name="download" size={17}/> Download reviewed copy</button></div>
@@ -775,8 +818,11 @@ function App() {
             </section>
           </>
         )}
-        <footer><span><Icon name="shield" size={15}/> ShareShield · Educational local-first prototype</span><span>Detect · Review · Redact · Verify</span></footer>
+        <footer><span><Icon name="shield" size={15}/> ShareShield · Educational local-first prototype</span>
+          <span><button className="footer-privacy" onClick={() => { setShowPrivacy(true); navigateTo('privacy') }}><Icon name="lock" size={14}/> Privacy &amp; safety</button> · Detect · Review · Redact · Verify</span></footer>
       </section>
+      {toast && <div className="delight-toast" role="status" aria-live="polite"><Icon name="sparkle" size={18}/><span>{toast}</span>
+        <button aria-label="Dismiss notification" onClick={() => setToast('')}><Icon name="close" size={14}/></button></div>}
     </main>
   )
 }
