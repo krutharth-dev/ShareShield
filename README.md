@@ -16,7 +16,7 @@ The existing React + TypeScript dashboard is connected to a FastAPI backend, wit
 
 | Area | Implemented |
 | --- | --- |
-| React frontend (team) | Emerald Shield responsive dashboard, Light/Dark/System themes, friendly guide, quick category presets, file uploads, findings checklist, preview and manual masks |
+| React frontend (team) | Midnight Cyan responsive dashboard, Light/Dark/System themes, friendly guide, quick category presets, file uploads, findings checklist, preview and manual masks |
 | Backend | FastAPI OCR/text detection, selected redactions, PDF/image/Office/tabular outputs |
 | Detection | Email, Indian phones, format/checksum candidates for Aadhaar, PAN, IFSC, UPI and payment cards |
 | Images and PDFs | Before/after preview, page navigation, user-drawn masking |
@@ -33,6 +33,15 @@ The existing React + TypeScript dashboard is connected to a FastAPI backend, wit
 
 Old DOC/XLS, archives, audio, video and password-protected PDFs are **not** supported. Input limit is 12 MiB; other page, pixel and complexity limits apply.
 
+## Approved ShareShield logo (integrated)
+
+The website now uses the **approved image-generated ShareShield icon**, optimized
+as a small transparent `frontend/public/shareshield-mark.webp` asset. The
+sidebar and mobile header render the actual mark beside a responsive
+"Share" + cyan "Shield" wordmark. It uses the same asset in Light and Dark
+themes. The source image is also available to the team separately for
+presentations and future high-resolution brand exports.
+
 ## Midnight Cyan privacy command center (selected design A)
 
 ShareShield now uses a cohesive **Midnight Blue + Electric Cyan** palette:
@@ -46,20 +55,24 @@ signals—not merely decorative cyan.
 This is a visual update, **not** a change to the OCR, redaction or
 verification engine. Reduced-motion support remains available.
 
-## Railway deployment — password-protected, synthetic-only demo
+## Cloudflare deployment — protected temporary demonstration
 
-The project is **prepared, not yet hosted** on Railway. The root Dockerfile
-builds React and runs FastAPI/Tesseract/OpenCV as one same-origin service,
-listening on Railway's injected `PORT`. `protected-demo` mode validates the
-exact Railway-assigned domain and requires a secret shared username/password
-before exposing document endpoints.
+**Cloudflare is now our preferred demonstration route.** The bundled
+[Cloudflare guide](docs/CLOUDFLARE_DEPLOYMENT.md) explains a temporary
+`trycloudflare.com` URL using Cloudflare Tunnel. The complete React +
+FastAPI/OCR app continues running **on the team's Mac**, secured with the
+existing password-protected `protected-demo` mode and a strict exact
+hostname allowlist. No paid Cloudflare plan or domain is required for a
+Quick Tunnel, but the Mac and both processes must remain running.
 
-**Railway deploy guide:** [docs/RAILWAY_DEPLOYMENT.md](docs/RAILWAY_DEPLOYMENT.md)
+Cloudflare Pages alone can host the React UI, **not** the native Python
+Tesseract/OpenCV processing stack. A genuine always-online Cloudflare
+deployment is possible later using **Cloudflare Containers** (Workers Paid,
+metered resources, and additional integration work). We have not purchased
+hosting, created a live URL, or approved the prototype for real PII.
 
-The hosting account must be connected and a plan chosen by the team before
-creating the public link. Never commit passwords or real ID files. Hosted
-uploads are processed on Railway infrastructure, **not on the user's device**.
-The current demo is not approved for real sensitive documents.
+Railway remains a documented **alternative** rather than the selected
+platform: [Railway guide](docs/RAILWAY_DEPLOYMENT.md).
 
 ## Emerald Shield premium workspace
 
@@ -223,7 +236,7 @@ flowchart LR
 
 A **PASS_SCOPED** result means that recognized *selected* strings were not found during the checks performed. It is **not a statement that all private data has been eliminated**. **UNVERIFIED** covers manual-only masks and incomplete coverage; **FLAG** indicates recognized selected data was still found. Review every export before sharing.
 
-Files are uploaded only to the server you configure. The bundled Docker configuration binds to **127.0.0.1** on your own computer. Do not publicly expose this prototype with real personal data. The app has no authentication, user isolation, anti-malware scanning or public HTTPS configuration. Upload frameworks can temporarily spool document contents. It is not end-to-end encrypted or certified for sensitive records.
+Files are uploaded only to the server you configure. The bundled Docker configuration binds to **127.0.0.1** on your own computer. Do not publicly expose this prototype with real personal data. The default local app has no per-user accounts, user isolation, anti-malware scanning or complete public-production security hardening. Optional hosted-demo mode adds shared-password access gating, which is not equivalent to audited authentication or upload isolation. Upload frameworks can temporarily spool document contents. It is not end-to-end encrypted or certified for sensitive records.
 
 The team should review the PyMuPDF AGPL/commercial terms and all third-party licenses before distribution.
 
@@ -231,6 +244,7 @@ The team should review the PyMuPDF AGPL/commercial terms and all third-party lic
 
 - [Frontend setup](frontend/README.md)
 - [Backend setup and limitations](backend/README.md)
+- [Cloudflare Tunnel/Containers deployment guide](docs/CLOUDFLARE_DEPLOYMENT.md)
 - [Self-hosted deployment runbook](docs/DEPLOYMENT.md)
 - [Scope and milestones](docs/PROJECT_SCOPE.md)
 - [Security policy](SECURITY.md)
