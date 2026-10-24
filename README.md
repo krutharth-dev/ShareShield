@@ -33,6 +33,34 @@ The existing React + TypeScript dashboard is connected to a FastAPI backend, wit
 
 Old DOC/XLS, archives, audio, video and password-protected PDFs are **not** supported. Input limit is 12 MiB; other page, pixel and complexity limits apply.
 
+## Midnight Cyan privacy command center (selected design A)
+
+ShareShield now uses a cohesive **Midnight Blue + Electric Cyan** palette:
+midnight `#0B1426`, deep-slate cards, electric cyan `#43C9F5`,
+periwinkle accents and ice-blue text. **Light / Dark / System** appearance
+preferences remain supported, with a coordinated pale-blue light mode.
+Shieldy's animated robot and the browser favicon use the same identity.
+Success (teal-green), warning (amber) and failure (rose) are separate
+signals—not merely decorative cyan.
+
+This is a visual update, **not** a change to the OCR, redaction or
+verification engine. Reduced-motion support remains available.
+
+## Railway deployment — password-protected, synthetic-only demo
+
+The project is **prepared, not yet hosted** on Railway. The root Dockerfile
+builds React and runs FastAPI/Tesseract/OpenCV as one same-origin service,
+listening on Railway's injected `PORT`. `protected-demo` mode validates the
+exact Railway-assigned domain and requires a secret shared username/password
+before exposing document endpoints.
+
+**Railway deploy guide:** [docs/RAILWAY_DEPLOYMENT.md](docs/RAILWAY_DEPLOYMENT.md)
+
+The hosting account must be connected and a plan chosen by the team before
+creating the public link. Never commit passwords or real ID files. Hosted
+uploads are processed on Railway infrastructure, **not on the user's device**.
+The current demo is not approved for real sensitive documents.
+
 ## Emerald Shield premium workspace
 
 The React application has a complete visual refresh with a collapsible premium
