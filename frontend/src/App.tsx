@@ -528,13 +528,13 @@ function App() {
         <div className="sidebar-spacer" />
         <div className="sidebar-privacy">
           <span className="sidebar-privacy-mark"><Icon name="lock" size={19}/></span>
-          <strong>{isHosted ? 'Password-protected cloud demo' : 'Local-first by design'}</strong>
-          <span>{isHosted ? 'Demo files are processed on the hosting server. Use fictional documents only.' : 'Your selected files are processed by your configured local server, not a third-party AI service.'}</span>
+          <strong>{isHosted ? 'Cloud-hosted document workspace' : 'Local-first by design'}</strong>
+          <span>{isHosted ? 'Uploaded files are processed on this hosting server, not on your device. For now, use fictional files only.' : 'Your selected files are processed by your configured local server, not a third-party AI service.'}</span>
         </div>
         <div className="sidebar-bottom">
           <span className={'local-indicator ' + (serverStatus === 'offline' ? 'indicator-unavailable' : '')} />
           <div><strong>{serverStatus === 'online' ? 'Backend connected' : serverStatus === 'checking' ? 'Checking service' : 'Backend unavailable'}</strong>
-            <small>{serverStatus === 'online' ? (ocrAvailable ? (isHosted ? 'OCR ready · server processing' : 'OCR ready · local processing') : 'OCR unavailable') : (isHosted ? 'Hosted demo service unavailable' : 'Start ShareShield locally')}</small></div>
+            <small>{serverStatus === 'online' ? (ocrAvailable ? (isHosted ? 'OCR ready · server processing' : 'OCR ready · local processing') : 'OCR unavailable') : (isHosted ? 'Hosted service unavailable' : 'Start ShareShield locally')}</small></div>
         </div>
       </aside>
       {sidebarOpen && <button className="mobile-backdrop" onClick={() => setSidebarOpen(false)} aria-label="Close navigation" />}
@@ -590,7 +590,7 @@ function App() {
                   <button className="primary-action hero-primary" onClick={() => navigateTo('upload')}><Icon name="upload" size={18}/> Protect a document <Icon name="arrowRight" size={17}/></button>
                   <button className="secondary-action hero-secondary" onClick={() => { sample(); navigateTo('upload') }}><Icon name="file" size={17}/> Try fictional demo</button>
                 </div>
-                <p className="hero-footnote"><Icon name="lock" size={14}/> Designed for local processing · Your choice, every step</p>
+                <p className="hero-footnote"><Icon name="lock" size={14}/> Review before export · Your choice, every step</p>
               </div>
               <HeroVisual busy={phase !== 'ready'} findings={analysis?.findings.length ?? 0} hasAnalysis={Boolean(analysis)} />
             </section>
@@ -632,7 +632,7 @@ function App() {
             {showPrivacy && <PrivacyPanel onClose={() => setShowPrivacy(false)} />}
             {showAbout && <section className="about-panel surface-card" id="about">
               <div className="section-title"><div><h2><Icon name="info" size={19}/> About ShareShield</h2><p>Intelligent on-device privacy leak detection and automatic redaction system.</p></div></div>
-              <p>ShareShield is a student-built, local-first prototype for reviewing and redacting files you explicitly choose. {isHosted ? 'This demo runs on a remote server, not on your device.' : 'This session is running against your local server.'} It does not silently inspect other applications or certify complete anonymization.</p>
+              <p>ShareShield is a document privacy workspace for finding, reviewing, and redacting information in files you choose. {isHosted ? 'This website processes uploads on its hosting server, not on your device. Only use fictional files on this public build.' : 'This session processes documents through your local server.'} It does not silently inspect other applications or guarantee complete anonymization.</p>
               <p className="pref-note">Always examine the exported file. Automatic OCR, face proposals, and other detections can miss sensitive information.</p>
             </section>}
             <details className="journey-panel" aria-label="Document protection process">
@@ -706,12 +706,12 @@ function App() {
                 <button className="secondary-action" onClick={sample} disabled={phase !== 'ready'}><Icon name="file" size={17}/> Use fictional sample</button>
                 <button className="primary-action" onClick={scan} disabled={!file || invalid || phase !== 'ready'}>{phase === 'scanning' ? <><span className="mini-spinner"/> Analyzing…</> : <><Icon name="scan" size={18}/> Analyze document <Icon name="arrowRight" size={17}/></>}</button>
               </div>
-              {serverStatus === "offline" && <p className="warning">{isHosted ? 'The hosted demo server is not responding. Check the service status and retry.' : 'The local backend is not responding. Start the server, then refresh this page.'}</p>}
+              {serverStatus === "offline" && <p className="warning">{isHosted ? 'The hosted processing service is not responding. Check its status and try again.' : 'The local backend is not responding. Start the server, then refresh this page.'}</p>}
               {ocrAvailable === false && <p className="warning">OCR isn't available. Images and scanned PDFs cannot be text-scanned automatically.</p>}
               {visionAvailable === false && <p className="warning">Face/QR auto-detection is unavailable; manually draw masks over photos and codes.</p>}
               <p className={problem ? 'warning' : 'notice'} role="status" aria-live="polite">{phase === 'scanning' && <span className="mini-spinner"/>}{message}</p>
               <div className="privacy-note"><span>♧</span><p><strong>Privacy comes first.</strong><br />
-                Files are sent only to your configured ShareShield server. Use local deployment for private documents; this prototype cannot guarantee complete sanitization.</p></div>
+                Files are sent to the ShareShield server powering this page. Public hosting is not suitable for genuine identity documents; check all redactions manually.</p></div>
             </section>
             {analysis && <section className="review-grid" id="review" aria-label="Redaction workspace">
               <article className="review-card findings-card surface-card">
@@ -864,7 +864,7 @@ function App() {
             </section>
           </>
         )}
-        <footer><span><Icon name="shield" size={15}/> ShareShield · {isHosted ? 'Protected educational cloud demo' : 'Educational local-first prototype'}</span>
+        <footer><span><Icon name="shield" size={15}/> ShareShield · {isHosted ? 'Cloud document review · remote processing' : 'Local document review'}</span>
           <span><button className="footer-privacy" onClick={() => { setShowPrivacy(true); navigateTo('privacy') }}><Icon name="lock" size={14}/> Privacy &amp; safety</button> · Detect · Review · Redact · Verify</span></footer>
       </section>
       <CommandPalette open={commandOpen} onClose={() => setCommandOpen(false)} actions={commandActions}/>
