@@ -982,3 +982,20 @@ html[data-theme="dark"] .guide-progress > span.current { color:#092417; }
 @media (prefers-reduced-motion:reduce) {
   .mascot-shape, .delight-toast, .dropzone.drag-over::before { animation:none !important; }
 }
+
+
+/* The complete six-stage process is optional; the three-stage companion
+   remains the primary experience, keeping the landing page welcoming. */
+.journey-panel { padding:0; }
+.journey-panel .journey-summary {
+  display:flex; align-items:center; gap:10px; padding:16px 20px;
+  color:var(--sh-ink-soft); font-size:12px; font-weight:750;
+  cursor:pointer; list-style-position:inside;
+}
+.journey-panel .journey-summary svg { flex:none; color:var(--sh-green); }
+.journey-panel .journey-summary > span { margin-left:auto; font-size:10px; background:var(--sh-green-light); padding:5px 8px; border-radius:6px; color:var(--sh-green); font-weight:700; }
+.journey-panel[open] > .journey-heading, .journey-panel[open] > .workflow-stepper { margin-left:20px; margin-right:20px; }
+.journey-panel[open] > .journey-heading { margin-top:12px; }
+.journey-panel[open] > .workflow-stepper { margin-bottom:22px; }
+.journey-panel[open] > .journey-summary { border-bottom:1px solid var(--sh-border); }
+.journey-panel .journey-summary:hover { color:var(--sh-green); background:var(--sh-green-light); }
