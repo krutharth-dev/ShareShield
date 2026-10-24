@@ -17,11 +17,23 @@ export default function CommandPalette({
   const [query, setQuery] = useState('')
   const [activeIndex, setActiveIndex] = useState(0)
   const inputRef = useRef<HTMLInputElement>(null)
+  const dialogRef = useRef<HTMLElement>(null)
+  const previousFocus = useRef<HTMLElement | null>(null)
   useEffect(() => {
     if (!open) return
+    previousFocus.current = document.activeElement instanceof HTMLElement ? document.activeElement : null
     // Focus after React renders the dialog, with no remote dependency.
     inputRef.current?.focus()
+    return () => previousFocus.current?.focus()
   }, [open])
+  function trapFocus(event: React.KeyboardEvent<HTMLElement>) {
+    if (event.key !== 'Tab') return
+    const nodes = dialogRef.current?.querySelectorAll<HTMLElement>('input:not(:disabled),button:not(:disabled)')
+    if (!nodes?.length) return
+    const first = nodes[0], last = nodes[nodes.length - 1]
+    if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus() }
+    else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus() }
+  }
   const matches = actions.filter(action => (action.title + ' ' + action.description).toLowerCase().includes(query.toLowerCase().trim()))
   function invoke(action: CommandAction) {
     if (action.disabled) return
@@ -31,7 +43,7 @@ export default function CommandPalette({
   if (!open) return null
   return (
     <div className="command-overlay" onMouseDown={event => { if (event.target === event.currentTarget) onClose() }}>
-      <section className="command-dialog" role="dialog" aria-modal="true" aria-label="ShareShield command menu">
+      <section ref={dialogRef} className="command-dialog" role="dialog" aria-modal="true" aria-label="ShareShield command menu" onKeyDown={trapFocus}>
         <div className="command-input-row">
           <Icon name="search" size={21}/>
           <input ref={inputRef} type="search" value={query} aria-label="Search workspace actions"
