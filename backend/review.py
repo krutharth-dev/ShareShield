@@ -265,9 +265,13 @@ def evaluate(selected: list[engine.Finding], redacted_data: bytes, ext: str,
         for f in found
     ]
     contains_visual = any(f.category in {"face_candidate", "qr_candidate"} for f in selected)
+    scan_incomplete = any(
+        "OCR timed out" in note or "OCR is unavailable" in note
+        or "Tesseract OCR is unavailable" in note for note in warnings
+    )
     status = (
         "FLAG" if remaining_selected or high_risk else
-        "UNVERIFIED" if remainder or manual_count or contains_visual or mode != "blackout" else
+        "UNVERIFIED" if scan_incomplete or remainder or manual_count or contains_visual or mode != "blackout" else
         "PASS_SCOPED" if selected else "UNVERIFIED"
     )
     checks = ["Reopened and rescanned the complete exported file"]

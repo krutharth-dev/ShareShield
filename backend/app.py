@@ -14,6 +14,7 @@ from fastapi.responses import FileResponse, Response
 from fastapi.staticfiles import StaticFiles
 from starlette.middleware.trustedhost import TrustedHostMiddleware
 from fastapi.responses import JSONResponse
+from starlette.concurrency import run_in_threadpool
 
 from backend import engine, review, smart
 from backend.patterns import SEVERITY
@@ -229,7 +230,8 @@ def _expand_ids(findings: list[engine.Finding], ids: list[int], all_occurrences:
 @app.post("/analyze")
 async def analyze(file: Annotated[UploadFile, File()]):
     data, ext = await _upload(file)
-    findings, limitations = engine.inspect(data, ext)
+    # OCR and OpenCV must not block the ASGI event loop and /health.
+    findings, limitations = await run_in_threadpool(engine.inspect, data, ext)
     page_count = 1
     if ext == ".pdf":
         with engine.open_pdf(data) as doc:
@@ -257,7 +259,7 @@ async def preview_file(
     page: Annotated[int, Form()] = 1,
 ):
     data, ext = await _upload(file)
-    image = review.preview(data, ext, page)
+    image = await run_in_threadpool(review.preview, data, ext, page)
     if ext == ".pdf":
         with engine.open_pdf(data) as doc:
             bounds = doc[page - 1].rect
@@ -285,7 +287,7 @@ async def redact_selected(
     data, ext = await _upload(file)
     if engine.fingerprint(data) != analysis_id:
         raise HTTPException(409, "File differs from the analyzed copy. Reanalyze the file.")
-    findings, _ = engine.inspect(data, ext)
+    findings, _ = await run_in_threadpool(engine.inspect, data, ext)
     chosen = _expand_ids(findings, _ids(selected_ids, len(findings)), redact_all)
     if any(not f.rectangles and not f.location for f in chosen):
         raise HTTPException(422, "One or more selected findings could not be located")
@@ -293,12 +295,12 @@ async def redact_selected(
     if not chosen and not manual:
         raise HTTPException(422, "Select a finding or draw a manual redaction box")
     if ext in engine.IMAGE_EXTENSIONS or ext == ".pdf":
-        result, mime, name = review.redact_visual(data, ext, chosen, manual, redaction_mode)
+        result, mime, name = await run_in_threadpool(review.redact_visual, data, ext, chosen, manual, redaction_mode)
         result_ext = ".png" if ext in engine.IMAGE_EXTENSIONS else ".pdf"
     else:
-        result, mime, name = engine.redact(data, ext, chosen)
+        result, mime, name = await run_in_threadpool(engine.redact, data, ext, chosen)
         result_ext = ext
-    report = review.evaluate(chosen, result, result_ext, len(manual), redaction_mode)
+    report = await run_in_threadpool(review.evaluate, chosen, result, result_ext, len(manual), redaction_mode)
     if report["status"] == "FLAG":
         raise HTTPException(409, "FLAG: selected information is still detectable in the output")
     return Response(content=result, media_type=mime,
@@ -331,8 +333,8 @@ async def verify_result(
     valid_outputs = {".png"} if ext in engine.IMAGE_EXTENSIONS else {ext}
     if out_ext not in valid_outputs:
         raise HTTPException(422, "The redacted output has an unexpected format")
-    initial, _ = engine.inspect(original, ext)
+    initial, _ = await run_in_threadpool(engine.inspect, original, ext)
     chosen = _expand_ids(initial, _ids(selected_ids, len(initial)), redact_all)
     if manual_count < 0 or manual_count > 60:
         raise HTTPException(422, "Invalid manual redaction count")
-    return review.evaluate(chosen, output, out_ext, manual_count, redaction_mode)
+    return await run_in_threadpool(review.evaluate, chosen, output, out_ext, manual_count, redaction_mode)

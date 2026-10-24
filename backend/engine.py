@@ -35,6 +35,7 @@ MAX_PIXELS = 25_000_000
 MAX_PAGES = 25
 MAX_FINDINGS = 500
 OCR_TIMEOUT_SECONDS = 20
+OCR_MAX_SIDE = 1500  # Resize before CPU-intensive OCR on small hosting instances
 Image.MAX_IMAGE_PIXELS = MAX_PIXELS
 
 EXTENSIONS = {".pdf", ".docx", ".pptx", ".txt", ".jpg", ".jpeg", ".png", ".webp", ".bmp", ".tif", ".tiff", ".heic", ".heif", ".csv", ".xlsx"}
@@ -94,9 +95,17 @@ def ocr_available() -> bool:
 def ocr(image: Image.Image, page: int, scale: float = 1.0) -> list[Finding]:
     """Locate matches in OCR lines; return rectangles in original image/page units."""
     try:
+        shrink = min(1.0, OCR_MAX_SIDE / max(image.width, image.height))
+        source = image.convert("RGB")
+        if shrink < 1:
+            source = source.resize(
+                (max(1, round(image.width * shrink)), max(1, round(image.height * shrink))),
+                Image.Resampling.LANCZOS,
+            )
         result = pytesseract.image_to_data(
-            image.convert("RGB"), output_type=Output.DICT,
+            source, output_type=Output.DICT,
             config="--psm 11", timeout=OCR_TIMEOUT_SECONDS)
+        scale *= shrink
     except (pytesseract.TesseractNotFoundError, OSError) as exc:
         raise HTTPException(503, "OCR unavailable: install the Tesseract application (macOS: brew install tesseract), then restart ShareShield") from exc
     except RuntimeError as exc:
@@ -164,38 +173,42 @@ def open_pdf(data: bytes):
 
 
 def _pdf_findings(pdf: fitz.Document) -> tuple[list[Finding], list[str]]:
+    """Skip redundant OCR on native-only PDF pages, but examine image pages."""
     findings: list[Finding] = []
     from backend import smart
     has_ocr = ocr_available()
     has_vision = smart.available()
-    notes = [
-        "PDF annotations, attachments, file metadata and embedded content are not fully inspected.",
-    ]
+    notes = ["PDF annotations, attachments, metadata and embedded content are not fully inspected."]
     if has_ocr:
-        notes.append("Rendered pages were scanned with OCR; faint text, handwriting and unusual layouts may be missed.")
+        notes.append("OCR is best-effort on pages with raster imagery; handwriting and low-contrast text may be missed.")
     else:
-        notes.append("UNVERIFIED: Tesseract OCR is unavailable. Scanned pages and text inside images were NOT inspected; install with 'brew install tesseract'.")
-    notes.append("Face and QR proposals are best-effort; barcodes and QR-like codes may require manual masks.")
+        notes.append("UNVERIFIED: Tesseract OCR is unavailable; image-based text was NOT inspected.")
+    notes.append("Face/QR recognition is best-effort. Manually inspect photographs, barcodes and vector graphics.")
     if not has_vision:
-        notes.append("UNVERIFIED: Visual face/QR detector unavailable; manually mask photos and codes.")
+        notes.append("UNVERIFIED: Visual face/QR detection unavailable; manually mask photos and codes.")
     for number, page in enumerate(pdf, 1):
         text = page.get_text("text", sort=True)
-        native = scan_text(
-            text, number,
-            lambda value, a, b: [tuple(r) for r in page.search_for(value)]
-        )
-        visual = []
-        if has_ocr or has_vision:
-            # Render every page to inspect embedded images and screenshots.
-            pix = page.get_pixmap(matrix=fitz.Matrix(2, 2), alpha=False)
+        native = scan_text(text, number, lambda value, a, b: [tuple(r) for r in page.search_for(value)])
+        visual: list[Finding] = []
+        # Pages containing raster images require OCR even if they have native text.
+        # Native text-only pages do not need expensive rasterization/Tesseract.
+        needs_render = bool(page.get_images(full=True)) or not text.strip()
+        if needs_render and (has_ocr or has_vision):
+            render_scale = 1.5
+            pix = page.get_pixmap(matrix=fitz.Matrix(render_scale, render_scale), alpha=False)
             if pix.width * pix.height > MAX_PIXELS:
                 raise HTTPException(413, "Rendered PDF page exceeds 25-megapixel image limit")
             image = Image.frombytes("RGB", (pix.width, pix.height), pix.samples)
             if has_ocr:
-                visual.extend(ocr(image, number, scale=2))
+                try:
+                    visual.extend(ocr(image, number, scale=render_scale))
+                except HTTPException as exc:
+                    if exc.status_code not in (503, 504):
+                        raise
+                    notes.append(f"UNVERIFIED: OCR timed out or was unavailable on page {number}. Manually inspect and mask image text.")
             if has_vision:
-                visual.extend(smart.regions(image, number, scale=2))
-        combined: dict[tuple[str,str,int], Finding] = {}
+                visual.extend(smart.regions(image, number, scale=render_scale))
+        combined: dict[tuple[str, str, int], Finding] = {}
         for finding in native + visual:
             key = (finding.category, finding.value, finding.page)
             if key not in combined:
@@ -207,7 +220,6 @@ def _pdf_findings(pdf: fitz.Document) -> tuple[list[Finding], list[str]]:
                         prior.rectangles.append(rect)
         findings.extend(combined.values())
     return findings, notes
-
 
 def _paragraphs_docx(doc):
     def walk_table(table, prefix):
@@ -288,7 +300,14 @@ def _inspect_document(data: bytes, ext: str) -> tuple[list[Finding], list[str]]:
             limits.append("UNVERIFIED: Face and QR detection unavailable; manually mask visible photos and codes.")
         else:
             limits.append("Face/QR recognition is best-effort. Review every photograph and 2D code manually.")
-        return ocr(image, 1) + smart.regions(image, 1), limits
+        try:
+            recognized = ocr(image, 1)
+        except HTTPException as exc:
+            if exc.status_code not in (503, 504):
+                raise
+            recognized = []
+            limits.append("UNVERIFIED: OCR timed out or was unavailable. Image text is NOT verified; inspect and mask it manually.")
+        return recognized + smart.regions(image, 1), limits
     if ext == ".pdf":
         with open_pdf(data) as pdf:
             return _pdf_findings(pdf)

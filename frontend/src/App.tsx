@@ -144,7 +144,10 @@ function App() {
     let active = true
     let timer: ReturnType<typeof setTimeout> | undefined
     let failures = 0
+    let checking = false
     async function checkHealth() {
+      if (!active || checking) return
+      checking = true
       try {
         const response = await fetch('/health', { cache: 'no-store', credentials: 'same-origin' })
         if (!response.ok) throw Error('Health check returned ' + response.status)
@@ -166,9 +169,15 @@ function App() {
         } else {
           setServerStatus('offline')
         }
+      } finally {
+        checking = false
       }
     }
     void checkHealth()
+    // Cold starts and long scans should not leave a permanent offline badge.
+    const poll = window.setInterval(() => { void checkHealth() }, 20000)
+    const onVisible = () => { if (document.visibilityState === 'visible') void checkHealth() }
+    document.addEventListener('visibilitychange', onVisible)
     const onReconnect = () => {
       if (timer) clearTimeout(timer)
       failures = 0
@@ -179,6 +188,8 @@ function App() {
     return () => {
       active = false
       if (timer) clearTimeout(timer)
+      window.clearInterval(poll)
+      document.removeEventListener('visibilitychange', onVisible)
       window.removeEventListener('online', onReconnect)
     }
   }, [])
@@ -291,6 +302,7 @@ function App() {
       if (!response.ok) throw Error(await errorFrom(response))
       const data: Analysis = await response.json()
       if (id !== requestId.current) return
+      setServerStatus('online')
       setAnalysis(data)
       setToast(data.findings.length ? 'Scan finished! Check the suggestions below.' : 'Scan finished. Check for anything the scanner missed.')
       setSelected(defaultFindingIds(data.findings, privacyCategories))
@@ -471,6 +483,7 @@ function App() {
       if (!check.ok) throw Error(await errorFrom(check))
       const checked: Report = await check.json()
       if (id !== requestId.current) return
+      setServerStatus('online')
       setReport(checked)
       if (checked.status === 'FLAG') {
         setProblem(true); setMessage('Verification found selected information in the output. Download withheld.')
@@ -568,8 +581,8 @@ function App() {
         </div>
         <div className="sidebar-bottom">
           <span className={'local-indicator ' + (serverStatus === 'offline' ? 'indicator-unavailable' : '')} />
-          <div><strong>{serverStatus === 'online' ? 'Backend connected' : serverStatus === 'checking' ? 'Checking service' : 'Backend unavailable'}</strong>
-            <small>{serverStatus === 'online' ? (ocrAvailable ? (isHosted ? 'OCR ready · server processing' : 'OCR ready · local processing') : 'OCR unavailable') : (isHosted ? 'Hosted service unavailable' : 'Start ShareShield locally')}</small></div>
+          <div><strong>{phase !== 'ready' ? 'Processing document' : serverStatus === 'online' ? 'Backend connected' : serverStatus === 'checking' ? 'Checking service' : 'Reconnecting to server'}</strong>
+            <small>{phase !== 'ready' ? 'Document processing in progress' : serverStatus === 'online' ? (ocrAvailable ? (isHosted ? 'OCR ready · server processing' : 'OCR ready · local processing') : 'OCR unavailable') : (isHosted ? 'Check connection or retry' : 'Start ShareShield locally')}</small></div>
         </div>
       </aside>
       {sidebarOpen && <button className="mobile-backdrop" onClick={() => setSidebarOpen(false)} aria-label="Close navigation" />}
@@ -597,8 +610,8 @@ function App() {
                   <Icon name={icon} size={15}/><span>{label}</span>
                 </button>)}
             </div>
-            <span className={'server-pill ' + serverStatus} role="status">
-              <span className="status-dot" />{serverStatus === 'online' ? 'System online' : serverStatus === 'checking' ? 'Checking' : 'Offline'}
+            <span className={'server-pill ' + (phase !== 'ready' ? 'checking' : serverStatus)} role="status">
+              <span className="status-dot" />{phase !== 'ready' ? 'Processing' : serverStatus === 'online' ? 'System online' : serverStatus === 'checking' ? 'Connecting' : 'Reconnecting'}
             </span>
           </div>
         </header>
@@ -741,7 +754,7 @@ function App() {
                 <button className="secondary-action" onClick={sample} disabled={phase !== 'ready'}><Icon name="file" size={17}/> Use fictional sample</button>
                 <button className="primary-action" onClick={scan} disabled={!file || invalid || phase !== 'ready'}>{phase === 'scanning' ? <><span className="mini-spinner"/> Analyzing…</> : <><Icon name="scan" size={18}/> Analyze document <Icon name="arrowRight" size={17}/></>}</button>
               </div>
-              {serverStatus === "offline" && <p className="warning">{isHosted ? 'The hosted processing service is not responding. Check its status and try again.' : 'The local backend is not responding. Start the server, then refresh this page.'}</p>}
+              {serverStatus === 'offline' && phase === 'ready' && <p className="connection-notice" role="status"><Icon name="alert" size={15}/><span>{isHosted ? 'The server did not answer its last connection check. It may be waking up; retry when ready.' : 'Your local backend is not responding. Check that ShareShield is running.'}</span><button className="connection-retry" type="button" onClick={() => { setServerStatus('checking'); window.location.reload() }}>Reconnect</button></p>}
               {ocrAvailable === false && <p className="warning">OCR isn't available. Images and scanned PDFs cannot be text-scanned automatically.</p>}
               {visionAvailable === false && <p className="warning">Face/QR auto-detection is unavailable; manually draw masks over photos and codes.</p>}
               <p className={problem ? 'warning' : 'notice'} role="status" aria-live="polite">{phase === 'scanning' && <span className="mini-spinner"/>}{message}</p>

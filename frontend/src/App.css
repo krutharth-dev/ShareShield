@@ -1729,3 +1729,29 @@ html[data-theme="dark"] .brand-wordmark span:last-child {color:#55D7FF;}
 @media (prefers-reduced-motion:reduce) {
   .sidebar .brand:hover .brand-icon.brand-icon-approved {transform:none;}
 }
+
+/* Polished release: non-alarming connection recovery and clear mobile controls. */
+.connection-notice {
+  display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin:14px 0;
+  padding:13px 15px; border:1px solid var(--sh-border);
+  border-radius:12px; color:var(--sh-ink); background:var(--sh-surface-2);
+  font-size:13px; line-height:1.5;
+}
+.connection-notice > svg {color:var(--sh-muted);flex-shrink:0;}
+.connection-notice > span {flex:1 1 190px;}
+.connection-retry {
+  border:1px solid var(--sh-border); border-radius:9px; font-size:12px;
+  color:var(--sh-ink); background:var(--sh-surface); padding:8px 12px;
+  font-weight:750; cursor:pointer;
+}
+.connection-retry:hover {border-color:var(--sh-green); color:var(--sh-green);}
+#overview,#upload,#scan,#review,#export,#verify,#session,.upload-card,.review-panel,.verification-panel {scroll-margin-top:100px;}
+@media(max-width:720px) {
+ .connection-notice {align-items:flex-start;padding:12px;}
+ .connection-retry {margin-left:auto;}
+ .main-content {min-width:0;}
+ .topbar {min-width:0;}
+ .topbar-right {min-width:0;}
+ .server-pill {white-space:nowrap;}
+ .mobile-brand-mark {height:28px;width:28px;object-fit:contain;}
+}
