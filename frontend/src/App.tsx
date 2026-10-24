@@ -192,7 +192,7 @@ function App() {
     setRecent(false)
     setSidebarOpen(false)
     window.setTimeout(() => document.getElementById(id)?.scrollIntoView({
-      behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth',
+      behavior: !motionEnabled || window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth',
       block: 'start',
     }), 0)
   }
