@@ -296,3 +296,39 @@ or large language model. Its content is maintained in
 - [ ] Test `FLAG` and `UNVERIFIED` states with synthetic test documents.
 - [ ] Confirm Ctrl/Command+K command menu and Shieldy coexist without
       keyboard-focus problems on desktop and mobile.
+
+
+## Shieldy Robot mascot (24 October 2026)
+
+Shieldy now has a **drawn robot**, not just a static shield glyph.
+
+- Original first-party, self-contained `ShieldyRobot.tsx` SVG illustration:
+  mint-green robot head, dark faceplate with expressive eyes and smile,
+  antenna indicator, articulated waving arm, little legs and a chest shield.
+- The robot is always recognizable as the **bottom-right launcher**, even
+  before the helper window is opened. It also appears inside the assistant's
+  welcome card, chat header and guided-tour screen.
+- A larger, full-bodied version appears in the **dashboard Shieldy guide**,
+  making the character discoverable without opening chat.
+- Three strictly decorative states: cheerful normally, thinking during actual
+  processing, and cautionary (amber face/LED) when verification is flagged.
+  The bot does **not** infer user emotions or claim output is fully safe.
+- Lightweight CSS animation: occasional blink, gentle wave, subtle floating
+  and antenna/chest-light pulse. Animated only when OS Reduce Motion and the
+  in-app motion switch allow it.
+- Uses local inline SVG with unique gradient IDs via React `useId()`.
+  No generated image hosting, remote assets, third-party trackers or animation
+  framework required.
+
+### On-device visual checks
+
+1. Reload the local site; Shieldy's robot **head and face** should be visible
+   immediately in the lower-right launcher, not only the label or help box.
+2. A full-bodied Shieldy should appear beside the dashboard guide text.
+3. Open help; a robot should appear in the green header and introductory
+   greeting; switch to Guided Tour to see the full robot again.
+4. Watch a fictional file scan: Shieldy's eyes indicate a thinking state.
+   Try a synthetic flagged result to verify its caution expression.
+5. Pause animations through the motion toggle, then try macOS Reduce Motion.
+6. Test browser zoom 125% and a narrow phone width; the button and robot
+   should remain visible and clickable without hiding the document controls.
