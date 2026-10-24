@@ -1,0 +1,19 @@
+# ShareShield educational demo. This is not a public PII processing service.
+# Host uses a random high-entropy password you set in Render; do NOT commit it.
+services:
+  - type: web
+    name: shareshield-demo
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    plan: starter
+    healthCheckPath: /health
+    envVars:
+      - key: PORT
+        value: "8000"
+      - key: SHARESHIELD_DEPLOYMENT_MODE
+        value: protected-demo
+      - key: SHARESHIELD_DEMO_USER
+        value: demo
+      - key: SHARESHIELD_DEMO_PASSWORD
+        sync: false
