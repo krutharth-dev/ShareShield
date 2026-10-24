@@ -128,21 +128,13 @@ def ocr(image: Image.Image, page: int, scale: float = 1.0, warnings: list[str] |
 
 
     def with_visual_fallback(found: list[Finding]) -> list[Finding]:
-        # Only offer generic image-text masks when semantic OCR coverage is sparse.
-        # They are reviewable candidates and never treated as verified PII.
-        extras = [f for f in visual_suggestions if f.category == "qr_candidate"]
-        if len(found) < 3:
-            extras.extend(f for f in visual_suggestions
-                          if f.category == "text_region_candidate")
-            if warnings is not None:
-                warnings.append(
-                    "UNVERIFIED: OCR did not reliably identify document text. "
-                    "Visible text regions are suggested for manual review and masking."
-                )
+        """Preserve public labels, symbols and nonsensitive text."""
+        extras = [code for code in code_proposals if not any(
+            other.category == "qr_candidate" and other.rectangles == code.rectangles
+            for other in found)]
         return (found + extras)[:MAX_FINDINGS]
 
-
-    def inspect_pass(frame: Image.Image, segmentation: int, pass_scale: float) -> tuple[list[Finding], int]:
+    def inspect_pass(frame: Image.Image, segmentation: int, pass_scale: float, offset_y: float = 0) -> tuple[list[Finding], int]:
         try:
             result = pytesseract.image_to_data(
                 frame, output_type=Output.DICT, lang="eng",
@@ -161,6 +153,7 @@ def ocr(image: Image.Image, page: int, scale: float = 1.0, warnings: list[str] |
                 continue
             key = tuple(int(result[k][i]) for k in ("page_num", "block_num", "par_num", "line_num"))
             x, y, w, h = (float(result[k][i]) / pass_scale for k in ("left", "top", "width", "height"))
+            y += offset_y
             by_line.setdefault(key, []).append((word, (x, y, x+w, y+h)))
 
         findings: list[Finding] = []
@@ -195,6 +188,36 @@ def ocr(image: Image.Image, page: int, scale: float = 1.0, warnings: list[str] |
         findings.extend(inferred_identity_fields(line_rows, page))
         return findings, word_count
 
+    def cropped_recovery() -> list[Finding]:
+        """Focused OCR after full-page OCR stalls on dense documents.
+
+        Reads smaller image portions and maps findings back to original pixels.
+        It never guesses which unreadable words were private.
+        """
+        if warnings is not None:
+            warnings.append("UNVERIFIED: Whole-page OCR failed; focused text regions were retried.")
+        cutoff = source.height // 2
+        overlap = max(12, min(45, source.height // 30))
+        crops = [
+            (source.crop((0, 0, source.width, min(source.height, cutoff + overlap))), 0),
+            (source.crop((0, max(0, cutoff - overlap), source.width, source.height)),
+             max(0, cutoff - overlap)),
+        ]
+        recognized: list[Finding] = []
+        for tile, offset in crops:
+            try:
+                findings, _ = inspect_pass(tile, 11, coordinate_scale, offset / coordinate_scale)
+                for field in findings:
+                    if not any(f.category == field.category and f.value == field.value
+                               and f.page == field.page for f in recognized):
+                        recognized.append(field)
+            except HTTPException as exc:
+                if exc.status_code not in (503, 504, 422):
+                    raise
+                if warnings is not None:
+                    warnings.append("UNVERIFIED: A focused section could not be read.")
+        return with_visual_fallback(recognized)
+
     try:
         primary, count = inspect_pass(source, 6, coordinate_scale)
     except HTTPException as error:
@@ -214,9 +237,7 @@ def ocr(image: Image.Image, page: int, scale: float = 1.0, warnings: list[str] |
             recovered, _ = inspect_pass(enhanced, 11, coordinate_scale * factor)
             return with_visual_fallback(recovered)
         except HTTPException:
-            if warnings is not None:
-                warnings.append('UNVERIFIED: Both OCR passes failed; all visible text masks require review.')
-            return with_visual_fallback([])
+            return cropped_recovery()
     important = {"aadhaar_candidate", "id12_candidate", "vid_candidate",
                  "dob_candidate", "indian_mobile_candidate", "pan_candidate"}
     needs_fallback = (count < 12 or len(primary) < 3 or

@@ -53,7 +53,7 @@ const privacyOptions = [
   { id: 'contacts', label: 'Phone and email', categories: ['email', 'indian_mobile_candidate'] },
   { id: 'codes', label: 'QR codes (barcode: manual)', categories: ['qr_candidate'] },
   { id: 'financial', label: 'PAN, UPI, cards and IFSC', categories: ['pan_candidate', 'upi_candidate', 'payment_card_candidate', 'ifsc_candidate'] },
-  { id: 'other', label: 'Other areas (auto + manual)', categories: ['text_region_candidate'] },
+  { id: 'other', label: 'Other areas (manual only)', categories: [] },
 ]
 const privacyIcons: Record<string, string> = {
   identity: 'shield', name: 'file', address: 'privacy', dob: 'report',
@@ -66,7 +66,7 @@ const privacyNotes: Record<string, string> = {
 }
 function defaultFindingIds(findings: Finding[], wanted: string[]) {
   const categories = new Set(privacyOptions.filter(option => wanted.includes(option.id)).flatMap(option => option.categories))
-  return findings.filter(f => f.locatable && categories.has(f.category)).map(f => f.id)
+  return findings.filter(f => f.locatable && f.category !== 'text_region_candidate' && categories.has(f.category)).map(f => f.id)
 }
 const allowed = new Set(['pdf', 'docx', 'pptx', 'xlsx', 'csv', 'txt', 'jpg', 'jpeg', 'png', 'heic', 'heif', 'webp', 'bmp', 'tif', 'tiff'])
 const outputExt: Record<string, string> = { '.pdf': '.pdf', '.docx': '.docx', '.pptx': '.pptx', '.xlsx': '.xlsx', '.csv': '.csv', '.txt': '.txt' }
@@ -440,7 +440,7 @@ function App() {
     clearResult()
   }
   function selectionAll(all: boolean) {
-    setSelected(all ? (analysis?.findings.filter(f => f.locatable).map(f => f.id) || []) : [])
+    setSelected(all ? (analysis?.findings.filter(f => f.locatable && f.category !== 'text_region_candidate').map(f => f.id) || []) : [])
     clearResult()
   }
   function point(event: React.PointerEvent<HTMLDivElement>) {
