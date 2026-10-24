@@ -42,6 +42,26 @@ upload/categories, and a dedicated wide document review workbench. It supports
 the appearance choice only (never file contents). All icons are local SVG;
 subtle motion respects Reduce Motion.
 
+### Shieldy — built-in beginner helper
+
+The bottom-right **Shieldy** bubble offers an offline FAQ, a "Start guided
+tour" option, and contextual advice. It highlights the real upload, review,
+page-check and export sections as users progress. Unlike a generic chat bot,
+it only uses the current stage and safe counts (never document contents or
+detected identity values), never calls third-party APIs, and never clicks
+redact/download/acknowledgement for users.
+
+- **Ask:** "How do I hide a face?", "What does UNVERIFIED mean?",
+  "Why is download disabled?" or use the suggested question buttons.
+- **Guide:** Choose file → configure & analyze → review/redact →
+  inspect & acknowledge → save reviewed export.
+- **Skip or close:** Both are supported at any point. The tour follows real
+  application state, not fake progress.
+- **No stored chats:** Replies are from a bundled FAQ; users are warned not
+  to paste real personal information.
+
+See the [Shieldy assistant documentation and acceptance checklist](docs/EMERALD_SHIELD_UI.md#shieldy-assistant--context-aware-offline-help-24-october-2026).
+
 ### Aurora Edition — more advanced, still lightweight
 
 ShareShield now has a **premium animated document command center** with an
