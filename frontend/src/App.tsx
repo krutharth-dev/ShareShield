@@ -129,6 +129,7 @@ function App() {
   const [showPrivacy, setShowPrivacy] = useState(false)
   const [toast, setToast] = useState('')
   const [commandOpen, setCommandOpen] = useState(false)
+  const [activeSection, setActiveSection] = useState('overview')
   const [motionEnabled, setMotionEnabled] = useState(true)
   const [drawMode, setDrawMode] = useState(true)
   const [appearance, setAppearance] = useState<Appearance>(() => {
@@ -187,6 +188,7 @@ function App() {
     return () => media.removeEventListener('change', apply)
   }, [appearance])
   function navigateTo(id: string) {
+    setActiveSection(id)
     setRecent(false)
     setSidebarOpen(false)
     window.setTimeout(() => document.getElementById(id)?.scrollIntoView({
@@ -508,18 +510,18 @@ function App() {
         </div>
         <p className="nav-heading">WORKSPACE</p>
         <nav className="side-nav" aria-label="Workspace sections">
-          <button title="Dashboard" className={'nav-item ' + (!recent ? 'active' : '')} onClick={() => navigateTo('overview')}><Icon name="dashboard" /><span>Dashboard</span></button>
-          <button title="Redact document" className="nav-item" onClick={() => navigateTo('upload')}><Icon name="scan" /><span>Redact document</span></button>
-          <button title="Review workspace" className="nav-item" disabled={!analysis} onClick={() => navigateTo('review')}><Icon name="layers" /><span>Review workspace</span></button>
-          <button title="Verification report" className="nav-item" disabled={!report} onClick={() => navigateTo('verification')}><Icon name="report" /><span>Verification report</span></button>
-          <button title="Session status" className={'nav-item ' + (recent ? 'active' : '')} onClick={() => { setRecent(true); setSidebarOpen(false) }}><Icon name="bolt" /><span>Session status</span></button>
+          <button title="Dashboard" className={'nav-item ' + (!recent && activeSection === 'overview' ? 'active' : '')} onClick={() => navigateTo('overview')}><Icon name="dashboard" /><span>Dashboard</span></button>
+          <button title="Redact document" className={'nav-item ' + (activeSection === 'upload' ? 'active' : '')} onClick={() => navigateTo('upload')}><Icon name="scan" /><span>Redact document</span></button>
+          <button title="Review workspace" className={'nav-item ' + (activeSection === 'review' ? 'active' : '')} disabled={!analysis} onClick={() => navigateTo('review')}><Icon name="layers" /><span>Review workspace</span></button>
+          <button title="Verification report" className={'nav-item ' + (activeSection === 'verification' ? 'active' : '')} disabled={!report} onClick={() => navigateTo('verification')}><Icon name="report" /><span>Verification report</span></button>
+          <button title="Session status" className={'nav-item ' + (recent ? 'active' : '')} onClick={() => { setRecent(true); setActiveSection('session'); setSidebarOpen(false) }}><Icon name="bolt" /><span>Session status</span></button>
         </nav>
         <p className="nav-heading nav-secondary">TOOLS & MORE</p>
         <nav className="side-nav" aria-label="Additional tools">
           <button title="Load fictional sample" className="nav-item" onClick={() => { sample(); navigateTo('upload') }}><Icon name="file" /><span>Fictional demo file</span></button>
-          <button title="Appearance settings" className={'nav-item ' + (showSettings ? 'active' : '')} onClick={() => { setShowSettings(x => !x); navigateTo('settings') }}><Icon name="settings" /><span>Appearance</span></button>
-          <button title="Privacy and safety" className={'nav-item ' + (showPrivacy ? 'active' : '')} onClick={() => { setShowPrivacy(true); navigateTo('privacy') }}><Icon name="lock"/><span>Privacy &amp; safety</span></button>
-          <button title="About ShareShield" className={'nav-item ' + (showAbout ? 'active' : '')} onClick={() => { setShowAbout(x => !x); navigateTo('about') }}><Icon name="info" /><span>About project</span></button>
+          <button title="Appearance settings" className={'nav-item ' + (activeSection === 'settings' ? 'active' : '')} onClick={() => { setShowSettings(x => !x); navigateTo('settings') }}><Icon name="settings" /><span>Appearance</span></button>
+          <button title="Privacy and safety" className={'nav-item ' + (activeSection === 'privacy' ? 'active' : '')} onClick={() => { setShowPrivacy(true); navigateTo('privacy') }}><Icon name="lock"/><span>Privacy &amp; safety</span></button>
+          <button title="About ShareShield" className={'nav-item ' + (activeSection === 'about' ? 'active' : '')} onClick={() => { setShowAbout(x => !x); navigateTo('about') }}><Icon name="info" /><span>About project</span></button>
         </nav>
         <div className="sidebar-spacer" />
         <div className="sidebar-privacy">
@@ -645,10 +647,10 @@ function App() {
               <div className="section-title"><div><span className="section-kicker">01 / GET STARTED</span><h2>Start with your document</h2>
                 <p>PDF, photos, Word, Excel, PowerPoint, CSV and text · up to 12 MiB</p></div>
                 <span className="section-side-note"><Icon name="lock" size={14}/> Explicit upload only</span></div>
-              <div className={'dropzone ' + (dragging ? 'drag-over' : '')}
+              <div className={'dropzone ' + (dragging ? 'drag-over' : '') + (phase === 'scanning' ? ' scanning' : '')}
                 role="button" tabIndex={0} aria-label="Browse supported files"
                 onClick={() => input.current?.click()}
-                onKeyDown={event => { if (event.key === 'Enter' || event.key === ' ') input.current?.click() }}
+                onKeyDown={event => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); input.current?.click() } }}
                 onDragOver={event => { event.preventDefault(); setDragging(true) }}
                 onDragLeave={event => { event.preventDefault(); setDragging(false) }}
                 onDrop={event => { event.preventDefault(); setDragging(false); choose(event.dataTransfer.files[0] || null) }}>
@@ -658,6 +660,9 @@ function App() {
                 <span className="browse-button">Choose a file <Icon name="arrowRight" size={15}/></span>
                 <span className="format-pills"><em>PDF</em><em>JPG / PNG</em><em>HEIC</em><em>Word</em><em>PowerPoint</em><em>Excel</em></span>
               </div>
+              {phase === 'scanning' && <div className="status-strip" role="status" aria-live="polite">
+                <span className="status-signal"/> Scanning supported privacy patterns on your configured server…
+              </div>}
               {file && <div className="file-row"><span className="pdf-icon">{formatType(file.name)}</span>
                 <div className="file-details"><strong>{file.name}</strong><small>{MB(file.size)}</small></div>
                 <span className="file-state">{invalid ? 'Unsupported' : 'Selected'}</span>
