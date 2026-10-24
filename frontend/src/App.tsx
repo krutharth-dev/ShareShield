@@ -118,6 +118,7 @@ function App() {
   const [redactionMode, setRedactionMode] = useState<RedactionMode>('blackout')
   const [allOccurrences, setAllOccurrences] = useState(true)
   const [serverStatus, setServerStatus] = useState<'checking' | 'online' | 'offline'>('checking')
+  const [logoUnavailable, setLogoUnavailable] = useState(false)
   const input = useRef<HTMLInputElement>(null)
   const previewSurface = useRef<HTMLDivElement>(null)
   const requestId = useRef(0)
@@ -141,11 +142,45 @@ function App() {
 
   useEffect(() => {
     let active = true
-    fetch('/health', { cache: 'no-store' })
-      .then(r => { if (!r.ok) throw Error('Server health check failed'); return r.json() })
-      .then(x => { if (active) { setOcrAvailable(Boolean(x.ocr_available)); setVisionAvailable(Boolean(x.vision_available)); setServerStatus('online') } })
-      .catch(() => { if (active) { setOcrAvailable(null); setVisionAvailable(null); setServerStatus('offline') } })
-    return () => { active = false }
+    let timer: ReturnType<typeof setTimeout> | undefined
+    let failures = 0
+    async function checkHealth() {
+      try {
+        const response = await fetch('/health', { cache: 'no-store', credentials: 'same-origin' })
+        if (!response.ok) throw Error('Health check returned ' + response.status)
+        const status = await response.json()
+        if (status?.status !== 'ok') throw Error('Invalid server health response')
+        if (!active) return
+        failures = 0
+        setOcrAvailable(Boolean(status.ocr_available))
+        setVisionAvailable(Boolean(status.vision_available))
+        setServerStatus('online')
+      } catch {
+        if (!active) return
+        setOcrAvailable(null)
+        setVisionAvailable(null)
+        failures += 1
+        if (failures < 4) {
+          setServerStatus('checking')
+          timer = setTimeout(checkHealth, failures * 2500)
+        } else {
+          setServerStatus('offline')
+        }
+      }
+    }
+    void checkHealth()
+    const onReconnect = () => {
+      if (timer) clearTimeout(timer)
+      failures = 0
+      setServerStatus('checking')
+      void checkHealth()
+    }
+    window.addEventListener('online', onReconnect)
+    return () => {
+      active = false
+      if (timer) clearTimeout(timer)
+      window.removeEventListener('online', onReconnect)
+    }
   }, [])
   useEffect(() => () => { if (resultUrl.current) URL.revokeObjectURL(resultUrl.current) }, [])
   useEffect(() => {
@@ -502,7 +537,7 @@ function App() {
       <aside className={'sidebar' + (sidebarCollapsed ? ' is-collapsed' : '') + (sidebarOpen ? ' mobile-open' : '')} aria-label="Main navigation">
         <div className="sidebar-head">
           <a className="brand" href="/" aria-label="ShareShield home">
-            <span className="brand-icon brand-icon-approved"><img src="/shareshield-mark.webp" alt="" width="48" height="48" /></span>
+            <span className="brand-icon brand-icon-approved">{logoUnavailable ? <Icon name="shield" size={28} /> : <img src="/shareshield-mark.webp" alt="" width="48" height="48" onError={() => setLogoUnavailable(true)} />}</span>
             <span className="brand-words"><strong className="brand-wordmark"><span>Share</span><span>Shield</span></strong><small>PRIVACY WORKSPACE</small></span>
           </a>
           <button className="sidebar-toggle icon-button" type="button" aria-label={sidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
