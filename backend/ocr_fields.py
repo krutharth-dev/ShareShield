@@ -50,7 +50,8 @@ def inferred_identity_fields(
             return
         seen.add(signature)
         value = " ".join(rows[i][0] for i in indexes)[:330]
-        output.append(Finding(category, value, page, [box]))
+        output.append(Finding(category, value, page,
+                              [rows[i][1] for i in indexes] if category == "address_candidate" else [box]))
 
     def possible_person(line: str):
         if _BLOCKED_NAMES.search(line) or re.search(r"\d", line):
@@ -72,6 +73,8 @@ def inferred_identity_fields(
             indexes = [i]
             for j in range(i + 1, min(i + 9, len(rows))):
                 follow, follow_box = rows[j]
+                if follow_box[0] > box[0] + max(80, (box[2] - box[0]) * .4):
+                    continue  # Separate column / portrait noise is not an address.
                 if _STOP.search(follow) or follow_box[1] - rows[indexes[-1]][1][3] > 95:
                     break
                 if follow_box[1] < box[1] - 5:
@@ -85,6 +88,8 @@ def inferred_identity_fields(
             indexes = [i]
             for j in range(i + 1, min(i + 9, len(rows))):
                 follow, follow_box = rows[j]
+                if follow_box[0] > box[0] + max(80, (box[2] - box[0]) * .4):
+                    continue  # Separate column / portrait noise is not an address.
                 if _STOP.search(follow) or follow_box[1] - rows[indexes[-1]][1][3] > 95:
                     break
                 indexes.append(j)

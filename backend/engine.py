@@ -161,7 +161,19 @@ def ocr(image: Image.Image, page: int, scale: float = 1.0, warnings: list[str] |
         findings: list[Finding] = []
         line_rows: list[tuple[str, tuple[float, float, float, float]]] = []
         word_count = 0
+        # PSM 6 can merge a portrait or a second column into a text row.
+        # Split large horizontal gaps before deriving field rectangles.
+        segments = []
         for words in by_line.values():
+            chunk = []
+            for word, box in sorted(words, key=lambda item: item[1][0]):
+                if chunk and box[0] - chunk[-1][1][2] > max(60 / pass_scale, 3 * (box[3] - box[1])):
+                    segments.append(chunk)
+                    chunk = []
+                chunk.append((word, box))
+            if chunk:
+                segments.append(chunk)
+        for words in segments:
             pieces, spans, cursor = [], [], 0
             word_count += len(words)
             for word, box in words:

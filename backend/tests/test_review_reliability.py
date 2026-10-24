@@ -106,3 +106,16 @@ def test_browser_status_and_platform_health_agree():
     assert status.status_code == 200
     assert status.json() == health.json()
     assert status.headers['Cache-Control'] == 'no-store'
+
+
+def test_address_masks_do_not_bridge_portrait_column():
+    from backend.ocr_fields import inferred_identity_fields
+    rows = [('Government of India', (20,10,200,30)),
+            ('S/O SAMPLE PARENT', (20,80,220,100)),
+            ('O', (500,105,520,125)),
+            ('Flat 14 Example Street', (20,110,240,130)),
+            ('Fiction City 560001', (20,140,230,160))]
+    addresses = [f for f in inferred_identity_fields(rows, 1) if f.category == 'address_candidate']
+    assert addresses
+    assert all(r[2] <= 240 for f in addresses for r in f.rectangles)
+    assert all(' O ' not in f.value for f in addresses)
