@@ -88,6 +88,7 @@ function formatType(name: string) {
 function MB(bytes: number) { return (bytes / 1048576).toFixed(2) + ' MB' }
 
 function App() {
+  const isHosted = !['localhost', '127.0.0.1'].includes(window.location.hostname)
   const [file, setFile] = useState<File | null>(null)
   const [analysis, setAnalysis] = useState<Analysis | null>(null)
   const [selected, setSelected] = useState<number[]>([])
@@ -527,13 +528,13 @@ function App() {
         <div className="sidebar-spacer" />
         <div className="sidebar-privacy">
           <span className="sidebar-privacy-mark"><Icon name="lock" size={19}/></span>
-          <strong>Local-first by design</strong>
-          <span>Your selected files are processed by your configured server, not a third-party AI service.</span>
+          <strong>{isHosted ? 'Password-protected cloud demo' : 'Local-first by design'}</strong>
+          <span>{isHosted ? 'Demo files are processed on the hosting server. Use fictional documents only.' : 'Your selected files are processed by your configured local server, not a third-party AI service.'}</span>
         </div>
         <div className="sidebar-bottom">
           <span className={'local-indicator ' + (serverStatus === 'offline' ? 'indicator-unavailable' : '')} />
           <div><strong>{serverStatus === 'online' ? 'Backend connected' : serverStatus === 'checking' ? 'Checking service' : 'Backend unavailable'}</strong>
-            <small>{serverStatus === 'online' ? (ocrAvailable ? 'OCR ready · local processing' : 'OCR unavailable') : 'Start ShareShield locally'}</small></div>
+            <small>{serverStatus === 'online' ? (ocrAvailable ? (isHosted ? 'OCR ready · server processing' : 'OCR ready · local processing') : 'OCR unavailable') : (isHosted ? 'Hosted demo service unavailable' : 'Start ShareShield locally')}</small></div>
         </div>
       </aside>
       {sidebarOpen && <button className="mobile-backdrop" onClick={() => setSidebarOpen(false)} aria-label="Close navigation" />}
@@ -630,7 +631,7 @@ function App() {
             {showPrivacy && <PrivacyPanel onClose={() => setShowPrivacy(false)} />}
             {showAbout && <section className="about-panel surface-card" id="about">
               <div className="section-title"><div><h2><Icon name="info" size={19}/> About ShareShield</h2><p>Intelligent on-device privacy leak detection and automatic redaction system.</p></div></div>
-              <p>ShareShield is a student-built, local-first prototype for reviewing and redacting files you explicitly choose. It does not silently inspect other applications or certify complete anonymization.</p>
+              <p>ShareShield is a student-built, local-first prototype for reviewing and redacting files you explicitly choose. {isHosted ? 'This demo runs on a remote server, not on your device.' : 'This session is running against your local server.'} It does not silently inspect other applications or certify complete anonymization.</p>
               <p className="pref-note">Always examine the exported file. Automatic OCR, face proposals, and other detections can miss sensitive information.</p>
             </section>}
             <details className="journey-panel" aria-label="Document protection process">
@@ -704,7 +705,7 @@ function App() {
                 <button className="secondary-action" onClick={sample} disabled={phase !== 'ready'}><Icon name="file" size={17}/> Use fictional sample</button>
                 <button className="primary-action" onClick={scan} disabled={!file || invalid || phase !== 'ready'}>{phase === 'scanning' ? <><span className="mini-spinner"/> Analyzing…</> : <><Icon name="scan" size={18}/> Analyze document <Icon name="arrowRight" size={17}/></>}</button>
               </div>
-              {serverStatus === "offline" && <p className="warning">The local backend is not responding. Start the server, then refresh this page.</p>}
+              {serverStatus === "offline" && <p className="warning">{isHosted ? 'The hosted demo server is not responding. Check the service status and retry.' : 'The local backend is not responding. Start the server, then refresh this page.'}</p>}
               {ocrAvailable === false && <p className="warning">OCR isn't available. Images and scanned PDFs cannot be text-scanned automatically.</p>}
               {visionAvailable === false && <p className="warning">Face/QR auto-detection is unavailable; manually draw masks over photos and codes.</p>}
               <p className={problem ? 'warning' : 'notice'} role="status" aria-live="polite">{phase === 'scanning' && <span className="mini-spinner"/>}{message}</p>
@@ -862,7 +863,7 @@ function App() {
             </section>
           </>
         )}
-        <footer><span><Icon name="shield" size={15}/> ShareShield · Educational local-first prototype</span>
+        <footer><span><Icon name="shield" size={15}/> ShareShield · {isHosted ? 'Protected educational cloud demo' : 'Educational local-first prototype'}</span>
           <span><button className="footer-privacy" onClick={() => { setShowPrivacy(true); navigateTo('privacy') }}><Icon name="lock" size={14}/> Privacy &amp; safety</button> · Detect · Review · Redact · Verify</span></footer>
       </section>
       <CommandPalette open={commandOpen} onClose={() => setCommandOpen(false)} actions={commandActions}/>
