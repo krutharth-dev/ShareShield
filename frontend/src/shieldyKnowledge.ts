@@ -9,7 +9,7 @@ export type HelpTopic = {
   answer: string
 }
 export const helpTopics: HelpTopic[] = [
-  { id: 'start', label: 'How do I start?', triggers: ['start','begin','first','new','how to use','steps','guide','tutorial','work'],
+  { id: 'start', label: 'How do I start?', triggers: ['start','begin','first','new','how to use','how to redact','redact','redaction','steps','guide','tutorial','work'],
     answer: 'Pick a file or load the fictional sample, choose the privacy categories, and press Analyze document. Check every suggestion, then Generate & verify. Review the exported pages before downloading.' },
   { id: 'upload', label: 'What files can I use?', triggers: ['upload','file type','format','supported','pdf','word','excel','powerpoint','size','12 mib','heic'],
     answer: 'You can choose PDF, JPG/PNG and other supported images, DOCX, PPTX, XLSX, CSV, and TXT (up to 12 MiB). Image and PDF previews support manual masks. Word and spreadsheet files use text-based review; visual previews are not provided for those formats.' },
