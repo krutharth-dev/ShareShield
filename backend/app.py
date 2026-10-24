@@ -20,14 +20,17 @@ from backend.patterns import SEVERITY
 
 DEPLOYMENT_MODE = os.environ.get("SHARESHIELD_DEPLOYMENT_MODE", "local").lower()
 CLOUD_DEMO = DEPLOYMENT_MODE == "protected-demo"
-if DEPLOYMENT_MODE not in {"local", "protected-demo"}:
+HOSTED_DEMO = DEPLOYMENT_MODE in {"protected-demo", "public-demo"}
+if DEPLOYMENT_MODE not in {"local", "protected-demo", "public-demo"}:
     raise RuntimeError("Unknown SHARESHIELD_DEPLOYMENT_MODE")
 DEMO_USER = os.environ.get("SHARESHIELD_DEMO_USER", "")
 DEMO_PASSWORD = os.environ.get("SHARESHIELD_DEMO_PASSWORD", "")
 if CLOUD_DEMO and (not DEMO_USER or len(DEMO_PASSWORD) < 20):
     raise RuntimeError("Protected demo requires SHARESHIELD_DEMO_USER and a password of at least 20 characters")
+if DEPLOYMENT_MODE == "public-demo" and not os.environ.get("SHARESHIELD_PUBLIC_HOSTNAME", "").strip():
+    raise RuntimeError("Public demo requires an exact SHARESHIELD_PUBLIC_HOSTNAME")
 HOSTS = ["127.0.0.1", "localhost", "testserver"]
-if CLOUD_DEMO:
+if HOSTED_DEMO:
     # Keep host validation explicit for Railway's service domain.
     # healthcheck.railway.app is the host header used by its deployment probe.
     railway_host = os.environ.get("RAILWAY_PUBLIC_DOMAIN", "").strip().lower()
@@ -44,7 +47,7 @@ if CLOUD_DEMO:
     # Custom host for Cloudflare Tunnel or another externally secured edge.
     # Render compatibility is retained only when no custom hostname is set.
     custom_host = os.environ.get("SHARESHIELD_PUBLIC_HOSTNAME", "").strip().lower()
-    if not on_railway and not custom_host:
+    if not on_railway and not custom_host and CLOUD_DEMO:
         HOSTS.append("*.onrender.com")
     if custom_host:
         if ("://" in custom_host or "/" in custom_host or "*" in custom_host
@@ -106,7 +109,7 @@ async def security_headers(request, call_next):
             str(request.base_url).rstrip("/"),
             "http://127.0.0.1:5173", "http://localhost:5173",
         }
-        if CLOUD_DEMO:
+        if HOSTED_DEMO:
             # The hosting platform terminates TLS at its trusted edge.
             # Validate Origin hostname against Host instead of blindly trusting
             # forwarded-scheme headers from arbitrary browser requests.
