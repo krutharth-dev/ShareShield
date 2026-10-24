@@ -2,6 +2,8 @@
 from __future__ import annotations
 
 import json
+import base64
+import hmac
 from pathlib import Path
 import os
 from typing import Annotated
@@ -15,15 +17,54 @@ from fastapi.responses import JSONResponse
 from backend import engine, review, smart
 from backend.patterns import SEVERITY
 
-app = FastAPI(title="ShareShield local privacy review API", version="0.5.0")
-# Demo deployment only: reject hostile Host headers / DNS-rebinding requests.
-app.add_middleware(TrustedHostMiddleware, allowed_hosts=["127.0.0.1", "localhost", "testserver"])
+DEPLOYMENT_MODE = os.environ.get("SHARESHIELD_DEPLOYMENT_MODE", "local").lower()
+CLOUD_DEMO = DEPLOYMENT_MODE == "protected-demo"
+if DEPLOYMENT_MODE not in {"local", "protected-demo"}:
+    raise RuntimeError("Unknown SHARESHIELD_DEPLOYMENT_MODE")
+DEMO_USER = os.environ.get("SHARESHIELD_DEMO_USER", "")
+DEMO_PASSWORD = os.environ.get("SHARESHIELD_DEMO_PASSWORD", "")
+if CLOUD_DEMO and (not DEMO_USER or len(DEMO_PASSWORD) < 20):
+    raise RuntimeError("Protected demo requires SHARESHIELD_DEMO_USER and a password of at least 20 characters")
+HOSTS = ["127.0.0.1", "localhost", "testserver"]
+if CLOUD_DEMO:
+    # Render creates a unique *.onrender.com host; reject unrelated hostnames.
+    HOSTS.append("*.onrender.com")
+    custom_host = os.environ.get("SHARESHIELD_PUBLIC_HOSTNAME", "").strip().lower()
+    if custom_host:
+        if "://" in custom_host or "/" in custom_host or "*" in custom_host:
+            raise RuntimeError("SHARESHIELD_PUBLIC_HOSTNAME must be a plain hostname")
+        HOSTS.append(custom_host)
+app = FastAPI(title="ShareShield privacy review demo API", version="0.5.0")
+app.add_middleware(TrustedHostMiddleware, allowed_hosts=HOSTS)
+
+
+def _valid_demo_auth(header: str | None) -> bool:
+    if not CLOUD_DEMO:
+        return True
+    if not header or not header.startswith("Basic "):
+        return False
+    try:
+        decoded = base64.b64decode(header[6:], validate=True).decode("utf-8")
+    except (ValueError, UnicodeError):
+        return False
+    supplied_user, separator, supplied_password = decoded.partition(":")
+    return bool(separator) and hmac.compare_digest(supplied_user, DEMO_USER) and hmac.compare_digest(supplied_password, DEMO_PASSWORD)
 STATIC = Path(__file__).parent / "static" / "index.html"
 FRONTEND_DIST = Path(os.environ.get("SHARESHIELD_WEB_DIST", str(Path(__file__).resolve().parent.parent / "frontend" / "dist")))
 
 
 @app.middleware("http")
 async def security_headers(request, call_next):
+    # This is a shared-password *demo gate*, not per-user authentication.
+    # Health is publicly readable for the hosting platform.
+    if CLOUD_DEMO and request.url.path not in {"/health"}:
+        if not _valid_demo_auth(request.headers.get("authorization")):
+            return Response(
+                status_code=401, content="ShareShield demo: access code required",
+                media_type="text/plain",
+                headers={"WWW-Authenticate": 'Basic realm="ShareShield educational demo"',
+                         "Cache-Control": "no-store", "X-Content-Type-Options": "nosniff"},
+            )
     # Fail early when the client declares an excessive multipart body. The
     # upload reader also enforces per-file limits, including unknown lengths.
     if request.method == "POST" and request.url.path in {
@@ -48,7 +89,16 @@ async def security_headers(request, call_next):
             str(request.base_url).rstrip("/"),
             "http://127.0.0.1:5173", "http://localhost:5173",
         }
-        if origin and origin not in permitted:
+        if CLOUD_DEMO:
+            # Render terminates TLS at its trusted edge. Validate the Origin
+            # hostname against the actual Host instead of trusting forwarded
+            # scheme/proxy headers from an arbitrary browser.
+            from urllib.parse import urlsplit
+            from_host = urlsplit(origin).netloc.lower() if origin else ""
+            request_host = request.headers.get("host", "").lower()
+            if origin and (urlsplit(origin).scheme != "https" or from_host != request_host):
+                return JSONResponse({"detail": "Cross-origin upload blocked"}, status_code=403)
+        elif origin and origin not in permitted:
             return JSONResponse({"detail": "Cross-origin upload blocked on this local demo server"}, status_code=403)
         if request.headers.get("sec-fetch-site", "").lower() == "cross-site":
             return JSONResponse({"detail": "Cross-site request blocked"}, status_code=403)
