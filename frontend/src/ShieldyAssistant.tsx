@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import Icon from './Icon'
+import ShieldyRobot from './ShieldyRobot'
 import { answerHelpQuestion, helpTopics } from './shieldyKnowledge'
 
 type Props = {
@@ -111,7 +112,7 @@ export default function ShieldyAssistant(props: Props) {
     <div className="shieldy-container">
       {open && <section id="shieldy-panel" className="shieldy-panel" role="dialog" aria-modal="false" aria-label="Shieldy offline help">
         <header className="shieldy-head">
-          <span className="shieldy-avatar" aria-hidden="true"><Icon name="shield" size={26}/><span className="shieldy-avatar-eye"/></span>
+          <span className="shieldy-avatar robot-avatar" aria-hidden="true"><ShieldyRobot variant="head" size={48} mood={props.verificationStatus === 'FLAG' ? 'alert' : busy ? 'thinking' : 'happy'}/></span>
           <div className="shieldy-identity"><strong>Shieldy <span className="shieldy-wave" aria-hidden="true">✦</span></strong><small><span className="shieldy-status-dot"/> Your offline privacy guide</small></div>
           <button type="button" ref={closeButton} className="shieldy-head-close" onClick={dismiss} aria-label="Close Shieldy help"><Icon name="close" size={18}/></button>
         </header>
@@ -121,10 +122,13 @@ export default function ShieldyAssistant(props: Props) {
         </div>
 
         {mode === 'ask' ? <div className="shieldy-body">
-          {!reply ? <div className="shieldy-welcome">
-            <span className="shieldy-welcome-icon"><Icon name="sparkle" size={19}/></span>
-            <h3>Hey there! Need a hand?</h3>
-            <p>I'm here to explain ShareShield in simple words. Ask a privacy question or try a guided tour.</p>
+          {!reply ? <div className="shieldy-welcome robot-welcome">
+            <div className="shieldy-welcome-copy">
+              <span className="shieldy-welcome-eyebrow"><Icon name="sparkle" size={13}/> YOUR LITTLE PRIVACY BUDDY</span>
+              <h3>Hey there! I'm Shieldy 👋</h3>
+              <p>I'm here to explain ShareShield in simple words. Ask a question or take a guided tour.</p>
+            </div>
+            <span className="shieldy-welcome-robot" aria-hidden="true"><ShieldyRobot size={116} mood={busy ? 'thinking' : props.verificationStatus === 'FLAG' ? 'alert' : 'happy'}/></span>
           </div> : <div className="shieldy-answer" role="status" aria-live="polite">
             <span className="shieldy-answer-kicker"><Icon name="sparkle" size={14}/> Shieldy explains</span>
             <strong>{reply.title}</strong>
@@ -146,7 +150,7 @@ export default function ShieldyAssistant(props: Props) {
             {tourSteps.map((item, index) => <span key={item.title} className={index < stepIndex ? 'done' : index === stepIndex ? 'current' : ''}/>)}
           </div>
           <div className="shieldy-tour-card">
-            <span className="shieldy-tour-symbol"><Icon name={props.verificationStatus === 'FLAG' ? 'alert' : step.icon} size={26}/></span>
+            <span className="shieldy-tour-symbol shieldy-tour-robot" aria-hidden="true"><ShieldyRobot size={95} mood={props.verificationStatus === 'FLAG' ? 'alert' : busy ? 'thinking' : 'happy'}/></span>
             <h3>{props.verificationStatus === 'FLAG' ? 'Fix flagged information' : step.title}</h3>
             <p>{statusMessage}</p>
           </div>
@@ -168,9 +172,10 @@ export default function ShieldyAssistant(props: Props) {
         <div className="shieldy-foot"><Icon name="lock" size={13}/> Rule-based help · No external AI or chat uploads</div>
       </section>}
       {!open && <span className="shieldy-nudge" aria-hidden="true">{tourActive ? 'Tour in progress' : 'Need a hand?'}</span>}
-      <button ref={launcher} type="button" className={'shieldy-launcher ' + (open ? 'is-open' : '')}
+      <button ref={launcher} type="button" className={'shieldy-launcher robot-launcher ' + (open ? 'is-open' : '')}
         onClick={() => setOpen(x => !x)} aria-label={open ? 'Close Shieldy helper' : 'Open Shieldy helper'} aria-controls="shieldy-panel" aria-expanded={open}>
-        <Icon name={open ? 'close' : 'shield'} size={27}/>
+        <ShieldyRobot variant="head" size={76} mood={props.verificationStatus === 'FLAG' ? 'alert' : busy ? 'thinking' : 'happy'}/>
+        {open && <span className="robot-launcher-close" aria-hidden="true"><Icon name="close" size={11}/></span>}
         {!open && <span className="shieldy-launcher-spark" aria-hidden="true">✦</span>}
       </button>
     </div>
