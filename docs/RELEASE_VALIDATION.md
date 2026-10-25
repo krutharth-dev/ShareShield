@@ -54,3 +54,9 @@ A browser-specific fetch failure for `/health` was reproduced while direct navig
 The helper launcher is hidden during active review so it cannot obscure document masks or export controls. Explicit VID context takes precedence over coincidental payment-card checksum matches.
 
 Physical Safari/iOS/Android and universal device compatibility are not certified. General NER, Kannada OCR, complete hidden-content sanitization and a guarantee of all sensitive-data detection remain outside this release. The current service stays on the existing free plan.
+
+## Selective-export correction, 25 October 2026
+
+A user report exposed a verification-policy mismatch: leaving DOB unchecked still blocked export because DOB is high priority. Export now distinguishes findings left unselected in the reviewed snapshot from selected findings that survive, and from newly discovered high-priority findings. Retained findings keep the output UNVERIFIED and appear in the report with an explicit reminder to confirm the choice; they do not alone block export. Selected leaks and new high-priority findings continue to block export. The latter now receive an accurate error instead of falsely claiming selected information survived.
+
+Regression coverage includes keeping name/DOB while redacting VID in a synthetic searchable PDF, retaining an unselected PAN, selected-content export failures, and unexpected high-risk discoveries. No real identity documents are needed for testing this behavior.

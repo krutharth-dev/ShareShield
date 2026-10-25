@@ -312,9 +312,13 @@ async def redact_selected(
         result, mime, name = await document_job(engine.redact, data, ext, chosen)
         result_ext = ext
     original_incomplete = any(note.startswith("UNVERIFIED:") for note in original_notes)
-    report = await document_job(review.evaluate, chosen, result, result_ext, len(manual), redaction_mode, original_incomplete)
+    report = await document_job(review.evaluate, chosen, result, result_ext, len(manual), redaction_mode, original_incomplete,
+                                [f for f in findings if f not in chosen])
     if report["status"] == "FLAG":
-        raise HTTPException(409, "FLAG: selected information is still detectable in the output")
+        raise HTTPException(409,
+            "FLAG: selected information is still detectable in the output"
+            if report["remaining_selected_count"] else
+            "FLAG: additional high-priority information was found during verification. Analyze and review the findings again.")
     return Response(content=result, media_type=mime,
                     headers={
                         "Content-Disposition": f'attachment; filename="{name}"',
@@ -348,4 +352,5 @@ async def verify_result(
     if manual_count < 0 or manual_count > 60:
         raise HTTPException(422, "Invalid manual redaction count")
     original_incomplete = any(note.startswith("UNVERIFIED:") for note in original_notes)
-    return await document_job(review.evaluate, chosen, output, out_ext, manual_count, redaction_mode, original_incomplete)
+    return await document_job(review.evaluate, chosen, output, out_ext, manual_count, redaction_mode, original_incomplete,
+                              [f for f in initial if f not in chosen])

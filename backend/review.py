@@ -238,7 +238,8 @@ def redact_visual(data: bytes, ext: str, selected: list[engine.Finding],
 
 def evaluate(selected: list[engine.Finding], redacted_data: bytes, ext: str,
              manual_count: int=0, mode: str = "blackout",
-             original_incomplete: bool = False) -> dict[str,Any]:
+             original_incomplete: bool = False,
+             retained: list[engine.Finding] | None = None) -> dict[str,Any]:
     """Rescan the *entire* export, not only previously selected values.
 
     Never claim full privacy: undetected visual content, OCR errors and
@@ -256,10 +257,15 @@ def evaluate(selected: list[engine.Finding], redacted_data: bytes, ext: str,
         {"category": f.category, "page": f.page, "severity": engine.SEVERITY.get(f.category, "medium")}
         for f in found if (f.category, f.value) in leaked
     ]
-    # An unselected high-priority value remaining in the output is still a
-    # privacy risk. Fail closed rather than returning a reassuring pass.
+    # Previously reviewed but unselected findings are intentional retained
+    # content. Warn without misreporting a failed selected redaction. New
+    # high-risk discoveries still block export and require another review.
     high_risk = [f for f in found if engine.SEVERITY.get(f.category) == "high"
                  and f.category not in {"face_candidate", "qr_candidate"}]
+    retained_values = {(f.category, f.value) for f in (retained or [])}
+    unexpected_high_risk = [f for f in high_risk
+                            if (f.category, f.value) not in retained_values]
+    retained_found = [f for f in found if (f.category, f.value) in retained_values]
     remainder = [
         {"category": f.category, "page": f.page,
          "severity": engine.SEVERITY.get(f.category, "medium")}
@@ -274,7 +280,7 @@ def evaluate(selected: list[engine.Finding], redacted_data: bytes, ext: str,
         or "Tesseract OCR is unavailable" in note for note in warnings
     )
     status = (
-        "FLAG" if remaining_selected or high_risk else
+        "FLAG" if remaining_selected or unexpected_high_risk else
         "UNVERIFIED" if scan_incomplete or remainder or manual_count or contains_visual or mode != "blackout" else
         "PASS_SCOPED" if selected else "UNVERIFIED"
     )
@@ -296,6 +302,8 @@ def evaluate(selected: list[engine.Finding], redacted_data: bytes, ext: str,
         "remaining_detected": remainder[:50],
         "remaining_detected_count": len(remainder),
         "remaining_high_risk_count": len(high_risk),
+        "remaining_unselected_count": len(retained_found),
+        "unexpected_high_risk_count": len(unexpected_high_risk),
         "redaction_mode": mode,
         "checks": checks,
         "output_sha256": engine.fingerprint(redacted_data),
@@ -306,7 +314,8 @@ def evaluate(selected: list[engine.Finding], redacted_data: bytes, ext: str,
             "OCR and visual recognition can miss small or noisy text, Kannada, handwritten fields and unusual codes.",
             "Document metadata, embedded/hidden content and Office revision history are not fully sanitized.",
             *warnings,
-            *(["High-priority identifiers remain in the exported document. Do not share this version."] if high_risk else []),
+            *(["Unreviewed high-priority identifiers remain. Export is blocked; analyze and review again."] if unexpected_high_risk else []),
+            *(["Previously detected information was left unselected and remains visible. Confirm that retaining it is intentional before sharing."] if retained_found else []),
             *(["Some unselected candidate identifiers remain. Review them before sharing."] if remainder and not high_risk else []),
             *(["Faces/QR candidates require human visual review; their removal is not machine-certified."] if contains_visual else []),
             *(["Blur/pixelation may expose information. Blackout is recommended for private documents."] if mode != "blackout" else []),

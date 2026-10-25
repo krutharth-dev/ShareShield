@@ -10,7 +10,7 @@ from backend import engine, review
 client = TestClient(app)
 
 
-def test_leftover_unselected_high_risk_blocks_export():
+def test_reviewed_unselected_high_risk_warns_without_blocking_export():
     original = b"demo@example.org\nPAN: ABCDE1234F\n"
     response = client.post("/analyze", files={"file": ("fixture.txt", original)})
     assert response.status_code == 200
@@ -21,7 +21,19 @@ def test_leftover_unselected_high_risk_blocks_export():
         files={"file": ("fixture.txt", original)},
         data={"analysis_id": info["analysis_id"], "selected_ids": str(email_id)},
     )
-    assert redaction.status_code == 409  # PAN not selected, but still detected
+    assert redaction.status_code == 200, redaction.text
+    assert b"ABCDE1234F" in redaction.content
+    assert b"demo@example.org" not in redaction.content
+    assert redaction.headers['X-ShareShield-Verification'] == 'UNVERIFIED'
+    report = client.post('/verify', files={
+        'file': ('fixture.txt', original), 'redacted': ('output.txt', redaction.content)},
+        data={'analysis_id': info['analysis_id'], 'selected_ids': str(email_id)}).json()
+    assert report['status'] == 'UNVERIFIED'
+    assert report['remaining_selected_count'] == 0
+    assert report['remaining_unselected_count'] == 1
+    assert report['remaining_high_risk_count'] == 1
+    assert report['unexpected_high_risk_count'] == 0
+    assert 'ABCDE1234F' not in str(report)
 
 
 def test_unselected_medium_risk_requires_ack_and_report_leaks_no_values():
@@ -122,3 +134,52 @@ def test_pdf_export_strips_metadata_attachments_and_annotations(monkeypatch):
         assert exported.embfile_names() == []
         assert list(exported[0].annots() or []) == []
         assert "demo@example.org" not in exported[0].get_text()
+
+
+def test_new_unreviewed_high_risk_still_blocks():
+    selected = [engine.Finding('email', 'demo@example.org', 1, [], 'plain-text')]
+    report = review.evaluate(selected, b'PAN: ABCDE1234F', '.txt', retained=[])
+    assert report['status'] == 'FLAG'
+    assert report['unexpected_high_risk_count'] == 1
+
+
+def test_retained_list_never_overrides_selected_leak():
+    selected = [engine.Finding('email', 'demo@example.org', 1, [], 'plain-text')]
+    report = review.evaluate(selected, b'demo@example.org', '.txt', retained=selected)
+    assert report['status'] == 'FLAG'
+    assert report['remaining_selected_count'] == 1
+
+
+def test_identity_pdf_keep_name_and_dob_redact_id():
+    import fitz
+    doc = fitz.open(); page = doc.new_page()
+    for y, text in [(60, 'Government of India'), (100, 'SAMPLE STUDENT'),
+                    (130, 'DOB: 08/08/2006'), (170, 'VID: 1111 2222 3333 4444')]:
+        page.insert_text((60,y), text)
+    data = doc.tobytes(); doc.close()
+    info = client.post('/analyze', files={'file': ('fictional.pdf', data)}).json()
+    chosen = next(f['id'] for f in info['findings'] if f['category'] == 'vid_candidate')
+    fields = {'analysis_id':info['analysis_id'], 'selected_ids':str(chosen)}
+    result = client.post('/redact', files={'file':('fictional.pdf',data)}, data=fields)
+    assert result.status_code == 200, result.text
+    with fitz.open(stream=result.content, filetype='pdf') as output:
+        text = output[0].get_text()
+        assert 'Government of India' in text and 'SAMPLE STUDENT' in text
+        assert '08/08/2006' in text and '1111 2222' not in text
+    report = client.post('/verify', files={'file':('fictional.pdf',data),
+                         'redacted':('out.pdf',result.content)}, data=fields).json()
+    assert report['status'] == 'UNVERIFIED'
+    assert report['remaining_selected_count'] == 0
+    assert any(f['category']=='dob_candidate' for f in report['remaining_detected'])
+
+
+def test_selected_export_failure_still_returns_409(monkeypatch):
+    original = b'demo@example.org\nDOB: 08/08/2006'
+    info = client.post('/analyze', files={'file':('sample.txt',original)}).json()
+    email_id = next(f['id'] for f in info['findings'] if f['category']=='email')
+    monkeypatch.setattr(engine, 'redact', lambda data, ext, chosen: (data, 'text/plain', 'out.txt'))
+    response = client.post('/redact', files={'file':('sample.txt',original)},
+                           data={'analysis_id':info['analysis_id'],'selected_ids':str(email_id)})
+    assert response.status_code == 409
+    assert 'selected information' in response.json()['detail']
+    assert 'demo@example.org' not in response.text

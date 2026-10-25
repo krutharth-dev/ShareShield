@@ -41,6 +41,7 @@ type Report = {
   remaining_detected: { category: string; page: number; severity: string }[]
   remaining_detected_count: number
   remaining_high_risk_count: number
+  remaining_unselected_count: number
   redaction_mode: RedactionMode
   checks: string[]
   unverified: string[]
@@ -590,7 +591,7 @@ function App() {
       setServerStatus('online')
       setReport(checked)
       if (checked.status === 'FLAG') {
-        setProblem(true); setMessage('Verification found selected information in the output. Download withheld.')
+        setProblem(true); setMessage('Verification found selected or newly detected high-priority information. Download withheld.')
       } else {
         setResult(processed)
         setViewMode('split')
@@ -987,7 +988,7 @@ function App() {
                       'This keeps the export deliberate. It does not certify complete privacy.'}</span></div>
                   {!pagesComplete && <button className="guide-inline-link" onClick={() => navigateTo('review')}>Review pages <Icon name="arrowRight" size={14}/></button>}
                 </div>}
-                {report?.status === 'FLAG' && <p className="warning" role="alert"><Icon name="alert" size={15}/> This export is blocked until remaining high-risk candidates are addressed. Please adjust your masks and try again.</p>}
+                {report?.status === 'FLAG' && <p className="warning" role="alert"><Icon name="alert" size={15}/> This export is blocked because selected information survived or new high-priority findings need review. Please analyze again and check your masks.</p>}
                 <div className="action-row export-actions" id="export-actions"><button className="primary-action" disabled={phase !== 'ready' || (!selected.length && !manual.length)}
                   onClick={processFile}>{phase === 'processing' ? <><span className="mini-spinner"/> Processing…</> : <><Icon name="lock" size={17}/> Generate &amp; verify <Icon name="arrowRight" size={17}/></>}</button>
                   <button className="secondary-action" disabled={!result || !acknowledged || !pagesComplete || report?.status === 'FLAG'} onClick={download}><Icon name="download" size={17}/> Download reviewed copy</button></div>
@@ -999,7 +1000,7 @@ function App() {
                     {report.remaining_detected_count > report.remaining_detected.length && <small>Showing first {report.remaining_detected.length} only.</small>}
                   </div>}
                   <p className="report-digest">Output SHA-256: {report.output_sha256}</p>
-                  <p className="caption">{report.status === 'PASS_SCOPED' ? 'The full output was rescanned for supported patterns, but unidentified private information may remain.' : report.status === 'UNVERIFIED' ? 'Some candidate information or visual masks remain unverified. Review every page.' : 'High-risk or previously selected values remain; download is blocked.'}</p>
+                  <p className="caption">{report.remaining_unselected_count > 0 && `${report.remaining_unselected_count} detected item(s) were left unselected and remain visible. Confirm that you intend to keep them. `}{report.status === 'PASS_SCOPED' ? 'The full output was rescanned for supported patterns, but unidentified private information may remain.' : report.status === 'UNVERIFIED' ? 'Some candidate information or visual masks remain unverified. Review every page.' : 'Selected or newly detected high-priority values remain; download is blocked.'}</p>
                   {report.status !== 'FLAG' && <label className="acknowledgement">
                     <input type="checkbox" checked={acknowledged} onChange={event => setAcknowledged(event.target.checked)} />
                     I have inspected the export and understand that automatic detection cannot guarantee complete privacy.
