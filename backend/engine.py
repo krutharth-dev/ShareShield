@@ -52,13 +52,15 @@ class Finding:
     page: int
     rectangles: list[tuple[float, float, float, float]]
     location: str = ""
+    ocr_confidence: float | None = None
 
     def public(self, index: int) -> dict:
         return {"id": index, "category": self.category, "value": self.value,
                 "page": self.page, "locatable": bool(self.rectangles) or bool(self.location),
                 "severity": SEVERITY.get(self.category, "medium"),
-                "confidence": CONFIDENCE.get(self.category, .65),
-                "auto_select": CONFIDENCE.get(self.category, .65) >= .85,
+                "confidence": min(CONFIDENCE.get(self.category, .65), self.ocr_confidence) if self.ocr_confidence is not None else CONFIDENCE.get(self.category, .65),
+                "ocr_confidence": self.ocr_confidence,
+                "auto_select": self.ocr_confidence is None and CONFIDENCE.get(self.category, .65) >= .85,
                 "rectangles": self.rectangles, "location": self.location}
 
 

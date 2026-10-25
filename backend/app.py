@@ -14,7 +14,7 @@ from starlette.middleware.trustedhost import TrustedHostMiddleware
 from fastapi.responses import JSONResponse
 from starlette.concurrency import run_in_threadpool
 
-from backend import engine, review, smart, snapshots
+from backend import engine, review, smart, snapshots, handwriting
 from backend.patterns import SEVERITY
 
 DEPLOYMENT_MODE = os.environ.get("SHARESHIELD_DEPLOYMENT_MODE", "local").lower()
@@ -155,6 +155,7 @@ def health():
             "processor_busy": DOCUMENT_WORK_SLOT.locked(),
             "ocr_available": engine.ocr_available(),
             "vision_available": smart.available(),
+            "handwriting_available": handwriting.config() is not None,
             "redaction_modes": ["blackout", "blur", "pixelate"],
             "ocr_setup": None if engine.ocr_available() else "Install Tesseract with brew install tesseract; restart server"}
 
@@ -239,10 +240,15 @@ async def document_job(function, *args):
 
 
 @app.post("/analyze")
-async def analyze(file: Annotated[UploadFile, File()]):
+async def analyze(file: Annotated[UploadFile, File()],
+                  handwriting_mode: Annotated[bool, Form()] = False,
+                  cloud_consent: Annotated[bool, Form()] = False,
+                  handwriting_code: Annotated[str, Form()] = ""):
+    if handwriting_mode:
+        handwriting.authorize(cloud_consent, handwriting_code)
     data, ext = await _upload(file)
     # OCR and OpenCV must not block the ASGI event loop and /health.
-    findings, limitations = await document_job(engine.inspect, data, ext)
+    findings, limitations = await document_job(handwriting.inspect if handwriting_mode else engine.inspect, data, ext)
     page_count = 1
     if ext == ".pdf":
         with engine.open_pdf(data) as doc:

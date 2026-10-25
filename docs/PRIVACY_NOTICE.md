@@ -1,6 +1,6 @@
 # ShareShield Prototype Privacy Notice
 
-**Last reviewed:** October 24, 2026  
+**Last reviewed:** October 25, 2026
 **Scope:** ShareShield student mini-project, as run with the bundled React
 frontend and FastAPI server on `http://127.0.0.1:8000`. This is a
 technical privacy notice for an educational prototype, **not** a legally
@@ -37,9 +37,17 @@ The **bundled demo** listens at `127.0.0.1:8000`; in that configuration
 files are sent from the local browser to the local FastAPI process. OCR uses
 the Tesseract executable; visual proposals use local OpenCV, with other
 document processing libraries also running on the configured server. The
-application does not intentionally send uploaded documents to external
-AI models, analytics or advertising services, and the design uses locally
-bundled icons instead of remote asset CDNs.
+standard scan does not send documents to external AI services. Optional
+handwriting mode sends normalized page images to Azure Document Intelligence
+only after explicit per-upload consent and an operator-issued access code.
+Azure supplies recognized text, coordinates and confidence; its processing and
+retention rules apply. The adapter requests result deletion after polling,
+including failures; deletion is best effort and is not a guarantee of immediate
+removal from all provider systems. A failed deletion on a completed analysis
+is shown in its limitations. Exports are reinspected locally, without another
+Azure upload, and handwriting exports always remain UNVERIFIED.
+No document bytes or provider keys are deliberately logged. The design uses
+locally bundled icons instead of remote asset CDNs.
 
 **Hosting matters.** If the service is exposed on a remote server, uploaded
 documents travel to that server. Claims about strict on-device processing
