@@ -209,7 +209,9 @@ def redact_visual(data: bytes, ext: str, selected: list[engine.Finding],
                 if not boxes:
                     continue
                 for rectangle, _ in boxes:
-                    page.add_redact_annot(fitz.Rect(rectangle), fill=(0, 0, 0))
+                    # PyMuPDF annotations use unrotated page coordinates.
+                    target = fitz.Rect(rectangle) * page.derotation_matrix
+                    page.add_redact_annot(target, fill=(0, 0, 0))
                 page.apply_redactions(images=fitz.PDF_REDACT_IMAGE_PIXELS)
             # Remove metadata and extraneous attachments/annotations/links.
             _scrub_pdf_extras(doc)

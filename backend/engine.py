@@ -351,6 +351,12 @@ def _pdf_findings(pdf: fitz.Document) -> tuple[list[Finding], list[str]]:
                 label = " ".join(span["text"] for span in line["spans"])
                 rows.append((label, tuple(line["bbox"])))
         native.extend(inferred_identity_fields(rows, number))
+        # Public findings use the displayed (rotated) page coordinate system,
+        # matching previews, OCR boxes and user-drawn masks.
+        if page.rotation:
+            for finding in native:
+                finding.rectangles = [tuple(fitz.Rect(rect) * page.rotation_matrix)
+                                      for rect in finding.rectangles]
         visual: list[Finding] = []
         # Pages containing raster images require OCR even if they have native text.
         # Native text-only pages do not need expensive rasterization/Tesseract.

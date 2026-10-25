@@ -386,6 +386,8 @@ function App() {
       if (!response.ok) throw Error(await errorFrom(response))
       const data: Analysis = await response.json()
       if (id !== requestId.current) return
+      // Async user event handler, never invoked during render.
+      // eslint-disable-next-line react-hooks/purity
       lastBackendResponse.current = Date.now()
       setServerStatus('online')
       setProcessorBusy(false)
@@ -508,8 +510,16 @@ function App() {
     setEditIndex(null)
     clearResult()
   }
+  function changePage(next: number) {
+    initialPoint.current = null
+    setDraft(null)
+    setEditIndex(null)
+    setOriginalPreview('')
+    setOutputPreview('')
+    setPage(next)
+  }
   function onPointerDown(event: React.PointerEvent<HTMLDivElement>) {
-    if (!analysis?.preview_supported || phase !== 'ready' || !drawMode) return
+    if (!analysis?.preview_supported || !originalPreview || phase !== 'ready' || !drawMode) return
     const pos = point(event)
     initialPoint.current = pos
     setDraft({ page, ...pos, w: 0, h: 0 })
@@ -587,6 +597,8 @@ function App() {
       if (!check.ok) throw Error(await errorFrom(check))
       const checked: Report = await check.json()
       if (id !== requestId.current) return
+      // Async user event handler, never invoked during render.
+      // eslint-disable-next-line react-hooks/purity
       lastBackendResponse.current = Date.now()
       setServerStatus('online')
       setReport(checked)
@@ -940,8 +952,8 @@ function App() {
                       {outputPreview ? <img src={outputPreview} alt={'Redacted page ' + page} /> : <span>Generate output to preview here</span>}
                     </div></div></div>
                   </div>
-                  <div className="page-controls"><button onClick={() => setPage(x => Math.max(1, x - 1))} disabled={page === 1}>←</button>
-                    <span>Page {page} of {analysis.page_count}</span><button onClick={() => setPage(x => Math.min(analysis.page_count, x + 1))} disabled={page === analysis.page_count}>→</button>
+                  <div className="page-controls"><button onClick={() => changePage(Math.max(1, page - 1))} disabled={page === 1}>←</button>
+                    <span>Page {page} of {analysis.page_count}</span><button onClick={() => changePage(Math.min(analysis.page_count, page + 1))} disabled={page === analysis.page_count}>→</button>
                     <button onClick={undo} disabled={!history.length}>Undo edit</button>
                     <button onClick={redo} disabled={!future.length}>Redo edit</button>
                     <span className="muted">{manual.length} manual masks</span>
@@ -973,7 +985,7 @@ function App() {
                     </div>
                     <label className="compare-slider">Original visible: {compare}% <input type="range" min="0" max="100" value={compare} onChange={e => setCompare(Number(e.target.value))} /></label>
                   </div>}
-                  {result && <div className="page-review" id="export-review"><label><input type="checkbox" checked={reviewedPages.includes(page)}
+                  {result && <div className="page-review" id="export-review"><label><input type="checkbox" disabled={!outputPreview} checked={reviewedPages.includes(page)}
                     onChange={event => setReviewedPages(current => event.target.checked ? [...current, page] : current.filter(p => p !== page))} />
                     I have visually checked page {page} of the exported copy</label>
                     <small>{reviewedPages.length} / {analysis.page_count} pages reviewed. Inspect each page, including small IDs, signatures, photos and codes.</small>
@@ -1026,10 +1038,10 @@ function App() {
           <span><button className="footer-privacy" onClick={() => { setShowPrivacy(true); navigateTo('privacy') }}><Icon name="lock" size={14}/> Privacy &amp; safety</button> · Detect · Review · Redact · Verify</span></footer>
       </section>
       <CommandPalette open={commandOpen} onClose={() => setCommandOpen(false)} actions={commandActions}/>
-      {!Boolean(analysis) && <ShieldyAssistant
+      {!analysis && <ShieldyAssistant
         hasFile={Boolean(file)} hasAnalysis={Boolean(analysis)} hasResult={Boolean(result)}
-        findingCount={analysis?.findings.length ?? 0}
-        reviewedPages={reviewedPages.length} pageCount={analysis?.page_count ?? 0}
+        findingCount={0}
+        reviewedPages={reviewedPages.length} pageCount={0}
         pagesComplete={pagesComplete} acknowledged={acknowledged} phase={phase}
         verificationStatus={report?.status ?? null}
         onNavigate={id => {

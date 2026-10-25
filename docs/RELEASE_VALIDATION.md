@@ -60,3 +60,22 @@ Physical Safari/iOS/Android and universal device compatibility are not certified
 A user report exposed a verification-policy mismatch: leaving DOB unchecked still blocked export because DOB is high priority. Export now distinguishes findings left unselected in the reviewed snapshot from selected findings that survive, and from newly discovered high-priority findings. Retained findings keep the output UNVERIFIED and appear in the report with an explicit reminder to confirm the choice; they do not alone block export. Selected leaks and new high-priority findings continue to block export. The latter now receive an accurate error instead of falsely claiming selected information survived.
 
 Regression coverage includes keeping name/DOB while redacting VID in a synthetic searchable PDF, retaining an unselected PAN, selected-content export failures, and unexpected high-risk discoveries. No real identity documents are needed for testing this behavior.
+
+## Additional error audit, 25 October 2026
+
+Reproduced a manual blackout missing its target on a PDF rotated 90 degrees.
+Native PDF findings now use displayed page coordinates, matching OCR and previews;
+PDF redaction annotations convert those coordinates back to the unrotated page.
+Sixteen regression cases cover 0/90/180/270-degree pages, manual blackout and detected
+text with blackout/blur/pixelate. Checks verify actual black pixels, removed text,
+preserved public headings (native blackout), and output dimensions.
+
+Page navigation now clears old previews and draft masks before loading the next
+page. Drawing requires a loaded original preview; review acknowledgement requires
+an export preview. This prevents the previous page being reviewed as the new page.
+This frontend guard was source-reviewed and build/lint checked, not independently
+exercised in a physical-device browser during this audit.
+
+Validation: 99 Python tests passed; frontend build and ESLint passed; release and
+OCR smoke checks passed. Two purity-rule false positives in asynchronous click
+handlers have narrowly scoped explanatory suppressions. No global rule disabled.
