@@ -140,8 +140,6 @@ function App() {
   const [report, setReport] = useState<Report | null>(null)
   const [handwritingAvailable, setHandwritingAvailable] = useState(false)
   const [handwritingMode, setHandwritingMode] = useState(false)
-  const [cloudConsent, setCloudConsent] = useState(false)
-  const [handwritingCode, setHandwritingCode] = useState('')
   const [ocrAvailable, setOcrAvailable] = useState<boolean | null>(null)
   const [visionAvailable, setVisionAvailable] = useState<boolean | null>(null)
   const [privacyCategories, setPrivacyCategories] = useState<string[]>(privacyOptions.map(item => item.id))
@@ -298,7 +296,6 @@ function App() {
     requestId.current += 1
     setPhase('ready')
     setFile(next)
-    setCloudConsent(false)
     setAnalysis(null)
     setSelected([])
     setManual([])
@@ -353,6 +350,21 @@ function App() {
     ctx.fillStyle = '#333'; ctx.font = '18px sans-serif'; ctx.fillText('Manual-mask example', 800, 460)
     canvas.toBlob(blob => { if (blob) choose(new File([blob], 'fictional-identity.png', {type:'image/png'})) }, 'image/png')
   }
+  async function handwritingSample() {
+    const id = ++requestId.current
+    setPhase('scanning')
+    try {
+      const response = await fetch('/handwriting-sample', { cache: 'no-store' })
+      if (!response.ok) throw Error(await errorFrom(response))
+      const blob = await response.blob()
+      if (id !== requestId.current) return
+      choose(new File([blob], 'fictional-handwriting.png', { type: 'image/png' }))
+      setHandwritingMode(true)
+      setToast('Fictional handwriting-style font sample loaded. This is not a real pen-written benchmark.')
+    } catch (error) {
+      if (id === requestId.current) { setProblem(true); setMessage(error instanceof Error ? error.message : 'Sample unavailable.'); setPhase('ready') }
+    }
+  }
   async function reconnect() {
     // Keep the user's selected file and manual work: a full reload loses both.
     setServerStatus('checking')
@@ -376,13 +388,13 @@ function App() {
   }
 
   async function scan() {
-    if (!file || invalid || (handwritingMode && (!cloudConsent || !handwritingCode || !handwritingAvailable))) return
+    if (!file || invalid || (handwritingMode && !handwritingAvailable)) return
     const id = ++requestId.current
     setPhase('scanning'); setProblem(false); setMessage('Scanning file for supported identifiers…')
     // Keep the previous review available if a temporary 503 blocks rescan.
     try {
       const response = await postWithBusyRetry(
-        '/analyze', () => dataFor(file, { handwriting_mode: String(handwritingMode), cloud_consent: String(cloudConsent), handwriting_code: handwritingCode }),
+        '/analyze', () => dataFor(file, { handwriting_mode: String(handwritingMode) }),
         attempt => {
           if (id !== requestId.current) return
           setServerStatus('online')
@@ -701,7 +713,7 @@ function App() {
         <div className="sidebar-privacy">
           <span className="sidebar-privacy-mark"><Icon name="lock" size={19}/></span>
           <strong>{isHosted ? 'Cloud-hosted document workspace' : 'Local-first by design'}</strong>
-          <span>{isHosted ? 'Uploaded files are processed on this hosting server, not on your device. For now, use fictional files only.' : 'Standard scans run on your configured server. Optional handwriting mode sends page images to Azure with your consent.'}</span>
+          <span>{isHosted ? 'Uploaded files are processed on this hosting server, not on your device. For now, use fictional files only.' : 'Standard scans run on your configured server. Handwriting recognition also runs on this server without an external AI API.'}</span>
         </div>
         <div className="sidebar-bottom">
           <span className={'local-indicator ' + (serverStatus === 'offline' ? 'indicator-unavailable' : '')} />
@@ -847,13 +859,11 @@ function App() {
                   disabled={!handwritingAvailable || phase !== 'ready'}
                   onChange={event => { setHandwritingMode(event.target.checked); choose(file) }} />
                   Handwritten document · English · experimental</label>
-                {!handwritingAvailable && <p className="pref-note">Handwriting recognition is not configured on this server. Standard scanning and manual masks remain available.</p>}
+                {!handwritingAvailable && <p className="pref-note">The pretrained handwriting model is unavailable on this server. Standard scanning and manual masks remain available.</p>}
                 {handwritingMode && <>
-                  <p className="pref-note">Up to two PDF pages or one image. Page images are sent to Microsoft Azure for recognition. All recognized lines can be selected; use manual masks to correct missed areas. Every export requires visual review.</p>
-                  <label className="repeat-option"><input type="checkbox" checked={cloudConsent} disabled={phase !== 'ready'} onChange={event => setCloudConsent(event.target.checked)} />
-                    I agree to send this document’s page images to Azure Document Intelligence. Provider processing and retention rules apply.</label>
-                  <label>Handwriting access code <input type="password" autoComplete="off" value={handwritingCode} disabled={phase !== 'ready'} onChange={event => setHandwritingCode(event.target.value)} placeholder="Provided by the app owner" /></label>
-                  <p className="pref-note">No findings are automatically selected in this mode. Review uncertain words, names, faces, signatures and codes manually. Exports remain UNVERIFIED; the final rescan uses local OCR only.</p>
+                  <p className="pref-note">A pretrained English handwriting model runs on the ShareShield server. No Azure account, access code or paid OCR API is needed. Uploaded documents still leave your device for server processing.</p>
+                  <p className="pref-note">Up to two PDF pages or one image (4 megapixels). Select individual suggestions or whole lines, then adjust missed areas with manual masks. Nothing is automatically selected. Check word boundaries carefully.</p>
+                  <p className="pref-note">Experimental: neat writing may work better than cursive or noisy photos. All exports remain UNVERIFIED and require visual review. This model has not been fine-tuned on your documents.</p>
                 </>}
               </div>
               {file && <div className="privacy-preferences" id="privacy-preferences">
@@ -889,9 +899,10 @@ function App() {
                 </details>
               </div>}
               <div className="action-row upload-actions">
+                <button className="secondary-action" onClick={handwritingSample} disabled={!handwritingAvailable || phase !== 'ready'}>Use handwriting-style sample</button>
                 <button className="secondary-action" onClick={sample} disabled={phase !== 'ready'}><Icon name="file" size={17}/> Use fictional sample</button>
                 <button className="secondary-action" onClick={identitySample} disabled={phase !== 'ready'}>Use fictional ID image</button>
-                <button className="primary-action" onClick={scan} disabled={!file || invalid || phase !== 'ready' || (handwritingMode && (!handwritingAvailable || !cloudConsent || !handwritingCode))}>{phase === 'scanning' ? <><span className="mini-spinner"/> Analyzing…</> : <><Icon name="scan" size={18}/> Analyze document <Icon name="arrowRight" size={17}/></>}</button>
+                <button className="primary-action" onClick={scan} disabled={!file || invalid || phase !== 'ready' || (handwritingMode && !handwritingAvailable)}>{phase === 'scanning' ? <><span className="mini-spinner"/> Analyzing…</> : <><Icon name="scan" size={18}/> Analyze document <Icon name="arrowRight" size={17}/></>}</button>
               </div>
               {serverStatus === 'offline' && phase === 'ready' && <p className="connection-notice" role="status"><Icon name="alert" size={15}/><span>{isHosted ? 'The server did not answer its last connection check. It may be waking up; retry when ready.' : 'Your local backend is not responding. Check that ShareShield is running.'}</span><button className="connection-retry" type="button" onClick={() => { void reconnect() }}>Retry connection</button></p>}
               {ocrAvailable === false && <p className="warning">OCR isn't available. Images and scanned PDFs cannot be text-scanned automatically.</p>}

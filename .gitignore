@@ -60,3 +60,6 @@ Thumbs.db
 
 # Keep synthetic files and local exports out of Git
 demo-output/
+
+# Downloaded, checksum-verified pretrained assets
+backend/models/

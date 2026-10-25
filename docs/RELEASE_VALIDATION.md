@@ -81,3 +81,24 @@ Three additional regressions cover the direct engine PDF export entry point.
 Validation: 102 Python tests passed; frontend build and ESLint passed; release and
 OCR smoke checks passed. Two purity-rule false positives in asynchronous click
 handlers have narrowly scoped explanatory suppressions. No global rule disabled.
+
+## Pretrained handwriting release, 25 October 2026
+
+Replaced the active Azure route with server-side PP-OCRv5 mobile English inference
+through RapidOCR/ONNX Runtime. Model downloads are checksum-verified at build time;
+recognition subprocesses cannot connect to the network. Source bytes stay in pipes
+and memory. Workers exit after each scan and time out after 45 seconds. Inputs are
+limited to two PDF pages or one image of at most 4 megapixels.
+
+Added a fictional Caveat-font note and a real-model scan/export smoke test. It
+recognizes the synthetic email/phone/DOB, blackens the selected email and preserves
+the public sentence. Local end-to-end time was about 3.2 seconds and worker peak
+RSS about 358 MiB in the development environment; these are not production SLAs.
+This fixture is handwriting-style typography, not a real pen-written benchmark.
+No custom training or fine-tuning has been performed.
+
+124 Python tests pass, frontend build/lint pass, and existing release/OCR smoke
+checks pass. New regressions cover limits, unavailable models, timeouts, failed
+workers, empty recognition and value-only labeled-name geometry. Handwriting
+outputs remain UNVERIFIED; manual review is required. Native-device browser and
+real-writer accuracy evaluation remain outstanding.

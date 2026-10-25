@@ -1,72 +1,80 @@
-# Optional handwriting recognition (experimental)
+# Pretrained handwriting recognition (experimental)
 
-Standard scans are unchanged. The opt-in English handwriting workflow sends
-page images to Azure Document Intelligence Read (`prebuilt-read`, API
-`2024-11-30`). It is disabled unless all three environment variables are set:
+The active handwriting mode now uses open-source PP-OCRv5 mobile detection and
+English recognition models, executed by RapidOCR 3.9.2 / ONNX Runtime on the
+ShareShield server. No Azure account, access code, external document API or
+per-page OCR fee is required. Hosting still consumes server CPU and memory.
+This is integration of pretrained weights, not training a model from scratch
+and not fine-tuning on user documents.
 
-- `AZURE_DOCUMENT_INTELLIGENCE_ENDPOINT`: exact HTTPS resource endpoint,
-  for example `https://RESOURCE.cognitiveservices.azure.com` (no extra path).
-- `AZURE_DOCUMENT_INTELLIGENCE_KEY`: resource key, stored only as a server secret.
-- `SHARESHIELD_HANDWRITING_ACCESS_CODE`: a random secret of at least 16 characters,
-  shared only with intended testers. This is distinct from the Azure key.
+## Using it
 
-Set these in the existing Render service's Environment settings and deploy.
-Never put keys in frontend variables, Git, screenshots or chat. No Azure
-resource has been provisioned or paid plan enabled by this change.
+Enable **Handwritten document**, upload a single image (at most 4 megapixels)
+or a PDF of at most two pages, and analyze. Or use **Use handwriting-style
+sample**, which creates a fictional note rendered with the Caveat font.
+The sample is a functional regression fixture, not actual pen handwriting or
+a representative handwriting accuracy benchmark.
 
-## Reviewer flow
+All findings require explicit selection. Supported pattern identifiers and
+labeled names/addresses have candidates; every recognized line also has a
+selectable whole-line candidate. Use manual masks for missed details or loose
+word localization. General names in prose, signatures, faces, codes, cursive,
+poor scans and non-English writing require special care. There is no universal
+handwriting accuracy guarantee and no text-transcription editing in this version.
 
-Enable Handwritten document, select an image or at most two PDF pages, consent
-to Azure processing, enter the tester access code, and analyze. Every returned
-line is selectable, including text that was not classified as sensitive.
-Supported identifiers and heuristic identity fields are separate candidates.
-Nothing from cloud OCR is automatically selected. Review the recognized text,
-select sensitive candidates, and use manual boxes to correct missed regions.
-This release does not provide text-transcription editing or general name NER.
-Faces, QR codes, signatures and unrecognized writing need manual review in
-handwriting mode. Word confidence is combined conservatively with category
-confidence; it is not a calibrated privacy guarantee.
+Exports stay UNVERIFIED. The output is reopened and reinspected with existing
+local OCR, which does not independently certify handwriting removal. Inspect
+every page and acknowledge limitations before downloading.
 
-The existing export flow applies permanent text blackouts and requires page
-review plus acknowledgement. The review snapshot retains the cloud findings;
-export and verification never call Azure again. All handwriting exports are
-UNVERIFIED because local reinspection cannot independently validate handwriting.
+## Deployment and privacy
 
-## Limits and data handling
+Docker installs the pinned runtime, downloads checksum-verified detection and
+recognition models at build time, creates the fictional sample, and runs a
+real-model export smoke test. Requests never download models. Missing assets
+fail closed and the UI reports the model unavailable. Ordinary scans remain on
+the existing Tesseract workflow.
 
-Images are decoded/oriented and normalized to PNG. PDFs are rasterized in their
-displayed orientation. Maximum image side is 2000 pixels, and returned polygons
-are mapped to original preview coordinates. Entire normalized pages are sent,
-not only the eventual selected regions. Poor resolution can reduce accuracy.
+Recognition runs in a fresh subprocess with network connections disabled,
+one inference thread, bounded input dimensions and a 45-second timeout. Source
+bytes and results use pipes; the worker does not write documents to disk or
+print identifiers to server logs. The existing single document-work slot limits
+concurrent scans. Model memory is released when the child exits. PDF pages are
+processed sequentially, with a maximum raster side of 1400 pixels. Model-based
+word positions are estimates, not proof that all ink lies inside the boxes.
 
-At most 20 submitted pages per UTC day **per process**; failed attempts count.
-The counter resets on process restart and is not a billing cap. Keep a single
-worker, restrict distribution of the tester code, and configure provider-side
-quotas/monitoring before enabling. It is not suitable for unrestricted paid
-public access without durable per-user quotas and proper authentication.
-Cloud requests use the existing single document worker, bounded polling and
-request timeouts. No automatic retry of submitted provider jobs is performed.
-Only an explicit server-busy response with Retry-After is retried by the UI.
-Provider errors are sanitized. Redirects are disabled and operation URLs must
-stay under the configured Azure resource and model before credentials are sent.
-Result deletion is requested after polling; deletion failure is disclosed for
-completed analyses. Provider retention still applies, including incomplete jobs.
+Documents still travel to the configured ShareShield server when it is remotely
+hosted. This is not browser-only or on-device processing. No Azure calls are
+made by the active API, including from older clients that send Azure fields.
+Legacy Azure adapter code remains for its geometry parser and regression tests,
+but is disconnected from application routes. Previously configured Azure/tester
+variables are unused; they do not activate any external processing.
 
-## Validation and activation status
+Local setup after installing backend/requirements.txt:
 
-Mock-provider tests cover consent, access-code checks, disabled mode, zero cloud
-calls for standard scans, geometry/confidence, malformed polygons, page/quota
-limits, operation URL validation, provider failures, cleanup and end-to-end
-export with UNVERIFIED status and no second cloud call. These tests validate
-integration logic, **not handwriting recognition accuracy**.
+```sh
+python -m pip install -r backend/requirements-handwriting.txt
+python -m pip install --no-deps rapidocr==3.9.2
+python -m backend.prepare_handwriting
+python -m backend.handwriting_smoke
+```
 
-A real Azure round trip and handwriting benchmark are still required after
-credentials are configured. Use fictional handwritten samples only: neat and
-messy English, names/addresses, spaced IDs, rotated pages and low-contrast photos.
-Check every returned box and export; do not claim tested recognition accuracy
-or support for other languages until that benchmark is complete.
+The separate --no-deps install avoids RapidOCR pulling in GUI OpenCV alongside
+our existing headless OpenCV. The companion requirements file supplies its other
+dependencies. Local Mac/Windows wheel support should be checked separately; the
+published Linux service is the supported deployment target for this release.
 
-References:
-- https://learn.microsoft.com/en-us/azure/ai-services/document-intelligence/prebuilt/read?view=doc-intel-4.0.0
-- https://learn.microsoft.com/en-us/rest/api/aiservices/document-models/analyze-document-from-stream?view=rest-aiservices-v4.0%20(2024-11-30)
-- https://learn.microsoft.com/en-us/rest/api/aiservices/document-models/delete-analyze-result?view=rest-aiservices-v4.0%20(2024-11-30)
+## Testing and later fine-tuning
+
+Unit/API tests cover input limits, unavailable models, timeout/crash handling,
+word coordinate scaling, labeled-name boxes, no automatic selection and honest
+UNVERIFIED exports. The real-model smoke verifies synthetic handwriting-style
+text recognition, actual email blackout and preservation of a public sentence.
+
+Next accuracy work should use consented or fictional pen-written samples from
+multiple writers, with accurate transcriptions and sensitive-region labels.
+Keep writers separate between training and held-out evaluation; measure word
+error rate, sensitive-field recall and mask coverage. Only then decide whether
+fine-tuning improves the pretrained baseline. No private user documents have
+been collected for training and no fine-tuning has been performed.
+
+Sources and licenses: see THIRD_PARTY_HANDWRITING.md.

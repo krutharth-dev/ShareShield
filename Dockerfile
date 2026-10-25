@@ -19,7 +19,11 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 COPY backend/requirements.txt /app/backend/requirements.txt
 RUN python -m pip install --no-cache-dir -r /app/backend/requirements.txt
+COPY backend/requirements-handwriting.txt /app/backend/requirements-handwriting.txt
+RUN python -m pip install --no-cache-dir -r /app/backend/requirements-handwriting.txt \
+    && python -m pip install --no-cache-dir --no-deps rapidocr==3.9.2
 COPY backend/ /app/backend/
+RUN python -m backend.prepare_handwriting && python -m backend.handwriting_smoke
 # Fail the release before publication if core PDF/Office workflows regress.
 RUN python -m backend.release_smoke && python -m backend.ocr_smoke
 COPY --from=web-build /src/frontend/dist/ /app/frontend/dist/

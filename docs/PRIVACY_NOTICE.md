@@ -38,16 +38,12 @@ files are sent from the local browser to the local FastAPI process. OCR uses
 the Tesseract executable; visual proposals use local OpenCV, with other
 document processing libraries also running on the configured server. The
 standard scan does not send documents to external AI services. Optional
-handwriting mode sends normalized page images to Azure Document Intelligence
-only after explicit per-upload consent and an operator-issued access code.
-Azure supplies recognized text, coordinates and confidence; its processing and
-retention rules apply. The adapter requests result deletion after polling,
-including failures; deletion is best effort and is not a guarantee of immediate
-removal from all provider systems. A failed deletion on a completed analysis
-is shown in its limitations. Exports are reinspected locally, without another
-Azure upload, and handwriting exports always remain UNVERIFIED.
-No document bytes or provider keys are deliberately logged. The design uses
-locally bundled icons instead of remote asset CDNs.
+handwriting mode now uses pretrained open-source models on this same server.
+Model assets are fetched during deployment; recognition subprocesses have
+network connections disabled. Documents are not sent to Azure or another
+external handwriting API by the active application routes. All handwriting
+exports remain UNVERIFIED and require visual review. The app uses locally
+bundled icons instead of remote asset CDNs.
 
 **Hosting matters.** If the service is exposed on a remote server, uploaded
 documents travel to that server. Claims about strict on-device processing

@@ -26,7 +26,7 @@ export default function PrivacyPanel({ onClose }: { onClose: () => void }) {
       </details>
       <details className="privacy-detail">
         <summary>Does it share my files with other services?</summary>
-        <p>Standard scans use OCR and visual detection on the configured server. Optional handwriting mode sends page images to Microsoft Azure Document Intelligence only after explicit consent and an access code. It requests deletion of recognition results after processing; deletion is best effort and provider retention rules still apply. Export reinspection uses local OCR and does not send another copy to Azure. Only use a trusted server.</p>
+        <p>Standard scans and optional pretrained handwriting recognition run on the configured ShareShield server. The active handwriting workflow does not send documents to Azure or another external AI API. Model files are downloaded during deployment; recognition workers have networking disabled. When hosted remotely, documents still travel from your browser to that server. Only use a trusted server.</p>
       </details>
       <details className="privacy-detail">
         <summary>How private is an exported document?</summary>

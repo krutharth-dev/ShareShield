@@ -14,7 +14,7 @@ from starlette.middleware.trustedhost import TrustedHostMiddleware
 from fastapi.responses import JSONResponse
 from starlette.concurrency import run_in_threadpool
 
-from backend import engine, review, smart, snapshots, handwriting
+from backend import engine, review, smart, snapshots, local_handwriting
 from backend.patterns import SEVERITY
 
 DEPLOYMENT_MODE = os.environ.get("SHARESHIELD_DEPLOYMENT_MODE", "local").lower()
@@ -155,7 +155,8 @@ def health():
             "processor_busy": DOCUMENT_WORK_SLOT.locked(),
             "ocr_available": engine.ocr_available(),
             "vision_available": smart.available(),
-            "handwriting_available": handwriting.config() is not None,
+            "handwriting_available": local_handwriting.available(),
+            "handwriting_provider": "pretrained-server",
             "redaction_modes": ["blackout", "blur", "pixelate"],
             "ocr_setup": None if engine.ocr_available() else "Install Tesseract with brew install tesseract; restart server"}
 
@@ -239,16 +240,24 @@ async def document_job(function, *args):
     return await asyncio.shield(job)
 
 
+@app.get("/handwriting-sample", include_in_schema=False)
+def handwriting_sample():
+    sample = local_handwriting.MODEL_DIR / "fictional-handwriting.png"
+    if not sample.is_file():
+        raise HTTPException(503, "The fictional handwriting sample is unavailable.")
+    return FileResponse(sample, media_type="image/png", headers={"Cache-Control":"no-store"})
+
+
 @app.post("/analyze")
 async def analyze(file: Annotated[UploadFile, File()],
                   handwriting_mode: Annotated[bool, Form()] = False,
                   cloud_consent: Annotated[bool, Form()] = False,
                   handwriting_code: Annotated[str, Form()] = ""):
-    if handwriting_mode:
-        handwriting.authorize(cloud_consent, handwriting_code)
+    # Legacy consent/code fields are accepted for old clients but never invoke
+    # Azure. This release runs handwriting recognition on the server only.
     data, ext = await _upload(file)
     # OCR and OpenCV must not block the ASGI event loop and /health.
-    findings, limitations = await document_job(handwriting.inspect if handwriting_mode else engine.inspect, data, ext)
+    findings, limitations = await document_job(local_handwriting.inspect if handwriting_mode else engine.inspect, data, ext)
     page_count = 1
     if ext == ".pdf":
         with engine.open_pdf(data) as doc:

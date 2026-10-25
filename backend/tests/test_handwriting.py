@@ -37,14 +37,14 @@ def pdf():
         return doc.tobytes()
 
 
-def test_consent_access_and_disabled_checks_precede_provider(configured,monkeypatch):
-    monkeypatch.setattr(hw,'inspect',lambda *args: pytest.fail('Unauthorized provider call'))
-    files={'file':('fictional.pdf',pdf())}
-    assert client.post('/analyze',files=files,data={'handwriting_mode':'true'}).status_code==422
-    assert client.post('/analyze',files=files,data={'handwriting_mode':'true','cloud_consent':'true'}).status_code==403
+def test_legacy_cloud_adapter_requires_consent_and_access(configured,monkeypatch):
+    with pytest.raises(HTTPException) as e: hw.authorize(False,'')
+    assert e.value.status_code==422
+    with pytest.raises(HTTPException) as e: hw.authorize(True,'')
+    assert e.value.status_code==403
     monkeypatch.delenv('AZURE_DOCUMENT_INTELLIGENCE_KEY')
-    assert not client.get('/api/status').json()['handwriting_available']
-    assert client.post('/analyze',files=files,data={'handwriting_mode':'true','cloud_consent':'true'}).status_code==503
+    with pytest.raises(HTTPException) as e: hw.authorize(True,'fictional-access-code')
+    assert e.value.status_code==503
 
 
 def test_standard_scan_never_calls_cloud(configured,monkeypatch):
@@ -67,19 +67,19 @@ def test_invalid_geometry_rejected(polygon):
     with pytest.raises(ValueError): hw.parse_result(data,1,400,600)
 
 
-def test_handwriting_export_always_unverified_no_second_cloud_call(configured,monkeypatch):
+def test_local_handwriting_export_unverified_and_never_calls_cloud(configured,monkeypatch):
+    from backend import local_handwriting
     calls=[]
-    def read(payload):
-        calls.append(payload)
-        # PDF is rendered at 2x, Azure echoes corresponding coordinates.
-        data=azure_result();page=data['pages'][0];page['width']=800;page['height']=1200
-        for item in page['words']+page['lines']: item['polygon']=[v*2 for v in item['polygon']]
-        return data,False
-    monkeypatch.setattr(hw,'read_page',read)
+    def inspect(data, ext):
+        calls.append(1)
+        findings=hw.parse_result(azure_result(),1,400,600)
+        return findings,[local_handwriting.NOTICE]
+    monkeypatch.setattr(local_handwriting,'inspect',inspect)
+    monkeypatch.setattr(hw,'read_page',lambda *a: pytest.fail('Cloud invoked'))
     original=pdf();files={'file':('fictional.pdf',original)}
-    response=client.post('/analyze',files=files,data={'handwriting_mode':'true','cloud_consent':'true','handwriting_code':'fictional-access-code'})
+    response=client.post('/analyze',files=files,data={'handwriting_mode':'true'})
     assert response.status_code==200,response.text
-    info=response.json();assert any('deletion' in n for n in info['limitations'])
+    info=response.json()
     email=next(f for f in info['findings'] if f['category']=='email')
     data={'analysis_id':info['analysis_id'],'selected_ids':str(email['id'])}
     output=client.post('/redact',files=files,data=data)

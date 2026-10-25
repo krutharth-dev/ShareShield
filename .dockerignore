@@ -33,3 +33,5 @@
 
 # Keep generated samples out of container builds
 demo-output/
+
+backend/models/
