@@ -536,7 +536,7 @@ def redact(data: bytes, ext: str, selected: list[Finding]) -> tuple[bytes,str,st
             for n, boxes in by_page.items():
                 p = pdf[n-1]
                 for box in boxes:
-                    p.add_redact_annot(fitz.Rect(box), fill=(0,0,0))
+                    p.add_redact_annot(fitz.Rect(box) * p.derotation_matrix, fill=(0,0,0))
                 p.apply_redactions(images=fitz.PDF_REDACT_IMAGE_PIXELS)
             result = pdf.tobytes(garbage=4, deflate=True, clean=True)
         with open_pdf(result) as saved:

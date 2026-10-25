@@ -76,6 +76,8 @@ an export preview. This prevents the previous page being reviewed as the new pag
 This frontend guard was source-reviewed and build/lint checked, not independently
 exercised in a physical-device browser during this audit.
 
-Validation: 99 Python tests passed; frontend build and ESLint passed; release and
+Three additional regressions cover the direct engine PDF export entry point.
+
+Validation: 102 Python tests passed; frontend build and ESLint passed; release and
 OCR smoke checks passed. Two purity-rule false positives in asynchronous click
 handlers have narrowly scoped explanatory suppressions. No global rule disabled.

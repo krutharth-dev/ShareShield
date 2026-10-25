@@ -36,3 +36,16 @@ def test_rotated_pdf_masks_match_preview(rotation, mode, manual):
         center = (int((expected.x0 + expected.x1)/2), int((expected.y0 + expected.y1)/2))
         assert image.getpixel(center) == (0, 0, 0)
         assert (pix.width, pix.height) == (int(bounds.width), int(bounds.height))
+
+
+@pytest.mark.parametrize('rotation', [90, 180, 270])
+def test_direct_engine_pdf_redaction_uses_display_coordinates(rotation):
+    with fitz.open() as doc:
+        page = doc.new_page(width=400, height=600)
+        page.insert_text((50, 100), 'demo@example.org')
+        page.set_rotation(rotation)
+        data = doc.tobytes()
+    findings, _ = engine.inspect(data, '.pdf')
+    output, _, _ = engine.redact(data, '.pdf', findings)
+    with fitz.open(stream=output, filetype='pdf') as doc:
+        assert 'demo@example.org' not in doc[0].get_text()
