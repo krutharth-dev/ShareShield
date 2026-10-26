@@ -239,7 +239,7 @@ flowchart LR
 
 A **PASS_SCOPED** result means that recognized *selected* strings were not found during the checks performed. It is **not a statement that all private data has been eliminated**. **UNVERIFIED** covers manual-only masks and incomplete coverage; **FLAG** indicates recognized selected data was still found. Review every export before sharing.
 
-Files are uploaded only to the server you configure. The bundled Docker configuration binds to **127.0.0.1** on your own computer. Do not publicly expose this prototype with real personal data. The default local app has no per-user accounts, user isolation, anti-malware scanning or complete public-production security hardening. Optional hosted-demo mode adds shared-password access gating, which is not equivalent to audited authentication or upload isolation. Upload frameworks can temporarily spool document contents. It is not end-to-end encrypted or certified for sensitive records.
+Files are uploaded only to the server you configure. The bundled Docker configuration binds to **127.0.0.1** on your own computer. Do not publicly expose this prototype with real personal data. The default local app has no per-user accounts, user isolation, anti-malware scanning or complete public-production security hardening. The current public-demo mode has no password gate. The former protected-demo launcher is retired; see docs/DEPLOYMENT.md. Upload frameworks can temporarily spool document contents. It is not end-to-end encrypted or certified for sensitive records.
 
 The team should review the PyMuPDF AGPL/commercial terms and all third-party licenses before distribution.
 

@@ -63,3 +63,7 @@ demo-output/
 
 # Downloaded, checksum-verified pretrained assets
 backend/models/
+
+# Browser test artifacts (fictional fixtures only)
+frontend/test-results/
+frontend/playwright-report/

@@ -61,16 +61,22 @@ def check_file(data: bytes, ext: str) -> None:
 
 
 def preview(data: bytes, ext: str, page_number: int) -> bytes:
+    return preview_details(data, ext, page_number)[0]
+
+
+def preview_details(data: bytes, ext: str, page_number: int):
     if ext in engine.IMAGE_EXTENSIONS:
         if page_number != 1:
             raise HTTPException(422, "Images have only one page")
         image = engine.read_image(data)
+        width, height = image.size
         image.thumbnail((1400,1400))
     elif ext == ".pdf":
         with engine.open_pdf(data) as doc:
             if page_number<1 or page_number>doc.page_count:
                 raise HTTPException(422, "Page number is outside this PDF")
             page = doc[page_number-1]
+            width, height = page.rect.width, page.rect.height
             factor = min(2.0, 1400/max(page.rect.width,page.rect.height,1))
             pix = engine.render_pdf_page(page, factor)
             if pix.width*pix.height>engine.MAX_PIXELS:
@@ -80,7 +86,7 @@ def preview(data: bytes, ext: str, page_number: int) -> bytes:
         raise HTTPException(415, "Image preview is available only for PDFs and images")
     output = io.BytesIO()
     image.save(output,format="PNG")
-    return output.getvalue()
+    return output.getvalue(), width, height
 
 
 def parse_regions(raw: str, ext: str) -> list[dict[str,float|int]]:

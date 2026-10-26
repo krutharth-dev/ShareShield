@@ -7,6 +7,9 @@ from __future__ import annotations
 
 import csv
 import io
+from zipfile import BadZipFile
+from xml.etree.ElementTree import ParseError
+from lxml.etree import XMLSyntaxError
 from collections import defaultdict
 
 from fastapi import HTTPException
@@ -43,7 +46,7 @@ def _read_csv(data: bytes):
 def _open_xlsx(data: bytes):
     try:
         book = load_workbook(io.BytesIO(data), keep_links=False, data_only=False)
-    except (OSError, ValueError, KeyError, TypeError, EOFError, ImportError) as exc:
+    except (OSError, ValueError, KeyError, TypeError, EOFError, ImportError, BadZipFile, ParseError, XMLSyntaxError) as exc:
         raise HTTPException(422, "Invalid or unsupported XLSX workbook") from exc
     if len(book.worksheets) > MAX_SHEETS:
         raise HTTPException(413, "XLSX exceeds 40 worksheets")
