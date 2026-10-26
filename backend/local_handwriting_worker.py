@@ -100,7 +100,7 @@ def recognize(data, ext):
                 raise ValueError('Too many pages')
             for number,page in enumerate(doc,1):
                 scale = min(2,1400/max(page.rect.width,page.rect.height))
-                pix=page.get_pixmap(matrix=fitz.Matrix(scale,scale),alpha=False)
+                pix=engine.render_pdf_page(page, scale)
                 image=Image.frombytes('RGB',(pix.width,pix.height),pix.samples)
                 run(image,number,page.rect.width,page.rect.height)
                 del image, pix

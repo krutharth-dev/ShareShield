@@ -1773,3 +1773,6 @@ html[data-theme="dark"] .brand-wordmark span:last-child {color:#55D7FF;}
   .shieldy-panel {bottom:64px;}
   .scan-caveat {padding:12px;}
 }
+
+/* A disabled fieldset freezes all review inputs during asynchronous export. */
+.review-controls { border:0; padding:0; margin:0; min-width:0; }

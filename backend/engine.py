@@ -329,6 +329,14 @@ def open_pdf(data: bytes):
         raise HTTPException(422, "Unreadable or invalid PDF") from exc
 
 
+def render_pdf_page(page, scale: float):
+    """Reject oversized raster allocations before calling MuPDF."""
+    bounds = (page.rect * fitz.Matrix(scale, scale)).irect
+    if bounds.width <= 0 or bounds.height <= 0 or bounds.width * bounds.height > MAX_PIXELS:
+        raise HTTPException(413, "Rendered PDF page exceeds 25-megapixel image limit")
+    return page.get_pixmap(matrix=fitz.Matrix(scale, scale), alpha=False)
+
+
 def _pdf_findings(pdf: fitz.Document) -> tuple[list[Finding], list[str]]:
     """Skip redundant OCR on native-only PDF pages, but examine image pages."""
     findings: list[Finding] = []
@@ -365,7 +373,7 @@ def _pdf_findings(pdf: fitz.Document) -> tuple[list[Finding], list[str]]:
         needs_render = bool(page.get_images(full=True)) or not text.strip()
         if needs_render and (has_ocr or has_vision):
             render_scale = 1.5
-            pix = page.get_pixmap(matrix=fitz.Matrix(render_scale, render_scale), alpha=False)
+            pix = render_pdf_page(page, render_scale)
             if pix.width * pix.height > MAX_PIXELS:
                 raise HTTPException(413, "Rendered PDF page exceeds 25-megapixel image limit")
             image = Image.frombytes("RGB", (pix.width, pix.height), pix.samples)

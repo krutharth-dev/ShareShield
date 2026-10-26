@@ -575,7 +575,7 @@ function App() {
     clearResult()
   }
   async function processFile() {
-    if (!file || !analysis || (!selected.length && !manual.length)) return
+    if (phase !== 'ready' || !file || !analysis || (!selected.length && !manual.length)) return
     const id = requestId.current
     setPhase('processing'); setMessage('Redacting and verifying exported content…'); setProblem(false)
     clearResult()
@@ -590,12 +590,14 @@ function App() {
       const response = await postWithBusyRetry(
         '/redact', () => request,
         attempt => {
+          if (id !== requestId.current) return
           setServerStatus('online')
           setMessage('Processor is occupied. Retrying redaction (' + attempt + ' of 3)…')
         },
       )
       if (!response.ok) throw Error(await errorFrom(response))
       const bytes = await response.blob()
+      if (id !== requestId.current) return
       const ext = outputExt[analysis.format] || '.png'
       const processed = new File([bytes], 'shareshield-redacted' + ext, { type: bytes.type })
       const verify = new FormData()
@@ -609,6 +611,7 @@ function App() {
       const check = await postWithBusyRetry(
         '/verify', () => verify,
         attempt => {
+          if (id !== requestId.current) return
           setServerStatus('online')
           setMessage('Processor is occupied. Retrying verification (' + attempt + ' of 3)…')
         },
@@ -911,7 +914,7 @@ function App() {
               <div className="privacy-note"><span>♧</span><p><strong>Privacy comes first.</strong><br />
                 Files are sent to the ShareShield server powering this page. Public hosting is not suitable for genuine identity documents; check all redactions manually.</p></div>
             </section>
-            {analysis && <section className="review-grid" id="review" aria-label="Redaction workspace">
+            {analysis && <fieldset className="review-controls" disabled={phase !== 'ready'} aria-label="Document review controls"><section className="review-grid" id="review" aria-label="Redaction workspace">
               <article className="review-card findings-card surface-card">
                 <div className="section-title"><div><span className="section-kicker">03 / FINDINGS</span><h2><Icon name="search" size={18}/> Review detections</h2><p>Approve each suggested redaction</p></div><span className="finding-total">{analysis.findings.length} found</span></div>
                 <div className="metric-strip"><span><strong>{analysis.high_risk_count}</strong> high-priority</span><span><strong>{selected.length}</strong> selected</span></div>
@@ -1056,7 +1059,7 @@ function App() {
                   <button className="secondary-action" onClick={downloadReport}>Download verification JSON ↓</button>
                 </div>}
               </article>
-            </section>}
+            </section></fieldset>}
             <section className="workflow"><div className="section-title"><div><span className="section-kicker">WHY SHARESHIELD</span><h2>Built around your decisions.</h2><p>Privacy means knowing exactly what is—and isn't—protected.</p></div></div>
               <div className="workflow-grid">
                 <article className="workflow-card"><span className="workflow-icon"><Icon name="scan" size={22}/></span><span className="workflow-step">STEP 01</span><h3>Detect</h3><p>Scan chosen files for recognized identifier patterns.</p></article>

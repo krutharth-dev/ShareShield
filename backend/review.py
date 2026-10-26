@@ -71,8 +71,8 @@ def preview(data: bytes, ext: str, page_number: int) -> bytes:
             if page_number<1 or page_number>doc.page_count:
                 raise HTTPException(422, "Page number is outside this PDF")
             page = doc[page_number-1]
-            factor = min(2.0, 1400/max(page.rect.width,1))
-            pix = page.get_pixmap(matrix=fitz.Matrix(factor,factor), alpha=False)
+            factor = min(2.0, 1400/max(page.rect.width,page.rect.height,1))
+            pix = engine.render_pdf_page(page, factor)
             if pix.width*pix.height>engine.MAX_PIXELS:
                 raise HTTPException(413, "Page preview is too large")
             image = Image.frombytes("RGB",(pix.width,pix.height),pix.samples)
@@ -219,22 +219,21 @@ def redact_visual(data: bytes, ext: str, selected: list[engine.Finding],
         else:
             # Blur/pixelate PDFs ONLY after flattening every page. This prevents
             # original selectable text or embedded images hiding under a mask.
-            flattened = fitz.open()
-            for page_number, page in enumerate(doc, 1):
-                pix = page.get_pixmap(matrix=fitz.Matrix(2, 2), alpha=False)
-                if pix.width * pix.height > engine.MAX_PIXELS:
-                    raise HTTPException(413, "Flattened PDF page exceeds 25 MP")
-                image = Image.frombytes("RGB", (pix.width, pix.height), pix.samples)
-                for rectangle, kind in _page_boxes(page_number, page.rect, selected, manual):
-                    coords = tuple(2 * value for value in rectangle)
-                    _paint(image, coords, mode if kind == "visual" else "blackout",
-                           margin=7 if kind == "blackout" else 0)
-                payload = io.BytesIO()
-                image.save(payload, format="PNG")
-                output_page = flattened.new_page(width=page.rect.width, height=page.rect.height)
-                output_page.insert_image(output_page.rect, stream=payload.getvalue())
-            result = flattened.tobytes(garbage=4, deflate=True, clean=True)
-            flattened.close()
+            with fitz.open() as flattened:
+                for page_number, page in enumerate(doc, 1):
+                    pix = engine.render_pdf_page(page, 2)
+                    if pix.width * pix.height > engine.MAX_PIXELS:
+                        raise HTTPException(413, "Flattened PDF page exceeds 25 MP")
+                    image = Image.frombytes("RGB", (pix.width, pix.height), pix.samples)
+                    for rectangle, kind in _page_boxes(page_number, page.rect, selected, manual):
+                        coords = tuple(2 * value for value in rectangle)
+                        _paint(image, coords, mode if kind == "visual" else "blackout",
+                               margin=7 if kind == "blackout" else 0)
+                    payload = io.BytesIO()
+                    image.save(payload, format="PNG")
+                    output_page = flattened.new_page(width=page.rect.width, height=page.rect.height)
+                    output_page.insert_image(output_page.rect, stream=payload.getvalue())
+                result = flattened.tobytes(garbage=4, deflate=True, clean=True)
     return result, "application/pdf", "shareshield-redacted.pdf"
 
 

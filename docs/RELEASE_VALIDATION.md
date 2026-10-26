@@ -113,3 +113,17 @@ before loading dependencies and discards Python/native diagnostics. Both noisy
 success and failure paths have subprocess regression tests. All 126 backend
 tests, the real-model handwriting smoke and core release smoke pass locally.
 The handwriting fixture remains synthetic font text, not a real-writer benchmark.
+
+## Additional debug pass (2026-10-26)
+
+- Bound PDF preview dimensions by the longer side (including rotated tall pages).
+- Check predicted raster dimensions before MuPDF allocation for standard OCR,
+  previews, handwriting and flattened exports. Oversized OCR/flatten requests
+  receive 413 instead of allocating first; flattened documents close on errors.
+- Disable review form controls during scanning/export so selected findings,
+  manual-mask edits and mask styles cannot diverge from the in-flight export.
+  Stop stale-file responses before requesting export verification.
+- 131 backend tests and frontend lint/build pass, alongside real-model handwriting,
+  PDF/Office release and standard OCR smoke checks. Five new regression cases
+  cover tall/rotated previews and pre-allocation rejection in OCR/blur/pixelate.
+- Connected-browser navigation timed out; this pass does not certify mobile UI.
