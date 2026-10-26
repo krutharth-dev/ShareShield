@@ -164,7 +164,7 @@ function App() {
   const [commandOpen, setCommandOpen] = useState(false)
   const [activeSection, setActiveSection] = useState('overview')
   const [motionEnabled, setMotionEnabled] = useState(true)
-  const [drawMode, setDrawMode] = useState(true)
+  const [drawMode, setDrawMode] = useState(false)
   const [appearance, setAppearance] = useState<Appearance>(() => {
     const current = document.documentElement.dataset.preference
     return current === 'light' || current === 'dark' || current === 'system' ? current : 'dark'
@@ -309,7 +309,7 @@ function App() {
     setPage(1)
     setRecent(false)
     setOriginalPreview('')
-    setDrawMode(true)
+    setDrawMode(false)
     clearResult()
     setProblem(false)
     setMessage('')
@@ -498,7 +498,11 @@ function App() {
       y: Math.min(1, Math.max(0, (event.clientY - box.top) / box.height)),
     }
   }
-  const initialPoint = useRef<{ x: number; y: number } | null>(null)
+  const initialPoint = useRef<{ x: number; y: number; pointerId: number } | null>(null)
+  function cancelDrawing() {
+    initialPoint.current = null
+    setDraft(null)
+  }
   function commitManual(next: ManualBox[]) {
     setHistory(p => [...p.slice(-29), manual])
     setFuture([])
@@ -538,22 +542,23 @@ function App() {
     setPage(next)
   }
   function onPointerDown(event: React.PointerEvent<HTMLDivElement>) {
-    if (!analysis?.preview_supported || !originalPreview || phase !== 'ready' || !drawMode) return
+    if (!analysis?.preview_supported || !originalPreview || phase !== 'ready' || !drawMode ||
+      !event.isPrimary || event.button !== 0 || initialPoint.current) return
     const pos = point(event)
-    initialPoint.current = pos
+    initialPoint.current = { ...pos, pointerId: event.pointerId }
     setDraft({ page, ...pos, w: 0, h: 0 })
     event.currentTarget.setPointerCapture(event.pointerId)
   }
   function onPointerMove(event: React.PointerEvent<HTMLDivElement>) {
     const start = initialPoint.current
-    if (!start) return
+    if (!start || start.pointerId !== event.pointerId) return
     const end = point(event)
     setDraft({ page, x: Math.min(start.x, end.x), y: Math.min(start.y, end.y),
       w: Math.abs(end.x - start.x), h: Math.abs(end.y - start.y) })
   }
   function onPointerUp(event: React.PointerEvent<HTMLDivElement>) {
     const start = initialPoint.current
-    if (!start) return
+    if (!start || start.pointerId !== event.pointerId) return
     const end = point(event)
     const box = { page, x: Math.min(start.x, end.x), y: Math.min(start.y, end.y),
       w: Math.abs(end.x - start.x), h: Math.abs(end.y - start.y) }
@@ -945,11 +950,11 @@ function App() {
                   <div className="workspace-toolbar" role="toolbar" aria-label="Redaction tools">
                     <span className="toolbar-title"><Icon name="wand" size={17}/> Tools</span>
                     <button className={drawMode ? 'tool-button active' : 'tool-button'} aria-pressed={drawMode}
-                      onClick={() => setDrawMode(x => !x)} title="Toggle drawing rectangles on the original preview">
+                      onClick={() => { cancelDrawing(); setDrawMode(x => !x) }} title="Toggle drawing rectangles on the original preview">
                       <Icon name="privacy" size={16}/> {drawMode ? 'Drawing masks' : 'Draw mask'}
                     </button>
                     <span className="toolbar-spacer" />
-                    <span className="toolbar-tip">Select regions on the original document</span>
+                    <span className="toolbar-tip">{drawMode ? 'Drag one finger to draw a mask. Turn drawing off to scroll.' : 'Scroll to inspect. Enable Draw mask to add a blackout.'}</span>
                   </div>
                   <details className="mask-style-details">
                     <summary><Icon name="settings" size={16}/> Mask style <strong>{redactionMode === 'blackout' ? 'Blackout (recommended)' : redactionMode === 'blur' ? 'Blur (visual only)' : 'Pixelate (visual only)'}</strong></summary>
@@ -973,7 +978,7 @@ function App() {
                   <div className="zoom-controls"><strong><Icon name="search" size={16}/> Inspect fine details</strong><label>Zoom {zoom}% <input type="range" min="100" max="300" step="25" value={zoom} onChange={e => setZoom(Number(e.target.value))} /></label></div>
                   <div className={"preview-pair mode-" + viewMode}>
                     <div><p className="preview-caption"><span className="preview-dot original-dot"/> ORIGINAL · Selected areas highlighted</p>
-                      <div className="zoom-viewport"><div className="page-frame" style={{ width: zoom + '%' }} ref={previewSurface} onPointerDown={onPointerDown} onPointerMove={onPointerMove} onPointerUp={onPointerUp} onPointerCancel={() => { initialPoint.current = null; setDraft(null) }}>
+                      <div className="zoom-viewport"><div className={drawMode ? "page-frame is-drawing" : "page-frame"} style={{ width: zoom + '%' }} ref={previewSurface} onPointerDown={onPointerDown} onPointerMove={onPointerMove} onPointerUp={onPointerUp} onPointerCancel={event => { if (initialPoint.current?.pointerId === event.pointerId) cancelDrawing() }} onLostPointerCapture={event => { if (initialPoint.current?.pointerId === event.pointerId) cancelDrawing() }}>
                         {originalPreview ? <img src={originalPreview} alt={'Original page ' + page} draggable={false} /> : <span>Loading preview…</span>}
                         <svg className="mark-layer" viewBox="0 0 1000 1000" preserveAspectRatio="none" aria-hidden="true">
                           {chosen.filter(f => f.page === page).flatMap(f => f.rectangles.map((r, i) =>
@@ -987,8 +992,8 @@ function App() {
                       {outputPreview ? <img src={outputPreview} alt={'Redacted page ' + page} /> : <span>Generate output to preview here</span>}
                     </div></div></div>
                   </div>
-                  <div className="page-controls"><button onClick={() => changePage(Math.max(1, page - 1))} disabled={page === 1}>←</button>
-                    <span>Page {page} of {analysis.page_count}</span><button onClick={() => changePage(Math.min(analysis.page_count, page + 1))} disabled={page === analysis.page_count}>→</button>
+                  <div className="page-controls"><button onClick={() => changePage(Math.max(1, page - 1))} disabled={page === 1} aria-label="Previous page">←</button>
+                    <span>Page {page} of {analysis.page_count}</span><button onClick={() => changePage(Math.min(analysis.page_count, page + 1))} disabled={page === analysis.page_count} aria-label="Next page">→</button>
                     <button onClick={undo} disabled={!history.length}>Undo edit</button>
                     <button onClick={redo} disabled={!future.length}>Redo edit</button>
                     <span className="muted">{manual.length} manual masks</span>

@@ -80,6 +80,16 @@ jobs:
       - name: Run backend and integration tests
         run: python -m pytest backend/tests -v --tb=short
 
+      - name: Install browser test engines
+        working-directory: frontend
+        run: npx playwright install --with-deps chromium webkit
+
+      - name: Desktop and mobile browser workflows
+        working-directory: frontend
+        env:
+          SHARESHIELD_TEST_PYTHON: python
+        run: npm run test:e2e
+
       - name: Build deployable Docker image
         run: docker build --tag shareshield:ci .
 

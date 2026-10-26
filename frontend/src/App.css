@@ -296,7 +296,7 @@ button:focus-visible, .dropzone:focus-visible, a:focus-visible { outline: 3px so
 .preview-pair { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 11px; margin-top: 20px; }
 .preview-pair > div { min-width: 0; }
 .preview-caption { font-size: 11px; font-weight: 700; color: #738479; }
-.page-frame { position: relative; display: block; width: 100%; background: #eaf0ed; border: 1px solid #d9e5dd; border-radius: 10px; overflow: hidden; user-select: none; touch-action: none; }
+.page-frame { position: relative; display: block; width: 100%; background: #eaf0ed; border: 1px solid #d9e5dd; border-radius: 10px; overflow: hidden; user-select: none; touch-action: auto; }
 .page-frame img { display: block; width: 100%; height: auto; -webkit-user-drag: none; }
 .page-frame > span { display: grid; place-items: center; min-height: 210px; padding: 18px; color: #82938a; font-size: 12px; text-align: center; }
 .page-frame.after { touch-action: auto; }
@@ -1776,3 +1776,10 @@ html[data-theme="dark"] .brand-wordmark span:last-child {color:#55D7FF;}
 
 /* A disabled fieldset freezes all review inputs during asynchronous export. */
 .review-controls { border:0; padding:0; margin:0; min-width:0; }
+
+/* Browsing permits native touch pan/pinch; drawing is an explicit mode. */
+.page-frame.is-drawing { touch-action: none; cursor: crosshair; }
+@media (pointer: coarse) {
+  .workspace-toolbar button, .view-toolbar button, .page-controls button,
+  .mask-actions button, .mask-selector button { min-height: 44px; min-width: 44px; }
+}
