@@ -8,7 +8,7 @@ import threading
 import time
 from urllib.parse import urlsplit
 
-import fitz
+import pymupdf as fitz
 import httpx
 from fastapi import HTTPException
 from PIL import Image

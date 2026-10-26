@@ -4,7 +4,7 @@ import io
 import json
 import re
 import sys
-import fitz
+import pymupdf as fitz
 import numpy as np
 from PIL import Image
 from backend import engine

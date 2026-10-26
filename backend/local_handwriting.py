@@ -40,7 +40,7 @@ def inspect(data, ext):
     try:
         # Source bytes travel over pipes only. A fresh child releases model memory
         # after the scan; subprocess.run kills and waits for timed-out children.
-        result = subprocess.run([sys.executable, '-m', 'backend.local_handwriting_worker', ext],
+        result = subprocess.run([sys.executable, '-m', 'backend.handwriting_runner', ext],
                                 input=data, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
                                 env=env, timeout=45, check=False,
                                 cwd=Path(__file__).resolve().parents[1])

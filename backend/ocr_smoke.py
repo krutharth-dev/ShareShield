@@ -1,7 +1,7 @@
 """Synthetic, privacy-safe OCR regression tests for photographed identity layouts."""
 import io
 
-import fitz
+import pymupdf as fitz
 from PIL import Image, ImageDraw, ImageFont
 
 from backend import engine, review

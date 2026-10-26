@@ -4,7 +4,7 @@ Runs in the Docker image build, using only invented sample data.
 """
 import io
 
-import fitz
+import pymupdf as fitz
 from docx import Document
 from pptx import Presentation
 from pptx.util import Inches

@@ -102,3 +102,14 @@ checks pass. New regressions cover limits, unavailable models, timeouts, failed
 workers, empty recognition and value-only labeled-name geometry. Handwriting
 outputs remain UNVERIFIED; manual review is required. Native-device browser and
 real-writer accuracy evaluation remain outstanding.
+
+## Handwriting deployment repair (2026-10-26)
+
+The first pretrained-model build failed its real-model smoke test: PyMuPDF
+1.28.2 emits the deprecated `import fitz` warning to stdout, contaminating the
+worker JSON pipe. Reproduced locally with that version. Runtime imports now use
+`pymupdf`; a standard-library runner reserves a dedicated result descriptor
+before loading dependencies and discards Python/native diagnostics. Both noisy
+success and failure paths have subprocess regression tests. All 126 backend
+tests, the real-model handwriting smoke and core release smoke pass locally.
+The handwriting fixture remains synthetic font text, not a real-writer benchmark.

@@ -10,7 +10,7 @@ import math
 import zipfile
 from typing import Any
 
-import fitz
+import pymupdf as fitz
 from fastapi import HTTPException
 from PIL import Image, ImageDraw
 
