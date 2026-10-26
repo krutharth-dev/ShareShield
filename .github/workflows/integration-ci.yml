@@ -4,9 +4,11 @@ on:
   push:
     branches:
       - main
+      - integration/deployable-web-app
   pull_request:
     branches:
       - main
+      - integration/deployable-web-app
   workflow_dispatch:
 
 permissions:
@@ -88,7 +90,7 @@ jobs:
             --tmpfs /tmp:rw,nosuid,noexec,size=128m \
             --cap-drop ALL \
             --security-opt no-new-privileges:true \
-            --memory 2g \
+            --memory 512m --memory-swap 512m \
             --publish 127.0.0.1:8765:8000 \
             shareshield:ci
 
@@ -159,6 +161,9 @@ jobs:
               assert report["output_sha256"] == hashlib.sha256(redact.content).hexdigest()
               print("PASS: React homepage, OCR health, analysis, redaction, verification")
           PY
+
+      - name: Real handwriting round-trip inside the 512 MiB service
+        run: SHARESHIELD_SMOKE_URL=http://127.0.0.1:8765 python -m backend.handwriting_smoke
 
       - name: Print container logs if a check failed
         if: failure()

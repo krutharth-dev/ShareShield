@@ -66,11 +66,11 @@ def test_cloudflare_public_hostname_is_exact(monkeypatch):
         importlib.reload(backend_app)
 
 
-def test_cloudflare_script_checks_hostname_and_password():
-    script = (ROOT / "scripts" / "start-cloudflare-demo.sh").read_text()
-    for word in ("trycloudflare.com", "read -r -s demo_password",
-                 "SHARESHIELD_PUBLIC_HOSTNAME", "SHARESHIELD_DEMO_PASSWORD",
-                 "protected-demo", "start-demo.sh"):
-        assert word in script, word
-    assert "unset demo_password" in script
-    assert "echo $demo_password" not in script
+def test_retired_cloudflare_launcher_fails_before_starting_server():
+    import subprocess
+    result = subprocess.run(['bash', str(ROOT / 'scripts/start-cloudflare-demo.sh'),
+                             'https://fictional.trycloudflare.com'],
+                            input='', capture_output=True, text=True, timeout=5)
+    assert result.returncode == 2
+    assert 'retired' in result.stderr
+    assert 'no password gate' in result.stderr

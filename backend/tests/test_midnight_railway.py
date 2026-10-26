@@ -55,10 +55,10 @@ def test_railway_docker_port_and_documented_security_configuration():
     api = (ROOT / "backend" / "app.py").read_text()
     for token in ('PORT:-8000', "os.getenv('PORT','8000')", 'USER appuser'):
         assert token in docker
-    for token in ("SHARESHIELD_DEPLOYMENT_MODE", "SHARESHIELD_DEMO_USER",
-                  "SHARESHIELD_DEMO_PASSWORD", "fictional", "Railway",
-                  "integration/deployable-web-app", "not strictly on-device"):
-        assert token.lower() in guide.lower(), token
+    assert "retired" in guide.lower()
+    assert "no longer" in guide.lower()
+    assert "DEPLOYMENT.md" in guide
+
     assert 'RAILWAY_PUBLIC_DOMAIN' in api
     assert 'healthcheck.railway.app' in api
     assert 'TrustedHostMiddleware' in api
