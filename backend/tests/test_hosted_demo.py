@@ -96,6 +96,7 @@ def test_public_render_demo_has_no_login_but_retains_origin_and_host_checks(monk
         assert homepage.status_code == 200
         assert "WWW-Authenticate" not in homepage.headers
         assert client.get("/health", headers=headers).status_code == 200
+        assert client.post("/analyze", headers={**headers, "origin": "https://["}).status_code == 403
         assert client.get("/", headers={"host": "someone-else.onrender.com"}).status_code == 400
         assert client.post("/analyze", headers={**headers,
                    "origin": "https://evil.example.net"}).status_code == 403

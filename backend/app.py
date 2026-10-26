@@ -16,6 +16,7 @@ from starlette.concurrency import run_in_threadpool
 
 from backend import engine, review, smart, snapshots, local_handwriting
 from backend.patterns import SEVERITY
+from backend.upload_guard import UploadGuard
 
 DEPLOYMENT_MODE = os.environ.get("SHARESHIELD_DEPLOYMENT_MODE", "local").lower()
 HOSTED_DEMO = DEPLOYMENT_MODE == "public-demo"
@@ -46,6 +47,7 @@ if HOSTED_DEMO:
             raise RuntimeError("SHARESHIELD_PUBLIC_HOSTNAME must be a plain hostname")
         HOSTS.append(custom_host)
 app = FastAPI(title="ShareShield privacy review API", version="0.6.0")
+app.add_middleware(UploadGuard, max_bytes=engine.MAX_BYTES)
 app.add_middleware(TrustedHostMiddleware, allowed_hosts=HOSTS)
 
 
@@ -84,9 +86,13 @@ async def security_headers(request, call_next):
             # Validate Origin hostname against Host instead of blindly trusting
             # forwarded-scheme headers from arbitrary browser requests.
             from urllib.parse import urlsplit
-            from_host = urlsplit(origin).netloc.lower() if origin else ""
+            try:
+                parsed_origin = urlsplit(origin) if origin else None
+            except ValueError:
+                return JSONResponse({"detail": "Invalid Origin header"}, status_code=403)
+            from_host = parsed_origin.netloc.lower() if parsed_origin else ""
             request_host = request.headers.get("host", "").lower()
-            if origin and (urlsplit(origin).scheme != "https" or from_host != request_host):
+            if origin and (parsed_origin.scheme != "https" or from_host != request_host):
                 return JSONResponse({"detail": "Cross-origin upload blocked"}, status_code=403)
         elif origin and origin not in permitted:
             return JSONResponse({"detail": "Cross-origin upload blocked on this local demo server"}, status_code=403)
@@ -287,14 +293,7 @@ async def preview_file(
     page: Annotated[int, Form()] = 1,
 ):
     data, ext = await _upload(file)
-    image = await document_job(review.preview, data, ext, page)
-    if ext == ".pdf":
-        with engine.open_pdf(data) as doc:
-            bounds = doc[page - 1].rect
-            width, height = bounds.width, bounds.height
-    else:
-        source = engine.read_image(data)
-        width, height = source.width, source.height
+    image, width, height = await document_job(review.preview_details, data, ext, page)
     return Response(content=image, media_type="image/png",
                     headers={"Cache-Control": "no-store",
                              "X-Document-Width": str(width),

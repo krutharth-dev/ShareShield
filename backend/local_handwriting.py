@@ -32,6 +32,8 @@ def inspect(data, ext):
                     raise HTTPException(413, 'Handwriting images are limited to 4 megapixels. Resize the image first.')
                 if getattr(image, 'n_frames', 1) > 1:
                     raise HTTPException(422, 'Handwriting mode requires a single image frame. Convert all frames to a PDF.')
+        except Image.DecompressionBombError as exc:
+            raise HTTPException(413, 'Handwriting image dimensions exceed the safe limit.') from exc
         except (OSError, ValueError) as exc:
             raise HTTPException(422, 'Unreadable handwriting image.') from exc
     if not available():
