@@ -155,7 +155,7 @@ test('manual editing restores the original after export focus and exports the dr
   await page.route('**/redact', async route => { await exportGate; await route.continue() })
   await page.getByRole('button', { name: 'Generate & verify' }).click()
   expect((await exportRequest).postData()).toContain('manual_regions')
-  await page.getByText('Extra scan options', { exact: true }).click()
+  await page.locator('.advanced-settings > summary').click()
   await expect(page.getByRole('checkbox', { name: /Protect every recognized occurrence/ })).toBeDisabled()
   releaseExport()
   await expect(page.getByRole('heading', { name: 'Verification: UNVERIFIED' })).toBeVisible()
