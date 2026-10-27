@@ -120,6 +120,7 @@ def parse_result(result, page_number, width, height):
     if len(words) > 5000:
         raise ValueError('Too many words')
     text, spans = '', []
+    previous_line = None
     for word in words:
         value = word['content']
         if not isinstance(value, str) or len(value) > 2000:
@@ -127,8 +128,14 @@ def parse_result(result, page_number, width, height):
         confidence = float(word.get('confidence', 0))
         if not math.isfinite(confidence) or not 0 <= confidence <= 1:
             raise ValueError('Invalid confidence')
+        # The local recognizer supplies line membership. Preserve it so label
+        # matches cannot consume neighbors or join unrelated digit fragments.
+        line_index = word.get('line_index')
+        if text:
+            text += '\n' if line_index != previous_line else ' '
+        previous_line = line_index
         start = len(text)
-        text += value + ' '
+        text += value
         spans.append((start, start+len(value), box(word), confidence))
     def rectangles(value, start, end):
         return [rect for a,b,rect,c in spans if a < end and b > start]

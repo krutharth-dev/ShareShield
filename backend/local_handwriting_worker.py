@@ -36,7 +36,7 @@ def convert(output, number, source_width, source_height, width, height):
     if output.txts is None:
         return []
     lines, words, labeled = [], [], []
-    for text, score, poly, group in zip(output.txts, output.scores, output.boxes, output.word_results):
+    for line_index, (text, score, poly, group) in enumerate(zip(output.txts, output.scores, output.boxes, output.word_results)):
         if not text.strip():
             continue
         polygon = np.asarray(poly).clip([0,0],[width,height]).reshape(-1).tolist()
@@ -56,7 +56,7 @@ def convert(output, number, source_width, source_height, width, height):
             labeled.append((match.group(1).lower()+'_candidate', match.group(2), targets))
         for word,confidence,box in valid_words:
             polygon = np.asarray(box).clip([0,0],[width,height]).reshape(-1).tolist()
-            words.append({'content':word,'confidence':float(confidence),'polygon':polygon})
+            words.append({'content':word,'confidence':float(confidence),'polygon':polygon, 'line_index':line_index})
     if len(lines) > 250 or len(words) > 2000:
         raise ValueError('Too much text; split the file')
     result = {'pages':[{'unit':'pixel','width':width,'height':height,'words':words,'lines':lines}]}

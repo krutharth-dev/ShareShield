@@ -12,6 +12,7 @@ type Finding = {
   category: string
   severity: string
   confidence: number
+  ocr_confidence?: number | null
   auto_select: boolean
   value: string
   page: number
@@ -899,7 +900,7 @@ function App() {
                     <span className="privacy-option-icon"><Icon name={privacyIcons[item.id]} size={18}/></span><span className="privacy-option-copy"><strong>{item.label}</strong><small>{privacyNotes[item.id]}</small></span><span className="privacy-option-check"><Icon name="check" size={13}/></span>
                   </label>)}
                 </div>
-                <p className="pref-note"><Icon name="info" size={14}/> Categories preselect suggestions, not guaranteed findings. Review every page for anything missed.</p>
+                <p className="pref-note"><Icon name="info" size={14}/> {handwritingMode ? 'Handwriting suggestions must be selected individually.' : 'Categories preselect suggestions, not guaranteed findings.'} Review every page for anything missed.</p>
                 <details className="advanced-settings">
                   <summary><Icon name="settings" size={15}/> Extra scan options <span>Optional</span></summary>
                   <label className="repeat-option"><input type="checkbox" checked={allOccurrences} onChange={event => { setAllOccurrences(event.target.checked); clearResult() }} /> Protect every recognized occurrence of a selected identifier, including other pages</label>
@@ -923,7 +924,7 @@ function App() {
               <article className="review-card findings-card surface-card">
                 <div className="section-title"><div><span className="section-kicker">03 / FINDINGS</span><h2><Icon name="search" size={18}/> Review detections</h2><p>Approve each suggested redaction</p></div><span className="finding-total">{analysis.findings.length} found</span></div>
                 <div className="metric-strip"><span><strong>{analysis.high_risk_count}</strong> high-priority</span><span><strong>{selected.length}</strong> selected</span></div>
-                <p className="pref-note">Selected categories preselect detected candidates. Individual boxes can still be unchecked.</p>
+                <p className="pref-note">{handwritingMode ? 'Handwriting suggestions require explicit selection; categories do not select them automatically.' : 'Selected categories preselect detected candidates. Individual boxes can still be unchecked.'}</p>
                 <div className="action-row compact-actions">
                   <button className="secondary-action" onClick={() => selectionAll(true)}>Select all</button>
                   <button className="secondary-action" onClick={() => selectionAll(false)}>Clear</button>
@@ -932,7 +933,7 @@ function App() {
                   {analysis.findings.length === 0 && <p className="muted">No supported patterns found. This does not mean the file is safe.</p>}
                   {analysis.findings.map(f => <label key={f.id} className="finding-row">
                     <input type="checkbox" checked={selected.includes(f.id)} disabled={!f.locatable} onChange={() => changeSelected(f.id)} />
-                    <span className="finding-text"><strong>{f.value}</strong><small>{f.category.replaceAll('_', ' ')} · {Math.round(f.confidence * 100)}% rule confidence · {f.auto_select ? 'recommended' : 'review suggestion'} · {analysis.preview_supported ? 'page ' + f.page : f.location || 'text'}</small></span><span className={'severity-tag ' + f.severity}>{f.severity}</span>
+                    <span className="finding-text"><strong>{f.value}</strong><small>{f.category.replaceAll('_', ' ')} · {Math.round(f.confidence * 100)}% {f.ocr_confidence != null ? 'combined OCR/rule score' : 'rule confidence'} · {f.auto_select ? 'recommended' : 'review suggestion'} · {analysis.preview_supported ? 'page ' + f.page : f.location || 'text'}</small></span><span className={'severity-tag ' + f.severity}>{f.severity}</span>
                   </label>)}
                 </div>
                 {analysis.limitations.some(note => note.includes('UNVERIFIED:')) && <div className="scan-caveat" role="alert">

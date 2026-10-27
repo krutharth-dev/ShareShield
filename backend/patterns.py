@@ -14,8 +14,8 @@ MORE_RULES = (
     # Context-marked candidates: intentionally conservative, not full NLP/NER.
     ("vid_candidate", re.compile(r"(?i)\bVID[\s.:-]*(?:\d{4}[\s-]?){3}\d{4}(?!\d)")),
     ("dob_candidate", re.compile(r"(?i)\b(?:DOB|D\.O\.B\.|Date of Birth)[\s.:-]*\d{1,2}[/.-]\d{1,2}[/.-]\d{4}\b")),
-    ("name_candidate", re.compile(r"(?im)\b(?:Full Name|Name)\s*:\s*[A-Za-z][A-Za-z. ]{2,75}(?=\n|$)")),
-    ("address_candidate", re.compile(r"(?im)\bAddress\s*:\s*[^\r\n]{4,110}")),
+    ("name_candidate", re.compile(r"(?im)\b(?:Full[ \t]+Name|Name)[ \t]*:[ \t]*[^\W\d_](?:[^\W\d_]|[ .'’-]){2,75}(?=\r?$)")),
+    ("address_candidate", re.compile(r"(?im)\bAddress[ \t]*:[ \t]*[^\s\r\n][^\r\n]{3,109}")),
     ("ifsc_candidate", re.compile(r"(?<![A-Za-z0-9])[A-Z]{4}0[A-Z0-9]{6}(?![A-Za-z0-9])")),
     ("payment_card_candidate", re.compile(r"(?<!\d)(?:\d[ -]?){12,18}\d(?!\d)")),
     ("aadhaar_candidate", re.compile(r"(?<!\d)(?<!\d[ -])[2-9]\d{3}[ -]?\d{4}[ -]?\d{4}(?![ -]?\d)")),
