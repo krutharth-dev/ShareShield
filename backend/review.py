@@ -178,6 +178,10 @@ def _scrub_pdf_extras(doc: fitz.Document) -> None:
     for name in list(doc.embfile_names()):
         doc.embfile_del(name)
     for page in doc:
+        # PDF widgets are separate from ordinary annotations. Removing only
+        # annots() leaves AcroForm names/values embedded in shared exports.
+        for widget in list(page.widgets() or []):
+            page.delete_widget(widget)
         for annotation in list(page.annots() or []):
             page.delete_annot(annotation)
         for link in list(page.get_links()):
@@ -255,6 +259,12 @@ def evaluate(selected: list[engine.Finding], redacted_data: bytes, ext: str,
     """
     check_file(redacted_data, ext)
     found, warnings = engine.inspect(redacted_data, ext)
+    pdf_form_fields_remaining = 0
+    if ext == ".pdf":
+        with engine.open_pdf(redacted_data) as pdf:
+            pdf_form_fields_remaining = sum(
+                1 for page in pdf for _widget in (page.widgets() or ())
+            )
     selected_values = {(f.category, f.value) for f in selected
                        if f.category not in {"face_candidate", "qr_candidate", "text_region_candidate"}}
     remaining_values = {(f.category, f.value) for f in found
@@ -287,7 +297,7 @@ def evaluate(selected: list[engine.Finding], redacted_data: bytes, ext: str,
         or "Tesseract OCR is unavailable" in note for note in warnings
     )
     status = (
-        "FLAG" if remaining_selected or unexpected_high_risk else
+        "FLAG" if remaining_selected or unexpected_high_risk or pdf_form_fields_remaining else
         "UNVERIFIED" if scan_incomplete or remainder or manual_count or contains_visual or mode != "blackout" else
         "PASS_SCOPED" if selected else "UNVERIFIED"
     )
@@ -306,6 +316,7 @@ def evaluate(selected: list[engine.Finding], redacted_data: bytes, ext: str,
         "manual_boxes": manual_count,
         "remaining_selected": remaining_selected[:50],
         "remaining_selected_count": len(remaining_selected),
+        "pdf_form_fields_remaining": pdf_form_fields_remaining,
         "remaining_detected": remainder[:50],
         "remaining_detected_count": len(remainder),
         "remaining_high_risk_count": len(high_risk),
@@ -321,6 +332,7 @@ def evaluate(selected: list[engine.Finding], redacted_data: bytes, ext: str,
             "OCR and visual recognition can miss small or noisy text, Kannada, handwritten fields and unusual codes.",
             "Document metadata, embedded/hidden content and Office revision history are not fully sanitized.",
             *warnings,
+            *(["Interactive PDF form fields remain in the exported file. Their hidden values are not verified; export is blocked."] if pdf_form_fields_remaining else []),
             *(["Unreviewed high-priority identifiers remain. Export is blocked; analyze and review again."] if unexpected_high_risk else []),
             *(["Previously detected information was left unselected and remains visible. Confirm that retaining it is intentional before sharing."] if retained_found else []),
             *(["Some unselected candidate identifiers remain. Review them before sharing."] if remainder and not high_risk else []),
