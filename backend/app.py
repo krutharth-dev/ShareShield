@@ -14,7 +14,7 @@ from starlette.middleware.trustedhost import TrustedHostMiddleware
 from fastapi.responses import JSONResponse
 from starlette.concurrency import run_in_threadpool
 
-from backend import engine, review, smart, snapshots, local_handwriting
+from backend import engine, review, smart, snapshots, local_handwriting, manual_text
 from backend.patterns import SEVERITY
 from backend.upload_guard import UploadGuard
 
@@ -60,7 +60,7 @@ async def security_headers(request, call_next):
     # Fail early when the client declares an excessive multipart body. The
     # upload reader also enforces per-file limits, including unknown lengths.
     if request.method == "POST" and request.url.path in {
-        "/analyze", "/preview", "/redact", "/verify"
+        "/analyze", "/preview", "/text-preview", "/redact", "/verify"
     }:
         header = request.headers.get("content-length")
         if header is not None:
@@ -256,6 +256,7 @@ def handwriting_sample():
 
 @app.post("/analyze")
 async def analyze(file: Annotated[UploadFile, File()],
+                  manual_only: Annotated[bool, Form()] = False,
                   handwriting_mode: Annotated[bool, Form()] = False,
                   cloud_consent: Annotated[bool, Form()] = False,
                   handwriting_code: Annotated[str, Form()] = ""):
@@ -263,7 +264,11 @@ async def analyze(file: Annotated[UploadFile, File()],
     # Azure. This release runs handwriting recognition on the server only.
     data, ext = await _upload(file)
     # OCR and OpenCV must not block the ASGI event loop and /health.
-    findings, limitations = await document_job(local_handwriting.inspect if handwriting_mode else engine.inspect, data, ext)
+    if manual_only:
+        # Opening the editor must not depend on a successful OCR/pattern scan.
+        findings, limitations = [], ['UNVERIFIED: Automatic detection was skipped. Review and mask the document manually, or run Analyze document.']
+    else:
+        findings, limitations = await document_job(local_handwriting.inspect if handwriting_mode else engine.inspect, data, ext)
     page_count = 1
     if ext == ".pdf":
         with engine.open_pdf(data) as doc:
@@ -282,6 +287,7 @@ async def analyze(file: Annotated[UploadFile, File()],
         "high_risk_count": sum(1 for f in findings if SEVERITY.get(f.category) == "high"),
         "page_count": page_count,
         "preview_supported": ext in engine.IMAGE_EXTENSIONS or ext == ".pdf",
+        "manual_only": manual_only,
         "limitations": limitations,
         "message": "Review results; no findings does not mean the file contains no sensitive data.",
     }
@@ -300,12 +306,20 @@ async def preview_file(
                              "X-Document-Height": str(height)})
 
 
+@app.post('/text-preview')
+async def text_preview(file: Annotated[UploadFile, File()], analysis_id: Annotated[str, Form()]):
+    data, ext = await _upload(file)
+    snapshots.get(analysis_id, data, ext)
+    return {'sections': await document_job(manual_text.preview, data, ext)}
+
+
 @app.post("/redact")
 async def redact_selected(
     file: Annotated[UploadFile, File()],
     analysis_id: Annotated[str, Form()],
     selected_ids: Annotated[str, Form()] = "",
     manual_regions: Annotated[str, Form()] = "[]",
+    manual_text_regions: Annotated[str, Form()] = "[]",
     redact_all: Annotated[bool, Form()] = False,
     redaction_mode: Annotated[str, Form()] = "blackout",
 ):
@@ -317,6 +331,7 @@ async def redact_selected(
     if any(not f.rectangles and not f.location for f in chosen):
         raise HTTPException(422, "One or more selected findings could not be located")
     manual = review.parse_regions(manual_regions, ext)
+    chosen.extend(await document_job(manual_text.parse, manual_text_regions, data, ext, redact_all))
     if not chosen and not manual:
         raise HTTPException(422, "Select a finding or draw a manual redaction box")
     if ext in engine.IMAGE_EXTENSIONS or ext == ".pdf":
@@ -351,6 +366,7 @@ async def verify_result(
     analysis_id: Annotated[str, Form()],
     selected_ids: Annotated[str, Form()] = "",
     manual_count: Annotated[int, Form()] = 0,
+    manual_text_regions: Annotated[str, Form()] = "[]",
     redact_all: Annotated[bool, Form()] = False,
     redaction_mode: Annotated[str, Form()] = "blackout",
 ):
@@ -363,6 +379,7 @@ async def verify_result(
     if out_ext not in valid_outputs:
         raise HTTPException(422, "The redacted output has an unexpected format")
     chosen = _expand_ids(initial, _ids(selected_ids, len(initial)), redact_all)
+    chosen.extend(await document_job(manual_text.parse, manual_text_regions, original, ext, redact_all))
     if manual_count < 0 or manual_count > 60:
         raise HTTPException(422, "Invalid manual redaction count")
     original_incomplete = any(note.startswith("UNVERIFIED:") for note in original_notes)

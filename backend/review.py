@@ -259,11 +259,14 @@ def evaluate(selected: list[engine.Finding], redacted_data: bytes, ext: str,
                        if f.category not in {"face_candidate", "qr_candidate", "text_region_candidate"}}
     remaining_values = {(f.category, f.value) for f in found
                         if f.category not in {"face_candidate", "qr_candidate", "text_region_candidate"}}
+    from backend import manual_text
+    surviving_manual = manual_text.surviving(selected, redacted_data, ext)
     leaked = selected_values.intersection(remaining_values)
     remaining_selected = [
         {"category": f.category, "page": f.page, "severity": engine.SEVERITY.get(f.category, "medium")}
         for f in found if (f.category, f.value) in leaked
     ]
+    remaining_selected.extend({'category': f.category, 'page': f.page, 'severity': 'medium'} for f in surviving_manual)
     # Previously reviewed but unselected findings are intentional retained
     # content. Warn without misreporting a failed selected redaction. New
     # high-risk discoveries still block export and require another review.
@@ -288,7 +291,7 @@ def evaluate(selected: list[engine.Finding], redacted_data: bytes, ext: str,
     )
     status = (
         "FLAG" if remaining_selected or unexpected_high_risk else
-        "UNVERIFIED" if scan_incomplete or remainder or manual_count or contains_visual or mode != "blackout" else
+        "UNVERIFIED" if scan_incomplete or remainder or manual_count or contains_visual or any(f.category == manual_text.CATEGORY for f in selected) or mode != "blackout" else
         "PASS_SCOPED" if selected else "UNVERIFIED"
     )
     checks = ["Reopened and rescanned the complete exported file"]
@@ -304,6 +307,7 @@ def evaluate(selected: list[engine.Finding], redacted_data: bytes, ext: str,
         "status": status,
         "selected_count": len(selected),
         "manual_boxes": manual_count,
+        "manual_text_count": sum(f.category == manual_text.CATEGORY for f in selected),
         "remaining_selected": remaining_selected[:50],
         "remaining_selected_count": len(remaining_selected),
         "remaining_detected": remainder[:50],
@@ -327,5 +331,6 @@ def evaluate(selected: list[engine.Finding], redacted_data: bytes, ext: str,
             *(["Faces/QR candidates require human visual review; their removal is not machine-certified."] if contains_visual else []),
             *(["Blur/pixelation may expose information. Blackout is recommended for private documents."] if mode != "blackout" else []),
             *(["Manual boxes have not been independently verified. Inspect every page."] if manual_count else []),
+            *(["Manual text was checked at its selected editable locations. Hidden/embedded content and unselected occurrences remain unverified."] if any(f.category == manual_text.CATEGORY for f in selected) else []),
         ],
     }

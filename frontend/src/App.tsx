@@ -6,6 +6,7 @@ import PrivacyPanel from './PrivacyPanel'
 import HeroVisual from './HeroVisual'
 import ShieldyAssistant from './ShieldyAssistant'
 import CommandPalette, { type CommandAction } from './CommandPalette'
+import ManualTextEditor, { type ManualTextRegion } from './ManualTextEditor'
 
 type Finding = {
   id: number
@@ -30,6 +31,7 @@ type Analysis = {
   high_risk_count: number
   page_count: number
   preview_supported: boolean
+  manual_only?: boolean
   limitations: string[]
 }
 type ManualBox = { page: number; x: number; y: number; w: number; h: number }
@@ -37,6 +39,7 @@ type Report = {
   status: 'PASS_SCOPED' | 'FLAG' | 'UNVERIFIED'
   selected_count: number
   manual_boxes: number
+  manual_text_count?: number
   output_sha256: string
   remaining_selected: { category: string; page: number; severity: string }[]
   remaining_detected: { category: string; page: number; severity: string }[]
@@ -128,6 +131,7 @@ function App() {
   const [problem, setProblem] = useState(false)
   const [page, setPage] = useState(1)
   const [manual, setManual] = useState<ManualBox[]>([])
+  const [manualTexts, setManualTexts] = useState<ManualTextRegion[]>([])
   const [history, setHistory] = useState<ManualBox[][]>([])
   const [future, setFuture] = useState<ManualBox[][]>([])
   const [editIndex, setEditIndex] = useState<number | null>(null)
@@ -310,6 +314,7 @@ function App() {
     setAnalysis(null)
     setSelected([])
     setManual([])
+    setManualTexts([])
     setHistory([])
     setFuture([])
     setEditIndex(null)
@@ -398,8 +403,8 @@ function App() {
     }
   }
 
-  async function scan() {
-    if (phase !== 'ready' || !file || invalid || (handwritingMode && !handwritingAvailable)) return
+  async function scan(manualOnly = false) {
+    if (phase !== 'ready' || !file || invalid || (!manualOnly && handwritingMode && !handwritingAvailable)) return
     cancelDrawing()
     const previousChoices = analysis && analysisHandwriting.current === handwritingMode
       ? new Map(analysis.findings.map(f => [findingKey(f), selected.includes(f.id)]))
@@ -409,7 +414,7 @@ function App() {
     // Keep the previous review available if a temporary 503 blocks rescan.
     try {
       const response = await postWithBusyRetry(
-        '/analyze', () => dataFor(file, { handwriting_mode: String(handwritingMode) }),
+        '/analyze', () => dataFor(file, { handwriting_mode: String(handwritingMode), manual_only: String(manualOnly) }),
         attempt => {
           if (id !== requestId.current) return
           setServerStatus('online')
@@ -433,7 +438,7 @@ function App() {
       setManual(current => current.filter(box => box.page <= data.page_count))
       setHistory([]); setFuture([]); setEditIndex(null); clearResult()
       const incomplete = data.limitations.some(note => note.includes('UNVERIFIED:'))
-      setToast(incomplete ? 'Partial scan: manually review unverified content.' : data.findings.length ? 'Scan finished! Check the suggestions below.' : 'Scan finished. Check for anything the scanner missed.')
+      setToast(manualOnly ? 'Manual editor ready. Select text or draw a mask.' : incomplete ? 'Partial scan: manually review unverified content.' : data.findings.length ? 'Scan finished! Check the suggestions below.' : 'Scan finished. Check for anything the scanner missed.')
       const defaults = new Set(defaultFindingIds(data.findings, privacyCategories))
       setSelected(data.findings.filter(f => f.locatable && (previousChoices.get(findingKey(f)) ?? defaults.has(f.id))).map(f => f.id))
       setPage(1)
@@ -443,11 +448,23 @@ function App() {
           ? data.findings.length + ' candidate(s) found. Review them before redacting.'
           : 'No configured patterns detected. The file is NOT certified safe; use manual redaction for images and PDFs.')
       setProblem(false)
+      if (manualOnly) {
+        setViewMode('original')
+        setDrawMode(data.preview_supported)
+        setMessage('Manual editor ready. Automatic detection was skipped; review the full document.')
+        navigateTo('manual-editor')
+      }
     } catch (error) {
       if (id !== requestId.current) return
       setProcessorBusy(false)
       setProblem(true); setMessage(error instanceof Error ? error.message : 'Unable to analyze file.')
     } finally { if (id === requestId.current) setPhase('ready') }
+  }
+  function openManualEditor() {
+    if (phase !== 'ready' || !file || invalid) return
+    if (!analysis) { void scan(true); return }
+    if (analysis.preview_supported) { setDrawMode(true); setViewMode('original') }
+    navigateTo('manual-editor')
   }
   useEffect(() => {
     if (!file || !analysis?.preview_supported) return
@@ -621,7 +638,7 @@ function App() {
     clearResult()
   }
   async function processFile() {
-    if (phase !== 'ready' || !file || !analysis || (!selected.length && !manual.length)) return
+    if (phase !== 'ready' || !file || !analysis || (!selected.length && !manual.length && !manualTexts.length)) return
     const id = requestId.current
     cancelDrawing()
     setPhase('processing'); setMessage('Redacting and verifying exported content…'); setProblem(false)
@@ -631,6 +648,7 @@ function App() {
         analysis_id: analysis.analysis_id,
         selected_ids: selected.join(','),
         manual_regions: JSON.stringify(manual),
+        manual_text_regions: JSON.stringify(manualTexts),
         redact_all: String(allOccurrences),
         redaction_mode: analysis.preview_supported ? redactionMode : 'blackout',
       })
@@ -653,6 +671,7 @@ function App() {
       verify.append('analysis_id', analysis.analysis_id)
       verify.append('selected_ids', selected.join(','))
       verify.append('manual_count', String(manual.length))
+      verify.append('manual_text_regions', JSON.stringify(manualTexts))
       verify.append('redact_all', String(allOccurrences))
       verify.append('redaction_mode', analysis.preview_supported ? redactionMode : 'blackout')
       const check = await postWithBusyRetry(
@@ -865,9 +884,10 @@ function App() {
             </section>}
             {showPrivacy && <PrivacyPanel onClose={() => setShowPrivacy(false)} />}
             {showAbout && <section className="about-panel surface-card" id="about">
-              <div className="section-title"><div><h2><Icon name="info" size={19}/> About ShareShield</h2><p>Intelligent on-device privacy leak detection and automatic redaction system.</p></div></div>
+              <div className="section-title"><div><h2><Icon name="info" size={19}/> About ShareShield</h2><p>Document review, OCR and user-controlled redaction.</p></div></div>
               <p>ShareShield is a document privacy workspace for finding, reviewing, and redacting information in files you choose. {isHosted ? 'This website processes uploads on its hosting server, not on your device. Only use fictional files on this public build.' : 'This session processes documents through your local server.'} It does not silently inspect other applications or guarantee complete anonymization.</p>
               <p className="pref-note">Always examine the exported file. Automatic OCR, face proposals, and other detections can miss sensitive information.</p>
+              <p className="pref-note">OCR engines: Tesseract for standard images/scanned PDFs; RapidOCR with PP-OCRv5 mobile models and ONNX Runtime for experimental English handwriting. PyMuPDF reads existing text in searchable PDFs.</p>
             </section>}
             <details className="journey-panel" aria-label="Document protection process">
               <summary className="journey-summary"><Icon name="layers" size={17}/> See the full six-step workflow <span>Optional details</span></summary>
@@ -952,7 +972,8 @@ function App() {
                 <button className="secondary-action" onClick={handwritingSample} disabled={!handwritingAvailable || phase !== 'ready'}>Use handwriting-style sample</button>
                 <button className="secondary-action" onClick={sample} disabled={phase !== 'ready'}><Icon name="file" size={17}/> Use fictional sample</button>
                 <button className="secondary-action" onClick={identitySample} disabled={phase !== 'ready'}>Use fictional ID image</button>
-                <button className="primary-action" onClick={scan} disabled={!file || invalid || phase !== 'ready' || (handwritingMode && !handwritingAvailable)}>{phase === 'scanning' ? <><span className="mini-spinner"/> Analyzing…</> : <><Icon name="scan" size={18}/> Analyze document <Icon name="arrowRight" size={17}/></>}</button>
+                <button className="secondary-action" onClick={openManualEditor} disabled={!file || invalid || phase !== 'ready'}><Icon name="privacy" size={17}/> Open manual editor</button>
+                <button className="primary-action" onClick={() => void scan()} disabled={!file || invalid || phase !== 'ready' || (handwritingMode && !handwritingAvailable)}>{phase === 'scanning' ? <><span className="mini-spinner"/> Analyzing…</> : <><Icon name="scan" size={18}/> Analyze document <Icon name="arrowRight" size={17}/></>}</button>
               </div>
               {serverStatus === 'offline' && phase === 'ready' && <p className="connection-notice" role="status"><Icon name="alert" size={15}/><span>{isHosted ? 'The server did not answer its last connection check. It may be waking up; retry when ready.' : 'Your local backend is not responding. Check that ShareShield is running.'}</span><button className="connection-retry" type="button" onClick={() => { void reconnect() }}>Retry connection</button></p>}
               {ocrAvailable === false && <p className="warning">OCR isn't available. Images and scanned PDFs cannot be text-scanned automatically.</p>}
@@ -979,15 +1000,15 @@ function App() {
                 </div>
                 {analysis.limitations.some(note => note.includes('UNVERIFIED:')) && <div className="scan-caveat" role="alert">
                   <Icon name="alert" size={18}/>
-                  <div><strong>Manual review required</strong><p>Parts of this document could not be automatically inspected. Review every page, check images and QR codes, and cover missed details before export. The report will remain unverified.</p></div>
+                  <div><strong>{analysis.manual_only ? 'Manual-only review' : 'Manual review required'}</strong><p>{analysis.manual_only ? 'Automatic detection was skipped. Select the text or draw the masks you need. You can still run Analyze document; your manual work will be preserved.' : 'Parts of this document could not be automatically inspected. Review every page, check images and QR codes, and cover missed details before export.'} The report will remain unverified.</p></div>
                 </div>}
                 <details className="limitations" open={analysis.limitations.some(note => note.includes('UNVERIFIED:'))}><summary>What might the scanner miss?</summary>
                   <ul>{analysis.limitations.map((x, i) => <li key={i}>{x}</li>)}</ul>
                 </details>
               </article>
-              <article className="review-card preview-card surface-card">
+              <article className="review-card preview-card surface-card" id="manual-editor">
                 <div className="section-title"><div><span className="section-kicker">04 / DOCUMENT WORKSPACE</span><h2><Icon name="layers" size={18}/> Redact &amp; verify</h2>
-                  <p>{analysis.preview_supported ? 'Draw on the original to mask anything detection missed' : 'Preview is available for images and PDFs only'}</p></div><span className="section-side-note"><Icon name="shield" size={15}/> Human review required</span></div>
+                  <p>{analysis.preview_supported ? 'Draw on the original to mask anything detection missed' : 'Select any editable text, even when automatic detection missed it'}</p></div><span className="section-side-note"><Icon name="shield" size={15}/> Human review required</span></div>
                 {analysis.preview_supported ? <>
                   <div className="workspace-toolbar" role="toolbar" aria-label="Redaction tools">
                     <span className="toolbar-title"><Icon name="wand" size={17}/> Tools</span>
@@ -1072,7 +1093,8 @@ function App() {
                     I have visually checked page {page} of the exported copy</label>
                     <small>{reviewedPages.length} / {analysis.page_count} pages reviewed. Inspect each page, including small IDs, signatures, photos and codes.</small>
                   </div>}
-                </> : <p className="preview-placeholder">For Word, PowerPoint, Excel, CSV and TXT, recognized text is permanently replaced. Blur/photo masking is supported in images and PDFs only.</p>}
+                </> : file && <ManualTextEditor key={analysis.analysis_id} file={file} analysisId={analysis.analysis_id} regions={manualTexts}
+                  onChange={regions => { setManualTexts(regions); clearResult() }} disabled={phase !== 'ready'} />}
                 {result && <div className={'download-guide ' + (pagesComplete && acknowledged ? 'download-ready' : '')} role="status">
                   <Icon name={pagesComplete && acknowledged ? 'checkCircle' : 'info'} size={18}/>
                   <div><strong>{pagesComplete && acknowledged ? 'Review steps completed — download enabled' :
@@ -1083,11 +1105,11 @@ function App() {
                   {!pagesComplete && <button className="guide-inline-link" onClick={() => navigateTo('review')}>Review pages <Icon name="arrowRight" size={14}/></button>}
                 </div>}
                 {report?.status === 'FLAG' && <p className="warning" role="alert"><Icon name="alert" size={15}/> This export is blocked because selected information survived or new high-priority findings need review. Please analyze again and check your masks.</p>}
-                <div className="action-row export-actions" id="export-actions"><button className="primary-action" disabled={phase !== 'ready' || (!selected.length && !manual.length)}
+                <div className="action-row export-actions" id="export-actions"><button className="primary-action" disabled={phase !== 'ready' || (!selected.length && !manual.length && !manualTexts.length)}
                   onClick={processFile}>{phase === 'processing' ? <><span className="mini-spinner"/> Processing…</> : <><Icon name="lock" size={17}/> Generate &amp; verify <Icon name="arrowRight" size={17}/></>}</button>
                   <button className="secondary-action" disabled={!result || !acknowledged || !pagesComplete || report?.status === 'FLAG'} onClick={download}><Icon name="download" size={17}/> Download reviewed copy</button></div>
                 {report && <div id="verification" className={'report-card ' + statusColor}><h3><Icon name={report.status === 'FLAG' ? 'alert' : 'checkCircle'} size={19}/> Verification: {report.status.replace('_', ' ')}</h3>
-                  <p>{report.selected_count} recognized items selected · {report.manual_boxes} manual masks</p>
+                  <p>{report.selected_count} selected items · {report.manual_boxes} manual masks{Boolean(report.manual_text_count) && ` · ${report.manual_text_count} manual text selections`}</p>
                   <div className="metric-strip"><span><strong>{report.remaining_detected_count}</strong> remaining candidates</span><span><strong>{report.remaining_high_risk_count}</strong> high-risk remaining</span></div>
                   {report.remaining_detected_count > 0 && <div className="remaining-list"><strong>Detected in exported file (values omitted from audit)</strong>
                     <ul>{report.remaining_detected.map((item, i) => <li key={i}>{item.category.replaceAll('_', ' ')} · page {item.page} · {item.severity}</li>)}</ul>

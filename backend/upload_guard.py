@@ -3,7 +3,7 @@ import asyncio
 from starlette.exceptions import HTTPException
 from starlette.responses import JSONResponse
 
-PATHS = {'/analyze', '/preview', '/redact', '/verify'}
+PATHS = {'/analyze', '/preview', '/text-preview', '/redact', '/verify'}
 
 
 class UploadGuard:
