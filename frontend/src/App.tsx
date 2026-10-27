@@ -900,7 +900,7 @@ function App() {
                     <span className="privacy-option-icon"><Icon name={privacyIcons[item.id]} size={18}/></span><span className="privacy-option-copy"><strong>{item.label}</strong><small>{privacyNotes[item.id]}</small></span><span className="privacy-option-check"><Icon name="check" size={13}/></span>
                   </label>)}
                 </div>
-                <p className="pref-note"><Icon name="info" size={14}/> Categories preselect suggestions, not guaranteed findings. Review every page for anything missed.</p>
+                <p className="pref-note"><Icon name="info" size={14}/> {handwritingMode ? 'Handwriting suggestions must be selected individually.' : 'Categories preselect suggestions, not guaranteed findings.'} Review every page for anything missed.</p>
                 <details className="advanced-settings">
                   <summary><Icon name="settings" size={15}/> Extra scan options <span>Optional</span></summary>
                   <label className="repeat-option"><input type="checkbox" checked={allOccurrences} onChange={event => { setAllOccurrences(event.target.checked); clearResult() }} /> Protect every recognized occurrence of a selected identifier, including other pages</label>
