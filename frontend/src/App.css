@@ -1799,3 +1799,27 @@ html[data-theme="dark"] .brand-wordmark span:last-child {color:#55D7FF;}
   .workspace-toolbar button, .view-toolbar button, .page-controls button,
   .mask-actions button, .mask-selector button { min-height: 44px; min-width: 44px; }
 }
+
+/* The preview is an interactive selection surface, not just an illustration. */
+.preview-detection {
+  position: absolute;
+  z-index: 2;
+  display: block;
+  box-sizing: border-box;
+  padding: 0;
+  min-width: 4px;
+  min-height: 4px;
+  border: 2px dashed #239bd9;
+  border-radius: 2px;
+  background: #239bd91a;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+.preview-detection.chosen { border-style: solid; background: #239bd92c; }
+.preview-detection:hover, .preview-detection:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 2px;
+  background: #43c9f54d;
+}
+.page-frame.is-drawing .preview-detection { pointer-events: none; }
+.preview-interaction-hint { margin: 12px 0 0; }
