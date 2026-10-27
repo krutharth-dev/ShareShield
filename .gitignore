@@ -46,6 +46,9 @@ reports/
 *.ppt
 *.pptx
 *.docx
+*.xlsx
+*.xls
+*.csv
 # Intentionally use synthetic test files outside Git unless explicitly approved.
 
 # IDE and OS
@@ -54,3 +57,13 @@ Thumbs.db
 .idea/
 .vscode/*
 !.vscode/extensions.json
+
+# Keep synthetic files and local exports out of Git
+demo-output/
+
+# Downloaded, checksum-verified pretrained assets
+backend/models/
+
+# Browser test artifacts (fictional fixtures only)
+frontend/test-results/
+frontend/playwright-report/

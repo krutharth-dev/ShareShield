@@ -1,0 +1,37 @@
+**/.git
+**/.venv
+**/__pycache__
+**/.pytest_cache
+**/node_modules
+**/dist
+**/.env
+**/.env.*
+**/*.pdf
+**/*.docx
+**/*.pptx
+**/*.xlsx
+**/*.csv
+**/*.jpg
+**/*.jpeg
+**/*.png
+**/*.heic
+**/*.heif
+**/*.webp
+# Required public brand asset: keep it in the Docker build context.
+!frontend/public/shareshield-mark.webp
+**/*.tif
+**/*.tiff
+**/*.zip
+**/uploads
+**/outputs
+**/processed
+**/reports
+**/temp
+**/tmp
+**/*.log
+!.env.example
+
+# Keep generated samples out of container builds
+demo-output/
+
+backend/models/

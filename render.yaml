@@ -1,0 +1,19 @@
+# ShareShield public website hosting configuration.
+# The application is accessible without a sign-in prompt. Uploaded files are
+# processed remotely on Render: never use actual private documents until the
+# security and privacy release requirements have been completed.
+services:
+  - type: web
+    name: shareshield-demo
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    plan: free
+    healthCheckPath: /health
+    envVars:
+      - key: PORT
+        value: "10000"
+      - key: SHARESHIELD_DEPLOYMENT_MODE
+        value: public-demo
+      - key: SHARESHIELD_PUBLIC_HOSTNAME
+        value: shareshield-demo.onrender.com

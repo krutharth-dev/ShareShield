@@ -1,0 +1,11 @@
+# Install rapidocr==3.9.2 with --no-deps separately: use the existing headless
+# OpenCV instead of installing a second, conflicting GUI OpenCV distribution.
+onnxruntime==1.23.2
+shapely==2.1.2
+pyclipper==1.4.0
+colorlog==6.10.1
+omegaconf==2.3.0
+requests>=2.32,<3
+tqdm>=4.67,<5
+six>=1.15,<2
+PyYAML>=6,<7
