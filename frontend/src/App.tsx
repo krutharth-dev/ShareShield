@@ -73,6 +73,9 @@ function defaultFindingIds(findings: Finding[], wanted: string[]) {
   const categories = new Set(privacyOptions.filter(option => wanted.includes(option.id)).flatMap(option => option.categories))
   return findings.filter(f => f.locatable && f.auto_select && f.category !== 'text_region_candidate' && categories.has(f.category)).map(f => f.id)
 }
+function findingKey(finding: Finding) {
+  return JSON.stringify([finding.category, finding.value, finding.page, finding.location || '', finding.rectangles])
+}
 const allowed = new Set(['pdf', 'docx', 'pptx', 'xlsx', 'csv', 'txt', 'jpg', 'jpeg', 'png', 'heic', 'heif', 'webp', 'bmp', 'tif', 'tiff'])
 const outputExt: Record<string, string> = { '.pdf': '.pdf', '.docx': '.docx', '.pptx': '.pptx', '.xlsx': '.xlsx', '.csv': '.csv', '.txt': '.txt' }
 function dataFor(file: File, extra?: Record<string, string>) {
@@ -96,9 +99,10 @@ async function postWithBusyRetry(
   endpoint: string,
   makeBody: () => FormData,
   onRetry?: (attempt: number) => void,
+  signal?: AbortSignal,
 ): Promise<Response> {
   for (let attempt = 0; attempt < 4; attempt += 1) {
-    const response = await fetch(endpoint, { method: 'POST', body: makeBody(), cache: 'no-store' })
+    const response = await fetch(endpoint, { method: 'POST', body: makeBody(), cache: 'no-store', signal })
     if (response.status !== 503 || !response.headers.has('Retry-After') || attempt === 3) return response
     onRetry?.(attempt + 1)
     const retryAfter = Number(response.headers.get('Retry-After'))
@@ -152,7 +156,9 @@ function App() {
   const [logoUnavailable, setLogoUnavailable] = useState(false)
   const input = useRef<HTMLInputElement>(null)
   const previewSurface = useRef<HTMLDivElement>(null)
+  const previewImage = useRef<HTMLImageElement>(null)
   const requestId = useRef(0)
+  const analysisHandwriting = useRef(false)
   const resultUrl = useRef<string | null>(null)
   const [dragging, setDragging] = useState(false)
   const [recent, setRecent] = useState(false)
@@ -180,7 +186,7 @@ function App() {
       if (!active || checking) return
       checking = true
       try {
-        const response = await fetch('/api/status', { cache: 'no-store', credentials: 'same-origin' })
+        const response = await fetch('/api/status', { cache: 'no-store', credentials: 'same-origin', signal: AbortSignal.timeout(20000) })
         if (!response.ok) throw Error('Health check returned ' + response.status)
         const status = await response.json()
         if (status?.status !== 'ok') throw Error('Invalid server health response')
@@ -292,8 +298,12 @@ function App() {
     setOutputPreview('')
     setReviewedPages([])
     setAcknowledged(false)
+    // Export focus hides the editable original. An invalidated export must
+    // never leave the user looking at an empty, disabled export-only view.
+    setViewMode(current => current === 'export' ? 'original' : current)
   }
   function choose(next: File | null) {
+    cancelDrawing()
     requestId.current += 1
     setPhase('ready')
     setFile(next)
@@ -370,7 +380,7 @@ function App() {
     // Keep the user's selected file and manual work: a full reload loses both.
     setServerStatus('checking')
     try {
-      const response = await fetch('/api/status', { cache: 'no-store', credentials: 'same-origin' })
+      const response = await fetch('/api/status', { cache: 'no-store', credentials: 'same-origin', signal: AbortSignal.timeout(20000) })
       if (!response.ok) throw Error('Health check unsuccessful')
       const health = await response.json()
       if (health?.status !== 'ok') throw Error('Unexpected health response')
@@ -389,7 +399,11 @@ function App() {
   }
 
   async function scan() {
-    if (!file || invalid || (handwritingMode && !handwritingAvailable)) return
+    if (phase !== 'ready' || !file || invalid || (handwritingMode && !handwritingAvailable)) return
+    cancelDrawing()
+    const previousChoices = analysis && analysisHandwriting.current === handwritingMode
+      ? new Map(analysis.findings.map(f => [findingKey(f), selected.includes(f.id)]))
+      : new Map<string, boolean>()
     const id = ++requestId.current
     setPhase('scanning'); setProblem(false); setMessage('Scanning file for supported identifiers…')
     // Keep the previous review available if a temporary 503 blocks rescan.
@@ -412,10 +426,16 @@ function App() {
       setServerStatus('online')
       setProcessorBusy(false)
       setAnalysis(data)
-      setSelected([]); setManual([]); setHistory([]); setFuture([]); setEditIndex(null); clearResult()
+      analysisHandwriting.current = handwritingMode
+      setOriginalPreview('')
+      // Reanalysis renews the review token; it must not discard the user's
+      // manual work on the same file. IDs may reorder, so match exact findings.
+      setManual(current => current.filter(box => box.page <= data.page_count))
+      setHistory([]); setFuture([]); setEditIndex(null); clearResult()
       const incomplete = data.limitations.some(note => note.includes('UNVERIFIED:'))
       setToast(incomplete ? 'Partial scan: manually review unverified content.' : data.findings.length ? 'Scan finished! Check the suggestions below.' : 'Scan finished. Check for anything the scanner missed.')
-      setSelected(defaultFindingIds(data.findings, privacyCategories))
+      const defaults = new Set(defaultFindingIds(data.findings, privacyCategories))
+      setSelected(data.findings.filter(f => f.locatable && (previousChoices.get(findingKey(f)) ?? defaults.has(f.id))).map(f => f.id))
       setPage(1)
       setMessage(incomplete
         ? 'Scan finished with incomplete coverage. Inspect every page and mask missed details manually.'
@@ -434,9 +454,7 @@ function App() {
     let active = true
     const controller = new AbortController()
     async function load() {
-      const response = await fetch('/preview', {
-        method: 'POST', body: dataFor(file!, { page: String(page) }), signal: controller.signal, cache: 'no-store',
-      })
+      const response = await postWithBusyRetry('/preview', () => dataFor(file!, { page: String(page) }), undefined, controller.signal)
       if (!response.ok) throw Error(await errorFrom(response))
       const blob = await response.blob()
       if (!active) return
@@ -454,9 +472,7 @@ function App() {
     let active = true
     const controller = new AbortController()
     async function load() {
-      const response = await fetch('/preview', {
-        method: 'POST', body: dataFor(result!, { page: String(page) }), signal: controller.signal, cache: 'no-store',
-      })
+      const response = await postWithBusyRetry('/preview', () => dataFor(result!, { page: String(page) }), undefined, controller.signal)
       if (!response.ok) throw Error(await errorFrom(response))
       const blob = await response.blob()
       if (!active) return
@@ -476,7 +492,17 @@ function App() {
   function toggleCategory(id: string) {
     const next = privacyCategories.includes(id) ? privacyCategories.filter(item => item !== id) : [...privacyCategories, id]
     setPrivacyCategories(next)
-    if (analysis) setSelected(defaultFindingIds(analysis.findings, next))
+    if (analysis) {
+      const categories = new Set(privacyOptions.find(option => option.id === id)?.categories)
+      const enabled = next.includes(id)
+      // Only update this category; preserve deliberate choices in every other
+      // category, including suggestions the user explicitly checked.
+      setSelected(current => {
+        const kept = current.filter(value => !analysis.findings.some(f => f.id === value && categories.has(f.category)))
+        const added = enabled ? defaultFindingIds(analysis.findings, [id]) : []
+        return [...kept, ...added]
+      })
+    }
     clearResult()
   }
   function chooseMode(next: RedactionMode) {
@@ -492,8 +518,9 @@ function App() {
     clearResult()
   }
   function point(event: React.PointerEvent<HTMLDivElement>) {
-    const box = previewSurface.current?.getBoundingClientRect()
-    if (!box) return { x: 0, y: 0 }
+    // Normalize against the image itself, excluding the frame's border.
+    const box = previewImage.current?.getBoundingClientRect()
+    if (!box || !box.width || !box.height) return null
     return {
       x: Math.min(1, Math.max(0, (event.clientX - box.left) / box.width)),
       y: Math.min(1, Math.max(0, (event.clientY - box.top) / box.height)),
@@ -501,8 +528,12 @@ function App() {
   }
   const initialPoint = useRef<{ x: number; y: number; pointerId: number } | null>(null)
   function cancelDrawing() {
+    const pointerId = initialPoint.current?.pointerId
     initialPoint.current = null
     setDraft(null)
+    if (pointerId !== undefined && previewSurface.current?.hasPointerCapture(pointerId)) {
+      previewSurface.current.releasePointerCapture(pointerId)
+    }
   }
   function commitManual(next: ManualBox[]) {
     setHistory(p => [...p.slice(-29), manual])
@@ -535,8 +566,7 @@ function App() {
     clearResult()
   }
   function changePage(next: number) {
-    initialPoint.current = null
-    setDraft(null)
+    cancelDrawing()
     setEditIndex(null)
     setOriginalPreview('')
     setOutputPreview('')
@@ -545,7 +575,14 @@ function App() {
   function onPointerDown(event: React.PointerEvent<HTMLDivElement>) {
     if (!analysis?.preview_supported || !originalPreview || phase !== 'ready' || !drawMode ||
       !event.isPrimary || event.button !== 0 || initialPoint.current) return
+    if (!previewImage.current?.complete || !previewImage.current.naturalWidth) return
+    if (manual.length >= 60) {
+      setToast('Limit of 60 masks reached. Delete an existing box before adding another.')
+      return
+    }
     const pos = point(event)
+    if (!pos) return
+    event.preventDefault()
     initialPoint.current = { ...pos, pointerId: event.pointerId }
     setDraft({ page, ...pos, w: 0, h: 0 })
     event.currentTarget.setPointerCapture(event.pointerId)
@@ -554,6 +591,7 @@ function App() {
     const start = initialPoint.current
     if (!start || start.pointerId !== event.pointerId) return
     const end = point(event)
+    if (!end) return
     setDraft({ page, x: Math.min(start.x, end.x), y: Math.min(start.y, end.y),
       w: Math.abs(end.x - start.x), h: Math.abs(end.y - start.y) })
   }
@@ -561,15 +599,17 @@ function App() {
     const start = initialPoint.current
     if (!start || start.pointerId !== event.pointerId) return
     const end = point(event)
+    cancelDrawing()
+    if (!end) return
     const box = { page, x: Math.min(start.x, end.x), y: Math.min(start.y, end.y),
       w: Math.abs(end.x - start.x), h: Math.abs(end.y - start.y) }
-    if (box.w > .005 && box.h > .005 && manual.length < 60) {
+    if (box.w > .002 && box.h > .002 && manual.length < 60) {
       commitManual([...manual, box])
       setToast('Manual mask added. Nice catch!')
       setEditIndex(manual.length)
+    } else {
+      setToast('Drag across the area to mask it. The box must have both width and height.')
     }
-    initialPoint.current = null
-    setDraft(null)
   }
   function undo() {
     if (!history.length) return
@@ -583,6 +623,7 @@ function App() {
   async function processFile() {
     if (phase !== 'ready' || !file || !analysis || (!selected.length && !manual.length)) return
     const id = requestId.current
+    cancelDrawing()
     setPhase('processing'); setMessage('Redacting and verifying exported content…'); setProblem(false)
     clearResult()
     try {
@@ -646,7 +687,7 @@ function App() {
   }
   function download() {
     if (!result || report?.status === 'FLAG' || !acknowledged || (analysis?.preview_supported && reviewedPages.length !== analysis.page_count)) return
-    const url = URL.createObjectURL(result)
+    const url = resultUrl.current || URL.createObjectURL(result)
     resultUrl.current = url
     const link = document.createElement('a')
     link.href = url; link.download = result.name
@@ -903,7 +944,7 @@ function App() {
                 <p className="pref-note"><Icon name="info" size={14}/> {handwritingMode ? 'Handwriting suggestions must be selected individually.' : 'Categories preselect suggestions, not guaranteed findings.'} Review every page for anything missed.</p>
                 <details className="advanced-settings">
                   <summary><Icon name="settings" size={15}/> Extra scan options <span>Optional</span></summary>
-                  <label className="repeat-option"><input type="checkbox" checked={allOccurrences} onChange={event => { setAllOccurrences(event.target.checked); clearResult() }} /> Protect every recognized occurrence of a selected identifier, including other pages</label>
+                  <label className="repeat-option"><input type="checkbox" checked={allOccurrences} disabled={phase !== 'ready'} onChange={event => { setAllOccurrences(event.target.checked); clearResult() }} /> Protect every recognized occurrence of a selected identifier, including other pages</label>
                   <p className="pref-note">Repeated-value protection is on by default. Detection can still miss information; use manual masks for PDFs and images.</p>
                 </details>
               </div>}
@@ -951,7 +992,7 @@ function App() {
                   <div className="workspace-toolbar" role="toolbar" aria-label="Redaction tools">
                     <span className="toolbar-title"><Icon name="wand" size={17}/> Tools</span>
                     <button className={drawMode ? 'tool-button active' : 'tool-button'} aria-pressed={drawMode}
-                      onClick={() => { cancelDrawing(); setDrawMode(x => !x) }} title="Toggle drawing rectangles on the original preview">
+                      onClick={() => { cancelDrawing(); if (!drawMode) setViewMode('original'); setDrawMode(x => !x) }} title="Toggle drawing rectangles on the original preview">
                       <Icon name="privacy" size={16}/> {drawMode ? 'Drawing masks' : 'Draw mask'}
                     </button>
                     <span className="toolbar-spacer" />
@@ -974,13 +1015,13 @@ function App() {
                   <div className="view-toolbar" role="group" aria-label="Document view">
                     {([['split', 'Compare both'], ['original', 'Original focus'], ['export', 'Export focus']] as const).map(([value, label]) =>
                       <button key={value} className={viewMode === value ? 'view-button active' : 'view-button'}
-                        disabled={value === 'export' && !result} aria-pressed={viewMode === value} onClick={() => setViewMode(value)}>{label}</button>)}
+                        disabled={value === 'export' && !result} aria-pressed={viewMode === value} onClick={() => { cancelDrawing(); if (value === 'export') setDrawMode(false); setViewMode(value) }}>{label}</button>)}
                   </div>
-                  <div className="zoom-controls"><strong><Icon name="search" size={16}/> Inspect fine details</strong><label>Zoom {zoom}% <input type="range" min="100" max="300" step="25" value={zoom} onChange={e => setZoom(Number(e.target.value))} /></label></div>
+                  <div className="zoom-controls"><strong><Icon name="search" size={16}/> Inspect fine details</strong><label>Zoom {zoom}% <input type="range" min="100" max="300" step="25" value={zoom} onChange={e => { cancelDrawing(); setZoom(Number(e.target.value)) }} /></label></div>
                   <div className={"preview-pair mode-" + viewMode}>
                     <div><p className="preview-caption"><span className="preview-dot original-dot"/> ORIGINAL · Selected areas highlighted</p>
                       <div className="zoom-viewport"><div className={drawMode ? "page-frame is-drawing" : "page-frame"} style={{ width: zoom + '%' }} ref={previewSurface} onPointerDown={onPointerDown} onPointerMove={onPointerMove} onPointerUp={onPointerUp} onPointerCancel={event => { if (initialPoint.current?.pointerId === event.pointerId) cancelDrawing() }} onLostPointerCapture={event => { if (initialPoint.current?.pointerId === event.pointerId) cancelDrawing() }}>
-                        {originalPreview ? <img src={originalPreview} alt={'Original page ' + page} draggable={false} /> : <span>Loading preview…</span>}
+                        {originalPreview ? <img ref={previewImage} src={originalPreview} alt={'Original page ' + page} draggable={false} /> : <span>Loading preview…</span>}
                         <svg className="mark-layer" viewBox="0 0 1000 1000" preserveAspectRatio="none" aria-hidden="true">
                           {chosen.filter(f => f.page === page).flatMap(f => f.rectangles.map((r, i) =>
                             <rect key={f.id + ':' + i} x={r[0] / previewWidth * 1000} y={r[1] / previewHeight * 1000}
