@@ -332,6 +332,8 @@ async def redact_selected(
         raise HTTPException(409,
             "FLAG: selected information is still detectable in the output"
             if report["remaining_selected_count"] else
+            "FLAG: interactive PDF form fields remain in the export"
+            if report["pdf_form_fields_remaining"] else
             "FLAG: additional high-priority information was found during verification. Analyze and review the findings again.")
     return Response(content=result, media_type=mime,
                     headers={
