@@ -4,6 +4,7 @@ export default defineConfig({
   testDir: './e2e',
   fullyParallel: false,
   workers: 1, // The API deliberately bounds document work; don't overload it in CI.
+  maxFailures: process.env.CI ? 1 : 0,
   timeout: 90_000,
   expect: { timeout: 20_000 },
   use: { baseURL: 'http://127.0.0.1:5173', trace: 'retain-on-failure' },
