@@ -120,6 +120,10 @@ test('category changes preserve individual choices in other categories', async (
   await page.getByRole('checkbox', { name: /Bank accounts, PAN, UPI & cards Payment/ }).uncheck()
   await expect(phone).not.toBeChecked()
   await expect(suggestion).toBeChecked()
+  await page.getByRole('button', { name: 'Analyze document' }).click()
+  await expect(page.getByRole('button', { name: 'Analyze document' })).toBeEnabled()
+  await expect(phone).not.toBeChecked()
+  await expect(suggestion).toBeChecked()
   // Changing the category itself still applies its automatic defaults.
   await page.getByRole('checkbox', { name: /Phone and email Email/ }).uncheck()
   await page.getByRole('checkbox', { name: /Phone and email Email/ }).check()
@@ -165,6 +169,10 @@ test('manual editing restores the original after export focus and exports the dr
   await expect(original).toBeVisible()
   await expect(page.getByRole('button', { name: 'Export focus', exact: true })).toBeDisabled()
   await expect(page.getByRole('button', { name: 'Original focus', exact: true })).toHaveAttribute('aria-pressed', 'true')
+  await page.getByRole('button', { name: 'Analyze document' }).click()
+  await expect(page.getByRole('button', { name: 'Analyze document' })).toBeEnabled()
+  await expect(original).toBeVisible()
+  await expect(page.locator('.manual-mask')).toHaveCount(1)
   await noOverflow(page)
 })
 

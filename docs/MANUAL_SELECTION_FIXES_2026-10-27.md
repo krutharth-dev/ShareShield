@@ -17,12 +17,25 @@ selected and disabled, leaving the original hidden and the workspace empty.
   ignoring the user's action. Minimum dimensions match the API validator.
 - Repeated-occurrence protection is disabled while scanning or exporting,
   including though it lives outside the disabled review fieldset.
+- Category checkboxes have full-card pointer targets and visible keyboard focus.
+- Notification bodies no longer intercept document input. This fixes a
+  reproduced mobile PDF drag failure when the scan toast overlapped the page;
+  notification dismissal remains interactive.
+- Reanalysis preserves masks on the same source and exact reviewed choices when
+  the recognition mode is unchanged, even if finding IDs reorder.
+- Original/export previews retry explicit temporary busy responses and abort
+  stale page requests. Health probes time out instead of staying pending forever.
+- Repeated downloads reuse the current result URL instead of leaking one URL
+  per click until the tab is closed.
 
 Regression coverage includes selection preservation, drawing from Export focus,
 editing after export, submitted manual regions, export-setting locking and native
 Chromium touch input. Existing browser workflows cover cancellation, undo/redo,
-zoom, touch panning, verification and reviewed downloads. Backend redaction and
-verification policy are unchanged.
+zoom, touch panning, verification and reviewed downloads. Additional recovery
+cases cover appearance persistence, keyboard navigation, actual file input,
+invalid extensions, a busy scan/preview, stale file responses, and two-page PDF
+masks with per-page download gating. Backend
+redaction and verification policy are unchanged.
 
 Validation commands:
 
@@ -33,7 +46,11 @@ OMP_THREAD_LIMIT=1 .venv/bin/python -m pytest backend/tests -q
 cd frontend && npm run test:e2e
 ```
 
-Local frontend lint/build and 155 backend tests passed before release. Browser
-engine downloads in the editing environment returned truncated archives; the
-full browser matrix and container checks run in GitHub CI before deployment.
-Physical-device behavior and general detection completeness are not certified.
+Local frontend lint/build and 155 backend tests passed before release. Standard
+browser-engine downloads returned truncated archives in the editing environment;
+local Chromium tests subsequently ran using the packaged Chromium binary from
+the established @sparticuz/chromium npm package, without adding an application
+dependency. Desktop and mobile-size Chromium review/touch workflows pass locally.
+The pinned Playwright Chromium/WebKit matrix and container checks run in GitHub
+CI before deployment. Physical-device behavior and general detection
+completeness are not certified.

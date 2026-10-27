@@ -1777,6 +1777,22 @@ html[data-theme="dark"] .brand-wordmark span:last-child {color:#55D7FF;}
 /* A disabled fieldset freezes all review inputs during asynchronous export. */
 .review-controls { border:0; padding:0; margin:0; min-width:0; }
 
+/* Keep the real category checkbox as the card's full-size hit target. This
+   supports direct checkbox activation and keyboard focus, as well as labels. */
+.privacy-option input {
+  inset:0; margin:0; width:100%; height:100%; opacity:0;
+  pointer-events:auto; cursor:pointer; z-index:1;
+}
+.privacy-option:focus-within {
+  outline:2px solid var(--sh-green); outline-offset:3px;
+}
+.privacy-option input:disabled { cursor:wait; }
+
+/* Status messages may overlap a zoomed/mobile document. Let drawing and page
+   controls receive input through the notification body; keep Close usable. */
+.delight-toast { pointer-events:none; }
+.delight-toast button { pointer-events:auto; }
+
 /* Browsing permits native touch pan/pinch; drawing is an explicit mode. */
 .page-frame.is-drawing { touch-action: none; cursor: crosshair; }
 @media (pointer: coarse) {

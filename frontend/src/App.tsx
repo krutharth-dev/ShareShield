@@ -73,6 +73,9 @@ function defaultFindingIds(findings: Finding[], wanted: string[]) {
   const categories = new Set(privacyOptions.filter(option => wanted.includes(option.id)).flatMap(option => option.categories))
   return findings.filter(f => f.locatable && f.auto_select && f.category !== 'text_region_candidate' && categories.has(f.category)).map(f => f.id)
 }
+function findingKey(finding: Finding) {
+  return JSON.stringify([finding.category, finding.value, finding.page, finding.location || '', finding.rectangles])
+}
 const allowed = new Set(['pdf', 'docx', 'pptx', 'xlsx', 'csv', 'txt', 'jpg', 'jpeg', 'png', 'heic', 'heif', 'webp', 'bmp', 'tif', 'tiff'])
 const outputExt: Record<string, string> = { '.pdf': '.pdf', '.docx': '.docx', '.pptx': '.pptx', '.xlsx': '.xlsx', '.csv': '.csv', '.txt': '.txt' }
 function dataFor(file: File, extra?: Record<string, string>) {
@@ -96,9 +99,10 @@ async function postWithBusyRetry(
   endpoint: string,
   makeBody: () => FormData,
   onRetry?: (attempt: number) => void,
+  signal?: AbortSignal,
 ): Promise<Response> {
   for (let attempt = 0; attempt < 4; attempt += 1) {
-    const response = await fetch(endpoint, { method: 'POST', body: makeBody(), cache: 'no-store' })
+    const response = await fetch(endpoint, { method: 'POST', body: makeBody(), cache: 'no-store', signal })
     if (response.status !== 503 || !response.headers.has('Retry-After') || attempt === 3) return response
     onRetry?.(attempt + 1)
     const retryAfter = Number(response.headers.get('Retry-After'))
@@ -154,6 +158,7 @@ function App() {
   const previewSurface = useRef<HTMLDivElement>(null)
   const previewImage = useRef<HTMLImageElement>(null)
   const requestId = useRef(0)
+  const analysisHandwriting = useRef(false)
   const resultUrl = useRef<string | null>(null)
   const [dragging, setDragging] = useState(false)
   const [recent, setRecent] = useState(false)
@@ -181,7 +186,7 @@ function App() {
       if (!active || checking) return
       checking = true
       try {
-        const response = await fetch('/api/status', { cache: 'no-store', credentials: 'same-origin' })
+        const response = await fetch('/api/status', { cache: 'no-store', credentials: 'same-origin', signal: AbortSignal.timeout(20000) })
         if (!response.ok) throw Error('Health check returned ' + response.status)
         const status = await response.json()
         if (status?.status !== 'ok') throw Error('Invalid server health response')
@@ -375,7 +380,7 @@ function App() {
     // Keep the user's selected file and manual work: a full reload loses both.
     setServerStatus('checking')
     try {
-      const response = await fetch('/api/status', { cache: 'no-store', credentials: 'same-origin' })
+      const response = await fetch('/api/status', { cache: 'no-store', credentials: 'same-origin', signal: AbortSignal.timeout(20000) })
       if (!response.ok) throw Error('Health check unsuccessful')
       const health = await response.json()
       if (health?.status !== 'ok') throw Error('Unexpected health response')
@@ -396,6 +401,9 @@ function App() {
   async function scan() {
     if (phase !== 'ready' || !file || invalid || (handwritingMode && !handwritingAvailable)) return
     cancelDrawing()
+    const previousChoices = analysis && analysisHandwriting.current === handwritingMode
+      ? new Map(analysis.findings.map(f => [findingKey(f), selected.includes(f.id)]))
+      : new Map<string, boolean>()
     const id = ++requestId.current
     setPhase('scanning'); setProblem(false); setMessage('Scanning file for supported identifiers…')
     // Keep the previous review available if a temporary 503 blocks rescan.
@@ -418,11 +426,16 @@ function App() {
       setServerStatus('online')
       setProcessorBusy(false)
       setAnalysis(data)
+      analysisHandwriting.current = handwritingMode
       setOriginalPreview('')
-      setSelected([]); setManual([]); setHistory([]); setFuture([]); setEditIndex(null); clearResult()
+      // Reanalysis renews the review token; it must not discard the user's
+      // manual work on the same file. IDs may reorder, so match exact findings.
+      setManual(current => current.filter(box => box.page <= data.page_count))
+      setHistory([]); setFuture([]); setEditIndex(null); clearResult()
       const incomplete = data.limitations.some(note => note.includes('UNVERIFIED:'))
       setToast(incomplete ? 'Partial scan: manually review unverified content.' : data.findings.length ? 'Scan finished! Check the suggestions below.' : 'Scan finished. Check for anything the scanner missed.')
-      setSelected(defaultFindingIds(data.findings, privacyCategories))
+      const defaults = new Set(defaultFindingIds(data.findings, privacyCategories))
+      setSelected(data.findings.filter(f => f.locatable && (previousChoices.get(findingKey(f)) ?? defaults.has(f.id))).map(f => f.id))
       setPage(1)
       setMessage(incomplete
         ? 'Scan finished with incomplete coverage. Inspect every page and mask missed details manually.'
@@ -441,9 +454,7 @@ function App() {
     let active = true
     const controller = new AbortController()
     async function load() {
-      const response = await fetch('/preview', {
-        method: 'POST', body: dataFor(file!, { page: String(page) }), signal: controller.signal, cache: 'no-store',
-      })
+      const response = await postWithBusyRetry('/preview', () => dataFor(file!, { page: String(page) }), undefined, controller.signal)
       if (!response.ok) throw Error(await errorFrom(response))
       const blob = await response.blob()
       if (!active) return
@@ -461,9 +472,7 @@ function App() {
     let active = true
     const controller = new AbortController()
     async function load() {
-      const response = await fetch('/preview', {
-        method: 'POST', body: dataFor(result!, { page: String(page) }), signal: controller.signal, cache: 'no-store',
-      })
+      const response = await postWithBusyRetry('/preview', () => dataFor(result!, { page: String(page) }), undefined, controller.signal)
       if (!response.ok) throw Error(await errorFrom(response))
       const blob = await response.blob()
       if (!active) return
@@ -678,7 +687,7 @@ function App() {
   }
   function download() {
     if (!result || report?.status === 'FLAG' || !acknowledged || (analysis?.preview_supported && reviewedPages.length !== analysis.page_count)) return
-    const url = URL.createObjectURL(result)
+    const url = resultUrl.current || URL.createObjectURL(result)
     resultUrl.current = url
     const link = document.createElement('a')
     link.href = url; link.download = result.name
