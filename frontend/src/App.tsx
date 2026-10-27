@@ -996,7 +996,7 @@ function App() {
                       <Icon name="privacy" size={16}/> {drawMode ? 'Drawing masks' : 'Draw mask'}
                     </button>
                     <span className="toolbar-spacer" />
-                    <span className="toolbar-tip">{drawMode ? 'Drag one finger to draw a mask. Turn drawing off to scroll.' : 'Scroll to inspect. Enable Draw mask to add a blackout.'}</span>
+                    <span className="toolbar-tip">{drawMode ? 'Drag over the original preview to add a manual mask. Turn drawing off to scroll.' : 'Click any outlined suggestion to select it. For missed areas, press Draw mask and drag.'}</span>
                   </div>
                   <details className="mask-style-details">
                     <summary><Icon name="settings" size={16}/> Mask style <strong>{redactionMode === 'blackout' ? 'Blackout (recommended)' : redactionMode === 'blur' ? 'Blur (visual only)' : 'Pixelate (visual only)'}</strong></summary>
@@ -1018,6 +1018,7 @@ function App() {
                         disabled={value === 'export' && !result} aria-pressed={viewMode === value} onClick={() => { cancelDrawing(); if (value === 'export') setDrawMode(false); setViewMode(value) }}>{label}</button>)}
                   </div>
                   <div className="zoom-controls"><strong><Icon name="search" size={16}/> Inspect fine details</strong><label>Zoom {zoom}% <input type="range" min="100" max="300" step="25" value={zoom} onChange={e => { cancelDrawing(); setZoom(Number(e.target.value)) }} /></label></div>
+                  <p className="pref-note preview-interaction-hint">{drawMode ? "Drawing is active: drag a rectangle over anything you want to hide." : "Outlines are clickable. For other areas, choose Draw mask above and drag a rectangle."}</p>
                   <div className={"preview-pair mode-" + viewMode}>
                     <div><p className="preview-caption"><span className="preview-dot original-dot"/> ORIGINAL · Selected areas highlighted</p>
                       <div className="zoom-viewport"><div className={drawMode ? "page-frame is-drawing" : "page-frame"} style={{ width: zoom + '%' }} ref={previewSurface} onPointerDown={onPointerDown} onPointerMove={onPointerMove} onPointerUp={onPointerUp} onPointerCancel={event => { if (initialPoint.current?.pointerId === event.pointerId) cancelDrawing() }} onLostPointerCapture={event => { if (initialPoint.current?.pointerId === event.pointerId) cancelDrawing() }}>
@@ -1029,6 +1030,24 @@ function App() {
                           {[...manual.filter(m => m.page === page), ...(draft ? [draft] : [])].map((m, i) =>
                             <rect key={'mask:' + i} x={m.x * 1000} y={m.y * 1000} width={m.w * 1000} height={m.h * 1000} className="manual-mask" />)}
                         </svg>
+                        {/* Click highlighted findings to toggle them. While drawing,
+                            these controls must not intercept the pointer gesture. */}
+                        {analysis.findings.filter(f => f.page === page && f.category !== 'text_region_candidate').flatMap(f =>
+                          f.rectangles.map((r, i) => {
+                            const left = Math.min(100, Math.max(0, r[0] / previewWidth * 100))
+                            const top = Math.min(100, Math.max(0, r[1] / previewHeight * 100))
+                            const right = Math.min(100, Math.max(left, r[2] / previewWidth * 100))
+                            const bottom = Math.min(100, Math.max(top, r[3] / previewHeight * 100))
+                            const active = selected.includes(f.id)
+                            if (right <= left || bottom <= top) return null
+                            return <button key={'detection:' + f.id + ':' + i} type="button"
+                              className={'preview-detection ' + (active ? 'chosen' : 'available')}
+                              style={{ left: left + '%', top: top + '%', width: (right - left) + '%', height: (bottom - top) + '%' }}
+                              onClick={() => changeSelected(f.id)}
+                              aria-pressed={active}
+                              aria-label={(active ? 'Remove' : 'Select') + ' ' + f.category.replaceAll('_', ' ') + ' on page ' + page}
+                              title={(active ? 'Remove' : 'Select') + ' suggested redaction'} />
+                          }))}
                       </div></div></div>
                     <div><p className="preview-caption"><span className="preview-dot export-dot"/> REDACTED · Export preview</p><div className="zoom-viewport"><div className="page-frame after" style={{ width: zoom + '%' }}>
                       {outputPreview ? <img src={outputPreview} alt={'Redacted page ' + page} /> : <span>Generate output to preview here</span>}
