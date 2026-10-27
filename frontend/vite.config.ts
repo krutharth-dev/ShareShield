@@ -12,6 +12,7 @@ export default defineConfig({
     proxy: {
       '/analyze': 'http://127.0.0.1:8000',
       '/preview': 'http://127.0.0.1:8000',
+      '/text-preview': 'http://127.0.0.1:8000',
       '/redact': 'http://127.0.0.1:8000',
       '/verify': 'http://127.0.0.1:8000',
       '/api/status': 'http://127.0.0.1:8000',
