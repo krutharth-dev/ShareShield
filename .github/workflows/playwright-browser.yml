@@ -1,0 +1,24 @@
+name: Playwright browser acceptance
+on: [push, pull_request]
+jobs:
+  browser:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - run: npm ci --no-audit --no-fund
+      - run: npm run build
+      - run: npm install --no-save --ignore-scripts playwright@1.56.1
+      - run: npx playwright install --with-deps chromium
+      - name: Browser smoke + downloaded byte inspection
+        run: |
+          npm run preview -- --host 127.0.0.1 --port 4174 > /tmp/shareshield-preview.log 2>&1 &
+          for i in {1..30}; do if curl -fsS http://127.0.0.1:4174/app >/dev/null; then break; fi; sleep 1; done
+          node tests/browser/smoke.mjs
