@@ -42,6 +42,11 @@ export function priorityForCategory(input:string):number|null{
  if(c==='PERSONAL_DETAILS_BLOCK'||c==='ADDRESS_REVIEW'||c==='KANNADA_ADDRESS_REVIEW'||c==='KANNADA_PARTY_ADDRESS_BLOCK_REVIEW'||c==='KANNADA_RESPONDENT_ADDRESS_BLOCK_REVIEW'||c==='POSTAL_CODE_REVIEW'||c.startsWith('RESIDENTIAL_ADDRESS'))return 14;
  if(c==='PERSON_NAME_REVIEW'||c==='ADDRESSEE_REVIEW'||c==='KANNADA_PARTY_IDENTITY_REVIEW'||c.startsWith('GUARDIAN_NAME'))return 15;
  if(c==='KANNADA_CASE_REFERENCE_REVIEW'||c==='LEGAL_CASE_REFERENCE'||c==='OTHER_IDENTIFIER')return 16;
+ if(c==='ACADEMIC_ADMISSION_ID'||c==='COLLEGE_USN_REVIEW')return 10;
+ if(c==='PATIENT_NAME_REVIEW')return 15;
+ if(c==='INTERNATIONAL_PHONE_REVIEW'||c==='EMERGENCY_CONTACT_REVIEW')return 12;
+ if(c==='PAYMENT_CARD_REVIEW'||c==='IBAN_REVIEW')return 7;
+ if(c==='VEHICLE_REGISTRATION_REVIEW'||c==='INSURANCE_POLICY_REVIEW')return 16;
  return null;
 }
 /** Needs special attention regardless of whether a numerical category exists. */
@@ -66,7 +71,7 @@ export const DEFAULT_CATEGORIES=['AADHAAR_CANDIDATE','PAN_CANDIDATE','CREDENTIAL
 export function classifyPriority(category:string,purpose:SharingPurpose='public',documentType='general'):{tier:Tier;mandatory:boolean;reason:string;order:number}{
  const c=category.toUpperCase();let tier:Tier='MEDIUM';let reason='Personal information: disclosure is optional for the selected purpose.';
  let order=priorityForCategory(c)??(c==='BLOOD_GROUP'?9.1:c.startsWith('MEDICAL_')?9.2:18);
- if(/^(AADHAAR|PAN_|CREDENTIAL|BANK_ACCOUNT|PASSPORT|CARD_NUMBER|MEDICAL_RECORD_NUMBER|PATIENT_ID|HEALTH_INSURANCE_ID|BIOMETRIC)/.test(c)){
+ if(/^(AADHAAR|PAN_|CREDENTIAL|BANK_ACCOUNT|PASSPORT|CARD_NUMBER|MEDICAL_RECORD_NUMBER|PATIENT_ID|HEALTH_INSURANCE_ID|BIOMETRIC|PAYMENT_CARD_REVIEW|IBAN_REVIEW|INSURANCE_POLICY_REVIEW)/.test(c)){
   tier='HIGH';reason='Sensitive identifier or credential: removal is required for sharing clearance.';
  }
  if(/^(ACADEMIC_RESULT|ACADEMIC_GRADE|CERTIFICATE_NUMBER|ADMINISTRATIVE_INFO)$/.test(c)){
@@ -77,6 +82,19 @@ export function classifyPriority(category:string,purpose:SharingPurpose='public'
   else if(purpose==='medical'){tier='MEDIUM';reason='May be needed by an authorized healthcare recipient. Confirm the recipient and retain only necessary information.';}
   else{tier='MEDIUM';reason='Health information: review whether this recipient needs it.';}
  }
+ if(/^(MEDICAL_DIAGNOSIS_REVIEW|MEDICAL_TEST_RESULT_REVIEW|CLINICAL_NOTE_REVIEW|MEDICAL_PROCEDURE_REVIEW)$/.test(c)){
+  tier=purpose==='public'?'HIGH':'MEDIUM';
+  reason=purpose==='public'?'Labelled patient health information should be protected from public disclosure.':'Health details may be necessary to the authorized recipient; review relevance and consent.';
+ }
+ if(c==='PATIENT_NAME_REVIEW'){
+  tier=purpose==='public'?'HIGH':'MEDIUM';
+  reason='Patient identity must be considered separately from the clinical information.';
+ }
+ if(c==='ACADEMIC_ADMISSION_ID'||c==='COLLEGE_USN_REVIEW'){
+  tier=purpose==='public'?'HIGH':'MEDIUM';
+  reason='Student or university identifier: review recipient necessity; unlabelled USN shapes require confirmation.';
+ }
+ if(c==='INSURANCE_POLICY_REVIEW')reason='Private insurance identifier requires confirmation and recipient-specific protection.';
  if(/^(KANNADA_PARTY_ADDRESS_BLOCK_REVIEW|KANNADA_RESPONDENT_ADDRESS_BLOCK_REVIEW|KANNADA_PARTY_IDENTITY_REVIEW|KANNADA_ADDRESS_REVIEW|KANNADA_PERSONAL_DETAIL_REVIEW|PERSON_NAME_REVIEW|ADDRESS_REVIEW|PERSONAL_DETAILS_BLOCK|ADDRESSEE_REVIEW)$/.test(c)){
   if(purpose==='public'){tier='HIGH';reason='Personal identity or multi-line residential address in a public document: confirm and remove the complete block.';}
   else{tier='MEDIUM';reason='Identifying party or address details: check whether the intended recipient is authorized to receive them.';}
@@ -90,11 +108,11 @@ export function classifyPriority(category:string,purpose:SharingPurpose='public'
  return {tier,mandatory:tier==='HIGH',reason,order};
 }
 export function inferDocumentType(findings:readonly RankedFinding[]):string{
- if(findings.some(f=>/^(BLOOD_GROUP|MEDICAL_|PATIENT_ID|ALLERGY|LAB_RESULT)/.test(f.category)))return 'medical';
+ if(findings.some(f=>/^(BLOOD_GROUP|MEDICAL_|PATIENT_ID|PATIENT_NAME_REVIEW|CLINICAL_NOTE_REVIEW|ALLERGY|LAB_RESULT)/.test(f.category)))return 'medical';
  if(findings.some(f=>f.category.startsWith('AADHAAR')||f.category.startsWith('PAN_')))return 'identity';
  if(findings.some(f=>/^(BANK_|IFSC|UPI_)/.test(f.category)))return 'financial';
  if(findings.some(f=>/^(KANNADA_PARTY_|KANNADA_RESPONDENT_|KANNADA_CASE_REFERENCE_|LEGAL_CASE_REFERENCE)/.test(f.category)))return 'legal';
- if(findings.some(f=>/^(ACADEMIC_|STUDENT_)/.test(f.category)))return 'academic';return 'general';
+ if(findings.some(f=>/^(ACADEMIC_|STUDENT_|COLLEGE_USN_)/.test(f.category)))return 'academic';return 'general';
 }
 /** Image ink not reliably read by OCR; keep separate from identified PII. */
 export function isUncertainOcrRegion(f:{category:string}):boolean{
