@@ -38,6 +38,9 @@ export async function onRequest(context) {
     if(pathname.endsWith("/redact") && !contentType.startsWith("application/json"))
       return fail(415, "Expected JSON.");
   }
+  // Health reflects browser-local processing, not a hosted Python/Tesseract API.
+  if(pathname === "/api/health" && !env?.BACKEND_ORIGIN)
+    return new Response(JSON.stringify({status:"ok",mode:"browser-local",server_processing:false,demo_only:true}),{status:200,headers:JSON_HEADERS});
   if(!env?.BACKEND_ORIGIN) return fail(503, "Processing backend has not been configured.");
   let backend;
   try{

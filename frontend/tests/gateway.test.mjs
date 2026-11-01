@@ -25,8 +25,16 @@ test("enforces max declared upload body size", async()=>{
   }),"https://api.example"));
   assert.equal(response.status,413);
 });
-test("fails closed when backend is not configured", async()=>{
+test("browser-local Pages health is truthful without a Python backend", async()=>{
   const response=await onRequest(ctx(req("/api/health")));
+  assert.equal(response.status,200);
+  const body=await response.json();
+  assert.equal(body.mode,"browser-local");
+  assert.equal(body.server_processing,false);
+  assert.equal(response.headers.get("cache-control"),"no-store");
+});
+test("server processing endpoints fail closed without backend", async()=>{
+  const response=await onRequest(ctx(req("/api/v1/files/abc/download")));
   assert.equal(response.status,503);
 });
 test("rejects unencrypted nonlocal origins", async()=>{
