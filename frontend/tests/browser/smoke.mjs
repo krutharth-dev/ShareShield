@@ -54,8 +54,8 @@ try{
  assert.equal(await page.getByRole('region',{name:'Pre-export coverage preview'}).count(),1,'Coverage checkpoint must exist after analysis');
  assert.ok((await page.getByRole('region',{name:'Pre-export coverage preview'}).textContent())?.includes('High findings covered'));
 
- assert.equal(await page.locator('.finding-card input:checked').count(),0,'No OCR candidates must be auto-selected');
- assert.equal(await page.locator('.finding-box').count(),0,'Document should not start covered in masks');
+ assert.ok(await page.locator('.finding-card input:checked').count()>=1,'Confident high-priority credentials should be auto-selected');
+ assert.equal(await page.locator('.finding-box').count(),0,'Plain-text inputs have no visual page overlay');
  await page.locator('.findings-panel .priority-trigger').click();
  const dialog=page.getByRole('dialog',{name:'Sensitive information priorities'});
  assert.equal(await dialog.count(),1,'Priority overlay opens on demand');
@@ -121,10 +121,12 @@ try{
  assert.ok(!optionalBytes.includes('ABCDE1234F'));
  await page.getByLabel('Sharing purpose').selectOption('public');
  assert.equal(await page.locator('.report').count(),0,'Context changes invalidate previous clearance');
+ // Simulate a user overriding an automatic high-priority mask: verification must flag exposure.
+ await page.locator('.finding-card').filter({has:page.getByRole('heading',{name:'BLOOD GROUP',exact:true})}).locator('input[type="checkbox"]').uncheck();
  await page.getByRole('button',{name:'Redact & verify export'}).click();
  await page.locator('.report').waitFor();
  assert.equal((await page.locator('.report-heading h2').textContent()).trim(),'FLAG','Public health exposure remains mandatory');
- console.log('PASS purpose changes, tier-local ranks, optional disclosure and mandatory health clearance');
+ console.log('PASS purpose changes, tier-local ranks, manual override and mandatory health clearance');
  // Exercise the existing synthetic printed PDF, source preview and actual
  // rasterized downloadable PDF. This does not validate handwritten accuracy.
  await page.getByRole('button',{name:/Clear workspace/}).click();
@@ -157,6 +159,7 @@ try{
  assert.equal(await page.locator('.manual-editor').count(),0);
  await page.getByRole('button',{name:'Mark region',exact:true}).click();
  console.log('PASS add, move, resize and delete manual region');
+ await page.getByRole('button',{name:'Clear selection'}).click();
  await page.getByRole('button',{name:/Redact & verify export/}).click();
  await page.locator('.report').waitFor({timeout:90000});
  await page.getByRole('region',{name:'Exported PDF page preview'}).waitFor({state:'visible',timeout:20000});
