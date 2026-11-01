@@ -1,0 +1,45 @@
+name: Cloudflare Mini Project production release (manual gate)
+on:
+  workflow_dispatch:
+    inputs:
+      reviewed:
+        description: "PR reviewed, full security acceptance and judge evidence signed off"
+        type: boolean
+        required: true
+        default: false
+jobs:
+  release:
+    if: github.ref_name == 'main' && inputs.reviewed == true
+    runs-on: ubuntu-latest
+    environment: production
+    permissions:
+      contents: read
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - run: npm ci --no-audit --no-fund
+      - run: npm run typecheck
+      - run: npm test
+      - run: npm run build
+      - run: npm run worker:check
+      - name: Deploy exact reviewed commit
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          test -n "$CLOUDFLARE_API_TOKEN"
+          test -n "$CLOUDFLARE_ACCOUNT_ID"
+          echo "Deploying Git commit $(git rev-parse HEAD)"
+          npx wrangler deploy
+      - name: Confirm public Worker endpoints
+        run: |
+          curl --fail --retry 4 --retry-all-errors --retry-delay 3 https://shareshield-mini.krutharth-dev.workers.dev/api/health
+          curl --fail --retry 4 --retry-all-errors --retry-delay 3 -o /dev/null https://shareshield-mini.krutharth-dev.workers.dev/app
+          echo "Release commit $(git rev-parse HEAD)"

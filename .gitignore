@@ -1,56 +1,19 @@
+
 # Python
 __pycache__/
 *.py[cod]
-*.egg-info/
-.venv/
-venv/
 .pytest_cache/
-.mypy_cache/
-.ruff_cache/
-.coverage*
-htmlcov/
-dist/
-build/
+.venv/
+.shareshield_data/
 
-# Node / React / Vite
+
 node_modules/
-frontend/dist/
-frontend/build/
-.vite/
+dist/
+.wrangler/
 *.tsbuildinfo
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-pnpm-debug.log*
-.pnpm-store/
+__pycache__/
+.pytest_cache/
+.venv/
+.shareshield_data/
 
-# Secrets and local settings
-.env
-.env.*
-!.env.example
-*.pem
-*.key
-*.p12
-*.pfx
-*.log
-
-# Document inputs, temporary data and exports (privacy)
-uploads/
-outputs/
-temp/
-tmp/
-processed/
-redacted/
-reports/
-*.pdf
-*.ppt
-*.pptx
-*.docx
-# Intentionally use synthetic test files outside Git unless explicitly approved.
-
-# IDE and OS
-.DS_Store
-Thumbs.db
-.idea/
-.vscode/*
-!.vscode/extensions.json
+frontend/public/ocr/
