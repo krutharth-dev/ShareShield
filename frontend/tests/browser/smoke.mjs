@@ -54,6 +54,9 @@ try{
  assert.equal(await page.getByRole('region',{name:'Pre-export coverage preview'}).count(),1,'Coverage checkpoint must exist after analysis');
  assert.ok((await page.getByRole('region',{name:'Pre-export coverage preview'}).textContent())?.includes('High findings covered'));
 
+ assert.ok((await page.locator('.finding-card').first().textContent()).includes('not a calibrated probability'),'Finding cards explain heuristic confidence');
+ assert.ok((await page.locator('.finding-card').first().textContent()).includes('Source line'),'Finding cards preserve source context');
+ assert.ok((await page.locator('.finding-card').first().textContent()).includes('label or shape recognition'),'Finding cards expose validation scope');
  assert.ok(await page.locator('.finding-card input:checked').count()>=1,'Confident high-priority credentials should be auto-selected');
  assert.equal(await page.locator('.finding-box').count(),0,'Plain-text inputs have no visual page overlay');
  await page.locator('.findings-panel .priority-trigger').click();

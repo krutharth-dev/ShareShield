@@ -4,7 +4,7 @@
  * context review are not suppressed by this numerical de-duplication.
  */
 export type Located={id:string;page:number;category:string;boxes:{x:number;y:number;width:number;height:number}[];
- detection_confidence:number;ocr_confidence?:number;reason:string};
+ detection_confidence:number;ocr_confidence?:number;reason:string;validation?:{status:string;method:string;detail:string}};
 const group=(s:string)=>{
  if(s==='AADHAAR_NUMBER_REGION_REVIEW')return 'fallback';
  if(s==='AADHAAR_VIRTUAL_ID'||s==='VIRTUAL_ID')return 'virtual-id';
@@ -49,6 +49,7 @@ export function consolidateLocated<T extends Located>(candidates:readonly T[],va
   if(!same&&family==='aadhaar'){
    old.category='AADHAAR_OCR_REVIEW';
    old.detection_confidence=Math.min(old.detection_confidence,.4);
+   old.validation={status:'failed',method:'OCR observation consistency',detail:'Overlapping observations disagree; checksum results for individual readings do not confirm the source.'};
    old.reason='Overlapping Aadhaar-like OCR readings disagree. Manually verify the original pixels; no reading is confirmed.';
    disagreements++;
   }else if(family!=='fallback'&&candidate.category===old.category&&

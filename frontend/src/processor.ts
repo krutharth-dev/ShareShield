@@ -16,7 +16,7 @@ import {redactSelectedSpans,type TextSpan} from './text-redaction';
 import {pdfTextBoundingBox} from './pdf-text-geometry';
 GlobalWorkerOptions.workerSrc=pdfWorker;
 export type Box={x:number;y:number;width:number;height:number};
-export type Finding={id:string;category:string;risk:Risk;detection_confidence:number;ocr_confidence?:number;preview:string;reason:string;page:number;boxes:Box[]};
+export type Finding={id:string;category:string;risk:Risk;detection_confidence:number;ocr_confidence?:number;preview:string;reason:string;validation?:Candidate['validation'];source_context?:string;confidence_meaning?:string;page:number;boxes:Box[]};
 export type PageView={url:string;width:number;height:number};
 export type Check={name:string;status:'passed'|'failed'|'incomplete';detail:string};
 export type ResidualDetail={category:string;page:number;source:'PDF text'|'metadata'|'OCR'|'text export'|'DOCX export'|'face scan'|'QR scan'|'source coverage'};
@@ -64,7 +64,7 @@ function makeFindings(candidates:Candidate[],tokens:Token[],page:number,values:M
      boxes=[{x,y,width:right-x,height:bottom-y}];
    }
    return {id,category:f.category,risk:f.risk,detection_confidence:f.detection_confidence,
-     ocr_confidence:scores.length?Math.min(...scores):undefined,preview:masked(f.value),reason:f.reason,page,boxes};
+     ocr_confidence:scores.length?Math.min(...scores):undefined,preview:masked(f.value),reason:f.reason,validation:f.validation,source_context:f.source_context,confidence_meaning:f.confidence_meaning,page,boxes};
  });
 }
 export function forget(id:string){const s=records.get(id);if(s){s.analysis.pages.forEach(p=>URL.revokeObjectURL(p.url));s.outputs.forEach(u=>URL.revokeObjectURL(u));s.bytes.fill(0);s.values.clear();s.textSpans.clear();records.delete(id);}}

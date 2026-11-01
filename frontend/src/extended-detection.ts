@@ -1,3 +1,5 @@
+import {validatePhone} from './identifier-validation.ts';
+import {labelledRules} from './category-registry.ts';
 import type { Candidate, Risk } from './detection.ts';
 
 /**
@@ -7,7 +9,7 @@ import type { Candidate, Risk } from './detection.ts';
  */
 export function validLuhn(value: string): boolean {
   const digits = value.replace(/[ -]/g, '');
-  if (!/^\d{13,19}$/.test(digits)) return false;
+  if (!/^\d{13,19}$/.test(digits) || /^([0-9])\1+$/.test(digits)) return false;
   let total = 0, alternate = false;
   for (let i = digits.length - 1; i >= 0; i--) {
     let n = Number(digits[i]);
@@ -30,91 +32,20 @@ export function validIbanChecksum(value: string): boolean {
   return remainder === 1;
 }
 
-type Rule = {
-  category: string;
-  pattern: RegExp;
-  risk: Risk;
-  confidence: number;
-  reason: string;
-};
-
-/** Match the value capture only, not the label; never consume a neighbouring field. */
-const labelledRules: Rule[] = [
-  {
-    category: 'PATIENT_ID',
-    pattern: /(?:ರೋಗಿಯ?\s*(?:ಗುರುತಿನ\s*)?(?:ಸಂಖ್ಯೆ|ಐಡಿ)|patient\s*registration\s*(?:id|no\.?|number))\s*[:：#=\-]\s*([A-Z0-9೦-೯-]{3,30})/giu,
-    risk: 'HIGH', confidence: .88, reason: 'Explicit patient identifier label; no issuer verification'
-  },
-  {
-    category: 'MEDICAL_RECORD_NUMBER',
-    pattern: /(?:ವೈದ್ಯಕೀಯ\s*(?:ದಾಖಲೆ|ರೆಕಾರ್ಡ್)\s*(?:ಸಂಖ್ಯೆ|ನಂಬರ್)|ಆಸ್ಪತ್ರೆ\s*(?:ನೋಂದಣಿ|ದಾಖಲೆ)\s*ಸಂಖ್ಯೆ)\s*[:：#=\-]\s*([A-Z0-9೦-೯-]{3,30})/giu,
-    risk: 'HIGH', confidence: .9, reason: 'Explicit Kannada medical record or hospital registration label'
-  },
-  {
-    category: 'PATIENT_NAME_REVIEW',
-    pattern: /(?:^|\n)[ \t]*(?:patient\s*name|ರೋಗಿಯ\s*ಹೆಸರು)\s*[:：=\-]\s*([^\r\n]{3,90})/giu,
-    risk: 'HIGH', confidence: .68, reason: 'Labelled patient identity; review names against source'
-  },
-  {
-    category: 'MEDICAL_DIAGNOSIS_REVIEW',
-    pattern: /(?:^|\n)[ \t]*(?:ರೋಗನಿರ್ಣಯ|diagnostic\s*impression)\s*[:：=\-]\s*([^\r\n]{2,180})/giu,
-    risk: 'MEDIUM', confidence: .7, reason: 'Labelled clinical diagnosis; clinical interpretation requires review'
-  },
-  {
-    category: 'MEDICAL_TEST_RESULT_REVIEW',
-    pattern: /(?:^|\n)[ \t]*(?:ಲ್ಯಾಬ್\s*ಫಲಿತಾಂಶ|ಪರೀಕ್ಷೆಯ\s*ಫಲಿತಾಂಶ|ರಕ್ತ\s*ಪರೀಕ್ಷೆ|pathology\s*result)\s*[:：=\-]\s*([^\r\n]{2,180})/giu,
-    risk: 'MEDIUM', confidence: .7, reason: 'Labelled laboratory or pathology result; interpretation requires review'
-  },
-  {
-    category: 'CLINICAL_NOTE_REVIEW',
-    pattern: /(?:^|\n)[ \t]*(?:clinical\s*notes?|ವೈದ್ಯಕೀಯ\s*ಟಿಪ್ಪಣಿ|ಚಿಕಿತ್ಸೆಯ\s*ವಿವರ)\s*[:：=\-]\s*([^\r\n]{3,180})/giu,
-    risk: 'MEDIUM', confidence: .67, reason: 'Labelled clinical notes may contain several sensitive details'
-  },
-  {
-    category: 'MEDICAL_PROCEDURE_REVIEW',
-    pattern: /(?:^|\n)[ \t]*(?:procedure|surgery|operation|ಶಸ್ತ್ರಚಿಕಿತ್ಸೆ)\s*[:：=\-]\s*([^\r\n]{3,180})/giu,
-    risk: 'MEDIUM', confidence: .68, reason: 'Labelled treatment or surgery information'
-  },
-  {
-    category: 'ACADEMIC_ADMISSION_ID',
-    pattern: /(?:admission\s*(?:no\.?|number|id)|university\s*registration\s*(?:no\.?|number)|examination\s*seat\s*(?:no\.?|number)|ಪ್ರವೇಶ\s*ಸಂಖ್ಯೆ|ನೋಂದಣಿ\s*ಸಂಖ್ಯೆ)\s*[:：#=\-]\s*([A-Z0-9೦-೯/-]{4,30})/giu,
-    risk: 'HIGH', confidence: .86, reason: 'Labelled admission, university or examination identifier'
-  },
-  {
-    category: 'EMERGENCY_CONTACT_REVIEW',
-    pattern: /(?:^|\n)[ \t]*(?:emergency\s*contact|ತುರ್ತು\s*ಸಂಪರ್ಕ)\s*[:：=\-]\s*([^\r\n]{4,100})/giu,
-    risk: 'MEDIUM', confidence: .7, reason: 'Emergency contact may identify another person; review the entire field'
-  },
-  {
-    category: 'VEHICLE_REGISTRATION_REVIEW',
-    pattern: /(?:vehicle\s*(?:registration|number|no\.?)|registration\s*plate|ವಾಹನ\s*ಸಂಖ್ಯೆ)\s*[:：#=\-]\s*([A-Z0-9 -]{6,24})/giu,
-    risk: 'MEDIUM', confidence: .65, reason: 'Vehicle identifier may be personal depending on its owner and recipient'
-  },
-  {
-    category: 'INSURANCE_POLICY_REVIEW',
-    pattern: /(?:insurance\s*policy\s*(?:number|no\.?|id)|ವಿಮೆ\s*(?:ಪಾಲಿಸಿ\s*)?ಸಂಖ್ಯೆ)\s*[:：#=\-]\s*([A-Z0-9/-]{5,32})/giu,
-    risk: 'HIGH', confidence: .7, reason: 'Explicit insurance-policy identifier; type and validity not confirmed'
-  },
-  {
-    category: 'INTERNATIONAL_PHONE_REVIEW',
-    pattern: /(?:international\s*(?:mobile|phone)|overseas\s*phone|contact\s*number)\s*[:：=\-]\s*(\+[1-9][0-9 ()-]{7,21})/giu,
-    risk: 'MEDIUM', confidence: .58, reason: 'International telephone-shaped value; country-specific metadata not yet validated'
-  }
-];
-
 export function detectExtended(text: string, existing: readonly Candidate[] = []): Candidate[] {
   const added: Candidate[] = [];
   const add = (category: string, value: string, start: number, risk: Risk, confidence: number, reason: string) => {
     const end = start + value.length;
     if (start < 0 || end > text.length || text.slice(start, end) !== value) return;
+    if (/^(?:unknown|none|not available|n\/a|redacted)$/i.test(value.trim())) return;
     if (!value.trim() || /^\s*(?:\[REDACTED\]|••••)\s*$/i.test(value)) return;
     // Avoid duplicate source findings when the legacy rule already owns that span.
-    if ([...existing, ...added].some(f => f.start === start && f.end === end)) return;
+    if ([...existing, ...added].some(f => f.category!=='KANNADA_PERSONAL_DETAIL_REVIEW' && f.start === start && f.end === end)) return;
     added.push({ category, value, start, end, risk, detection_confidence: confidence, reason });
   };
   for (const rule of labelledRules) {
     for (const match of text.matchAll(rule.pattern)) {
-      const value = match[1];
+      const value = match[1] ?? match[0];
       if (!value) continue;
       add(rule.category, value, match.index! + match[0].lastIndexOf(value),
         rule.risk, rule.confidence, rule.reason);
@@ -137,6 +68,13 @@ export function detectExtended(text: string, existing: readonly Candidate[] = []
     const start = m.index! + m[0].lastIndexOf(value);
     add('IBAN_REVIEW', value, start, 'HIGH', validIbanChecksum(value) ? .7 : .42,
       validIbanChecksum(value) ? 'IBAN mod-97 passed; country length and account ownership not checked' : 'IBAN labelled but checksum or length is invalid; manual review');
+  }
+
+  const international = /(?<![A-Za-z0-9+])\+[1-9][0-9]*(?:[ \t-]?[0-9]+|[ \t]*\([0-9]+\)){1,7}(?![0-9])/g;
+  for(const m of text.matchAll(international)) {
+    if(m[0].replace(/\D/g,'').length>15||validatePhone(m[0]).status!=='passed')continue;
+    add('INTERNATIONAL_PHONE_REVIEW',m[0],m.index!,'MEDIUM',.8,
+      'Explicit international calling code; numbering-plan validation does not establish ownership');
   }
 
   // A bare university-seat-number-like code is review-only: layout and issuer rules vary.

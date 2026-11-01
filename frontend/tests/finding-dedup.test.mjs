@@ -48,3 +48,12 @@ test('virtual identifiers are not collapsed with nearby 12-digit Aadhaar finding
  const a=[f('a','AADHAAR_CANDIDATE',0,20,15),f('v','AADHAAR_VIRTUAL_ID',0,21,16)];
  assert.equal(consolidateLocated(a,new Map([['a','123456789012'],['v','1234567890123456']])).findings.length,2);
 });
+
+test('OCR disagreement invalidates stale successful structural validation',()=>{
+ const boxes=[{x:10,y:10,width:100,height:20}];
+ const first={id:'old',page:0,category:'AADHAAR_CANDIDATE',boxes,detection_confidence:.94,reason:'checksum pass',validation:{status:'passed',method:'Verhoeff',detail:'format only'}};
+ const second={...first,id:'new'};
+ const result=consolidateLocated([first,second],new Map([['old','234567890124'],['new','234567890125']]));
+ assert.equal(result.findings[0].validation.status,'failed');
+ assert.equal(result.findings[0].category,'AADHAAR_OCR_REVIEW');
+});
