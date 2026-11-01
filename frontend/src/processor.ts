@@ -253,7 +253,7 @@ export async function redact(id:string,selected:string[],manual:Manual[],progres
  if(s.text===undefined)validateManualRegions(manual,s.analysis.pages);
  const values=selected.map(x=>s.values.get(x)).filter((v):v is string=>v!==undefined);let output:Uint8Array;let mime:string;let extension:string;const checks:Check[]=[];let remaining=0,incomplete=false;
  const warnings=['SCOPED_CLEAR is limited to the listed checks. It is not a guarantee of anonymity.'];
- warnings.push('16-digit VID/BID fields are excluded from automatic detection by user preference. This is not proof that they are safe for public sharing.');
+ warnings.push('Labelled VID/BID candidates can be detected and redacted; unlabelled, unreadable or OCR-damaged virtual IDs may still be missed. Review all pages.');
  if(selected.length===0&&manual.length===0){
    incomplete=true;
    warnings.push('No redactions were approved or applied. A document with zero detected findings cannot be automatically declared safe.');

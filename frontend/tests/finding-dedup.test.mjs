@@ -38,3 +38,13 @@ test('duplicate fallback bands consolidate, separate bands do not',()=>{
  const a=[f('a','AADHAAR_NUMBER_REGION_REVIEW',0,20,15),f('b','AADHAAR_NUMBER_REGION_REVIEW',0,21,16),f('c','AADHAAR_NUMBER_REGION_REVIEW',0,20,145)];
  assert.equal(consolidateLocated(a,new Map()).findings.length,2);
 });
+
+test('exact duplicate Kannada address observations are collapsed without suppressing distinct addresses',()=>{
+ const a=[f('a','KANNADA_ADDRESS_REVIEW',0,20,15),f('b','KANNADA_ADDRESS_REVIEW',0,21,15),f('c','KANNADA_ADDRESS_REVIEW',0,20,145)];
+ const r=consolidateLocated(a,new Map([['a','ಮನೆ 1, ರಸ್ತೆ'],['b','ಮನೆ 1, ರಸ್ತೆ'],['c','ಮನೆ 2, ರಸ್ತೆ']]));
+ assert.equal(r.findings.length,2);assert.deepEqual(r.removedIds,['b']);
+});
+test('virtual identifiers are not collapsed with nearby 12-digit Aadhaar findings',()=>{
+ const a=[f('a','AADHAAR_CANDIDATE',0,20,15),f('v','AADHAAR_VIRTUAL_ID',0,21,16)];
+ assert.equal(consolidateLocated(a,new Map([['a','123456789012'],['v','1234567890123456']])).findings.length,2);
+});

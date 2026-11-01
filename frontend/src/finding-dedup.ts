@@ -7,6 +7,7 @@ export type Located={id:string;page:number;category:string;boxes:{x:number;y:num
  detection_confidence:number;ocr_confidence?:number;reason:string};
 const group=(s:string)=>{
  if(s==='AADHAAR_NUMBER_REGION_REVIEW')return 'fallback';
+ if(s==='AADHAAR_VIRTUAL_ID'||s==='VIRTUAL_ID')return 'virtual-id';
  if(s.startsWith('AADHAAR'))return 'aadhaar';
  if(s==='INDIAN_MOBILE'||s==='MOBILE_NUMBER')return 'mobile';
  if(s.startsWith('BANK_ACCOUNT'))return 'bank-account';
@@ -17,6 +18,10 @@ const group=(s:string)=>{
 const digits=(s:string)=>[...s].map(ch=>{
  const c=ch.codePointAt(0)!;return c>=0xce6&&c<=0xcef?String(c-0xce6):c>=0x966&&c<=0x96f?String(c-0x966):ch;
 }).join('').replace(/[\s.\-:_/]+/g,'').toLowerCase();
+const strictlyOverlaps=(a:{x:number;y:number;width:number;height:number},b:typeof a)=>{
+ const overlap=Math.max(0,Math.min(a.x+a.width,b.x+b.width)-Math.max(a.x,b.x))*Math.max(0,Math.min(a.y+a.height,b.y+b.height)-Math.max(a.y,b.y));
+ return a.width>0&&a.height>0&&b.width>0&&b.height>0&&overlap/Math.min(a.width*a.height,b.width*b.height)>.85;
+};
 const intersects=(a:{x:number;y:number;width:number;height:number},b:typeof a)=>{
  const area=Math.max(0,Math.min(a.x+a.width,b.x+b.width)-Math.max(a.x,b.x))*
  Math.max(0,Math.min(a.y+a.height,b.y+b.height)-Math.max(a.y,b.y));
@@ -26,6 +31,14 @@ export function consolidateLocated<T extends Located>(candidates:readonly T[],va
  const kept:T[]=[],removed:string[]=[];let disagreements=0;
  for(const candidate of candidates){
   const family=group(candidate.category);
+  // Dedupe repeated *identical* textual observations at the same pixels only.
+  // Preserve different Kannada address blocks and all uncertain/unreadable regions.
+  if(!family&&candidate.boxes.length&&!/^(UNREADABLE|HANDWRITING|FACE|QR_CODE)/.test(candidate.category)){
+   const value=values.get(candidate.id)?.trim().normalize('NFKC');
+   if(value&&kept.some(existing=>existing.page===candidate.page&&existing.category===candidate.category&&
+    values.get(existing.id)?.trim().normalize('NFKC')===value&&
+    existing.boxes.some(a=>candidate.boxes.some(b=>strictlyOverlaps(a,b))))){removed.push(candidate.id);continue;}
+  }
   if(!family||!candidate.boxes.length){kept.push(candidate);continue;}
   const index=kept.findIndex(existing=>existing.page===candidate.page&&group(existing.category)===family&&
    existing.boxes.length>0&&existing.boxes.some(a=>candidate.boxes.some(b=>intersects(a,b))));
