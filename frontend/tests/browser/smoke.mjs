@@ -54,6 +54,9 @@ try{
  assert.equal(await page.getByRole('region',{name:'Pre-export coverage preview'}).count(),1,'Coverage checkpoint must exist after analysis');
  assert.ok((await page.getByRole('region',{name:'Pre-export coverage preview'}).textContent())?.includes('High findings covered'));
 
+ assert.ok((await page.locator('.finding-card').first().textContent()).includes('not a calibrated probability'),'Finding cards explain heuristic confidence');
+ assert.ok((await page.locator('.finding-card').first().textContent()).includes('Source line'),'Finding cards preserve source context');
+ assert.ok((await page.locator('.finding-card').first().textContent()).includes('label or shape recognition'),'Finding cards expose validation scope');
  assert.ok(await page.locator('.finding-card input:checked').count()>=1,'Confident high-priority credentials should be auto-selected');
  assert.equal(await page.locator('.finding-box').count(),0,'Plain-text inputs have no visual page overlay');
  await page.locator('.findings-panel .priority-trigger').click();
@@ -283,4 +286,23 @@ try{
  assert.ok(exportedV2Text.includes(bidValue),'BID must remain untouched');
  assert.ok(exportedV2Text.includes('Grade: A+'),'Ordinary academic content must remain');
  console.log('PASS mini project: Aadhaar and VID detection with manual restore before re-export');
+ // Adversarial plaintext: normalization must never shift export positions.
+ await page.getByRole('button',{name:/Clear workspace/}).click();
+ const hiddenSecret='synthetic\u200b secret';
+ const adversarialSource='{"password":"'+hiddenSecret+'"}\r\nＰＡＮ：ＡＢＣＰＥ１２３４Ｆ\r\nPrescription:\r\n  fictional first medicine\r\n  fictional tail medicine\r\nGrade: A+\r\nEND_PUBLIC';
+ await page.locator('input[type="file"]').setInputFiles({name:'adversarial-offsets.txt',mimeType:'text/plain',buffer:Buffer.from(adversarialSource)});
+ await page.getByRole('button',{name:/Analyze pending files/}).click();
+ await page.locator('.finding-card').filter({hasText:'MEDICAL TEXT BLOCK REVIEW'}).first().waitFor({timeout:20000});
+ await page.getByRole('button',{name:'Open Priorities',exact:true}).click();
+ await page.locator('.priority-dialog-manual').getByRole('button',{name:'View findings'}).click();
+ assert.ok(await page.locator('.finding-card').filter({hasText:'MEDICAL TEXT BLOCK REVIEW'}).count()>=2,'Continuation lines must appear in the separate manual queue');
+ await page.getByRole('button',{name:'Show all findings'}).click();
+ await page.getByRole('button',{name:'Select all',exact:true}).click();
+ await page.getByRole('button',{name:'Redact & verify export'}).click();
+ await page.locator('.report-heading a[download]').waitFor({timeout:25000});
+ const adversarialLink=await page.locator('.report-heading a[download]').getAttribute('href');
+ const adversarialExport=await page.evaluate(async url=>await (await fetch(url)).text(),adversarialLink);
+ for(const secret of [hiddenSecret,'ＡＢＣＰＥ１２３４Ｆ','fictional tail medicine'])assert.ok(!adversarialExport.includes(secret),'Complete source value must be absent from actual export');
+ assert.ok(adversarialExport.includes('END_PUBLIC'),'Unrelated suffix must survive normalized redaction');
+ console.log('PASS normalized source offsets, multiline review queue and exported plaintext');
 }finally{await page.close();await browser.close();}
