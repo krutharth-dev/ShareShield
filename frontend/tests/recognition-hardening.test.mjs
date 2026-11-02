@@ -50,7 +50,7 @@ test('international metadata validates country plans without domestic substrings
  }
  for(const value of ['+999 123456789','+1 123 456 7890','+61 012 345 678'])assert.equal(validatePhone(value).status,'failed',value);
  assert.equal(only('Contact Number: +999 123456789','INTERNATIONAL_PHONE_REVIEW')[0].validation.status,'failed');
- assert.equal(only('ದೂರವಾಣಿ: +೯೧ ೯೮೭೬೫೪೩೨೧೦','INTERNATIONAL_PHONE_REVIEW')[0]?.validation.status,'passed');
+ assert.equal(only('ದೂರವಾಣಿ: +೯೧ ೯೮೭೬೫೪೩೨೧೦','INDIAN_MOBILE')[0]?.validation.status,'passed');
 });
 test('medical, academic and Kannada fields retain identity and offsets',()=>{
  const text='MRN: DEMO123\nPatient ID: TEST456\nDiagnosis: fictional diagnosis\nBlood Group: A+\nPrescription: fictional medication\nಔಷಧಿ: ಕಾಲ್ಪನಿಕ ಔಷಧ\nUSN: 4MC24CS099\nAdmission number: TEST2026\nAcademic Record: fictional attendance\nGrade: A+';

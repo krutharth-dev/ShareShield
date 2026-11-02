@@ -1,4 +1,4 @@
-import {validatePhone} from './identifier-validation.ts';
+import {validatePhone,validateIban} from './identifier-validation.ts';
 import {labelledRules} from './category-registry.ts';
 import type { Candidate, Risk } from './detection.ts';
 
@@ -44,7 +44,7 @@ export function detectExtended(text: string, existing: readonly Candidate[] = []
     added.push({ category, value, start, end, risk, detection_confidence: confidence, reason });
   };
   for (const rule of labelledRules) {
-    for (const match of text.matchAll(rule.pattern)) {
+    for (const match of text.matchAll(rule.pattern.source.startsWith('-----BEGIN')?rule.pattern:new RegExp(rule.pattern.source.replaceAll('\\s*','[ \t]*').replaceAll('\\s+','[ \t]+'),rule.pattern.flags))) {
       const value = match[1] ?? match[0];
       if (!value) continue;
       add(rule.category, value, match.index! + match[0].lastIndexOf(value),
@@ -60,14 +60,19 @@ export function detectExtended(text: string, existing: readonly Candidate[] = []
       validLuhn(value) ? 'Card-number structure and Luhn checksum passed; issuance not established' : 'Labelled payment-card value did not pass checksum; inspect OCR');
   }
 
-  // Require the explicit IBAN label. Country-specific lengths still need reference validation.
-  const ibanLabels = /(?:^|\n)[ \t]*(?:IBAN|international\s*bank\s*account\s*number)\s*[:：#=\-]\s*([A-Z]{2}\d{2}[A-Z0-9 \t-]{11,45})/gim;
-  for (const m of text.matchAll(ibanLabels)) {
-    const value = m[1].trimEnd();
-    if (!/^[A-Z]{2}\d{2}/i.test(value)) continue;
-    const start = m.index! + m[0].lastIndexOf(value);
-    add('IBAN_REVIEW', value, start, 'HIGH', validIbanChecksum(value) ? .7 : .42,
-      validIbanChecksum(value) ? 'IBAN mod-97 passed; country length and account ownership not checked' : 'IBAN labelled but checksum or length is invalid; manual review');
+  // Read the complete labelled field without accepting a valid prefix or next label.
+  const ibanLabels = /\b(?:IBAN|international[ \t]*bank[ \t]*account[ \t]*number)["']?[ \t]*[:#=][ \t]*["']?/gi;
+  for(const m of text.matchAll(ibanLabels)){
+    const start=m.index!+m[0].length,lineEnd=text.indexOf('\n',start);
+    const rest=text.slice(start,lineEnd<0?text.length:lineEnd);
+    const boundary=rest.search(/[ \t]+[A-Za-z][A-Za-z _-]{0,35}[ \t]*[:=]/);
+    const value=(boundary<0?rest:rest.slice(0,boundary)).match(/^[^"'\r\n;]+/)?.[0].trimEnd();
+    if(!value||value.length<4)continue;
+    const validation=validateIban(value);
+    add('IBAN_REVIEW',value,start,'HIGH',validation.status==='passed'?.7:.42,validation.detail);
+  }
+  for(const m of text.matchAll(/\b[A-Z]{2}[0-9]{2}[A-Z0-9]{11,30}\b/gi)){
+    if(validateIban(m[0]).status==='passed')add('IBAN_REVIEW',m[0],m.index!,'HIGH',.65,'Unlabelled IBAN passed country format and checksum; review context.');
   }
 
   const international = /(?<![A-Za-z0-9+])\+[1-9][0-9]*(?:[ \t-]?[0-9]+|[ \t]*\([0-9]+\)){1,7}(?![0-9])/g;

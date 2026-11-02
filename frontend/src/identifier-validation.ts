@@ -1,4 +1,5 @@
-import {parsePhoneNumberFromString} from 'libphonenumber-js/max';
+import {parsePhoneNumberFromString,isSupportedCountry,type CountryCode} from 'libphonenumber-js/max';
+import {validateIBAN,getCountrySpecifications} from 'ibantools';
 export type Validation = {status:'passed'|'failed'|'context_only'|'not_checked';method:string;detail:string};
 export function normalizeDigits(value:string):string {
  return value.replace(/[०-९೦-೯]/gu,c=>String(c.charCodeAt(0)-(c>='೦'?0xce6:0x966)));
@@ -9,11 +10,24 @@ export function validAadhaar(value:string){const s=normalizeDigits(value).replac
 
 export const validPan=(value:string)=>/^[A-Z]{3}[ABCFGHLJPT][A-Z][0-9]{4}[A-Z]$/.test(value.toUpperCase());
 export const validIfsc=(value:string)=>/^[A-Z]{4}0[A-Z0-9]{6}$/.test(value.toUpperCase());
-export function validatePhone(value:string):Validation {
- const input=normalizeDigits(value).trim();
- // National numbers are interpreted as Indian only in the legacy Indian-mobile recognizer.
- const number=parsePhoneNumberFromString(input.startsWith('+')?input:'+91'+input);
- const valid=!!number?.isValid();
+export function validatePhone(value:string,countryHint?:string):Validation {
+ let input=normalizeDigits(value).trim();
+ if(input.startsWith('00'))input='+'+input.slice(2);
+ const country=countryHint?.toUpperCase();
+ const knownCountry=country&&isSupportedCountry(country)?country as CountryCode:undefined;
+ const strict=/^(?:\+)?[0-9][0-9 ().-]*$/.test(input)&&input.replace(/\D/g,'').length<=15;
+ const number=strict&&(input.startsWith('+')||knownCountry)?parsePhoneNumberFromString(input,{defaultCountry:knownCountry,extract:false}):undefined;
+ const valid=!!number?.isValid()&&(!country||!!knownCountry);
  return {status:valid?'passed':'failed',method:'country numbering-plan metadata',
- detail:valid?`Numbering-plan format passed (${number!.country??'non-geographic'}); assignment and ownership are not verified.`:'Number does not match a supported country numbering plan; review OCR and country code.'};
+ detail:valid?`Numbering-plan format passed (${number!.country??'non-geographic'}); assignment and ownership are not verified.`:'Complete field does not match a supported numbering plan; review country code, explicit region and OCR.'};
+}
+const ibanCountries=getCountrySpecifications();
+export function validateIban(value:string):Validation {
+ const iban=normalizeDigits(value).replace(/[ \t-]/g,'').toUpperCase();
+ const country=iban.slice(0,2),spec=ibanCountries[country];
+ if(!/^[A-Z]{2}[0-9]{2}[A-Z0-9]+$/.test(iban))return {status:'failed',method:'IBAN country format + mod-97',detail:'IBAN contains invalid characters or header structure; review the complete field.'};
+ if(!spec?.chars||!spec.bban_regexp)return {status:'not_checked',method:'IBAN country format + mod-97',detail:'Country format is absent from the bundled registry; mandatory review, not validated.'};
+ const result=validateIBAN(iban);
+ return {status:result.valid?'passed':'failed',method:'IBAN country format + mod-97',
+ detail:result.valid?`Country length and BBAN format (${country}) plus checksums passed. Bank existence, issuance and ownership are not verified.`:'Country-specific length, BBAN format or checksum failed; retain for manual review.'};
 }

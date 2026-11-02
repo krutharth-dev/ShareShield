@@ -82,14 +82,13 @@ labelledRules.push(
  {category:'CONFIDENTIAL_INFORMATION_REVIEW',pattern:/(?:^|\n)[ \t]*(?:confidential\s*(?:notes|information)|trade\s*secret|ಗೌಪ್ಯ\s*ಮಾಹಿತಿ)\s*[:：=]\s*([^\r\n]{3,180})/giu,risk:'HIGH',confidence:.68,reason:'Explicit confidentiality label; confirm scope manually'},
  {category:'ACADEMIC_RECORD_REVIEW',pattern:/(?:^|\n)[ \t]*(?:academic\s*record|disciplinary\s*record|ಶೈಕ್ಷಣಿಕ\s*ದಾಖಲೆ)\s*[:：=]\s*([^\r\n]{3,180})/giu,risk:'MEDIUM',confidence:.75,reason:'Labelled student record; distinguish it from public course descriptions'},
  {category:'MEDICATION',pattern:/(?:^|\n)[ \t]*(?:ಔಷಧಿ|ಔಷಧಗಳು|ಔಷಧ\s*ಚೀಟಿ)\s*[:：=]\s*([^\r\n]{2,120})/gu,risk:'MEDIUM',confidence:.8,reason:'Explicit Kannada medication or prescription label'},
- {category:'CREDENTIAL_OR_SECRET',pattern:/\b(?:authorization\s*:\s*bearer|refresh[_ -]?token\s*[:=]|auth(?:entication)?[_ -]?token\s*[:=])\s*["']?([A-Za-z0-9._~+\/=!-]{4,})/giu,risk:'CRITICAL',confidence:.95,reason:'Explicit bearer, refresh or authentication token label'},
  {category:'CREDENTIAL_OR_SECRET',pattern:/-----BEGIN (?:RSA |EC |OPENSSH |ENCRYPTED )?PRIVATE KEY-----[\s\S]+?-----END (?:RSA |EC |OPENSSH |ENCRYPTED )?PRIVATE KEY-----/g,risk:'CRITICAL',confidence:.96,reason:'Private-key envelope; key validity not checked'}
 );
 
 export type CategoryDefinition = {
  family:string;
  baseRank:number|null;
- validation?:'aadhaar'|'vid'|'pan'|'ifsc'|'card'|'iban'|'phone';
+ validation?:'aadhaar'|'vid'|'pan'|'ifsc'|'card'|'iban'|'phone'|'bank';
  high?:boolean;
  health?:boolean;
  mandatoryReview?:boolean;
@@ -102,7 +101,7 @@ register(['AADHAAR_CANDIDATE','AADHAAR_REVIEW','AADHAAR_OCR_REVIEW','AADHAAR_NUM
 register(['AADHAAR_VIRTUAL_ID'],{family:'government',baseRank:1,validation:'vid',high:true});
 register(['PAN_CANDIDATE'],{family:'government',baseRank:2,validation:'pan',high:true});
 register(['CREDENTIAL_OR_SECRET'],{family:'credential',baseRank:3,high:true});
-register(['BANK_ACCOUNT_CANDIDATE'],{family:'banking',baseRank:4,high:true});
+register(['BANK_ACCOUNT_CANDIDATE'],{family:'banking',baseRank:4,high:true,validation:'bank'});
 register(['ENROLMENT_NUMBER'],{family:'government',baseRank:5,high:true});
 register(['PASSPORT_NUMBER'],{family:'government',baseRank:6,high:true});
 register(['UPI_ID','IFSC','PAYMENT_CARD_REVIEW','IBAN_REVIEW'],{family:'banking',baseRank:7});
@@ -128,3 +127,33 @@ register(['BIOMETRIC_INDICATOR_REVIEW'],{family:'biometric',baseRank:16,high:tru
 export const categoryDefinition=(category:string)=>CATEGORY_REGISTRY[category.trim().toUpperCase()];
 
 register(['KANNADA_PERSONAL_DETAIL_REVIEW'],{family:'identity',baseRank:null,mandatoryReview:true});
+
+/** Labels are line-local; value extraction handles quotes and whole fields centrally. */
+export type ContextFieldRule={category:string;label:RegExp;kind:'credential'|'identifier'|'numeric'|'phone';countryGroup?:number;risk:Risk;confidence:number};
+export const contextFieldRules:ContextFieldRule[]=[
+ {category:'CREDENTIAL_OR_SECRET',label:/(?<![A-Za-z0-9_])["']?(?:(?:temporary|temp)[ \t]+)?(?:password|passwd|api[_ -]?key|access[_ -]?token|refresh[_ -]?token|auth(?:entication)?[_ -]?token|client[_ -]?secret|secret)["']?(?:[ \t]*\(synthetic\))?[ \t]*[:=][ \t]*/gi,kind:'credential',risk:'CRITICAL',confidence:.97},
+ {category:'CREDENTIAL_OR_SECRET',label:/\bauthorization["']?[ \t]*:[ \t]*["']?bearer[ \t]+/gi,kind:'credential',risk:'CRITICAL',confidence:.95},
+ {category:'CREDENTIAL_OR_SECRET',label:/(?:ತಾತ್ಕಾಲಿಕ[ \t]+)?(?:ಪಾಸ್[ \t]*ವರ್ಡ್|ಪಾಸ್ವರ್ಡ್|ಗುಪ್ತ[ \t]*ಪದ|ರಹಸ್ಯ[ \t]*ಪದ)[ \t]*(?:\(ಸಿಂಥೆಟಿಕ್\))?[ \t]*[:：=][ \t]*/gu,kind:'credential',risk:'CRITICAL',confidence:.94},
+ {category:'MEDICAL_RECORD_NUMBER',label:/(?:\b(?:MRN|medical[ \t]*record[ \t]*(?:number|no\.?|id))|ವೈದ್ಯಕೀಯ[ \t]*(?:ದಾಖಲೆ|ರೆಕಾರ್ಡ್)[ \t]*(?:ಸಂಖ್ಯೆ|ನಂಬರ್))[ \t]*[:#=][ \t]*/giu,kind:'identifier',risk:'HIGH',confidence:.92},
+ {category:'PATIENT_ID',label:/(?:\bpatient[ \t]*(?:registration[ \t]*)?(?:id|number|no\.?)|ರೋಗಿಯ?[ \t]*(?:ಗುರುತಿನ[ \t]*)?(?:ಸಂಖ್ಯೆ|ಐಡಿ))[ \t]*[:#=][ \t]*/giu,kind:'identifier',risk:'HIGH',confidence:.92},
+ {category:'STUDENT_OR_EMPLOYEE_ID',label:/\b(?:USN|(?:college|student|employee)[ \t]*(?:id[ \t]*)?card[ \t]*(?:number|no\.?|id)?|student[ \t]*(?:application[ \t]*)?id|employee[ \t]*id|roll[ \t]*(?:number|no\.?))[ \t]*[:#=][ \t]*/gi,kind:'identifier',risk:'HIGH',confidence:.85},
+ {category:'ACADEMIC_ADMISSION_ID',label:/(?:\badmission[ \t]*(?:number|no\.?|id)|ಪ್ರವೇಶ[ \t]*ಸಂಖ್ಯೆ)[ \t]*[:#=][ \t]*/giu,kind:'identifier',risk:'HIGH',confidence:.86},
+ {category:'PASSPORT_NUMBER_REVIEW',label:/\bpassport[ \t]*(?:number|no\.?|id)?[ \t]*[:#=][ \t]*/gi,kind:'identifier',risk:'HIGH',confidence:.6},
+ {category:'DRIVING_LICENCE_REVIEW',label:/\b(?:driving[ \t]*licen[cs]e|DL)[ \t]*(?:number|no\.?|id)?[ \t]*[:#=][ \t]*/gi,kind:'identifier',risk:'HIGH',confidence:.6},
+ {category:'BANK_ACCOUNT_CANDIDATE',label:/(?:\b(?:bank[ \t]*)?account(?:[ \t]*(?:number|no\.?))?|\ba\/c|ಖಾತೆ(?:[ \t]*(?:ಸಂಖ್ಯೆ|ನಂಬರ್))?|खाता)[ \t]*[:#=][ \t]*/giu,kind:'numeric',risk:'HIGH',confidence:.88},
+ {category:'AADHAAR_VIRTUAL_ID',label:/(?:\b(?:VID|BID)|virtual[ \t]*(?:identification[ \t]*)?id|ವರ್ಚುವಲ್[ \t]*(?:ಐಡಿ|ಗುರುತಿನ[ \t]*ಸಂಖ್ಯೆ))[ \t]*[:#=][ \t]*/giu,kind:'numeric',risk:'HIGH',confidence:.9},
+ {category:'PAYMENT_CARD_REVIEW',label:/\b(?:payment[ \t]*card|(?:credit|debit)[ \t]*card|card[ \t]*(?:number|no\.?))[ \t]*[:#=][ \t]*/gi,kind:'numeric',risk:'HIGH',confidence:.7},
+ {category:'INTERNATIONAL_PHONE_REVIEW',label:/(?:\b(?:international[ \t]*)?(?:phone|mobile|telephone|contact[ \t]*number)|ದೂರವಾಣಿ|ಮೊಬೈಲ್)[ \t]*\(([A-Z]{2})\)[ \t]*[:=][ \t]*/giu,kind:'phone',countryGroup:1,risk:'MEDIUM',confidence:.85},
+ {category:'INTERNATIONAL_PHONE_REVIEW',label:/(?:\b(?:international[ \t]*)?(?:phone|mobile|telephone|contact[ \t]*number)|ದೂರವಾಣಿ|ಮೊಬೈಲ್)[ \t]*[:=][ \t]*(?=\+|00)/giu,kind:'phone',risk:'MEDIUM',confidence:.85}
+];
+export const blockFieldRules=[
+ {category:'MEDICAL_TEXT_BLOCK_REVIEW',label:/^[ \t]*(?:diagnosis|diagnoses|medical[ \t]*(?:condition|history)|prescriptions?|medications?|clinical[ \t]*notes?|allerg(?:y|ies)|lab(?:oratory)?[ \t]*results?|ರೋಗನಿರ್ಣಯ|ಔಷಧಿ|ಔಷಧಗಳು|ಔಷಧ[ \t]*ಚೀಟಿ|ವೈದ್ಯಕೀಯ[ \t]*ಟಿಪ್ಪಣಿ|ಚಿಕಿತ್ಸೆಯ[ \t]*ವಿವರ)[ \t]*[:=][ \t]*/iu},
+ {category:'ADDRESS_BLOCK_REVIEW',label:/^[ \t]*(?:(?:residential|home|postal|mailing)[ \t]*)?(?:address|ವಿಳಾಸ|ವಾಸಸ್ಥಳ)[ \t]*[:=][ \t]*/iu}
+];
+register(['PASSPORT_NUMBER_REVIEW'],{family:'government',baseRank:6,high:true,mandatoryReview:true});
+register(['DRIVING_LICENCE_REVIEW'],{family:'government',baseRank:9,mandatoryReview:true});
+register(['CREDENTIAL_FRAGMENT_REVIEW'],{family:'credential',baseRank:3,high:true,mandatoryReview:true});
+register(['MEDICAL_TEXT_BLOCK_REVIEW'],{family:'health',baseRank:null,health:true,mandatoryReview:true});
+register(['ADDRESS_BLOCK_REVIEW'],{family:'address',baseRank:14,mandatoryReview:true});
+
+register(['OTHER_IDENTIFIER_REVIEW'],{family:'other_identifier',baseRank:16,high:true,mandatoryReview:true});

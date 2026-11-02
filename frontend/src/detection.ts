@@ -1,10 +1,12 @@
+import {normalizeDetectionSource} from './detection-normalization.ts';
+import {detectContextFields,resolveCandidateOverlaps} from './context-fields.ts';
 import {validAadhaar} from './identifier-validation.ts';
 import {explainCandidate} from './finding-explanation.ts';
 import {detectExtended} from './extended-detection.ts';
 export type Risk = 'CRITICAL'|'HIGH'|'MEDIUM'|'LOW'|'CONTEXT_DEPENDENT';
-export type Candidate = {category:string;value:string;start:number;end:number;risk:Risk;detection_confidence:number;reason:string;validation?:import('./identifier-validation.ts').Validation;source_context?:string;confidence_meaning?:string};
+export type Candidate = {category:string;value:string;start:number;end:number;risk:Risk;detection_confidence:number;reason:string;validation?:import('./identifier-validation.ts').Validation;source_context?:string;confidence_meaning?:string;field_kind?:string;country_hint?:string};
 export {validAadhaar} from './identifier-validation.ts';
-export function detect(text:string):Candidate[]{
+function detectCanonical(text:string):Candidate[]{
  const found:Candidate[]=[];
  const patterns:[string,RegExp,Risk,number,string,number?][]=[
  ['BLOOD_GROUP',/(?:blood\s*(?:group|type)|ರಕ್ತದ?\s*ಗುಂಪು)\s*[:=\-]?\s*((?:AB|A|B|O)\s*(?:[+−-]|positive|negative))(?![A-Za-z])/gi,'MEDIUM',.96,'Explicit blood-group label, not an academic grade',1],
@@ -29,8 +31,6 @@ export function detect(text:string):Candidate[]{
  ['IFSC',/\b[A-Z]{4}0[A-Z0-9]{6}\b/gi,'HIGH',.97,'IFSC structure'],
  ['UPI_ID',/\b[a-z0-9._-]{2,256}@[a-z][a-z0-9-]{1,63}(?![a-z0-9.-])/gi,'HIGH',.85,'Payment handle candidate'],
   ['BANK_ACCOUNT_CANDIDATE',/(?:bank\s+)?(?:account(?:\s+number|\s+no\.?)?|a\/c|खाता|ಖಾತೆ(?:\s*(?:ಸಂಖ್ಯೆ|ನಂಬರ್))?)(?:\s*\(synthetic\))?\s*[:#：=\-]?\s*([0-9०-९೦-೯]{9,18})(?![0-9०-९೦-೯])/gi,'HIGH',.88,'Explicit bank-account label in English, Hindi or Kannada; not arbitrary numbers',1],
-  ['CREDENTIAL_OR_SECRET',/\b(?:(?:temporary|temp)\s+)?(?:api[_ -]?key|access[_-]?token|secret|password|passwd|client[_-]?secret)(?:\s*\(synthetic\))?\s*[:=]\s*["']?([^\s"\'\r\n]{4,256})/gi,'CRITICAL',.97,'Explicit credential or temporary-password label',1],
- ['CREDENTIAL_OR_SECRET',/(?:ತಾತ್ಕಾಲಿಕ[ \t]+)?(?:ಪಾಸ್[\u200c\u200d]?[ \t]*ವರ್ಡ್|ಪಾಸ್ವರ್ಡ್|ಗುಪ್ತ[ \t]*ಪದ|ರಹಸ್ಯ[ \t]*ಪದ)[ \t]*(?:\(ಸಿಂಥೆಟಿಕ್\))?[ \t]*[:：=][ \t]*["']?([^\s"'\r\n]{4,100})/gu,'CRITICAL',.94,'Explicit Kannada password or secret label; review source content',1],
  ['DATE_OF_BIRTH',/(?:date of birth|dob|ಜನ್ಮ\s*ದಿನಾಂಕ|ಹುಟ್ಟಿದ\s*ದಿನಾಂಕ|जन्म तिथि)\s*[:：=\-]?\s*([0-9०-९೦-೯]{1,4}[/.\-][0-9०-९೦-೯]{1,2}[/.\-][0-9०-९೦-೯]{1,4})/gi,'CONTEXT_DEPENDENT',.85,'Explicit date-of-birth label; supports Indian scripts',1],
   ['STUDENT_OR_EMPLOYEE_ID',/(?:\b(?:student\s*(?:application\s*)?id|employee\s*id|USN|roll\s*(?:no|number))|ವಿದ್ಯಾರ್ಥಿ(?:ಯ)?\s*ಗುರುತಿನ\s*ಸಂಖ್ಯೆ)\s*[:#=-]?\s*([A-Z0-9-]{4,30})/gi,'HIGH',.85,'Explicit institutional identifier label in English or Kannada',1],
  ['ENROLMENT_NUMBER',/\b(?:enrolment|enrollment)\s*(?:no|number)\.?\s*[:#-]?\s*(\d{4}\s*\/\s*\d{5}\s*\/\s*\d{5})/gi,'HIGH',.93,'Aadhaar enrolment identifier',1],
@@ -39,7 +39,7 @@ export function detect(text:string):Candidate[]{
  ['ADDRESS_REVIEW',/(?:^|\n)\s*((?:No\.?\s*\d{1,5}\b|(?:\d+(?:st|nd|rd|th)?\s+)?(?:Main|Cross|Street|Road|Lane)\b|Near\b|Address\s*:)[^\n]{3,95})/gim,'HIGH',.67,'Address-like line; inspect neighboring lines',1],
  ['POSTAL_CODE_REVIEW',/\b([1-9]\d{5})\b/g,'MEDIUM',.55,'Indian PIN-shaped sequence; context review',1],
  ];
- for(const [category,re,risk,confidence,reason,group] of patterns)for(const m of text.matchAll(re)){const value=m[group??0];const start=m.index!+(group?m[0].lastIndexOf(value):0);if(/^\s*\[REDACTED\]\s*$/i.test(value))continue;
+ for(const [category,re,risk,confidence,reason,group] of patterns)for(const m of text.matchAll(category==='ADDRESSEE_REVIEW'?re:new RegExp(re.source.replaceAll('\\s*','[ \t]*').replaceAll('\\s+','[ \t]+'),re.flags))){const value=m[group??0];const start=m.index!+(group?m[0].lastIndexOf(value):0);if(/^\s*\[REDACTED\]\s*$/i.test(value))continue;
  if(category==='POSTAL_CODE_REVIEW'&&!/(?:\bpin(?:\s*code)?|\bpostal\s*code|\bpostcode)\s*[:=-]?\s*$/i.test(text.slice(Math.max(0,start-40),start)))continue;
  if(category==='INDIAN_MOBILE'){
   const lineStart=text.lastIndexOf('\n',start-1)+1;
@@ -186,7 +186,7 @@ export function detect(text:string):Candidate[]{
    new RegExp(numericDigit+'[ \t._:/\\-]{0,6}$','u').test(text.slice(Math.max(0,start-9),start))||
    new RegExp('^[ \t._:/\\-]{0,6}'+numericDigit,'u').test(text.slice(end,end+9));
  const virtualIdField=/(?:\b(?:VID|BID)\b|virtual\s*(?:identification\s*)?id|ವರ್ಚುವಲ್\s*(?:ಐಡಿ|ಗುರುತಿನ\s*ಸಂಖ್ಯೆ))\s*[:#=\-]?\s*((?:[0-9०-९೦-೯][ \t-]?){15}[0-9०-९೦-೯])(?![0-9०-९೦-೯])/giu;
- const virtualIdMatches=[...text.matchAll(virtualIdField)];
+ const virtualIdMatches=[...text.matchAll(virtualIdField)].filter(m=>!touchesOtherDigits(m.index!+m[0].lastIndexOf(m[1]),m.index!+m[0].length));
  const excludedVirtualRanges=virtualIdMatches.map(m=>({start:m.index!,end:m.index!+m[0].length}));
  for(const m of virtualIdMatches){const value=m[1],start=m.index!+m[0].lastIndexOf(value);
   found.push({category:'AADHAAR_VIRTUAL_ID',value,start,end:start+value.length,risk:'HIGH',detection_confidence:.96,reason:'Labelled 16-digit virtual ID; syntax alone does not validate identity'});
@@ -226,12 +226,19 @@ export function detect(text:string):Candidate[]{
      found.push({category:'AADHAAR_OCR_REVIEW',value:m[0],start:m.index!,end:m.index!+m[0].length,risk:'HIGH',detection_confidence:.4,reason:'Possible Aadhaar digits distorted by OCR. Verify exact pixels manually.'});
    }
  }
- const combined=[...found,...detectExtended(text,found)];
+ const combined=[...found,...detectExtended(text,found),...detectContextFields(text)];
  // A local-number substring inside a +country-code number is not a second phone.
  const phones=combined.filter(f=>f.category==='INTERNATIONAL_PHONE_REVIEW');
  return combined.filter(f=>!(f.category==='INDIAN_MOBILE'&&phones.some(p=>p.start<=f.start&&p.end>=f.end)))
  .filter(f=>!(/^(?:PATIENT_ID|MEDICAL_RECORD_NUMBER)$/.test(f.category)&&/^(?:unknown|unavailable|none|null|missing|not)$/i.test(f.value)))
- .filter(f=>f.category==='AADHAAR_VIRTUAL_ID'||!inVirtualField(f.start,f.end)).sort((a,b)=>a.start-b.start).map(f=>explainCandidate(f,text));
+ .sort((a,b)=>a.start-b.start);
+}
+export function detect(text:string):Candidate[]{
+ const normalized=normalizeDetectionSource(text);
+ return resolveCandidateOverlaps(detectCanonical(normalized.text)).map(candidate=>{
+  const start=normalized.originalStart(candidate.start),end=normalized.originalEnd(candidate.end);
+  return explainCandidate({...candidate,start,end,value:text.slice(start,end)},text);
+ });
 }
 export const masked=(value:string)=>value.length<=4?'••••':'••••'+value.slice(-3);
 export function verificationStatus(residuals:number,incomplete:boolean){return residuals?'FLAG':incomplete?'UNVERIFIED':'SCOPED_CLEAR';}

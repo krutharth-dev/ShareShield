@@ -97,7 +97,7 @@ export function classifyPriority(category:string,purpose:SharingPurpose='public'
   reason='Student or university identifier: review recipient necessity; unlabelled USN shapes require confirmation.';
  }
  if(c==='INSURANCE_POLICY_REVIEW')reason='Private insurance identifier requires confirmation and recipient-specific protection.';
- if(/^(KANNADA_PARTY_ADDRESS_BLOCK_REVIEW|KANNADA_RESPONDENT_ADDRESS_BLOCK_REVIEW|KANNADA_PARTY_IDENTITY_REVIEW|KANNADA_ADDRESS_REVIEW|KANNADA_PERSONAL_DETAIL_REVIEW|PERSON_NAME_REVIEW|ADDRESS_REVIEW|PERSONAL_DETAILS_BLOCK|ADDRESSEE_REVIEW)$/.test(c)){
+ if(definition?.family==='address'||/^(KANNADA_PARTY_ADDRESS_BLOCK_REVIEW|KANNADA_RESPONDENT_ADDRESS_BLOCK_REVIEW|KANNADA_PARTY_IDENTITY_REVIEW|KANNADA_ADDRESS_REVIEW|KANNADA_PERSONAL_DETAIL_REVIEW|PERSON_NAME_REVIEW|ADDRESS_REVIEW|PERSONAL_DETAILS_BLOCK|ADDRESSEE_REVIEW)$/.test(c)){
   if(purpose==='public'){tier='HIGH';reason='Personal identity or multi-line residential address in a public document: confirm and remove the complete block.';}
   else{tier='MEDIUM';reason='Identifying party or address details: check whether the intended recipient is authorized to receive them.';}
  }
@@ -125,7 +125,7 @@ export function isUncertainOcrRegion(f:{category:string}):boolean{
  return /^(UNREADABLE_TEXT_LINE_REVIEW|UNREADABLE_PAGE_REVIEW|HANDWRITING_REVIEW)$/.test(f.category.toUpperCase());
 }
 export function requiresManualReview(f:{category:string;detection_confidence?:number;validation?:{status:string}}){
- return f.validation?.status==='failed'||needsMandatoryReview(f.category)||f.category.endsWith('_REVIEW')||(f.detection_confidence!==undefined&&f.detection_confidence<.6);
+ return f.validation?.status==='failed'||f.validation?.status==='not_checked'||needsMandatoryReview(f.category)||f.category.endsWith('_REVIEW')||(f.detection_confidence!==undefined&&f.detection_confidence<.6);
 }
 export function rankGroups<T extends RankedFinding>(findings:readonly T[],purpose:SharingPurpose='public',documentType=inferDocumentType(findings)){
  const categories=[...new Set(findings.map(f=>f.category))];
