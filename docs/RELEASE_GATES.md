@@ -1,21 +1,26 @@
-# ShareShield X release gates
+# ShareShield mini-project release gates
 
-## State
-This change is on a review branch based on `integration/complete-shareshield`. It has not been merged into `main` or deployed to the existing production Worker.
+The active target is the existing Cloudflare Pages project `shareshield-mini`; see `PRODUCTION_RELEASE.md`. PR #11 and stacked PR #12 are review work, not approved production releases. Older dated hackathon evidence describes that earlier application.
 
-## Must pass before merging/deploying
-- [ ] Frontend CI: install, TypeScript typecheck, Node tests, Vite build and Wrangler dry-run on exact branch head.
-- [ ] Backend CI: locked Python requirements, unit and integration tests, and verifier cases on exact branch head.
-- [ ] Browser acceptance with Playwright using fictional PDF/PNG/JPEG/DOCX examples.
-- [ ] Inspect actual downloaded outputs, not overlay highlights; independently rasterize and scan final files.
-- [ ] Demonstrate all four suspected handwriting lines when OCR confidently identifies only one.
-- [ ] Confirm QR unsupported/undecoded never yields `SCOPED_CLEAR`.
-- [ ] Confirm corrupt/empty OCR cannot produce automated clearance.
-- [ ] Demonstrate an intentionally remaining email, Aadhaar and QR region yields `FLAG`.
-- [ ] Confirm no sensitive values are displayed in error reports or committed to source.
-- [ ] Run Kannada-specific printed ground-truth benchmark, document its limits; do not fabricate accuracy.
-- [ ] Confirm deployed Worker version, build source and exact Git commit using Cloudflare and GitHub evidence.
-- [ ] Obtain judge-feedback audio before creating quotations or timestamps; review with project owner.
+## Automated evidence required on the exact release commit
 
-## Deployment policy
-No automatic or irreversible production update until all essential release gates pass. Keep the existing production Worker and integration PR intact. If a browser, model, cloud or paid dependency is unavailable, report `UNVERIFIED` rather than silently claiming success.
+- [ ] Frontend install, typecheck, candidate/policy tests and production build.
+- [ ] Pages Functions compilation.
+- [ ] Locked Python dependencies and backend/redaction verification tests.
+- [ ] Browser acceptance and actual downloaded-byte inspection, including multi-page files, manual restore, Unicode offsets, metadata and attachment exclusion.
+- [ ] Incomplete OCR/QR/face checks retain UNVERIFIED; remaining mandatory exposure yields FLAG.
+
+## Live and human acceptance
+
+- [ ] Pages preview final success, expected exact commit and production preserved.
+- [ ] Preview input → findings → approved masks → actual exported-file preview → downloaded and reopened output.
+- [ ] Mobile/keyboard review and manual region placement.
+- [ ] Printed Kannada ground-truth recognition/box benchmark with clear handwriting limits.
+- [ ] Authorized private-document visual acceptance where required; no genuine IDs/patient documents in commits or public demos.
+- [ ] Required reviewer approvals, security findings and explicit owner release authorization recorded.
+
+## Outstanding full-specification work
+
+A trained multilingual classifier with held-out results, full English/Kannada UI parity, five finished tutorial videos and broad format/security acceptance remain unestablished. Do not substitute heuristic confidence, scripts or green CI for those deliverables.
+
+Production Git builds are enabled on main. Do not merge simply because a draft preview passes. The manual production workflow has not been dispatched by this continuation.

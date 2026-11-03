@@ -17,3 +17,5 @@ __pycache__/
 .shareshield_data/
 
 frontend/public/ocr/
+
+frontend/.pages-functions-check/

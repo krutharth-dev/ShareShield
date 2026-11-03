@@ -12,6 +12,7 @@ try{
  assert.equal(await page.getByRole('heading',{name:/A real workflow/}).count(),1,'Presentation page must describe the live demonstration');
  await page.getByRole('link',{name:'Launch guided demo'}).click();
  assert.ok((await page.locator('.upload-zone').textContent())?.includes('no fixed PDF page limit'),'Upload UI must not claim a fixed PDF page cap');
+ assert.equal(await page.getByRole('combobox',{name:'Printed OCR language',exact:true}).count(),1,'OCR language selector must have an exact accessible name');
  assert.equal(await page.getByLabel('Printed OCR language').inputValue(),'eng+kan',
   'The workspace must default to English + Kannada for mixed-language documents');
  for(const code of ['eng','kan']){
