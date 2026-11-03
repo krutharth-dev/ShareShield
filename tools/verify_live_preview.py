@@ -30,7 +30,7 @@ def assets():
         if not path.is_file():
             continue
         relative = path.relative_to(ROOT / 'frontend/dist').as_posix()
-        request = urllib.request.Request(urljoin(PREVIEW_ORIGIN + '/', relative), headers={'Accept-Encoding':'identity'})
+        request = urllib.request.Request(urljoin(PREVIEW_ORIGIN + '/', relative), headers={'Accept-Encoding':'identity', 'User-Agent':'ShareShield-Acceptance/1.0 (+https://github.com/krutharth-dev/ShareShield)'})
         with urllib.request.urlopen(request, timeout=60) as response:
             data = response.read()
         expected = hashlib.sha256(path.read_bytes()).hexdigest()
