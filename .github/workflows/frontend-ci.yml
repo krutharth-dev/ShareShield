@@ -18,3 +18,5 @@ jobs:
       - run: npm test
       - run: npm run build
       - run: npm run worker:check
+      - name: Compile active Pages Functions
+        run: npx wrangler pages functions build functions --outdir .pages-functions-check

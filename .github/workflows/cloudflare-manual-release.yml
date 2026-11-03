@@ -1,4 +1,4 @@
-name: Cloudflare Mini Project production release (manual gate)
+name: Cloudflare Pages production release (manual gate)
 on:
   workflow_dispatch:
     inputs:
@@ -7,6 +7,9 @@ on:
         type: boolean
         required: true
         default: false
+concurrency:
+  group: shareshield-pages-production
+  cancel-in-progress: false
 jobs:
   release:
     if: github.ref_name == 'main' && inputs.reviewed == true
@@ -28,8 +31,9 @@ jobs:
       - run: npm run typecheck
       - run: npm test
       - run: npm run build
-      - run: npm run worker:check
-      - name: Deploy exact reviewed commit
+      - name: Compile Pages Functions
+        run: npx wrangler pages functions build functions --outdir .pages-functions-check
+      - name: Deploy reviewed commit to existing Pages project
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
@@ -37,9 +41,9 @@ jobs:
           test -n "$CLOUDFLARE_API_TOKEN"
           test -n "$CLOUDFLARE_ACCOUNT_ID"
           echo "Deploying Git commit $(git rev-parse HEAD)"
-          npx wrangler deploy
-      - name: Confirm public Worker endpoints
+          npx wrangler pages deploy dist --project-name shareshield-mini --branch main --commit-hash "$GITHUB_SHA" --commit-dirty=false
+      - name: Confirm public Pages endpoints
         run: |
-          curl --fail --retry 4 --retry-all-errors --retry-delay 3 https://shareshield-mini.krutharth-dev.workers.dev/api/health
-          curl --fail --retry 4 --retry-all-errors --retry-delay 3 -o /dev/null https://shareshield-mini.krutharth-dev.workers.dev/app
+          curl --fail --retry 4 --retry-all-errors --retry-delay 3 https://shareshield-mini.pages.dev/api/health
+          curl --fail --retry 4 --retry-all-errors --retry-delay 3 -o /dev/null https://shareshield-mini.pages.dev/app
           echo "Release commit $(git rev-parse HEAD)"

@@ -25,7 +25,15 @@ npm run dev
 
 ## Cloudflare deployment
 
-Mini project Worker: `shareshield-mini` (configured in `frontend/wrangler.jsonc`). From `frontend/`, after testing: `npx wrangler deploy`. The Python/Tesseract backend is not hosted by this Worker; main OCR and redaction processing run in the **browser**, with language assets loaded as needed. Do not redirect the mini-project Worker to the hackathon Worker or alter the hackathon production deployment.
+The active target is the existing **Cloudflare Pages** project `shareshield-mini`, connected to this repository's `main` branch:
+
+- Website: https://shareshield-mini.pages.dev
+- Workspace: https://shareshield-mini.pages.dev/app
+- Health: https://shareshield-mini.pages.dev/api/health
+
+Processing runs in the browser. The Pages Function reports that mode and keeps server-processing endpoints closed without a configured Python service. A standard Worker does not host FastAPI or native Tesseract.
+
+Use an isolated Pages preview for acceptance and obtain review/owner approval before merging or deploying production. Do not run plain `wrangler deploy` as the Pages release procedure or recreate retired hackathon Workers. The retained Worker configurations are historical/alternative build configurations. See [the Pages release runbook](docs/PRODUCTION_RELEASE.md).
 
 ## Safety and provenance
 
