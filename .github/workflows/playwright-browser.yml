@@ -22,3 +22,46 @@ jobs:
           npm run preview -- --host 127.0.0.1 --port 4174 > /tmp/shareshield-preview.log 2>&1 &
           for i in {1..30}; do if curl -fsS http://127.0.0.1:4174/app >/dev/null; then break; fi; sleep 1; done
           node tests/browser/smoke.mjs
+  live_preview:
+    if: github.event_name == 'push' && github.ref_name == 'fix/pages-release-acceptance-20261103'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read
+    env:
+      TEST_URL: https://5d01da12.shareshield-mini.pages.dev/app
+      SHARESHIELD_EVIDENCE_DIR: /tmp/shareshield-live-evidence
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: sudo apt-get update && sudo apt-get install -y tesseract-ocr tesseract-ocr-eng
+      - run: python -m pip install -r ../requirements.lock.txt
+      - run: npm ci --no-audit --no-fund
+      - run: npm run build
+      - name: Confirm live preview serves the tested runtime bytes
+        run: python ../tools/verify_live_preview.py assets
+      - run: npm install --no-save --ignore-scripts playwright@1.56.1
+      - run: npx playwright install --with-deps chromium
+      - name: Live Cloudflare upload, review, export and download acceptance
+        run: node tests/browser/smoke.mjs
+      - name: Independently inspect saved live exports with Python
+        working-directory: .
+        run: python tools/verify_live_preview.py exports
+      - name: Retain synthetic live acceptance evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: shareshield-live-preview-evidence-${{ github.sha }}
+          path: /tmp/shareshield-live-evidence
+          if-no-files-found: warn
+          retention-days: 7

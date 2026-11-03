@@ -1,6 +1,8 @@
 import {chromium} from 'playwright';
 import assert from 'node:assert/strict';
-import {readFile,writeFile} from 'node:fs/promises';
+import {readFile,writeFile,mkdir} from 'node:fs/promises';
+const evidenceDir=process.env.SHARESHIELD_EVIDENCE_DIR;
+if(evidenceDir)await mkdir(evidenceDir,{recursive:true});
 const browser=await chromium.launch({headless:true,args:['--no-sandbox']});
 const page=await browser.newPage({acceptDownloads:true});
 page.on('dialog',d=>d.accept());
@@ -87,6 +89,7 @@ try{
  assert.ok(exported.includes('[REDACTED]'),'Redaction placeholders required');
  for(const secret of ['fictional@example.test','DummySecret4829','TEST2026A'])
    assert.ok(!exported.includes(secret),'Downloaded export must not contain '+secret);
+ if(evidenceDir)await writeFile(evidenceDir+'/redacted.txt',exported);
  console.log('PASS browser redaction and reopened downloaded-file inspection');
  await page.getByRole('button',{name:'Clear selection'}).click();
  await page.getByRole('button',{name:'Redact & verify export'}).click();
@@ -172,6 +175,7 @@ try{
  assert.equal(await page.getByRole('button',{name:'Next exported page'}).count(),1,'In-app PDF page navigation is required');
  const statusPdf=(await page.locator('.report-heading h2').textContent())?.trim();
  assert.equal(statusPdf,'FLAG','Known unselected High exposures must flag even if OCR fails');
+ if(evidenceDir){const href=await page.locator('.report-heading a[download]').getAttribute('href');const bytes=await page.evaluate(async url=>Array.from(new Uint8Array(await (await fetch(url)).arrayBuffer())),href);await writeFile(evidenceDir+'/flagged-reference.pdf',Buffer.from(bytes));}
  await page.getByRole('button',{name:'Select all',exact:true}).click();
  await page.getByRole('button',{name:/Redact & verify export/}).click();
  await page.locator('.report').waitFor({timeout:90000});
@@ -193,6 +197,7 @@ try{
  },exportHref);
  const pdfBytes=Buffer.from(base64,'base64');
  await writeFile('/tmp/shareshield-browser-redacted.pdf',pdfBytes);
+ if(evidenceDir){await writeFile(evidenceDir+'/redacted-two-page.pdf',pdfBytes);await writeFile(evidenceDir+'/live-report.txt',await page.locator('.report').innerText());await page.locator('.report').screenshot({path:evidenceDir+'/live-export-preview.png'});}
  assert.equal(pdfBytes.subarray(0,5).toString('utf8'),'%PDF-');
  const {getDocument}=await import('pdfjs-dist/legacy/build/pdf.mjs');
  const pdfTask=getDocument({data:new Uint8Array(pdfBytes),useSystemFonts:true});
@@ -250,6 +255,7 @@ try{
  const exportedEight=await eightTask.promise;
  assert.equal(exportedEight.numPages,10,'Actual downloaded PDF must retain all ten pages');
  const exportedBytes=Buffer.from(bytesEight,'base64');
+ if(evidenceDir)await writeFile(evidenceDir+'/redacted-ten-page.pdf',exportedBytes);
  const reconstructed=await PDFDocument.load(exportedBytes);
  assert.ok(!reconstructed.catalog.lookup(PDFName.of('Names')),
   'Rasterized export must not import the source PDF embedded-file Names catalog');
@@ -305,5 +311,6 @@ try{
  const adversarialExport=await page.evaluate(async url=>await (await fetch(url)).text(),adversarialLink);
  for(const secret of [hiddenSecret,'ＡＢＣＰＥ１２３４Ｆ','fictional tail medicine'])assert.ok(!adversarialExport.includes(secret),'Complete source value must be absent from actual export');
  assert.ok(adversarialExport.includes('END_PUBLIC'),'Unrelated suffix must survive normalized redaction');
+ if(evidenceDir)await writeFile(evidenceDir+'/unicode-export.txt',adversarialExport);
  console.log('PASS normalized source offsets, multiline review queue and exported plaintext');
 }finally{await page.close();await browser.close();}
