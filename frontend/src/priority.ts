@@ -1,4 +1,5 @@
 import {categoryDefinition} from './category-registry.ts';
+import {isVirtualId} from './selection-policy.ts';
 /**
  * ShareShield review queue: the user's preferred category order, NOT a
  * prediction of privacy harm, PII validity, or OCR confidence.
@@ -27,6 +28,7 @@ export const PRIORITY_LABELS = [
 export type RankedFinding={category:string;page?:number;id?:string};
 export function priorityForCategory(input:string):number|null{
  const c=input.trim().toUpperCase();
+ if(isVirtualId({category:c}))return null;
  const registered=categoryDefinition(c);if(registered?.baseRank!=null)return registered.baseRank;
  if(c==='ENROLMENT_NUMBER')return 5;
  if(c.startsWith('AADHAAR'))return 1;
@@ -54,6 +56,7 @@ export function priorityForCategory(input:string):number|null{
 /** Needs special attention regardless of whether a numerical category exists. */
 export function needsMandatoryReview(category:string):boolean{
  const c=category.trim().toUpperCase();
+ if(isVirtualId({category:c}))return false;
  return categoryDefinition(c)?.mandatoryReview===true||/^(QR_CODE|FACE|PORTRAIT|PHOTO|UNREADABLE_TEXT_LINE_REVIEW|UNREADABLE_PAGE_REVIEW|HANDWRITING_REVIEW|KANNADA_PERSONAL_DETAIL_REVIEW)$/.test(c)||
         c==='AADHAAR_NUMBER_REGION_REVIEW'||c==='AADHAAR_OCR_REVIEW';
 }
@@ -71,6 +74,7 @@ export const PURPOSES={public:'General / Public Sharing',academic:'Academic Subm
 export type SharingPurpose=keyof typeof PURPOSES;
 export const DEFAULT_CATEGORIES=['AADHAAR_CANDIDATE','PAN_CANDIDATE','CREDENTIAL_OR_SECRET','BANK_ACCOUNT_CANDIDATE','ENROLMENT_NUMBER','PASSPORT_NUMBER','UPI_ID','VOTER_ID','DRIVING_LICENCE_NUMBER','STUDENT_OR_EMPLOYEE_ID','DATE_OF_BIRTH','INDIAN_MOBILE','EMAIL','ADDRESS_REVIEW','PERSON_NAME_REVIEW','LEGAL_CASE_REFERENCE','BLOOD_GROUP','MEDICAL_CONDITION','MEDICAL_RECORD_NUMBER','ACADEMIC_RESULT','CERTIFICATE_NUMBER'];
 export function classifyPriority(category:string,purpose:SharingPurpose='public',documentType='general'):{tier:Tier;mandatory:boolean;reason:string;order:number}{
+ if(isVirtualId({category}))return {tier:'LOW',mandatory:false,order:99,reason:'VID/BID is explicitly excluded from the configured redaction and verification scope; it may remain visible in exported documents.'};
  const c=category.toUpperCase(),definition=categoryDefinition(c);let tier:Tier='MEDIUM';let reason='Personal information: disclosure is optional for the selected purpose.';
  let order=priorityForCategory(c)??(c==='BLOOD_GROUP'?9.1:c.startsWith('MEDICAL_')?9.2:18);
  if(definition?.high||/^(AADHAAR|PAN_|CREDENTIAL|BANK_ACCOUNT|PASSPORT|CARD_NUMBER|MEDICAL_RECORD_NUMBER|PATIENT_ID|HEALTH_INSURANCE_ID|BIOMETRIC|PAYMENT_CARD_REVIEW|IBAN_REVIEW|INSURANCE_POLICY_REVIEW)/.test(c)){
@@ -125,6 +129,7 @@ export function isUncertainOcrRegion(f:{category:string}):boolean{
  return /^(UNREADABLE_TEXT_LINE_REVIEW|UNREADABLE_PAGE_REVIEW|HANDWRITING_REVIEW)$/.test(f.category.toUpperCase());
 }
 export function requiresManualReview(f:{category:string;detection_confidence?:number;validation?:{status:string}}){
+ if(isVirtualId(f))return false;
  return f.validation?.status==='failed'||f.validation?.status==='not_checked'||needsMandatoryReview(f.category)||f.category.endsWith('_REVIEW')||(f.detection_confidence!==undefined&&f.detection_confidence<.6);
 }
 export function rankGroups<T extends RankedFinding>(findings:readonly T[],purpose:SharingPurpose='public',documentType=inferDocumentType(findings)){

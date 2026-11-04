@@ -267,7 +267,7 @@ try{
  assert.notEqual((await page.locator('.report-heading h2').textContent())?.trim(),'SCOPED CLEAR',
   'No approved masks must never lead to a cleared result');
  console.log('PASS no fixed page cap: ten-page PDF analysis and reopened exported PDF');
- // Mini-project acceptance: 12-digit Aadhaar and separately labelled 16-digit virtual IDs.
+ // Mini-project acceptance: 12-digit Aadhaar selectable; labelled VID/BID excluded from the redaction list.
  await page.getByRole('button',{name:/Clear workspace/}).click();
  assert.equal(await page.getByLabel('Identifier validation').count(),0,'Experimental 16-digit profile must be removed');
  const aadhaarValue='1234 5678 9012',vidValue='8765 4321 8765 4321',bidValue='9107 2702 3707 5395';
@@ -277,7 +277,7 @@ try{
  const aadhaarCard=page.locator('.finding-card').filter({hasText:'AADHAAR REVIEW'});
  await aadhaarCard.waitFor({state:'visible',timeout:30000});
  assert.equal(await aadhaarCard.count(),1,'One true 12-digit Aadhaar-labelled field must produce one review finding');
- assert.equal(await page.locator('.finding-card').filter({hasText:'VIRTUAL ID'}).count(),2,'Both labelled virtual identifiers must be reviewable');
+ assert.equal(await page.locator('.finding-card').filter({hasText:'VIRTUAL ID'}).count(),0,'VID/BID must not appear in the redaction list');
  // BID is represented as a separate labelled virtual-ID finding.
  await page.getByRole('button',{name:'Select all',exact:true}).click();
  const selectedCategories=await page.locator('.finding-card input:checked').count();
@@ -292,7 +292,7 @@ try{
  assert.ok(exportedV2Text.includes(vidValue),'VID must remain untouched');
  assert.ok(exportedV2Text.includes(bidValue),'BID must remain untouched');
  assert.ok(exportedV2Text.includes('Grade: A+'),'Ordinary academic content must remain');
- console.log('PASS mini project: Aadhaar and VID detection with manual restore before re-export');
+ console.log('PASS mini project: 12-digit Aadhaar redaction with VID/BID deliberately out of scope');
  // Adversarial plaintext: normalization must never shift export positions.
  await page.getByRole('button',{name:/Clear workspace/}).click();
  const hiddenSecret='synthetic\u200b secret';
