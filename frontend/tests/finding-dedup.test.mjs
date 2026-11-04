@@ -57,3 +57,30 @@ test('OCR disagreement invalidates stale successful structural validation',()=>{
  assert.equal(result.findings[0].validation.status,'failed');
  assert.equal(result.findings[0].category,'AADHAAR_OCR_REVIEW');
 });
+
+test('a stronger OCR reading cannot shrink previously observed redaction coverage',()=>{
+ const wide={...f('wide','AADHAAR_REVIEW',0,10,10,.6),boxes:[box(10,10,120,20)]};
+ const narrow={...f('narrow','AADHAAR_REVIEW',0,15,10,.9),boxes:[box(15,10,35,20),box(55,10,35,20)]};
+ for(const observations of [[wide,narrow],[narrow,wide]]){
+  const copies=structuredClone(observations);
+  const r=consolidateLocated(copies,new Map(copies.map(x=>[x.id,'123456789012'])));
+  assert.equal(r.findings.length,1);
+  assert.ok(r.findings[0].boxes.some(b=>b.x===10&&b.width===120),'Original full region must survive either observation order');
+  assert.equal(r.findings[0].ocr_confidence,.9);
+ }
+});
+
+test('conflicting OCR observations retain both source regions for manual redaction',()=>{
+ const a={...f('a','AADHAAR_REVIEW',0,10,10),boxes:[box(10,10,100,20)]};
+ const b={...f('b','AADHAAR_REVIEW',0,20,10),boxes:[box(20,10,120,20)]};
+ const r=consolidateLocated([a,b],new Map([['a','123456789012'],['b','123456789013']]));
+ assert.equal(r.findings[0].category,'AADHAAR_OCR_REVIEW');
+ assert.equal(r.findings[0].boxes.length,2);
+ assert.equal(r.disagreements,1);
+});
+
+test('identical duplicate boxes do not multiply stored redaction regions',()=>{
+ const a=f('a','AADHAAR_REVIEW',0,10,10),b=f('b','AADHAAR_REVIEW',0,10,10);
+ const r=consolidateLocated([a,b],new Map([['a','123456789012'],['b','123456789012']]));
+ assert.equal(r.findings[0].boxes.length,1);
+});
