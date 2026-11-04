@@ -44,3 +44,7 @@ Use an isolated Pages preview for acceptance and obtain review/owner approval be
 - The hackathon submission remains in a separate **private** repository.
 
 See `docs/KNOWN_LIMITATIONS.md` and `VERIFICATION_CONTRACT.md` for technical boundaries.
+
+## Experimental multilingual trained recognizer (development only)
+
+The Phase 2 draft adds a locally trained contextual span classifier alongside the existing deterministic engine. See [reproduction and measured limitations](ml/README.md), [model card](ml/MODEL_CARD.md), and [data provenance](ml/DATA_PROVENANCE.md). AI-only suggestions require manual review. This synthetic-data model is not general NER or proof of anonymization, and this draft must not be deployed to production without further evaluation.

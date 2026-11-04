@@ -1,0 +1,36 @@
+{
+  "browser": "141.0.7390.37",
+  "cases": [
+    {
+      "unavailable": false,
+      "upload_to_export_ms": 433,
+      "resources": [
+        {
+          "duration": 59.40000000002328,
+          "encodedBodySize": 340636,
+          "decodedBodySize": 1520583
+        }
+      ],
+      "jsHeap": {
+        "used": 16100000,
+        "total": 23100000
+      }
+    },
+    {
+      "unavailable": true,
+      "upload_to_export_ms": 272,
+      "resources": [
+        {
+          "duration": 1.599999999976717,
+          "encodedBodySize": 0,
+          "decodedBodySize": 0
+        }
+      ],
+      "jsHeap": {
+        "used": 11200000,
+        "total": 15200000
+      }
+    }
+  ],
+  "memory_scope": "JS heap observed after upload/export, NOT peak renderer RSS or model-only memory. Browser peak memory remains unmeasured."
+}

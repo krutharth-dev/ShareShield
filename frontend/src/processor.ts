@@ -1,3 +1,5 @@
+import {loadContextModel} from './context-model';
+import {detectHybrid} from './hybrid-detection';
 import {classifyPriority,inferDocumentType,type SharingPurpose} from './priority';
 import {isVirtualId} from './selection-policy';
 import {coverageCheck} from './clearance';
@@ -17,7 +19,7 @@ import {redactSelectedSpans,type TextSpan} from './text-redaction';
 import {pdfTextBoundingBox} from './pdf-text-geometry';
 GlobalWorkerOptions.workerSrc=pdfWorker;
 export type Box={x:number;y:number;width:number;height:number};
-export type Finding={id:string;category:string;risk:Risk;detection_confidence:number;ocr_confidence?:number;preview:string;reason:string;validation?:Candidate['validation'];source_context?:string;confidence_meaning?:string;page:number;boxes:Box[]};
+export type Finding={recognition_source?:Candidate['recognition_source'];ai_model_version?:string;id:string;category:string;risk:Risk;detection_confidence:number;ocr_confidence?:number;preview:string;reason:string;validation?:Candidate['validation'];source_context?:string;confidence_meaning?:string;page:number;boxes:Box[]};
 export type PageView={url:string;width:number;height:number};
 export type Check={name:string;status:'passed'|'failed'|'incomplete';detail:string};
 export type ResidualDetail={category:string;page:number;source:'PDF text'|'metadata'|'OCR'|'text export'|'DOCX export'|'face scan'|'QR scan'|'source coverage'};
@@ -64,7 +66,7 @@ function makeFindings(candidates:Candidate[],tokens:Token[],page:number,values:M
      const bottom=Math.max(...boxes.map(b=>b.y+b.height))+5;
      boxes=[{x,y,width:right-x,height:bottom-y}];
    }
-   return {id,category:f.category,risk:f.risk,detection_confidence:f.detection_confidence,
+   return {id,recognition_source:f.recognition_source,ai_model_version:f.ai_model_version,category:f.category,risk:f.risk,detection_confidence:f.detection_confidence,
      ocr_confidence:scores.length?Math.min(...scores):undefined,preview:masked(f.value),reason:f.reason,validation:f.validation,source_context:f.source_context,confidence_meaning:f.confidence_meaning,page,boxes};
  });
 }
@@ -83,6 +85,9 @@ export async function analyze(file:File,lang='eng',progress:(s:string)=>void=()=
  const a:Analysis={file_id:crypto.randomUUID(),filename:file.name,kind,findings:[],pages:[],warnings:['Detection can miss sensitive content. Review every page. Names, addresses, QR codes and handwriting require manual review.'],language:lang,expires:Date.now()+TTL};
  a.warnings.push('VID/BID values are excluded from the configured redaction and verification scope. Review original documents before public sharing.');
  const s:Stored={analysis:a,bytes,values:new Map(),textSpans:new Map(),tokens:[],outputs:[],visionIncomplete:false,multilingualReviewRequired:false,ocrReviewRequired:false};let worker:Worker|undefined,pdf:PDFDocumentProxy|undefined;
+ const contextModel=await loadContextModel();
+ a.warnings.push(contextModel?'Experimental trained contextual recognition is active locally. Synthetic-data model; review AI-only findings and all unrecognised content.':'Contextual model unavailable: deterministic detection remains active; review for missed contextual information.');
+ const recognize=(text:string)=>detectHybrid(text,contextModel);
  let stage='initialization';
  try{
  if(kind==='txt'||kind==='csv'||kind==='docx'){
@@ -90,7 +95,7 @@ export async function analyze(file:File,lang='eng',progress:(s:string)=>void=()=
  if(text.includes('\0'))throw Error('Binary content is not supported as text.');if(text.length>500_000)throw Error('Text is limited to 500,000 characters.');
  s.text=text;
  if(/[\u0C80-\u0CFF]/u.test(text)){s.multilingualReviewRequired=true;a.warnings.push('Kannada script detected: identity and legal-party recognition is heuristic. Full manual review is mandatory before sharing.');}
- a.findings=makeFindings(detect(text),[],0,s.values,s.textSpans);
+ a.findings=makeFindings(recognize(text),[],0,s.values,s.textSpans);
  if(kind==='docx')a.warnings.push('DOCX MVP: only extractable Word text is reviewed. Export creates a fresh plain-text Word document without original images, comments, tracked changes, styling, hyperlinks, headers, footers or metadata. Complex formats must be reviewed manually.');
  else a.warnings.push('UTF-8 text only. CSV redaction preserves the text structure; spreadsheet formulas are not evaluated.');
  }else{
@@ -148,8 +153,8 @@ export async function analyze(file:File,lang='eng',progress:(s:string)=>void=()=
    s.ocrReviewRequired=true;
    a.warnings.push('Page '+n+': OCR recognition may be incomplete. Export cannot be automatically cleared without review.');
  }
- const native=makeFindings(detect(text),tokens,n-1,s.values);
- const acrossPasses=ocrPasses.flatMap(pass=>makeFindings(detect(pass.text),pass.tokens,n-1,s.values));
+ const native=makeFindings(recognize(text),tokens,n-1,s.values);
+ const acrossPasses=ocrPasses.flatMap(pass=>makeFindings(recognize(pass.text),pass.tokens,n-1,s.values));
  // Compare all OCR passes using actual overlapping boxes after aggregation; small pixel shifts must not multiply findings.
  // Retain incomplete OCR status when even the best pass is weak; per-line
   // coverage below separately checks for omitted words and handwritten ink.

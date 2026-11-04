@@ -3,7 +3,7 @@
  * values in different source locations. Uncertain ink and broad Kannada
  * context review are not suppressed by this numerical de-duplication.
  */
-export type Located={id:string;page:number;category:string;boxes:{x:number;y:number;width:number;height:number}[];
+export type Located={recognition_source?:string;id:string;page:number;category:string;boxes:{x:number;y:number;width:number;height:number}[];
  detection_confidence:number;ocr_confidence?:number;reason:string;validation?:{status:string;method:string;detail:string}};
 const group=(s:string)=>{
  if(s==='AADHAAR_NUMBER_REGION_REVIEW')return 'fallback';
@@ -29,7 +29,7 @@ const intersects=(a:{x:number;y:number;width:number;height:number},b:typeof a)=>
 };
 export function consolidateLocated<T extends Located>(candidates:readonly T[],values:ReadonlyMap<string,string>){
  const kept:T[]=[],removed:string[]=[];let disagreements=0;
- for(const candidate of candidates){
+ for(const candidate of [...candidates].sort((a,b)=>Number(a.recognition_source==='trained_ai')-Number(b.recognition_source==='trained_ai'))){
   const family=group(candidate.category);
   // Dedupe repeated *identical* textual observations at the same pixels only.
   // Preserve different Kannada address blocks and all uncertain/unreadable regions.

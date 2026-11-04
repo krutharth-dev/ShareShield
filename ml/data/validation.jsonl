@@ -1,0 +1,760 @@
+{"text": "Updated hospital medical record archive: 4829160", "start": 41, "end": 48, "category": "MEDICAL_RECORD_NUMBER", "language": "en", "family": 6, "split": "validation"}
+{"text": "Updated medical record archive hospital: 4829161", "start": 41, "end": 48, "category": "MEDICAL_RECORD_NUMBER", "language": "en", "family": 6, "split": "validation"}
+{"text": "Updated hospital medical record archive: 4829162", "start": 41, "end": 48, "category": "MEDICAL_RECORD_NUMBER", "language": "en", "family": 6, "split": "validation"}
+{"text": "Updated medical record archive hospital: 4829163", "start": 41, "end": 48, "category": "MEDICAL_RECORD_NUMBER", "language": "en", "family": 6, "split": "validation"}
+{"text": "ನವೀಕರಿಸಿದ ಆಸ್ಪತ್ರೆ ವೈದ್ಯಕೀಯ ದಾಖಲೆ: 4829160", "start": 35, "end": 42, "category": "MEDICAL_RECORD_NUMBER", "language": "kn", "family": 6, "split": "validation"}
+{"text": "ನವೀಕರಿಸಿದ ವೈದ್ಯಕೀಯ ದಾಖಲೆ ಆಸ್ಪತ್ರೆ: 4829161", "start": 35, "end": 42, "category": "MEDICAL_RECORD_NUMBER", "language": "kn", "family": 6, "split": "validation"}
+{"text": "ನವೀಕರಿಸಿದ ಆಸ್ಪತ್ರೆ ವೈದ್ಯಕೀಯ ದಾಖಲೆ: 4829162", "start": 35, "end": 42, "category": "MEDICAL_RECORD_NUMBER", "language": "kn", "family": 6, "split": "validation"}
+{"text": "ನವೀಕರಿಸಿದ ವೈದ್ಯಕೀಯ ದಾಖಲೆ ಆಸ್ಪತ್ರೆ: 4829163", "start": 35, "end": 42, "category": "MEDICAL_RECORD_NUMBER", "language": "kn", "family": 6, "split": "validation"}
+{"text": "Updated ಆಸ್ಪತ್ರೆ ವೈದ್ಯಕೀಯ ದಾಖಲೆ hospital medical record archive: 4829160", "start": 65, "end": 72, "category": "MEDICAL_RECORD_NUMBER", "language": "mixed", "family": 6, "split": "validation"}
+{"text": "Updated ವೈದ್ಯಕೀಯ ದಾಖಲೆ hospital medical record archive ಆಸ್ಪತ್ರೆ: 4829161", "start": 65, "end": 72, "category": "MEDICAL_RECORD_NUMBER", "language": "mixed", "family": 6, "split": "validation"}
+{"text": "Updated ಆಸ್ಪತ್ರೆ ವೈದ್ಯಕೀಯ ದಾಖಲೆ hospital medical record archive: 4829162", "start": 65, "end": 72, "category": "MEDICAL_RECORD_NUMBER", "language": "mixed", "family": 6, "split": "validation"}
+{"text": "Updated ವೈದ್ಯಕೀಯ ದಾಖಲೆ hospital medical record archive ಆಸ್ಪತ್ರೆ: 4829163", "start": 65, "end": 72, "category": "MEDICAL_RECORD_NUMBER", "language": "mixed", "family": 6, "split": "validation"}
+{"text": "Review hospital medical record archive with value 4829170", "start": 50, "end": 57, "category": "MEDICAL_RECORD_NUMBER", "language": "en", "family": 7, "split": "validation"}
+{"text": "Review medical record archive hospital with value 4829171", "start": 50, "end": 57, "category": "MEDICAL_RECORD_NUMBER", "language": "en", "family": 7, "split": "validation"}
+{"text": "Review hospital medical record archive with value 4829172", "start": 50, "end": 57, "category": "MEDICAL_RECORD_NUMBER", "language": "en", "family": 7, "split": "validation"}
+{"text": "Review medical record archive hospital with value 4829173", "start": 50, "end": 57, "category": "MEDICAL_RECORD_NUMBER", "language": "en", "family": 7, "split": "validation"}
+{"text": "ಆಸ್ಪತ್ರೆ ವೈದ್ಯಕೀಯ ದಾಖಲೆ ಮೌಲ್ಯವನ್ನು ಪರಿಶೀಲಿಸಿ 4829170", "start": 45, "end": 52, "category": "MEDICAL_RECORD_NUMBER", "language": "kn", "family": 7, "split": "validation"}
+{"text": "ವೈದ್ಯಕೀಯ ದಾಖಲೆ ಆಸ್ಪತ್ರೆ ಮೌಲ್ಯವನ್ನು ಪರಿಶೀಲಿಸಿ 4829171", "start": 45, "end": 52, "category": "MEDICAL_RECORD_NUMBER", "language": "kn", "family": 7, "split": "validation"}
+{"text": "ಆಸ್ಪತ್ರೆ ವೈದ್ಯಕೀಯ ದಾಖಲೆ ಮೌಲ್ಯವನ್ನು ಪರಿಶೀಲಿಸಿ 4829172", "start": 45, "end": 52, "category": "MEDICAL_RECORD_NUMBER", "language": "kn", "family": 7, "split": "validation"}
+{"text": "ವೈದ್ಯಕೀಯ ದಾಖಲೆ ಆಸ್ಪತ್ರೆ ಮೌಲ್ಯವನ್ನು ಪರಿಶೀಲಿಸಿ 4829173", "start": 45, "end": 52, "category": "MEDICAL_RECORD_NUMBER", "language": "kn", "family": 7, "split": "validation"}
+{"text": "Review ಆಸ್ಪತ್ರೆ ವೈದ್ಯಕೀಯ ದಾಖಲೆ hospital medical record archive with value 4829170", "start": 74, "end": 81, "category": "MEDICAL_RECORD_NUMBER", "language": "mixed", "family": 7, "split": "validation"}
+{"text": "Review ವೈದ್ಯಕೀಯ ದಾಖಲೆ hospital medical record archive ಆಸ್ಪತ್ರೆ with value 4829171", "start": 74, "end": 81, "category": "MEDICAL_RECORD_NUMBER", "language": "mixed", "family": 7, "split": "validation"}
+{"text": "Review ಆಸ್ಪತ್ರೆ ವೈದ್ಯಕೀಯ ದಾಖಲೆ hospital medical record archive with value 4829172", "start": 74, "end": 81, "category": "MEDICAL_RECORD_NUMBER", "language": "mixed", "family": 7, "split": "validation"}
+{"text": "Review ವೈದ್ಯಕೀಯ ದಾಖಲೆ hospital medical record archive ಆಸ್ಪತ್ರೆ with value 4829173", "start": 74, "end": 81, "category": "MEDICAL_RECORD_NUMBER", "language": "mixed", "family": 7, "split": "validation"}
+{"text": "Updated patient treatment registration: 5928160", "start": 40, "end": 47, "category": "PATIENT_ID", "language": "en", "family": 6, "split": "validation"}
+{"text": "Updated treatment registration patient: 5928161", "start": 40, "end": 47, "category": "PATIENT_ID", "language": "en", "family": 6, "split": "validation"}
+{"text": "Updated patient treatment registration: 5928162", "start": 40, "end": 47, "category": "PATIENT_ID", "language": "en", "family": 6, "split": "validation"}
+{"text": "Updated treatment registration patient: 5928163", "start": 40, "end": 47, "category": "PATIENT_ID", "language": "en", "family": 6, "split": "validation"}
+{"text": "ನವೀಕರಿಸಿದ ರೋಗಿಯ ಚಿಕಿತ್ಸೆ ಗುರುತು: 5928160", "start": 33, "end": 40, "category": "PATIENT_ID", "language": "kn", "family": 6, "split": "validation"}
+{"text": "ನವೀಕರಿಸಿದ ಚಿಕಿತ್ಸೆ ಗುರುತು ರೋಗಿಯ: 5928161", "start": 33, "end": 40, "category": "PATIENT_ID", "language": "kn", "family": 6, "split": "validation"}
+{"text": "ನವೀಕರಿಸಿದ ರೋಗಿಯ ಚಿಕಿತ್ಸೆ ಗುರುತು: 5928162", "start": 33, "end": 40, "category": "PATIENT_ID", "language": "kn", "family": 6, "split": "validation"}
+{"text": "ನವೀಕರಿಸಿದ ಚಿಕಿತ್ಸೆ ಗುರುತು ರೋಗಿಯ: 5928163", "start": 33, "end": 40, "category": "PATIENT_ID", "language": "kn", "family": 6, "split": "validation"}
+{"text": "Updated ರೋಗಿಯ ಚಿಕಿತ್ಸೆ ಗುರುತು patient treatment registration: 5928160", "start": 62, "end": 69, "category": "PATIENT_ID", "language": "mixed", "family": 6, "split": "validation"}
+{"text": "Updated ಚಿಕಿತ್ಸೆ ಗುರುತು patient treatment registration ರೋಗಿಯ: 5928161", "start": 62, "end": 69, "category": "PATIENT_ID", "language": "mixed", "family": 6, "split": "validation"}
+{"text": "Updated ರೋಗಿಯ ಚಿಕಿತ್ಸೆ ಗುರುತು patient treatment registration: 5928162", "start": 62, "end": 69, "category": "PATIENT_ID", "language": "mixed", "family": 6, "split": "validation"}
+{"text": "Updated ಚಿಕಿತ್ಸೆ ಗುರುತು patient treatment registration ರೋಗಿಯ: 5928163", "start": 62, "end": 69, "category": "PATIENT_ID", "language": "mixed", "family": 6, "split": "validation"}
+{"text": "Review patient treatment registration with value 5928170", "start": 49, "end": 56, "category": "PATIENT_ID", "language": "en", "family": 7, "split": "validation"}
+{"text": "Review treatment registration patient with value 5928171", "start": 49, "end": 56, "category": "PATIENT_ID", "language": "en", "family": 7, "split": "validation"}
+{"text": "Review patient treatment registration with value 5928172", "start": 49, "end": 56, "category": "PATIENT_ID", "language": "en", "family": 7, "split": "validation"}
+{"text": "Review treatment registration patient with value 5928173", "start": 49, "end": 56, "category": "PATIENT_ID", "language": "en", "family": 7, "split": "validation"}
+{"text": "ರೋಗಿಯ ಚಿಕಿತ್ಸೆ ಗುರುತು ಮೌಲ್ಯವನ್ನು ಪರಿಶೀಲಿಸಿ 5928170", "start": 43, "end": 50, "category": "PATIENT_ID", "language": "kn", "family": 7, "split": "validation"}
+{"text": "ಚಿಕಿತ್ಸೆ ಗುರುತು ರೋಗಿಯ ಮೌಲ್ಯವನ್ನು ಪರಿಶೀಲಿಸಿ 5928171", "start": 43, "end": 50, "category": "PATIENT_ID", "language": "kn", "family": 7, "split": "validation"}
+{"text": "ರೋಗಿಯ ಚಿಕಿತ್ಸೆ ಗುರುತು ಮೌಲ್ಯವನ್ನು ಪರಿಶೀಲಿಸಿ 5928172", "start": 43, "end": 50, "category": "PATIENT_ID", "language": "kn", "family": 7, "split": "validation"}
+{"text": "ಚಿಕಿತ್ಸೆ ಗುರುತು ರೋಗಿಯ ಮೌಲ್ಯವನ್ನು ಪರಿಶೀಲಿಸಿ 5928173", "start": 43, "end": 50, "category": "PATIENT_ID", "language": "kn", "family": 7, "split": "validation"}
+{"text": "Review ರೋಗಿಯ ಚಿಕಿತ್ಸೆ ಗುರುತು patient treatment registration with value 5928170", "start": 71, "end": 78, "category": "PATIENT_ID", "language": "mixed", "family": 7, "split": "validation"}
+{"text": "Review ಚಿಕಿತ್ಸೆ ಗುರುತು patient treatment registration ರೋಗಿಯ with value 5928171", "start": 71, "end": 78, "category": "PATIENT_ID", "language": "mixed", "family": 7, "split": "validation"}
+{"text": "Review ರೋಗಿಯ ಚಿಕಿತ್ಸೆ ಗುರುತು patient treatment registration with value 5928172", "start": 71, "end": 78, "category": "PATIENT_ID", "language": "mixed", "family": 7, "split": "validation"}
+{"text": "Review ಚಿಕಿತ್ಸೆ ಗುರುತು patient treatment registration ರೋಗಿಯ with value 5928173", "start": 71, "end": 78, "category": "PATIENT_ID", "language": "mixed", "family": 7, "split": "validation"}
+{"text": "Updated college admission registration: 6928160", "start": 40, "end": 47, "category": "ACADEMIC_ADMISSION_ID", "language": "en", "family": 6, "split": "validation"}
+{"text": "Updated admission registration college: 6928161", "start": 40, "end": 47, "category": "ACADEMIC_ADMISSION_ID", "language": "en", "family": 6, "split": "validation"}
+{"text": "Updated college admission registration: 6928162", "start": 40, "end": 47, "category": "ACADEMIC_ADMISSION_ID", "language": "en", "family": 6, "split": "validation"}
+{"text": "Updated admission registration college: 6928163", "start": 40, "end": 47, "category": "ACADEMIC_ADMISSION_ID", "language": "en", "family": 6, "split": "validation"}
+{"text": "ನವೀಕರಿಸಿದ ಕಾಲೇಜು ಪ್ರವೇಶ ನೋಂದಣಿ: 6928160", "start": 32, "end": 39, "category": "ACADEMIC_ADMISSION_ID", "language": "kn", "family": 6, "split": "validation"}
+{"text": "ನವೀಕರಿಸಿದ ಪ್ರವೇಶ ನೋಂದಣಿ ಕಾಲೇಜು: 6928161", "start": 32, "end": 39, "category": "ACADEMIC_ADMISSION_ID", "language": "kn", "family": 6, "split": "validation"}
+{"text": "ನವೀಕರಿಸಿದ ಕಾಲೇಜು ಪ್ರವೇಶ ನೋಂದಣಿ: 6928162", "start": 32, "end": 39, "category": "ACADEMIC_ADMISSION_ID", "language": "kn", "family": 6, "split": "validation"}
+{"text": "ನವೀಕರಿಸಿದ ಪ್ರವೇಶ ನೋಂದಣಿ ಕಾಲೇಜು: 6928163", "start": 32, "end": 39, "category": "ACADEMIC_ADMISSION_ID", "language": "kn", "family": 6, "split": "validation"}
+{"text": "Updated ಕಾಲೇಜು ಪ್ರವೇಶ ನೋಂದಣಿ college admission registration: 6928160", "start": 61, "end": 68, "category": "ACADEMIC_ADMISSION_ID", "language": "mixed", "family": 6, "split": "validation"}
+{"text": "Updated ಪ್ರವೇಶ ನೋಂದಣಿ college admission registration ಕಾಲೇಜು: 6928161", "start": 61, "end": 68, "category": "ACADEMIC_ADMISSION_ID", "language": "mixed", "family": 6, "split": "validation"}
+{"text": "Updated ಕಾಲೇಜು ಪ್ರವೇಶ ನೋಂದಣಿ college admission registration: 6928162", "start": 61, "end": 68, "category": "ACADEMIC_ADMISSION_ID", "language": "mixed", "family": 6, "split": "validation"}
+{"text": "Updated ಪ್ರವೇಶ ನೋಂದಣಿ college admission registration ಕಾಲೇಜು: 6928163", "start": 61, "end": 68, "category": "ACADEMIC_ADMISSION_ID", "language": "mixed", "family": 6, "split": "validation"}
+{"text": "Review college admission registration with value 6928170", "start": 49, "end": 56, "category": "ACADEMIC_ADMISSION_ID", "language": "en", "family": 7, "split": "validation"}
+{"text": "Review admission registration college with value 6928171", "start": 49, "end": 56, "category": "ACADEMIC_ADMISSION_ID", "language": "en", "family": 7, "split": "validation"}
+{"text": "Review college admission registration with value 6928172", "start": 49, "end": 56, "category": "ACADEMIC_ADMISSION_ID", "language": "en", "family": 7, "split": "validation"}
+{"text": "Review admission registration college with value 6928173", "start": 49, "end": 56, "category": "ACADEMIC_ADMISSION_ID", "language": "en", "family": 7, "split": "validation"}
+{"text": "ಕಾಲೇಜು ಪ್ರವೇಶ ನೋಂದಣಿ ಮೌಲ್ಯವನ್ನು ಪರಿಶೀಲಿಸಿ 6928170", "start": 42, "end": 49, "category": "ACADEMIC_ADMISSION_ID", "language": "kn", "family": 7, "split": "validation"}
+{"text": "ಪ್ರವೇಶ ನೋಂದಣಿ ಕಾಲೇಜು ಮೌಲ್ಯವನ್ನು ಪರಿಶೀಲಿಸಿ 6928171", "start": 42, "end": 49, "category": "ACADEMIC_ADMISSION_ID", "language": "kn", "family": 7, "split": "validation"}
+{"text": "ಕಾಲೇಜು ಪ್ರವೇಶ ನೋಂದಣಿ ಮೌಲ್ಯವನ್ನು ಪರಿಶೀಲಿಸಿ 6928172", "start": 42, "end": 49, "category": "ACADEMIC_ADMISSION_ID", "language": "kn", "family": 7, "split": "validation"}
+{"text": "ಪ್ರವೇಶ ನೋಂದಣಿ ಕಾಲೇಜು ಮೌಲ್ಯವನ್ನು ಪರಿಶೀಲಿಸಿ 6928173", "start": 42, "end": 49, "category": "ACADEMIC_ADMISSION_ID", "language": "kn", "family": 7, "split": "validation"}
+{"text": "Review ಕಾಲೇಜು ಪ್ರವೇಶ ನೋಂದಣಿ college admission registration with value 6928170", "start": 70, "end": 77, "category": "ACADEMIC_ADMISSION_ID", "language": "mixed", "family": 7, "split": "validation"}
+{"text": "Review ಪ್ರವೇಶ ನೋಂದಣಿ college admission registration ಕಾಲೇಜು with value 6928171", "start": 70, "end": 77, "category": "ACADEMIC_ADMISSION_ID", "language": "mixed", "family": 7, "split": "validation"}
+{"text": "Review ಕಾಲೇಜು ಪ್ರವೇಶ ನೋಂದಣಿ college admission registration with value 6928172", "start": 70, "end": 77, "category": "ACADEMIC_ADMISSION_ID", "language": "mixed", "family": 7, "split": "validation"}
+{"text": "Review ಪ್ರವೇಶ ನೋಂದಣಿ college admission registration ಕಾಲೇಜು with value 6928173", "start": 70, "end": 77, "category": "ACADEMIC_ADMISSION_ID", "language": "mixed", "family": 7, "split": "validation"}
+{"text": "Updated employee staff payroll identity: 7928160", "start": 41, "end": 48, "category": "STUDENT_OR_EMPLOYEE_ID", "language": "en", "family": 6, "split": "validation"}
+{"text": "Updated staff payroll identity employee: 7928161", "start": 41, "end": 48, "category": "STUDENT_OR_EMPLOYEE_ID", "language": "en", "family": 6, "split": "validation"}
+{"text": "Updated employee staff payroll identity: 7928162", "start": 41, "end": 48, "category": "STUDENT_OR_EMPLOYEE_ID", "language": "en", "family": 6, "split": "validation"}
+{"text": "Updated staff payroll identity employee: 7928163", "start": 41, "end": 48, "category": "STUDENT_OR_EMPLOYEE_ID", "language": "en", "family": 6, "split": "validation"}
+{"text": "ನವೀಕರಿಸಿದ ಉದ್ಯೋಗಿ ಸಿಬ್ಬಂದಿ ಗುರುತು: 7928160", "start": 35, "end": 42, "category": "STUDENT_OR_EMPLOYEE_ID", "language": "kn", "family": 6, "split": "validation"}
+{"text": "ನವೀಕರಿಸಿದ ಸಿಬ್ಬಂದಿ ಗುರುತು ಉದ್ಯೋಗಿ: 7928161", "start": 35, "end": 42, "category": "STUDENT_OR_EMPLOYEE_ID", "language": "kn", "family": 6, "split": "validation"}
+{"text": "ನವೀಕರಿಸಿದ ಉದ್ಯೋಗಿ ಸಿಬ್ಬಂದಿ ಗುರುತು: 7928162", "start": 35, "end": 42, "category": "STUDENT_OR_EMPLOYEE_ID", "language": "kn", "family": 6, "split": "validation"}
+{"text": "ನವೀಕರಿಸಿದ ಸಿಬ್ಬಂದಿ ಗುರುತು ಉದ್ಯೋಗಿ: 7928163", "start": 35, "end": 42, "category": "STUDENT_OR_EMPLOYEE_ID", "language": "kn", "family": 6, "split": "validation"}
+{"text": "Updated ಉದ್ಯೋಗಿ ಸಿಬ್ಬಂದಿ ಗುರುತು employee staff payroll identity: 7928160", "start": 65, "end": 72, "category": "STUDENT_OR_EMPLOYEE_ID", "language": "mixed", "family": 6, "split": "validation"}
+{"text": "Updated ಸಿಬ್ಬಂದಿ ಗುರುತು employee staff payroll identity ಉದ್ಯೋಗಿ: 7928161", "start": 65, "end": 72, "category": "STUDENT_OR_EMPLOYEE_ID", "language": "mixed", "family": 6, "split": "validation"}
+{"text": "Updated ಉದ್ಯೋಗಿ ಸಿಬ್ಬಂದಿ ಗುರುತು employee staff payroll identity: 7928162", "start": 65, "end": 72, "category": "STUDENT_OR_EMPLOYEE_ID", "language": "mixed", "family": 6, "split": "validation"}
+{"text": "Updated ಸಿಬ್ಬಂದಿ ಗುರುತು employee staff payroll identity ಉದ್ಯೋಗಿ: 7928163", "start": 65, "end": 72, "category": "STUDENT_OR_EMPLOYEE_ID", "language": "mixed", "family": 6, "split": "validation"}
+{"text": "Review employee staff payroll identity with value 7928170", "start": 50, "end": 57, "category": "STUDENT_OR_EMPLOYEE_ID", "language": "en", "family": 7, "split": "validation"}
+{"text": "Review staff payroll identity employee with value 7928171", "start": 50, "end": 57, "category": "STUDENT_OR_EMPLOYEE_ID", "language": "en", "family": 7, "split": "validation"}
+{"text": "Review employee staff payroll identity with value 7928172", "start": 50, "end": 57, "category": "STUDENT_OR_EMPLOYEE_ID", "language": "en", "family": 7, "split": "validation"}
+{"text": "Review staff payroll identity employee with value 7928173", "start": 50, "end": 57, "category": "STUDENT_OR_EMPLOYEE_ID", "language": "en", "family": 7, "split": "validation"}
+{"text": "ಉದ್ಯೋಗಿ ಸಿಬ್ಬಂದಿ ಗುರುತು ಮೌಲ್ಯವನ್ನು ಪರಿಶೀಲಿಸಿ 7928170", "start": 45, "end": 52, "category": "STUDENT_OR_EMPLOYEE_ID", "language": "kn", "family": 7, "split": "validation"}
+{"text": "ಸಿಬ್ಬಂದಿ ಗುರುತು ಉದ್ಯೋಗಿ ಮೌಲ್ಯವನ್ನು ಪರಿಶೀಲಿಸಿ 7928171", "start": 45, "end": 52, "category": "STUDENT_OR_EMPLOYEE_ID", "language": "kn", "family": 7, "split": "validation"}
+{"text": "ಉದ್ಯೋಗಿ ಸಿಬ್ಬಂದಿ ಗುರುತು ಮೌಲ್ಯವನ್ನು ಪರಿಶೀಲಿಸಿ 7928172", "start": 45, "end": 52, "category": "STUDENT_OR_EMPLOYEE_ID", "language": "kn", "family": 7, "split": "validation"}
+{"text": "ಸಿಬ್ಬಂದಿ ಗುರುತು ಉದ್ಯೋಗಿ ಮೌಲ್ಯವನ್ನು ಪರಿಶೀಲಿಸಿ 7928173", "start": 45, "end": 52, "category": "STUDENT_OR_EMPLOYEE_ID", "language": "kn", "family": 7, "split": "validation"}
+{"text": "Review ಉದ್ಯೋಗಿ ಸಿಬ್ಬಂದಿ ಗುರುತು employee staff payroll identity with value 7928170", "start": 74, "end": 81, "category": "STUDENT_OR_EMPLOYEE_ID", "language": "mixed", "family": 7, "split": "validation"}
+{"text": "Review ಸಿಬ್ಬಂದಿ ಗುರುತು employee staff payroll identity ಉದ್ಯೋಗಿ with value 7928171", "start": 74, "end": 81, "category": "STUDENT_OR_EMPLOYEE_ID", "language": "mixed", "family": 7, "split": "validation"}
+{"text": "Review ಉದ್ಯೋಗಿ ಸಿಬ್ಬಂದಿ ಗುರುತು employee staff payroll identity with value 7928172", "start": 74, "end": 81, "category": "STUDENT_OR_EMPLOYEE_ID", "language": "mixed", "family": 7, "split": "validation"}
+{"text": "Review ಸಿಬ್ಬಂದಿ ಗುರುತು employee staff payroll identity ಉದ್ಯೋಗಿ with value 7928173", "start": 74, "end": 81, "category": "STUDENT_OR_EMPLOYEE_ID", "language": "mixed", "family": 7, "split": "validation"}
+{"text": "Updated patient blood group transfusion: AB+-60", "start": 41, "end": 47, "category": "BLOOD_GROUP", "language": "en", "family": 6, "split": "validation"}
+{"text": "Updated blood group transfusion patient: AB+-61", "start": 41, "end": 47, "category": "BLOOD_GROUP", "language": "en", "family": 6, "split": "validation"}
+{"text": "Updated patient blood group transfusion: AB+-62", "start": 41, "end": 47, "category": "BLOOD_GROUP", "language": "en", "family": 6, "split": "validation"}
+{"text": "Updated blood group transfusion patient: AB+-63", "start": 41, "end": 47, "category": "BLOOD_GROUP", "language": "en", "family": 6, "split": "validation"}
+{"text": "ನವೀಕರಿಸಿದ ರೋಗಿಯ ರಕ್ತದ ಗುಂಪು: AB+-60", "start": 29, "end": 35, "category": "BLOOD_GROUP", "language": "kn", "family": 6, "split": "validation"}
+{"text": "ನವೀಕರಿಸಿದ ರಕ್ತದ ಗುಂಪು ರೋಗಿಯ: AB+-61", "start": 29, "end": 35, "category": "BLOOD_GROUP", "language": "kn", "family": 6, "split": "validation"}
+{"text": "ನವೀಕರಿಸಿದ ರೋಗಿಯ ರಕ್ತದ ಗುಂಪು: AB+-62", "start": 29, "end": 35, "category": "BLOOD_GROUP", "language": "kn", "family": 6, "split": "validation"}
+{"text": "ನವೀಕರಿಸಿದ ರಕ್ತದ ಗುಂಪು ರೋಗಿಯ: AB+-63", "start": 29, "end": 35, "category": "BLOOD_GROUP", "language": "kn", "family": 6, "split": "validation"}
+{"text": "Updated ರೋಗಿಯ ರಕ್ತದ ಗುಂಪು patient blood group transfusion: AB+-60", "start": 59, "end": 65, "category": "BLOOD_GROUP", "language": "mixed", "family": 6, "split": "validation"}
+{"text": "Updated ರಕ್ತದ ಗುಂಪು patient blood group transfusion ರೋಗಿಯ: AB+-61", "start": 59, "end": 65, "category": "BLOOD_GROUP", "language": "mixed", "family": 6, "split": "validation"}
+{"text": "Updated ರೋಗಿಯ ರಕ್ತದ ಗುಂಪು patient blood group transfusion: AB+-62", "start": 59, "end": 65, "category": "BLOOD_GROUP", "language": "mixed", "family": 6, "split": "validation"}
+{"text": "Updated ರಕ್ತದ ಗುಂಪು patient blood group transfusion ರೋಗಿಯ: AB+-63", "start": 59, "end": 65, "category": "BLOOD_GROUP", "language": "mixed", "family": 6, "split": "validation"}
+{"text": "Review patient blood group transfusion with value AB+-70", "start": 50, "end": 56, "category": "BLOOD_GROUP", "language": "en", "family": 7, "split": "validation"}
+{"text": "Review blood group transfusion patient with value AB+-71", "start": 50, "end": 56, "category": "BLOOD_GROUP", "language": "en", "family": 7, "split": "validation"}
+{"text": "Review patient blood group transfusion with value AB+-72", "start": 50, "end": 56, "category": "BLOOD_GROUP", "language": "en", "family": 7, "split": "validation"}
+{"text": "Review blood group transfusion patient with value AB+-73", "start": 50, "end": 56, "category": "BLOOD_GROUP", "language": "en", "family": 7, "split": "validation"}
+{"text": "ರೋಗಿಯ ರಕ್ತದ ಗುಂಪು ಮೌಲ್ಯವನ್ನು ಪರಿಶೀಲಿಸಿ AB+-70", "start": 39, "end": 45, "category": "BLOOD_GROUP", "language": "kn", "family": 7, "split": "validation"}
+{"text": "ರಕ್ತದ ಗುಂಪು ರೋಗಿಯ ಮೌಲ್ಯವನ್ನು ಪರಿಶೀಲಿಸಿ AB+-71", "start": 39, "end": 45, "category": "BLOOD_GROUP", "language": "kn", "family": 7, "split": "validation"}
+{"text": "ರೋಗಿಯ ರಕ್ತದ ಗುಂಪು ಮೌಲ್ಯವನ್ನು ಪರಿಶೀಲಿಸಿ AB+-72", "start": 39, "end": 45, "category": "BLOOD_GROUP", "language": "kn", "family": 7, "split": "validation"}
+{"text": "ರಕ್ತದ ಗುಂಪು ರೋಗಿಯ ಮೌಲ್ಯವನ್ನು ಪರಿಶೀಲಿಸಿ AB+-73", "start": 39, "end": 45, "category": "BLOOD_GROUP", "language": "kn", "family": 7, "split": "validation"}
+{"text": "Review ರೋಗಿಯ ರಕ್ತದ ಗುಂಪು patient blood group transfusion with value AB+-70", "start": 68, "end": 74, "category": "BLOOD_GROUP", "language": "mixed", "family": 7, "split": "validation"}
+{"text": "Review ರಕ್ತದ ಗುಂಪು patient blood group transfusion ರೋಗಿಯ with value AB+-71", "start": 68, "end": 74, "category": "BLOOD_GROUP", "language": "mixed", "family": 7, "split": "validation"}
+{"text": "Review ರೋಗಿಯ ರಕ್ತದ ಗುಂಪು patient blood group transfusion with value AB+-72", "start": 68, "end": 74, "category": "BLOOD_GROUP", "language": "mixed", "family": 7, "split": "validation"}
+{"text": "Review ರಕ್ತದ ಗುಂಪು patient blood group transfusion ರೋಗಿಯ with value AB+-73", "start": 68, "end": 74, "category": "BLOOD_GROUP", "language": "mixed", "family": 7, "split": "validation"}
+{"text": "Updated student academic examination grade: A+-60", "start": 44, "end": 49, "category": "ACADEMIC_GRADE", "language": "en", "family": 6, "split": "validation"}
+{"text": "Updated academic examination grade student: A+-61", "start": 44, "end": 49, "category": "ACADEMIC_GRADE", "language": "en", "family": 6, "split": "validation"}
+{"text": "Updated student academic examination grade: A+-62", "start": 44, "end": 49, "category": "ACADEMIC_GRADE", "language": "en", "family": 6, "split": "validation"}
+{"text": "Updated academic examination grade student: A+-63", "start": 44, "end": 49, "category": "ACADEMIC_GRADE", "language": "en", "family": 6, "split": "validation"}
+{"text": "ನವೀಕರಿಸಿದ ವಿದ್ಯಾರ್ಥಿ ಶೈಕ್ಷಣಿಕ ಪರೀಕ್ಷೆ ಅಂಕ: A+-60", "start": 43, "end": 48, "category": "ACADEMIC_GRADE", "language": "kn", "family": 6, "split": "validation"}
+{"text": "ನವೀಕರಿಸಿದ ಶೈಕ್ಷಣಿಕ ಪರೀಕ್ಷೆ ಅಂಕ ವಿದ್ಯಾರ್ಥಿ: A+-61", "start": 43, "end": 48, "category": "ACADEMIC_GRADE", "language": "kn", "family": 6, "split": "validation"}
+{"text": "ನವೀಕರಿಸಿದ ವಿದ್ಯಾರ್ಥಿ ಶೈಕ್ಷಣಿಕ ಪರೀಕ್ಷೆ ಅಂಕ: A+-62", "start": 43, "end": 48, "category": "ACADEMIC_GRADE", "language": "kn", "family": 6, "split": "validation"}
+{"text": "ನವೀಕರಿಸಿದ ಶೈಕ್ಷಣಿಕ ಪರೀಕ್ಷೆ ಅಂಕ ವಿದ್ಯಾರ್ಥಿ: A+-63", "start": 43, "end": 48, "category": "ACADEMIC_GRADE", "language": "kn", "family": 6, "split": "validation"}
+{"text": "Updated ವಿದ್ಯಾರ್ಥಿ ಶೈಕ್ಷಣಿಕ ಪರೀಕ್ಷೆ ಅಂಕ student academic examination grade: A+-60", "start": 76, "end": 81, "category": "ACADEMIC_GRADE", "language": "mixed", "family": 6, "split": "validation"}
+{"text": "Updated ಶೈಕ್ಷಣಿಕ ಪರೀಕ್ಷೆ ಅಂಕ student academic examination grade ವಿದ್ಯಾರ್ಥಿ: A+-61", "start": 76, "end": 81, "category": "ACADEMIC_GRADE", "language": "mixed", "family": 6, "split": "validation"}
+{"text": "Updated ವಿದ್ಯಾರ್ಥಿ ಶೈಕ್ಷಣಿಕ ಪರೀಕ್ಷೆ ಅಂಕ student academic examination grade: A+-62", "start": 76, "end": 81, "category": "ACADEMIC_GRADE", "language": "mixed", "family": 6, "split": "validation"}
+{"text": "Updated ಶೈಕ್ಷಣಿಕ ಪರೀಕ್ಷೆ ಅಂಕ student academic examination grade ವಿದ್ಯಾರ್ಥಿ: A+-63", "start": 76, "end": 81, "category": "ACADEMIC_GRADE", "language": "mixed", "family": 6, "split": "validation"}
+{"text": "Review student academic examination grade with value A+-70", "start": 53, "end": 58, "category": "ACADEMIC_GRADE", "language": "en", "family": 7, "split": "validation"}
+{"text": "Review academic examination grade student with value A+-71", "start": 53, "end": 58, "category": "ACADEMIC_GRADE", "language": "en", "family": 7, "split": "validation"}
+{"text": "Review student academic examination grade with value A+-72", "start": 53, "end": 58, "category": "ACADEMIC_GRADE", "language": "en", "family": 7, "split": "validation"}
+{"text": "Review academic examination grade student with value A+-73", "start": 53, "end": 58, "category": "ACADEMIC_GRADE", "language": "en", "family": 7, "split": "validation"}
+{"text": "ವಿದ್ಯಾರ್ಥಿ ಶೈಕ್ಷಣಿಕ ಪರೀಕ್ಷೆ ಅಂಕ ಮೌಲ್ಯವನ್ನು ಪರಿಶೀಲಿಸಿ A+-70", "start": 53, "end": 58, "category": "ACADEMIC_GRADE", "language": "kn", "family": 7, "split": "validation"}
+{"text": "ಶೈಕ್ಷಣಿಕ ಪರೀಕ್ಷೆ ಅಂಕ ವಿದ್ಯಾರ್ಥಿ ಮೌಲ್ಯವನ್ನು ಪರಿಶೀಲಿಸಿ A+-71", "start": 53, "end": 58, "category": "ACADEMIC_GRADE", "language": "kn", "family": 7, "split": "validation"}
+{"text": "ವಿದ್ಯಾರ್ಥಿ ಶೈಕ್ಷಣಿಕ ಪರೀಕ್ಷೆ ಅಂಕ ಮೌಲ್ಯವನ್ನು ಪರಿಶೀಲಿಸಿ A+-72", "start": 53, "end": 58, "category": "ACADEMIC_GRADE", "language": "kn", "family": 7, "split": "validation"}
+{"text": "ಶೈಕ್ಷಣಿಕ ಪರೀಕ್ಷೆ ಅಂಕ ವಿದ್ಯಾರ್ಥಿ ಮೌಲ್ಯವನ್ನು ಪರಿಶೀಲಿಸಿ A+-73", "start": 53, "end": 58, "category": "ACADEMIC_GRADE", "language": "kn", "family": 7, "split": "validation"}
+{"text": "Review ವಿದ್ಯಾರ್ಥಿ ಶೈಕ್ಷಣಿಕ ಪರೀಕ್ಷೆ ಅಂಕ student academic examination grade with value A+-70", "start": 85, "end": 90, "category": "ACADEMIC_GRADE", "language": "mixed", "family": 7, "split": "validation"}
+{"text": "Review ಶೈಕ್ಷಣಿಕ ಪರೀಕ್ಷೆ ಅಂಕ student academic examination grade ವಿದ್ಯಾರ್ಥಿ with value A+-71", "start": 85, "end": 90, "category": "ACADEMIC_GRADE", "language": "mixed", "family": 7, "split": "validation"}
+{"text": "Review ವಿದ್ಯಾರ್ಥಿ ಶೈಕ್ಷಣಿಕ ಪರೀಕ್ಷೆ ಅಂಕ student academic examination grade with value A+-72", "start": 85, "end": 90, "category": "ACADEMIC_GRADE", "language": "mixed", "family": 7, "split": "validation"}
+{"text": "Review ಶೈಕ್ಷಣಿಕ ಪರೀಕ್ಷೆ ಅಂಕ student academic examination grade ವಿದ್ಯಾರ್ಥಿ with value A+-73", "start": 85, "end": 90, "category": "ACADEMIC_GRADE", "language": "mixed", "family": 7, "split": "validation"}
+{"text": "Updated bank savings account transfer: 12345678960", "start": 39, "end": 50, "category": "BANK_ACCOUNT_CANDIDATE", "language": "en", "family": 6, "split": "validation"}
+{"text": "Updated savings account transfer bank: 12345678961", "start": 39, "end": 50, "category": "BANK_ACCOUNT_CANDIDATE", "language": "en", "family": 6, "split": "validation"}
+{"text": "Updated bank savings account transfer: 12345678962", "start": 39, "end": 50, "category": "BANK_ACCOUNT_CANDIDATE", "language": "en", "family": 6, "split": "validation"}
+{"text": "Updated savings account transfer bank: 12345678963", "start": 39, "end": 50, "category": "BANK_ACCOUNT_CANDIDATE", "language": "en", "family": 6, "split": "validation"}
+{"text": "ನವೀಕರಿಸಿದ ಬ್ಯಾಂಕ್ ಉಳಿತಾಯ ಖಾತೆ: 12345678960", "start": 31, "end": 42, "category": "BANK_ACCOUNT_CANDIDATE", "language": "kn", "family": 6, "split": "validation"}
+{"text": "ನವೀಕರಿಸಿದ ಉಳಿತಾಯ ಖಾತೆ ಬ್ಯಾಂಕ್: 12345678961", "start": 31, "end": 42, "category": "BANK_ACCOUNT_CANDIDATE", "language": "kn", "family": 6, "split": "validation"}
+{"text": "ನವೀಕರಿಸಿದ ಬ್ಯಾಂಕ್ ಉಳಿತಾಯ ಖಾತೆ: 12345678962", "start": 31, "end": 42, "category": "BANK_ACCOUNT_CANDIDATE", "language": "kn", "family": 6, "split": "validation"}
+{"text": "ನವೀಕರಿಸಿದ ಉಳಿತಾಯ ಖಾತೆ ಬ್ಯಾಂಕ್: 12345678963", "start": 31, "end": 42, "category": "BANK_ACCOUNT_CANDIDATE", "language": "kn", "family": 6, "split": "validation"}
+{"text": "Updated ಬ್ಯಾಂಕ್ ಉಳಿತಾಯ ಖಾತೆ bank savings account transfer: 12345678960", "start": 59, "end": 70, "category": "BANK_ACCOUNT_CANDIDATE", "language": "mixed", "family": 6, "split": "validation"}
+{"text": "Updated ಉಳಿತಾಯ ಖಾತೆ bank savings account transfer ಬ್ಯಾಂಕ್: 12345678961", "start": 59, "end": 70, "category": "BANK_ACCOUNT_CANDIDATE", "language": "mixed", "family": 6, "split": "validation"}
+{"text": "Updated ಬ್ಯಾಂಕ್ ಉಳಿತಾಯ ಖಾತೆ bank savings account transfer: 12345678962", "start": 59, "end": 70, "category": "BANK_ACCOUNT_CANDIDATE", "language": "mixed", "family": 6, "split": "validation"}
+{"text": "Updated ಉಳಿತಾಯ ಖಾತೆ bank savings account transfer ಬ್ಯಾಂಕ್: 12345678963", "start": 59, "end": 70, "category": "BANK_ACCOUNT_CANDIDATE", "language": "mixed", "family": 6, "split": "validation"}
+{"text": "Review bank savings account transfer with value 12345678970", "start": 48, "end": 59, "category": "BANK_ACCOUNT_CANDIDATE", "language": "en", "family": 7, "split": "validation"}
+{"text": "Review savings account transfer bank with value 12345678971", "start": 48, "end": 59, "category": "BANK_ACCOUNT_CANDIDATE", "language": "en", "family": 7, "split": "validation"}
+{"text": "Review bank savings account transfer with value 12345678972", "start": 48, "end": 59, "category": "BANK_ACCOUNT_CANDIDATE", "language": "en", "family": 7, "split": "validation"}
+{"text": "Review savings account transfer bank with value 12345678973", "start": 48, "end": 59, "category": "BANK_ACCOUNT_CANDIDATE", "language": "en", "family": 7, "split": "validation"}
+{"text": "ಬ್ಯಾಂಕ್ ಉಳಿತಾಯ ಖಾತೆ ಮೌಲ್ಯವನ್ನು ಪರಿಶೀಲಿಸಿ 12345678970", "start": 41, "end": 52, "category": "BANK_ACCOUNT_CANDIDATE", "language": "kn", "family": 7, "split": "validation"}
+{"text": "ಉಳಿತಾಯ ಖಾತೆ ಬ್ಯಾಂಕ್ ಮೌಲ್ಯವನ್ನು ಪರಿಶೀಲಿಸಿ 12345678971", "start": 41, "end": 52, "category": "BANK_ACCOUNT_CANDIDATE", "language": "kn", "family": 7, "split": "validation"}
+{"text": "ಬ್ಯಾಂಕ್ ಉಳಿತಾಯ ಖಾತೆ ಮೌಲ್ಯವನ್ನು ಪರಿಶೀಲಿಸಿ 12345678972", "start": 41, "end": 52, "category": "BANK_ACCOUNT_CANDIDATE", "language": "kn", "family": 7, "split": "validation"}
+{"text": "ಉಳಿತಾಯ ಖಾತೆ ಬ್ಯಾಂಕ್ ಮೌಲ್ಯವನ್ನು ಪರಿಶೀಲಿಸಿ 12345678973", "start": 41, "end": 52, "category": "BANK_ACCOUNT_CANDIDATE", "language": "kn", "family": 7, "split": "validation"}
+{"text": "Review ಬ್ಯಾಂಕ್ ಉಳಿತಾಯ ಖಾತೆ bank savings account transfer with value 12345678970", "start": 68, "end": 79, "category": "BANK_ACCOUNT_CANDIDATE", "language": "mixed", "family": 7, "split": "validation"}
+{"text": "Review ಉಳಿತಾಯ ಖಾತೆ bank savings account transfer ಬ್ಯಾಂಕ್ with value 12345678971", "start": 68, "end": 79, "category": "BANK_ACCOUNT_CANDIDATE", "language": "mixed", "family": 7, "split": "validation"}
+{"text": "Review ಬ್ಯಾಂಕ್ ಉಳಿತಾಯ ಖಾತೆ bank savings account transfer with value 12345678972", "start": 68, "end": 79, "category": "BANK_ACCOUNT_CANDIDATE", "language": "mixed", "family": 7, "split": "validation"}
+{"text": "Review ಉಳಿತಾಯ ಖಾತೆ bank savings account transfer ಬ್ಯಾಂಕ್ with value 12345678973", "start": 68, "end": 79, "category": "BANK_ACCOUNT_CANDIDATE", "language": "mixed", "family": 7, "split": "validation"}
+{"text": "Updated personal phone mobile contact: 9876543260", "start": 39, "end": 49, "category": "INDIAN_MOBILE", "language": "en", "family": 6, "split": "validation"}
+{"text": "Updated phone mobile contact personal: 9876543261", "start": 39, "end": 49, "category": "INDIAN_MOBILE", "language": "en", "family": 6, "split": "validation"}
+{"text": "Updated personal phone mobile contact: 9876543262", "start": 39, "end": 49, "category": "INDIAN_MOBILE", "language": "en", "family": 6, "split": "validation"}
+{"text": "Updated phone mobile contact personal: 9876543263", "start": 39, "end": 49, "category": "INDIAN_MOBILE", "language": "en", "family": 6, "split": "validation"}
+{"text": "ನವೀಕರಿಸಿದ ವೈಯಕ್ತಿಕ ಮೊಬೈಲ್ ದೂರವಾಣಿ: 9876543260", "start": 35, "end": 45, "category": "INDIAN_MOBILE", "language": "kn", "family": 6, "split": "validation"}
+{"text": "ನವೀಕರಿಸಿದ ಮೊಬೈಲ್ ದೂರವಾಣಿ ವೈಯಕ್ತಿಕ: 9876543261", "start": 35, "end": 45, "category": "INDIAN_MOBILE", "language": "kn", "family": 6, "split": "validation"}
+{"text": "ನವೀಕರಿಸಿದ ವೈಯಕ್ತಿಕ ಮೊಬೈಲ್ ದೂರವಾಣಿ: 9876543262", "start": 35, "end": 45, "category": "INDIAN_MOBILE", "language": "kn", "family": 6, "split": "validation"}
+{"text": "ನವೀಕರಿಸಿದ ಮೊಬೈಲ್ ದೂರವಾಣಿ ವೈಯಕ್ತಿಕ: 9876543263", "start": 35, "end": 45, "category": "INDIAN_MOBILE", "language": "kn", "family": 6, "split": "validation"}
+{"text": "Updated ವೈಯಕ್ತಿಕ ಮೊಬೈಲ್ ದೂರವಾಣಿ personal phone mobile contact: 9876543260", "start": 63, "end": 73, "category": "INDIAN_MOBILE", "language": "mixed", "family": 6, "split": "validation"}
+{"text": "Updated ಮೊಬೈಲ್ ದೂರವಾಣಿ personal phone mobile contact ವೈಯಕ್ತಿಕ: 9876543261", "start": 63, "end": 73, "category": "INDIAN_MOBILE", "language": "mixed", "family": 6, "split": "validation"}
+{"text": "Updated ವೈಯಕ್ತಿಕ ಮೊಬೈಲ್ ದೂರವಾಣಿ personal phone mobile contact: 9876543262", "start": 63, "end": 73, "category": "INDIAN_MOBILE", "language": "mixed", "family": 6, "split": "validation"}
+{"text": "Updated ಮೊಬೈಲ್ ದೂರವಾಣಿ personal phone mobile contact ವೈಯಕ್ತಿಕ: 9876543263", "start": 63, "end": 73, "category": "INDIAN_MOBILE", "language": "mixed", "family": 6, "split": "validation"}
+{"text": "Review personal phone mobile contact with value 9876543270", "start": 48, "end": 58, "category": "INDIAN_MOBILE", "language": "en", "family": 7, "split": "validation"}
+{"text": "Review phone mobile contact personal with value 9876543271", "start": 48, "end": 58, "category": "INDIAN_MOBILE", "language": "en", "family": 7, "split": "validation"}
+{"text": "Review personal phone mobile contact with value 9876543272", "start": 48, "end": 58, "category": "INDIAN_MOBILE", "language": "en", "family": 7, "split": "validation"}
+{"text": "Review phone mobile contact personal with value 9876543273", "start": 48, "end": 58, "category": "INDIAN_MOBILE", "language": "en", "family": 7, "split": "validation"}
+{"text": "ವೈಯಕ್ತಿಕ ಮೊಬೈಲ್ ದೂರವಾಣಿ ಮೌಲ್ಯವನ್ನು ಪರಿಶೀಲಿಸಿ 9876543270", "start": 45, "end": 55, "category": "INDIAN_MOBILE", "language": "kn", "family": 7, "split": "validation"}
+{"text": "ಮೊಬೈಲ್ ದೂರವಾಣಿ ವೈಯಕ್ತಿಕ ಮೌಲ್ಯವನ್ನು ಪರಿಶೀಲಿಸಿ 9876543271", "start": 45, "end": 55, "category": "INDIAN_MOBILE", "language": "kn", "family": 7, "split": "validation"}
+{"text": "ವೈಯಕ್ತಿಕ ಮೊಬೈಲ್ ದೂರವಾಣಿ ಮೌಲ್ಯವನ್ನು ಪರಿಶೀಲಿಸಿ 9876543272", "start": 45, "end": 55, "category": "INDIAN_MOBILE", "language": "kn", "family": 7, "split": "validation"}
+{"text": "ಮೊಬೈಲ್ ದೂರವಾಣಿ ವೈಯಕ್ತಿಕ ಮೌಲ್ಯವನ್ನು ಪರಿಶೀಲಿಸಿ 9876543273", "start": 45, "end": 55, "category": "INDIAN_MOBILE", "language": "kn", "family": 7, "split": "validation"}
+{"text": "Review ವೈಯಕ್ತಿಕ ಮೊಬೈಲ್ ದೂರವಾಣಿ personal phone mobile contact with value 9876543270", "start": 72, "end": 82, "category": "INDIAN_MOBILE", "language": "mixed", "family": 7, "split": "validation"}
+{"text": "Review ಮೊಬೈಲ್ ದೂರವಾಣಿ personal phone mobile contact ವೈಯಕ್ತಿಕ with value 9876543271", "start": 72, "end": 82, "category": "INDIAN_MOBILE", "language": "mixed", "family": 7, "split": "validation"}
+{"text": "Review ವೈಯಕ್ತಿಕ ಮೊಬೈಲ್ ದೂರವಾಣಿ personal phone mobile contact with value 9876543272", "start": 72, "end": 82, "category": "INDIAN_MOBILE", "language": "mixed", "family": 7, "split": "validation"}
+{"text": "Review ಮೊಬೈಲ್ ದೂರವಾಣಿ personal phone mobile contact ವೈಯಕ್ತಿಕ with value 9876543273", "start": 72, "end": 82, "category": "INDIAN_MOBILE", "language": "mixed", "family": 7, "split": "validation"}
+{"text": "Updated person full name guardian: Fictional Mira-60", "start": 35, "end": 52, "category": "PERSON_NAME_REVIEW", "language": "en", "family": 6, "split": "validation"}
+{"text": "Updated full name guardian person: Fictional Mira-61", "start": 35, "end": 52, "category": "PERSON_NAME_REVIEW", "language": "en", "family": 6, "split": "validation"}
+{"text": "Updated person full name guardian: Fictional Mira-62", "start": 35, "end": 52, "category": "PERSON_NAME_REVIEW", "language": "en", "family": 6, "split": "validation"}
+{"text": "Updated full name guardian person: Fictional Mira-63", "start": 35, "end": 52, "category": "PERSON_NAME_REVIEW", "language": "en", "family": 6, "split": "validation"}
+{"text": "ನವೀಕರಿಸಿದ ವ್ಯಕ್ತಿಯ ಪೂರ್ಣ ಹೆಸರು ಪೋಷಕ: Fictional Mira-60", "start": 37, "end": 54, "category": "PERSON_NAME_REVIEW", "language": "kn", "family": 6, "split": "validation"}
+{"text": "ನವೀಕರಿಸಿದ ಪೂರ್ಣ ಹೆಸರು ಪೋಷಕ ವ್ಯಕ್ತಿಯ: Fictional Mira-61", "start": 37, "end": 54, "category": "PERSON_NAME_REVIEW", "language": "kn", "family": 6, "split": "validation"}
+{"text": "ನವೀಕರಿಸಿದ ವ್ಯಕ್ತಿಯ ಪೂರ್ಣ ಹೆಸರು ಪೋಷಕ: Fictional Mira-62", "start": 37, "end": 54, "category": "PERSON_NAME_REVIEW", "language": "kn", "family": 6, "split": "validation"}
+{"text": "ನವೀಕರಿಸಿದ ಪೂರ್ಣ ಹೆಸರು ಪೋಷಕ ವ್ಯಕ್ತಿಯ: Fictional Mira-63", "start": 37, "end": 54, "category": "PERSON_NAME_REVIEW", "language": "kn", "family": 6, "split": "validation"}
+{"text": "Updated ವ್ಯಕ್ತಿಯ ಪೂರ್ಣ ಹೆಸರು ಪೋಷಕ person full name guardian: Fictional Mira-60", "start": 61, "end": 78, "category": "PERSON_NAME_REVIEW", "language": "mixed", "family": 6, "split": "validation"}
+{"text": "Updated ಪೂರ್ಣ ಹೆಸರು ಪೋಷಕ person full name guardian ವ್ಯಕ್ತಿಯ: Fictional Mira-61", "start": 61, "end": 78, "category": "PERSON_NAME_REVIEW", "language": "mixed", "family": 6, "split": "validation"}
+{"text": "Updated ವ್ಯಕ್ತಿಯ ಪೂರ್ಣ ಹೆಸರು ಪೋಷಕ person full name guardian: Fictional Mira-62", "start": 61, "end": 78, "category": "PERSON_NAME_REVIEW", "language": "mixed", "family": 6, "split": "validation"}
+{"text": "Updated ಪೂರ್ಣ ಹೆಸರು ಪೋಷಕ person full name guardian ವ್ಯಕ್ತಿಯ: Fictional Mira-63", "start": 61, "end": 78, "category": "PERSON_NAME_REVIEW", "language": "mixed", "family": 6, "split": "validation"}
+{"text": "Review person full name guardian with value Fictional Mira-70", "start": 44, "end": 61, "category": "PERSON_NAME_REVIEW", "language": "en", "family": 7, "split": "validation"}
+{"text": "Review full name guardian person with value Fictional Mira-71", "start": 44, "end": 61, "category": "PERSON_NAME_REVIEW", "language": "en", "family": 7, "split": "validation"}
+{"text": "Review person full name guardian with value Fictional Mira-72", "start": 44, "end": 61, "category": "PERSON_NAME_REVIEW", "language": "en", "family": 7, "split": "validation"}
+{"text": "Review full name guardian person with value Fictional Mira-73", "start": 44, "end": 61, "category": "PERSON_NAME_REVIEW", "language": "en", "family": 7, "split": "validation"}
+{"text": "ವ್ಯಕ್ತಿಯ ಪೂರ್ಣ ಹೆಸರು ಪೋಷಕ ಮೌಲ್ಯವನ್ನು ಪರಿಶೀಲಿಸಿ Fictional Mira-70", "start": 47, "end": 64, "category": "PERSON_NAME_REVIEW", "language": "kn", "family": 7, "split": "validation"}
+{"text": "ಪೂರ್ಣ ಹೆಸರು ಪೋಷಕ ವ್ಯಕ್ತಿಯ ಮೌಲ್ಯವನ್ನು ಪರಿಶೀಲಿಸಿ Fictional Mira-71", "start": 47, "end": 64, "category": "PERSON_NAME_REVIEW", "language": "kn", "family": 7, "split": "validation"}
+{"text": "ವ್ಯಕ್ತಿಯ ಪೂರ್ಣ ಹೆಸರು ಪೋಷಕ ಮೌಲ್ಯವನ್ನು ಪರಿಶೀಲಿಸಿ Fictional Mira-72", "start": 47, "end": 64, "category": "PERSON_NAME_REVIEW", "language": "kn", "family": 7, "split": "validation"}
+{"text": "ಪೂರ್ಣ ಹೆಸರು ಪೋಷಕ ವ್ಯಕ್ತಿಯ ಮೌಲ್ಯವನ್ನು ಪರಿಶೀಲಿಸಿ Fictional Mira-73", "start": 47, "end": 64, "category": "PERSON_NAME_REVIEW", "language": "kn", "family": 7, "split": "validation"}
+{"text": "Review ವ್ಯಕ್ತಿಯ ಪೂರ್ಣ ಹೆಸರು ಪೋಷಕ person full name guardian with value Fictional Mira-70", "start": 70, "end": 87, "category": "PERSON_NAME_REVIEW", "language": "mixed", "family": 7, "split": "validation"}
+{"text": "Review ಪೂರ್ಣ ಹೆಸರು ಪೋಷಕ person full name guardian ವ್ಯಕ್ತಿಯ with value Fictional Mira-71", "start": 70, "end": 87, "category": "PERSON_NAME_REVIEW", "language": "mixed", "family": 7, "split": "validation"}
+{"text": "Review ವ್ಯಕ್ತಿಯ ಪೂರ್ಣ ಹೆಸರು ಪೋಷಕ person full name guardian with value Fictional Mira-72", "start": 70, "end": 87, "category": "PERSON_NAME_REVIEW", "language": "mixed", "family": 7, "split": "validation"}
+{"text": "Review ಪೂರ್ಣ ಹೆಸರು ಪೋಷಕ person full name guardian ವ್ಯಕ್ತಿಯ with value Fictional Mira-73", "start": 70, "end": 87, "category": "PERSON_NAME_REVIEW", "language": "mixed", "family": 7, "split": "validation"}
+{"text": "Updated residential home address street: 42 Fictional Lane-60", "start": 41, "end": 61, "category": "ADDRESS_REVIEW", "language": "en", "family": 6, "split": "validation"}
+{"text": "Updated home address street residential: 42 Fictional Lane-61", "start": 41, "end": 61, "category": "ADDRESS_REVIEW", "language": "en", "family": 6, "split": "validation"}
+{"text": "Updated residential home address street: 42 Fictional Lane-62", "start": 41, "end": 61, "category": "ADDRESS_REVIEW", "language": "en", "family": 6, "split": "validation"}
+{"text": "Updated home address street residential: 42 Fictional Lane-63", "start": 41, "end": 61, "category": "ADDRESS_REVIEW", "language": "en", "family": 6, "split": "validation"}
+{"text": "ನವೀಕರಿಸಿದ ವಸತಿ ಮನೆ ವಿಳಾಸ ರಸ್ತೆ: 42 Fictional Lane-60", "start": 32, "end": 52, "category": "ADDRESS_REVIEW", "language": "kn", "family": 6, "split": "validation"}
+{"text": "ನವೀಕರಿಸಿದ ಮನೆ ವಿಳಾಸ ರಸ್ತೆ ವಸತಿ: 42 Fictional Lane-61", "start": 32, "end": 52, "category": "ADDRESS_REVIEW", "language": "kn", "family": 6, "split": "validation"}
+{"text": "ನವೀಕರಿಸಿದ ವಸತಿ ಮನೆ ವಿಳಾಸ ರಸ್ತೆ: 42 Fictional Lane-62", "start": 32, "end": 52, "category": "ADDRESS_REVIEW", "language": "kn", "family": 6, "split": "validation"}
+{"text": "ನವೀಕರಿಸಿದ ಮನೆ ವಿಳಾಸ ರಸ್ತೆ ವಸತಿ: 42 Fictional Lane-63", "start": 32, "end": 52, "category": "ADDRESS_REVIEW", "language": "kn", "family": 6, "split": "validation"}
+{"text": "Updated ವಸತಿ ಮನೆ ವಿಳಾಸ ರಸ್ತೆ residential home address street: 42 Fictional Lane-60", "start": 62, "end": 82, "category": "ADDRESS_REVIEW", "language": "mixed", "family": 6, "split": "validation"}
+{"text": "Updated ಮನೆ ವಿಳಾಸ ರಸ್ತೆ residential home address street ವಸತಿ: 42 Fictional Lane-61", "start": 62, "end": 82, "category": "ADDRESS_REVIEW", "language": "mixed", "family": 6, "split": "validation"}
+{"text": "Updated ವಸತಿ ಮನೆ ವಿಳಾಸ ರಸ್ತೆ residential home address street: 42 Fictional Lane-62", "start": 62, "end": 82, "category": "ADDRESS_REVIEW", "language": "mixed", "family": 6, "split": "validation"}
+{"text": "Updated ಮನೆ ವಿಳಾಸ ರಸ್ತೆ residential home address street ವಸತಿ: 42 Fictional Lane-63", "start": 62, "end": 82, "category": "ADDRESS_REVIEW", "language": "mixed", "family": 6, "split": "validation"}
+{"text": "Review residential home address street with value 42 Fictional Lane-70", "start": 50, "end": 70, "category": "ADDRESS_REVIEW", "language": "en", "family": 7, "split": "validation"}
+{"text": "Review home address street residential with value 42 Fictional Lane-71", "start": 50, "end": 70, "category": "ADDRESS_REVIEW", "language": "en", "family": 7, "split": "validation"}
+{"text": "Review residential home address street with value 42 Fictional Lane-72", "start": 50, "end": 70, "category": "ADDRESS_REVIEW", "language": "en", "family": 7, "split": "validation"}
+{"text": "Review home address street residential with value 42 Fictional Lane-73", "start": 50, "end": 70, "category": "ADDRESS_REVIEW", "language": "en", "family": 7, "split": "validation"}
+{"text": "ವಸತಿ ಮನೆ ವಿಳಾಸ ರಸ್ತೆ ಮೌಲ್ಯವನ್ನು ಪರಿಶೀಲಿಸಿ 42 Fictional Lane-70", "start": 42, "end": 62, "category": "ADDRESS_REVIEW", "language": "kn", "family": 7, "split": "validation"}
+{"text": "ಮನೆ ವಿಳಾಸ ರಸ್ತೆ ವಸತಿ ಮೌಲ್ಯವನ್ನು ಪರಿಶೀಲಿಸಿ 42 Fictional Lane-71", "start": 42, "end": 62, "category": "ADDRESS_REVIEW", "language": "kn", "family": 7, "split": "validation"}
+{"text": "ವಸತಿ ಮನೆ ವಿಳಾಸ ರಸ್ತೆ ಮೌಲ್ಯವನ್ನು ಪರಿಶೀಲಿಸಿ 42 Fictional Lane-72", "start": 42, "end": 62, "category": "ADDRESS_REVIEW", "language": "kn", "family": 7, "split": "validation"}
+{"text": "ಮನೆ ವಿಳಾಸ ರಸ್ತೆ ವಸತಿ ಮೌಲ್ಯವನ್ನು ಪರಿಶೀಲಿಸಿ 42 Fictional Lane-73", "start": 42, "end": 62, "category": "ADDRESS_REVIEW", "language": "kn", "family": 7, "split": "validation"}
+{"text": "Review ವಸತಿ ಮನೆ ವಿಳಾಸ ರಸ್ತೆ residential home address street with value 42 Fictional Lane-70", "start": 71, "end": 91, "category": "ADDRESS_REVIEW", "language": "mixed", "family": 7, "split": "validation"}
+{"text": "Review ಮನೆ ವಿಳಾಸ ರಸ್ತೆ residential home address street ವಸತಿ with value 42 Fictional Lane-71", "start": 71, "end": 91, "category": "ADDRESS_REVIEW", "language": "mixed", "family": 7, "split": "validation"}
+{"text": "Review ವಸತಿ ಮನೆ ವಿಳಾಸ ರಸ್ತೆ residential home address street with value 42 Fictional Lane-72", "start": 71, "end": 91, "category": "ADDRESS_REVIEW", "language": "mixed", "family": 7, "split": "validation"}
+{"text": "Review ಮನೆ ವಿಳಾಸ ರಸ್ತೆ residential home address street ವಸತಿ with value 42 Fictional Lane-73", "start": 71, "end": 91, "category": "ADDRESS_REVIEW", "language": "mixed", "family": 7, "split": "validation"}
+{"text": "Updated personal date of birth birthday: 12/03/2001-60", "start": 41, "end": 54, "category": "DATE_OF_BIRTH", "language": "en", "family": 6, "split": "validation"}
+{"text": "Updated date of birth birthday personal: 12/03/2001-61", "start": 41, "end": 54, "category": "DATE_OF_BIRTH", "language": "en", "family": 6, "split": "validation"}
+{"text": "Updated personal date of birth birthday: 12/03/2001-62", "start": 41, "end": 54, "category": "DATE_OF_BIRTH", "language": "en", "family": 6, "split": "validation"}
+{"text": "Updated date of birth birthday personal: 12/03/2001-63", "start": 41, "end": 54, "category": "DATE_OF_BIRTH", "language": "en", "family": 6, "split": "validation"}
+{"text": "ನವೀಕರಿಸಿದ ವೈಯಕ್ತಿಕ ಹುಟ್ಟಿದ ದಿನಾಂಕ: 12/03/2001-60", "start": 35, "end": 48, "category": "DATE_OF_BIRTH", "language": "kn", "family": 6, "split": "validation"}
+{"text": "ನವೀಕರಿಸಿದ ಹುಟ್ಟಿದ ದಿನಾಂಕ ವೈಯಕ್ತಿಕ: 12/03/2001-61", "start": 35, "end": 48, "category": "DATE_OF_BIRTH", "language": "kn", "family": 6, "split": "validation"}
+{"text": "ನವೀಕರಿಸಿದ ವೈಯಕ್ತಿಕ ಹುಟ್ಟಿದ ದಿನಾಂಕ: 12/03/2001-62", "start": 35, "end": 48, "category": "DATE_OF_BIRTH", "language": "kn", "family": 6, "split": "validation"}
+{"text": "ನವೀಕರಿಸಿದ ಹುಟ್ಟಿದ ದಿನಾಂಕ ವೈಯಕ್ತಿಕ: 12/03/2001-63", "start": 35, "end": 48, "category": "DATE_OF_BIRTH", "language": "kn", "family": 6, "split": "validation"}
+{"text": "Updated ವೈಯಕ್ತಿಕ ಹುಟ್ಟಿದ ದಿನಾಂಕ personal date of birth birthday: 12/03/2001-60", "start": 65, "end": 78, "category": "DATE_OF_BIRTH", "language": "mixed", "family": 6, "split": "validation"}
+{"text": "Updated ಹುಟ್ಟಿದ ದಿನಾಂಕ personal date of birth birthday ವೈಯಕ್ತಿಕ: 12/03/2001-61", "start": 65, "end": 78, "category": "DATE_OF_BIRTH", "language": "mixed", "family": 6, "split": "validation"}
+{"text": "Updated ವೈಯಕ್ತಿಕ ಹುಟ್ಟಿದ ದಿನಾಂಕ personal date of birth birthday: 12/03/2001-62", "start": 65, "end": 78, "category": "DATE_OF_BIRTH", "language": "mixed", "family": 6, "split": "validation"}
+{"text": "Updated ಹುಟ್ಟಿದ ದಿನಾಂಕ personal date of birth birthday ವೈಯಕ್ತಿಕ: 12/03/2001-63", "start": 65, "end": 78, "category": "DATE_OF_BIRTH", "language": "mixed", "family": 6, "split": "validation"}
+{"text": "Review personal date of birth birthday with value 12/03/2001-70", "start": 50, "end": 63, "category": "DATE_OF_BIRTH", "language": "en", "family": 7, "split": "validation"}
+{"text": "Review date of birth birthday personal with value 12/03/2001-71", "start": 50, "end": 63, "category": "DATE_OF_BIRTH", "language": "en", "family": 7, "split": "validation"}
+{"text": "Review personal date of birth birthday with value 12/03/2001-72", "start": 50, "end": 63, "category": "DATE_OF_BIRTH", "language": "en", "family": 7, "split": "validation"}
+{"text": "Review date of birth birthday personal with value 12/03/2001-73", "start": 50, "end": 63, "category": "DATE_OF_BIRTH", "language": "en", "family": 7, "split": "validation"}
+{"text": "ವೈಯಕ್ತಿಕ ಹುಟ್ಟಿದ ದಿನಾಂಕ ಮೌಲ್ಯವನ್ನು ಪರಿಶೀಲಿಸಿ 12/03/2001-70", "start": 45, "end": 58, "category": "DATE_OF_BIRTH", "language": "kn", "family": 7, "split": "validation"}
+{"text": "ಹುಟ್ಟಿದ ದಿನಾಂಕ ವೈಯಕ್ತಿಕ ಮೌಲ್ಯವನ್ನು ಪರಿಶೀಲಿಸಿ 12/03/2001-71", "start": 45, "end": 58, "category": "DATE_OF_BIRTH", "language": "kn", "family": 7, "split": "validation"}
+{"text": "ವೈಯಕ್ತಿಕ ಹುಟ್ಟಿದ ದಿನಾಂಕ ಮೌಲ್ಯವನ್ನು ಪರಿಶೀಲಿಸಿ 12/03/2001-72", "start": 45, "end": 58, "category": "DATE_OF_BIRTH", "language": "kn", "family": 7, "split": "validation"}
+{"text": "ಹುಟ್ಟಿದ ದಿನಾಂಕ ವೈಯಕ್ತಿಕ ಮೌಲ್ಯವನ್ನು ಪರಿಶೀಲಿಸಿ 12/03/2001-73", "start": 45, "end": 58, "category": "DATE_OF_BIRTH", "language": "kn", "family": 7, "split": "validation"}
+{"text": "Review ವೈಯಕ್ತಿಕ ಹುಟ್ಟಿದ ದಿನಾಂಕ personal date of birth birthday with value 12/03/2001-70", "start": 74, "end": 87, "category": "DATE_OF_BIRTH", "language": "mixed", "family": 7, "split": "validation"}
+{"text": "Review ಹುಟ್ಟಿದ ದಿನಾಂಕ personal date of birth birthday ವೈಯಕ್ತಿಕ with value 12/03/2001-71", "start": 74, "end": 87, "category": "DATE_OF_BIRTH", "language": "mixed", "family": 7, "split": "validation"}
+{"text": "Review ವೈಯಕ್ತಿಕ ಹುಟ್ಟಿದ ದಿನಾಂಕ personal date of birth birthday with value 12/03/2001-72", "start": 74, "end": 87, "category": "DATE_OF_BIRTH", "language": "mixed", "family": 7, "split": "validation"}
+{"text": "Review ಹುಟ್ಟಿದ ದಿನಾಂಕ personal date of birth birthday ವೈಯಕ್ತಿಕ with value 12/03/2001-73", "start": 74, "end": 87, "category": "DATE_OF_BIRTH", "language": "mixed", "family": 7, "split": "validation"}
+{"text": "Updated personal email contact inbox: fictional@example.test-60", "start": 38, "end": 63, "category": "EMAIL", "language": "en", "family": 6, "split": "validation"}
+{"text": "Updated email contact inbox personal: fictional@example.test-61", "start": 38, "end": 63, "category": "EMAIL", "language": "en", "family": 6, "split": "validation"}
+{"text": "Updated personal email contact inbox: fictional@example.test-62", "start": 38, "end": 63, "category": "EMAIL", "language": "en", "family": 6, "split": "validation"}
+{"text": "Updated email contact inbox personal: fictional@example.test-63", "start": 38, "end": 63, "category": "EMAIL", "language": "en", "family": 6, "split": "validation"}
+{"text": "ನವೀಕರಿಸಿದ ವೈಯಕ್ತಿಕ ಇಮೇಲ್ ಸಂಪರ್ಕ: fictional@example.test-60", "start": 33, "end": 58, "category": "EMAIL", "language": "kn", "family": 6, "split": "validation"}
+{"text": "ನವೀಕರಿಸಿದ ಇಮೇಲ್ ಸಂಪರ್ಕ ವೈಯಕ್ತಿಕ: fictional@example.test-61", "start": 33, "end": 58, "category": "EMAIL", "language": "kn", "family": 6, "split": "validation"}
+{"text": "ನವೀಕರಿಸಿದ ವೈಯಕ್ತಿಕ ಇಮೇಲ್ ಸಂಪರ್ಕ: fictional@example.test-62", "start": 33, "end": 58, "category": "EMAIL", "language": "kn", "family": 6, "split": "validation"}
+{"text": "ನವೀಕರಿಸಿದ ಇಮೇಲ್ ಸಂಪರ್ಕ ವೈಯಕ್ತಿಕ: fictional@example.test-63", "start": 33, "end": 58, "category": "EMAIL", "language": "kn", "family": 6, "split": "validation"}
+{"text": "Updated ವೈಯಕ್ತಿಕ ಇಮೇಲ್ ಸಂಪರ್ಕ personal email contact inbox: fictional@example.test-60", "start": 60, "end": 85, "category": "EMAIL", "language": "mixed", "family": 6, "split": "validation"}
+{"text": "Updated ಇಮೇಲ್ ಸಂಪರ್ಕ personal email contact inbox ವೈಯಕ್ತಿಕ: fictional@example.test-61", "start": 60, "end": 85, "category": "EMAIL", "language": "mixed", "family": 6, "split": "validation"}
+{"text": "Updated ವೈಯಕ್ತಿಕ ಇಮೇಲ್ ಸಂಪರ್ಕ personal email contact inbox: fictional@example.test-62", "start": 60, "end": 85, "category": "EMAIL", "language": "mixed", "family": 6, "split": "validation"}
+{"text": "Updated ಇಮೇಲ್ ಸಂಪರ್ಕ personal email contact inbox ವೈಯಕ್ತಿಕ: fictional@example.test-63", "start": 60, "end": 85, "category": "EMAIL", "language": "mixed", "family": 6, "split": "validation"}
+{"text": "Review personal email contact inbox with value fictional@example.test-70", "start": 47, "end": 72, "category": "EMAIL", "language": "en", "family": 7, "split": "validation"}
+{"text": "Review email contact inbox personal with value fictional@example.test-71", "start": 47, "end": 72, "category": "EMAIL", "language": "en", "family": 7, "split": "validation"}
+{"text": "Review personal email contact inbox with value fictional@example.test-72", "start": 47, "end": 72, "category": "EMAIL", "language": "en", "family": 7, "split": "validation"}
+{"text": "Review email contact inbox personal with value fictional@example.test-73", "start": 47, "end": 72, "category": "EMAIL", "language": "en", "family": 7, "split": "validation"}
+{"text": "ವೈಯಕ್ತಿಕ ಇಮೇಲ್ ಸಂಪರ್ಕ ಮೌಲ್ಯವನ್ನು ಪರಿಶೀಲಿಸಿ fictional@example.test-70", "start": 43, "end": 68, "category": "EMAIL", "language": "kn", "family": 7, "split": "validation"}
+{"text": "ಇಮೇಲ್ ಸಂಪರ್ಕ ವೈಯಕ್ತಿಕ ಮೌಲ್ಯವನ್ನು ಪರಿಶೀಲಿಸಿ fictional@example.test-71", "start": 43, "end": 68, "category": "EMAIL", "language": "kn", "family": 7, "split": "validation"}
+{"text": "ವೈಯಕ್ತಿಕ ಇಮೇಲ್ ಸಂಪರ್ಕ ಮೌಲ್ಯವನ್ನು ಪರಿಶೀಲಿಸಿ fictional@example.test-72", "start": 43, "end": 68, "category": "EMAIL", "language": "kn", "family": 7, "split": "validation"}
+{"text": "ಇಮೇಲ್ ಸಂಪರ್ಕ ವೈಯಕ್ತಿಕ ಮೌಲ್ಯವನ್ನು ಪರಿಶೀಲಿಸಿ fictional@example.test-73", "start": 43, "end": 68, "category": "EMAIL", "language": "kn", "family": 7, "split": "validation"}
+{"text": "Review ವೈಯಕ್ತಿಕ ಇಮೇಲ್ ಸಂಪರ್ಕ personal email contact inbox with value fictional@example.test-70", "start": 69, "end": 94, "category": "EMAIL", "language": "mixed", "family": 7, "split": "validation"}
+{"text": "Review ಇಮೇಲ್ ಸಂಪರ್ಕ personal email contact inbox ವೈಯಕ್ತಿಕ with value fictional@example.test-71", "start": 69, "end": 94, "category": "EMAIL", "language": "mixed", "family": 7, "split": "validation"}
+{"text": "Review ವೈಯಕ್ತಿಕ ಇಮೇಲ್ ಸಂಪರ್ಕ personal email contact inbox with value fictional@example.test-72", "start": 69, "end": 94, "category": "EMAIL", "language": "mixed", "family": 7, "split": "validation"}
+{"text": "Review ಇಮೇಲ್ ಸಂಪರ್ಕ personal email contact inbox ವೈಯಕ್ತಿಕ with value fictional@example.test-73", "start": 69, "end": 94, "category": "EMAIL", "language": "mixed", "family": 7, "split": "validation"}
+{"text": "Updated secret password authentication token API key: TEST_ONLY_secret_42-60", "start": 54, "end": 76, "category": "CREDENTIAL_OR_SECRET", "language": "en", "family": 6, "split": "validation"}
+{"text": "Updated password authentication token API key secret: TEST_ONLY_secret_42-61", "start": 54, "end": 76, "category": "CREDENTIAL_OR_SECRET", "language": "en", "family": 6, "split": "validation"}
+{"text": "Updated secret password authentication token API key: TEST_ONLY_secret_42-62", "start": 54, "end": 76, "category": "CREDENTIAL_OR_SECRET", "language": "en", "family": 6, "split": "validation"}
+{"text": "Updated password authentication token API key secret: TEST_ONLY_secret_42-63", "start": 54, "end": 76, "category": "CREDENTIAL_OR_SECRET", "language": "en", "family": 6, "split": "validation"}
+{"text": "ನವೀಕರಿಸಿದ ರಹಸ್ಯ ಪಾಸ್ವರ್ಡ್ ದೃಢೀಕರಣ ಕೀ: TEST_ONLY_secret_42-60", "start": 38, "end": 60, "category": "CREDENTIAL_OR_SECRET", "language": "kn", "family": 6, "split": "validation"}
+{"text": "ನವೀಕರಿಸಿದ ಪಾಸ್ವರ್ಡ್ ದೃಢೀಕರಣ ಕೀ ರಹಸ್ಯ: TEST_ONLY_secret_42-61", "start": 38, "end": 60, "category": "CREDENTIAL_OR_SECRET", "language": "kn", "family": 6, "split": "validation"}
+{"text": "ನವೀಕರಿಸಿದ ರಹಸ್ಯ ಪಾಸ್ವರ್ಡ್ ದೃಢೀಕರಣ ಕೀ: TEST_ONLY_secret_42-62", "start": 38, "end": 60, "category": "CREDENTIAL_OR_SECRET", "language": "kn", "family": 6, "split": "validation"}
+{"text": "ನವೀಕರಿಸಿದ ಪಾಸ್ವರ್ಡ್ ದೃಢೀಕರಣ ಕೀ ರಹಸ್ಯ: TEST_ONLY_secret_42-63", "start": 38, "end": 60, "category": "CREDENTIAL_OR_SECRET", "language": "kn", "family": 6, "split": "validation"}
+{"text": "Updated ರಹಸ್ಯ ಪಾಸ್ವರ್ಡ್ ದೃಢೀಕರಣ ಕೀ secret password authentication token API key: TEST_ONLY_secret_42-60", "start": 81, "end": 103, "category": "CREDENTIAL_OR_SECRET", "language": "mixed", "family": 6, "split": "validation"}
+{"text": "Updated ಪಾಸ್ವರ್ಡ್ ದೃಢೀಕರಣ ಕೀ secret password authentication token API key ರಹಸ್ಯ: TEST_ONLY_secret_42-61", "start": 81, "end": 103, "category": "CREDENTIAL_OR_SECRET", "language": "mixed", "family": 6, "split": "validation"}
+{"text": "Updated ರಹಸ್ಯ ಪಾಸ್ವರ್ಡ್ ದೃಢೀಕರಣ ಕೀ secret password authentication token API key: TEST_ONLY_secret_42-62", "start": 81, "end": 103, "category": "CREDENTIAL_OR_SECRET", "language": "mixed", "family": 6, "split": "validation"}
+{"text": "Updated ಪಾಸ್ವರ್ಡ್ ದೃಢೀಕರಣ ಕೀ secret password authentication token API key ರಹಸ್ಯ: TEST_ONLY_secret_42-63", "start": 81, "end": 103, "category": "CREDENTIAL_OR_SECRET", "language": "mixed", "family": 6, "split": "validation"}
+{"text": "Review secret password authentication token API key with value TEST_ONLY_secret_42-70", "start": 63, "end": 85, "category": "CREDENTIAL_OR_SECRET", "language": "en", "family": 7, "split": "validation"}
+{"text": "Review password authentication token API key secret with value TEST_ONLY_secret_42-71", "start": 63, "end": 85, "category": "CREDENTIAL_OR_SECRET", "language": "en", "family": 7, "split": "validation"}
+{"text": "Review secret password authentication token API key with value TEST_ONLY_secret_42-72", "start": 63, "end": 85, "category": "CREDENTIAL_OR_SECRET", "language": "en", "family": 7, "split": "validation"}
+{"text": "Review password authentication token API key secret with value TEST_ONLY_secret_42-73", "start": 63, "end": 85, "category": "CREDENTIAL_OR_SECRET", "language": "en", "family": 7, "split": "validation"}
+{"text": "ರಹಸ್ಯ ಪಾಸ್ವರ್ಡ್ ದೃಢೀಕರಣ ಕೀ ಮೌಲ್ಯವನ್ನು ಪರಿಶೀಲಿಸಿ TEST_ONLY_secret_42-70", "start": 48, "end": 70, "category": "CREDENTIAL_OR_SECRET", "language": "kn", "family": 7, "split": "validation"}
+{"text": "ಪಾಸ್ವರ್ಡ್ ದೃಢೀಕರಣ ಕೀ ರಹಸ್ಯ ಮೌಲ್ಯವನ್ನು ಪರಿಶೀಲಿಸಿ TEST_ONLY_secret_42-71", "start": 48, "end": 70, "category": "CREDENTIAL_OR_SECRET", "language": "kn", "family": 7, "split": "validation"}
+{"text": "ರಹಸ್ಯ ಪಾಸ್ವರ್ಡ್ ದೃಢೀಕರಣ ಕೀ ಮೌಲ್ಯವನ್ನು ಪರಿಶೀಲಿಸಿ TEST_ONLY_secret_42-72", "start": 48, "end": 70, "category": "CREDENTIAL_OR_SECRET", "language": "kn", "family": 7, "split": "validation"}
+{"text": "ಪಾಸ್ವರ್ಡ್ ದೃಢೀಕರಣ ಕೀ ರಹಸ್ಯ ಮೌಲ್ಯವನ್ನು ಪರಿಶೀಲಿಸಿ TEST_ONLY_secret_42-73", "start": 48, "end": 70, "category": "CREDENTIAL_OR_SECRET", "language": "kn", "family": 7, "split": "validation"}
+{"text": "Review ರಹಸ್ಯ ಪಾಸ್ವರ್ಡ್ ದೃಢೀಕರಣ ಕೀ secret password authentication token API key with value TEST_ONLY_secret_42-70", "start": 90, "end": 112, "category": "CREDENTIAL_OR_SECRET", "language": "mixed", "family": 7, "split": "validation"}
+{"text": "Review ಪಾಸ್ವರ್ಡ್ ದೃಢೀಕರಣ ಕೀ secret password authentication token API key ರಹಸ್ಯ with value TEST_ONLY_secret_42-71", "start": 90, "end": 112, "category": "CREDENTIAL_OR_SECRET", "language": "mixed", "family": 7, "split": "validation"}
+{"text": "Review ರಹಸ್ಯ ಪಾಸ್ವರ್ಡ್ ದೃಢೀಕರಣ ಕೀ secret password authentication token API key with value TEST_ONLY_secret_42-72", "start": 90, "end": 112, "category": "CREDENTIAL_OR_SECRET", "language": "mixed", "family": 7, "split": "validation"}
+{"text": "Review ಪಾಸ್ವರ್ಡ್ ದೃಢೀಕರಣ ಕೀ secret password authentication token API key ರಹಸ್ಯ with value TEST_ONLY_secret_42-73", "start": 90, "end": 112, "category": "CREDENTIAL_OR_SECRET", "language": "mixed", "family": 7, "split": "validation"}
+{"text": "Updated confidential court legal case identifier: CASE/2026/42-60", "start": 50, "end": 65, "category": "LEGAL_CASE_REFERENCE", "language": "en", "family": 6, "split": "validation"}
+{"text": "Updated court legal case identifier confidential: CASE/2026/42-61", "start": 50, "end": 65, "category": "LEGAL_CASE_REFERENCE", "language": "en", "family": 6, "split": "validation"}
+{"text": "Updated confidential court legal case identifier: CASE/2026/42-62", "start": 50, "end": 65, "category": "LEGAL_CASE_REFERENCE", "language": "en", "family": 6, "split": "validation"}
+{"text": "Updated court legal case identifier confidential: CASE/2026/42-63", "start": 50, "end": 65, "category": "LEGAL_CASE_REFERENCE", "language": "en", "family": 6, "split": "validation"}
+{"text": "ನವೀಕರಿಸಿದ ಗೌಪ್ಯ ನ್ಯಾಯಾಲಯ ಪ್ರಕರಣ ಸಂಖ್ಯೆ: CASE/2026/42-60", "start": 40, "end": 55, "category": "LEGAL_CASE_REFERENCE", "language": "kn", "family": 6, "split": "validation"}
+{"text": "ನವೀಕರಿಸಿದ ನ್ಯಾಯಾಲಯ ಪ್ರಕರಣ ಸಂಖ್ಯೆ ಗೌಪ್ಯ: CASE/2026/42-61", "start": 40, "end": 55, "category": "LEGAL_CASE_REFERENCE", "language": "kn", "family": 6, "split": "validation"}
+{"text": "ನವೀಕರಿಸಿದ ಗೌಪ್ಯ ನ್ಯಾಯಾಲಯ ಪ್ರಕರಣ ಸಂಖ್ಯೆ: CASE/2026/42-62", "start": 40, "end": 55, "category": "LEGAL_CASE_REFERENCE", "language": "kn", "family": 6, "split": "validation"}
+{"text": "ನವೀಕರಿಸಿದ ನ್ಯಾಯಾಲಯ ಪ್ರಕರಣ ಸಂಖ್ಯೆ ಗೌಪ್ಯ: CASE/2026/42-63", "start": 40, "end": 55, "category": "LEGAL_CASE_REFERENCE", "language": "kn", "family": 6, "split": "validation"}
+{"text": "Updated ಗೌಪ್ಯ ನ್ಯಾಯಾಲಯ ಪ್ರಕರಣ ಸಂಖ್ಯೆ confidential court legal case identifier: CASE/2026/42-60", "start": 79, "end": 94, "category": "LEGAL_CASE_REFERENCE", "language": "mixed", "family": 6, "split": "validation"}
+{"text": "Updated ನ್ಯಾಯಾಲಯ ಪ್ರಕರಣ ಸಂಖ್ಯೆ confidential court legal case identifier ಗೌಪ್ಯ: CASE/2026/42-61", "start": 79, "end": 94, "category": "LEGAL_CASE_REFERENCE", "language": "mixed", "family": 6, "split": "validation"}
+{"text": "Updated ಗೌಪ್ಯ ನ್ಯಾಯಾಲಯ ಪ್ರಕರಣ ಸಂಖ್ಯೆ confidential court legal case identifier: CASE/2026/42-62", "start": 79, "end": 94, "category": "LEGAL_CASE_REFERENCE", "language": "mixed", "family": 6, "split": "validation"}
+{"text": "Updated ನ್ಯಾಯಾಲಯ ಪ್ರಕರಣ ಸಂಖ್ಯೆ confidential court legal case identifier ಗೌಪ್ಯ: CASE/2026/42-63", "start": 79, "end": 94, "category": "LEGAL_CASE_REFERENCE", "language": "mixed", "family": 6, "split": "validation"}
+{"text": "Review confidential court legal case identifier with value CASE/2026/42-70", "start": 59, "end": 74, "category": "LEGAL_CASE_REFERENCE", "language": "en", "family": 7, "split": "validation"}
+{"text": "Review court legal case identifier confidential with value CASE/2026/42-71", "start": 59, "end": 74, "category": "LEGAL_CASE_REFERENCE", "language": "en", "family": 7, "split": "validation"}
+{"text": "Review confidential court legal case identifier with value CASE/2026/42-72", "start": 59, "end": 74, "category": "LEGAL_CASE_REFERENCE", "language": "en", "family": 7, "split": "validation"}
+{"text": "Review court legal case identifier confidential with value CASE/2026/42-73", "start": 59, "end": 74, "category": "LEGAL_CASE_REFERENCE", "language": "en", "family": 7, "split": "validation"}
+{"text": "ಗೌಪ್ಯ ನ್ಯಾಯಾಲಯ ಪ್ರಕರಣ ಸಂಖ್ಯೆ ಮೌಲ್ಯವನ್ನು ಪರಿಶೀಲಿಸಿ CASE/2026/42-70", "start": 50, "end": 65, "category": "LEGAL_CASE_REFERENCE", "language": "kn", "family": 7, "split": "validation"}
+{"text": "ನ್ಯಾಯಾಲಯ ಪ್ರಕರಣ ಸಂಖ್ಯೆ ಗೌಪ್ಯ ಮೌಲ್ಯವನ್ನು ಪರಿಶೀಲಿಸಿ CASE/2026/42-71", "start": 50, "end": 65, "category": "LEGAL_CASE_REFERENCE", "language": "kn", "family": 7, "split": "validation"}
+{"text": "ಗೌಪ್ಯ ನ್ಯಾಯಾಲಯ ಪ್ರಕರಣ ಸಂಖ್ಯೆ ಮೌಲ್ಯವನ್ನು ಪರಿಶೀಲಿಸಿ CASE/2026/42-72", "start": 50, "end": 65, "category": "LEGAL_CASE_REFERENCE", "language": "kn", "family": 7, "split": "validation"}
+{"text": "ನ್ಯಾಯಾಲಯ ಪ್ರಕರಣ ಸಂಖ್ಯೆ ಗೌಪ್ಯ ಮೌಲ್ಯವನ್ನು ಪರಿಶೀಲಿಸಿ CASE/2026/42-73", "start": 50, "end": 65, "category": "LEGAL_CASE_REFERENCE", "language": "kn", "family": 7, "split": "validation"}
+{"text": "Review ಗೌಪ್ಯ ನ್ಯಾಯಾಲಯ ಪ್ರಕರಣ ಸಂಖ್ಯೆ confidential court legal case identifier with value CASE/2026/42-70", "start": 88, "end": 103, "category": "LEGAL_CASE_REFERENCE", "language": "mixed", "family": 7, "split": "validation"}
+{"text": "Review ನ್ಯಾಯಾಲಯ ಪ್ರಕರಣ ಸಂಖ್ಯೆ confidential court legal case identifier ಗೌಪ್ಯ with value CASE/2026/42-71", "start": 88, "end": 103, "category": "LEGAL_CASE_REFERENCE", "language": "mixed", "family": 7, "split": "validation"}
+{"text": "Review ಗೌಪ್ಯ ನ್ಯಾಯಾಲಯ ಪ್ರಕರಣ ಸಂಖ್ಯೆ confidential court legal case identifier with value CASE/2026/42-72", "start": 88, "end": 103, "category": "LEGAL_CASE_REFERENCE", "language": "mixed", "family": 7, "split": "validation"}
+{"text": "Review ನ್ಯಾಯಾಲಯ ಪ್ರಕರಣ ಸಂಖ್ಯೆ confidential court legal case identifier ಗೌಪ್ಯ with value CASE/2026/42-73", "start": 88, "end": 103, "category": "LEGAL_CASE_REFERENCE", "language": "mixed", "family": 7, "split": "validation"}
+{"text": "Updated patient diagnosis disease condition: fictional condition-60", "start": 45, "end": 67, "category": "MEDICAL_CONDITION", "language": "en", "family": 6, "split": "validation"}
+{"text": "Updated diagnosis disease condition patient: fictional condition-61", "start": 45, "end": 67, "category": "MEDICAL_CONDITION", "language": "en", "family": 6, "split": "validation"}
+{"text": "Updated patient diagnosis disease condition: fictional condition-62", "start": 45, "end": 67, "category": "MEDICAL_CONDITION", "language": "en", "family": 6, "split": "validation"}
+{"text": "Updated diagnosis disease condition patient: fictional condition-63", "start": 45, "end": 67, "category": "MEDICAL_CONDITION", "language": "en", "family": 6, "split": "validation"}
+{"text": "ನವೀಕರಿಸಿದ ರೋಗಿಯ ರೋಗನಿರ್ಣಯ ಕಾಯಿಲೆ: fictional condition-60", "start": 34, "end": 56, "category": "MEDICAL_CONDITION", "language": "kn", "family": 6, "split": "validation"}
+{"text": "ನವೀಕರಿಸಿದ ರೋಗನಿರ್ಣಯ ಕಾಯಿಲೆ ರೋಗಿಯ: fictional condition-61", "start": 34, "end": 56, "category": "MEDICAL_CONDITION", "language": "kn", "family": 6, "split": "validation"}
+{"text": "ನವೀಕರಿಸಿದ ರೋಗಿಯ ರೋಗನಿರ್ಣಯ ಕಾಯಿಲೆ: fictional condition-62", "start": 34, "end": 56, "category": "MEDICAL_CONDITION", "language": "kn", "family": 6, "split": "validation"}
+{"text": "ನವೀಕರಿಸಿದ ರೋಗನಿರ್ಣಯ ಕಾಯಿಲೆ ರೋಗಿಯ: fictional condition-63", "start": 34, "end": 56, "category": "MEDICAL_CONDITION", "language": "kn", "family": 6, "split": "validation"}
+{"text": "Updated ರೋಗಿಯ ರೋಗನಿರ್ಣಯ ಕಾಯಿಲೆ patient diagnosis disease condition: fictional condition-60", "start": 68, "end": 90, "category": "MEDICAL_CONDITION", "language": "mixed", "family": 6, "split": "validation"}
+{"text": "Updated ರೋಗನಿರ್ಣಯ ಕಾಯಿಲೆ patient diagnosis disease condition ರೋಗಿಯ: fictional condition-61", "start": 68, "end": 90, "category": "MEDICAL_CONDITION", "language": "mixed", "family": 6, "split": "validation"}
+{"text": "Updated ರೋಗಿಯ ರೋಗನಿರ್ಣಯ ಕಾಯಿಲೆ patient diagnosis disease condition: fictional condition-62", "start": 68, "end": 90, "category": "MEDICAL_CONDITION", "language": "mixed", "family": 6, "split": "validation"}
+{"text": "Updated ರೋಗನಿರ್ಣಯ ಕಾಯಿಲೆ patient diagnosis disease condition ರೋಗಿಯ: fictional condition-63", "start": 68, "end": 90, "category": "MEDICAL_CONDITION", "language": "mixed", "family": 6, "split": "validation"}
+{"text": "Review patient diagnosis disease condition with value fictional condition-70", "start": 54, "end": 76, "category": "MEDICAL_CONDITION", "language": "en", "family": 7, "split": "validation"}
+{"text": "Review diagnosis disease condition patient with value fictional condition-71", "start": 54, "end": 76, "category": "MEDICAL_CONDITION", "language": "en", "family": 7, "split": "validation"}
+{"text": "Review patient diagnosis disease condition with value fictional condition-72", "start": 54, "end": 76, "category": "MEDICAL_CONDITION", "language": "en", "family": 7, "split": "validation"}
+{"text": "Review diagnosis disease condition patient with value fictional condition-73", "start": 54, "end": 76, "category": "MEDICAL_CONDITION", "language": "en", "family": 7, "split": "validation"}
+{"text": "ರೋಗಿಯ ರೋಗನಿರ್ಣಯ ಕಾಯಿಲೆ ಮೌಲ್ಯವನ್ನು ಪರಿಶೀಲಿಸಿ fictional condition-70", "start": 44, "end": 66, "category": "MEDICAL_CONDITION", "language": "kn", "family": 7, "split": "validation"}
+{"text": "ರೋಗನಿರ್ಣಯ ಕಾಯಿಲೆ ರೋಗಿಯ ಮೌಲ್ಯವನ್ನು ಪರಿಶೀಲಿಸಿ fictional condition-71", "start": 44, "end": 66, "category": "MEDICAL_CONDITION", "language": "kn", "family": 7, "split": "validation"}
+{"text": "ರೋಗಿಯ ರೋಗನಿರ್ಣಯ ಕಾಯಿಲೆ ಮೌಲ್ಯವನ್ನು ಪರಿಶೀಲಿಸಿ fictional condition-72", "start": 44, "end": 66, "category": "MEDICAL_CONDITION", "language": "kn", "family": 7, "split": "validation"}
+{"text": "ರೋಗನಿರ್ಣಯ ಕಾಯಿಲೆ ರೋಗಿಯ ಮೌಲ್ಯವನ್ನು ಪರಿಶೀಲಿಸಿ fictional condition-73", "start": 44, "end": 66, "category": "MEDICAL_CONDITION", "language": "kn", "family": 7, "split": "validation"}
+{"text": "Review ರೋಗಿಯ ರೋಗನಿರ್ಣಯ ಕಾಯಿಲೆ patient diagnosis disease condition with value fictional condition-70", "start": 77, "end": 99, "category": "MEDICAL_CONDITION", "language": "mixed", "family": 7, "split": "validation"}
+{"text": "Review ರೋಗನಿರ್ಣಯ ಕಾಯಿಲೆ patient diagnosis disease condition ರೋಗಿಯ with value fictional condition-71", "start": 77, "end": 99, "category": "MEDICAL_CONDITION", "language": "mixed", "family": 7, "split": "validation"}
+{"text": "Review ರೋಗಿಯ ರೋಗನಿರ್ಣಯ ಕಾಯಿಲೆ patient diagnosis disease condition with value fictional condition-72", "start": 77, "end": 99, "category": "MEDICAL_CONDITION", "language": "mixed", "family": 7, "split": "validation"}
+{"text": "Review ರೋಗನಿರ್ಣಯ ಕಾಯಿಲೆ patient diagnosis disease condition ರೋಗಿಯ with value fictional condition-73", "start": 77, "end": 99, "category": "MEDICAL_CONDITION", "language": "mixed", "family": 7, "split": "validation"}
+{"text": "Updated patient prescription medication treatment: fictional medicine-60", "start": 51, "end": 72, "category": "MEDICATION", "language": "en", "family": 6, "split": "validation"}
+{"text": "Updated prescription medication treatment patient: fictional medicine-61", "start": 51, "end": 72, "category": "MEDICATION", "language": "en", "family": 6, "split": "validation"}
+{"text": "Updated patient prescription medication treatment: fictional medicine-62", "start": 51, "end": 72, "category": "MEDICATION", "language": "en", "family": 6, "split": "validation"}
+{"text": "Updated prescription medication treatment patient: fictional medicine-63", "start": 51, "end": 72, "category": "MEDICATION", "language": "en", "family": 6, "split": "validation"}
+{"text": "ನವೀಕರಿಸಿದ ರೋಗಿಯ ಔಷಧಿ ಚಿಕಿತ್ಸೆ: fictional medicine-60", "start": 31, "end": 52, "category": "MEDICATION", "language": "kn", "family": 6, "split": "validation"}
+{"text": "ನವೀಕರಿಸಿದ ಔಷಧಿ ಚಿಕಿತ್ಸೆ ರೋಗಿಯ: fictional medicine-61", "start": 31, "end": 52, "category": "MEDICATION", "language": "kn", "family": 6, "split": "validation"}
+{"text": "ನವೀಕರಿಸಿದ ರೋಗಿಯ ಔಷಧಿ ಚಿಕಿತ್ಸೆ: fictional medicine-62", "start": 31, "end": 52, "category": "MEDICATION", "language": "kn", "family": 6, "split": "validation"}
+{"text": "ನವೀಕರಿಸಿದ ಔಷಧಿ ಚಿಕಿತ್ಸೆ ರೋಗಿಯ: fictional medicine-63", "start": 31, "end": 52, "category": "MEDICATION", "language": "kn", "family": 6, "split": "validation"}
+{"text": "Updated ರೋಗಿಯ ಔಷಧಿ ಚಿಕಿತ್ಸೆ patient prescription medication treatment: fictional medicine-60", "start": 71, "end": 92, "category": "MEDICATION", "language": "mixed", "family": 6, "split": "validation"}
+{"text": "Updated ಔಷಧಿ ಚಿಕಿತ್ಸೆ patient prescription medication treatment ರೋಗಿಯ: fictional medicine-61", "start": 71, "end": 92, "category": "MEDICATION", "language": "mixed", "family": 6, "split": "validation"}
+{"text": "Updated ರೋಗಿಯ ಔಷಧಿ ಚಿಕಿತ್ಸೆ patient prescription medication treatment: fictional medicine-62", "start": 71, "end": 92, "category": "MEDICATION", "language": "mixed", "family": 6, "split": "validation"}
+{"text": "Updated ಔಷಧಿ ಚಿಕಿತ್ಸೆ patient prescription medication treatment ರೋಗಿಯ: fictional medicine-63", "start": 71, "end": 92, "category": "MEDICATION", "language": "mixed", "family": 6, "split": "validation"}
+{"text": "Review patient prescription medication treatment with value fictional medicine-70", "start": 60, "end": 81, "category": "MEDICATION", "language": "en", "family": 7, "split": "validation"}
+{"text": "Review prescription medication treatment patient with value fictional medicine-71", "start": 60, "end": 81, "category": "MEDICATION", "language": "en", "family": 7, "split": "validation"}
+{"text": "Review patient prescription medication treatment with value fictional medicine-72", "start": 60, "end": 81, "category": "MEDICATION", "language": "en", "family": 7, "split": "validation"}
+{"text": "Review prescription medication treatment patient with value fictional medicine-73", "start": 60, "end": 81, "category": "MEDICATION", "language": "en", "family": 7, "split": "validation"}
+{"text": "ರೋಗಿಯ ಔಷಧಿ ಚಿಕಿತ್ಸೆ ಮೌಲ್ಯವನ್ನು ಪರಿಶೀಲಿಸಿ fictional medicine-70", "start": 41, "end": 62, "category": "MEDICATION", "language": "kn", "family": 7, "split": "validation"}
+{"text": "ಔಷಧಿ ಚಿಕಿತ್ಸೆ ರೋಗಿಯ ಮೌಲ್ಯವನ್ನು ಪರಿಶೀಲಿಸಿ fictional medicine-71", "start": 41, "end": 62, "category": "MEDICATION", "language": "kn", "family": 7, "split": "validation"}
+{"text": "ರೋಗಿಯ ಔಷಧಿ ಚಿಕಿತ್ಸೆ ಮೌಲ್ಯವನ್ನು ಪರಿಶೀಲಿಸಿ fictional medicine-72", "start": 41, "end": 62, "category": "MEDICATION", "language": "kn", "family": 7, "split": "validation"}
+{"text": "ಔಷಧಿ ಚಿಕಿತ್ಸೆ ರೋಗಿಯ ಮೌಲ್ಯವನ್ನು ಪರಿಶೀಲಿಸಿ fictional medicine-73", "start": 41, "end": 62, "category": "MEDICATION", "language": "kn", "family": 7, "split": "validation"}
+{"text": "Review ರೋಗಿಯ ಔಷಧಿ ಚಿಕಿತ್ಸೆ patient prescription medication treatment with value fictional medicine-70", "start": 80, "end": 101, "category": "MEDICATION", "language": "mixed", "family": 7, "split": "validation"}
+{"text": "Review ಔಷಧಿ ಚಿಕಿತ್ಸೆ patient prescription medication treatment ರೋಗಿಯ with value fictional medicine-71", "start": 80, "end": 101, "category": "MEDICATION", "language": "mixed", "family": 7, "split": "validation"}
+{"text": "Review ರೋಗಿಯ ಔಷಧಿ ಚಿಕಿತ್ಸೆ patient prescription medication treatment with value fictional medicine-72", "start": 80, "end": 101, "category": "MEDICATION", "language": "mixed", "family": 7, "split": "validation"}
+{"text": "Review ಔಷಧಿ ಚಿಕಿತ್ಸೆ patient prescription medication treatment ರೋಗಿಯ with value fictional medicine-73", "start": 80, "end": 101, "category": "MEDICATION", "language": "mixed", "family": 7, "split": "validation"}
+{"text": "Updated patient laboratory blood test result: fictional result 42-60", "start": 46, "end": 68, "category": "LAB_RESULT", "language": "en", "family": 6, "split": "validation"}
+{"text": "Updated laboratory blood test result patient: fictional result 42-61", "start": 46, "end": 68, "category": "LAB_RESULT", "language": "en", "family": 6, "split": "validation"}
+{"text": "Updated patient laboratory blood test result: fictional result 42-62", "start": 46, "end": 68, "category": "LAB_RESULT", "language": "en", "family": 6, "split": "validation"}
+{"text": "Updated laboratory blood test result patient: fictional result 42-63", "start": 46, "end": 68, "category": "LAB_RESULT", "language": "en", "family": 6, "split": "validation"}
+{"text": "ನವೀಕರಿಸಿದ ರೋಗಿಯ ಪ್ರಯೋಗಾಲಯ ರಕ್ತ ಪರೀಕ್ಷೆ ಫಲಿತಾಂಶ: fictional result 42-60", "start": 48, "end": 70, "category": "LAB_RESULT", "language": "kn", "family": 6, "split": "validation"}
+{"text": "ನವೀಕರಿಸಿದ ಪ್ರಯೋಗಾಲಯ ರಕ್ತ ಪರೀಕ್ಷೆ ಫಲಿತಾಂಶ ರೋಗಿಯ: fictional result 42-61", "start": 48, "end": 70, "category": "LAB_RESULT", "language": "kn", "family": 6, "split": "validation"}
+{"text": "ನವೀಕರಿಸಿದ ರೋಗಿಯ ಪ್ರಯೋಗಾಲಯ ರಕ್ತ ಪರೀಕ್ಷೆ ಫಲಿತಾಂಶ: fictional result 42-62", "start": 48, "end": 70, "category": "LAB_RESULT", "language": "kn", "family": 6, "split": "validation"}
+{"text": "ನವೀಕರಿಸಿದ ಪ್ರಯೋಗಾಲಯ ರಕ್ತ ಪರೀಕ್ಷೆ ಫಲಿತಾಂಶ ರೋಗಿಯ: fictional result 42-63", "start": 48, "end": 70, "category": "LAB_RESULT", "language": "kn", "family": 6, "split": "validation"}
+{"text": "Updated ರೋಗಿಯ ಪ್ರಯೋಗಾಲಯ ರಕ್ತ ಪರೀಕ್ಷೆ ಫಲಿತಾಂಶ patient laboratory blood test result: fictional result 42-60", "start": 83, "end": 105, "category": "LAB_RESULT", "language": "mixed", "family": 6, "split": "validation"}
+{"text": "Updated ಪ್ರಯೋಗಾಲಯ ರಕ್ತ ಪರೀಕ್ಷೆ ಫಲಿತಾಂಶ patient laboratory blood test result ರೋಗಿಯ: fictional result 42-61", "start": 83, "end": 105, "category": "LAB_RESULT", "language": "mixed", "family": 6, "split": "validation"}
+{"text": "Updated ರೋಗಿಯ ಪ್ರಯೋಗಾಲಯ ರಕ್ತ ಪರೀಕ್ಷೆ ಫಲಿತಾಂಶ patient laboratory blood test result: fictional result 42-62", "start": 83, "end": 105, "category": "LAB_RESULT", "language": "mixed", "family": 6, "split": "validation"}
+{"text": "Updated ಪ್ರಯೋಗಾಲಯ ರಕ್ತ ಪರೀಕ್ಷೆ ಫಲಿತಾಂಶ patient laboratory blood test result ರೋಗಿಯ: fictional result 42-63", "start": 83, "end": 105, "category": "LAB_RESULT", "language": "mixed", "family": 6, "split": "validation"}
+{"text": "Review patient laboratory blood test result with value fictional result 42-70", "start": 55, "end": 77, "category": "LAB_RESULT", "language": "en", "family": 7, "split": "validation"}
+{"text": "Review laboratory blood test result patient with value fictional result 42-71", "start": 55, "end": 77, "category": "LAB_RESULT", "language": "en", "family": 7, "split": "validation"}
+{"text": "Review patient laboratory blood test result with value fictional result 42-72", "start": 55, "end": 77, "category": "LAB_RESULT", "language": "en", "family": 7, "split": "validation"}
+{"text": "Review laboratory blood test result patient with value fictional result 42-73", "start": 55, "end": 77, "category": "LAB_RESULT", "language": "en", "family": 7, "split": "validation"}
+{"text": "ರೋಗಿಯ ಪ್ರಯೋಗಾಲಯ ರಕ್ತ ಪರೀಕ್ಷೆ ಫಲಿತಾಂಶ ಮೌಲ್ಯವನ್ನು ಪರಿಶೀಲಿಸಿ fictional result 42-70", "start": 58, "end": 80, "category": "LAB_RESULT", "language": "kn", "family": 7, "split": "validation"}
+{"text": "ಪ್ರಯೋಗಾಲಯ ರಕ್ತ ಪರೀಕ್ಷೆ ಫಲಿತಾಂಶ ರೋಗಿಯ ಮೌಲ್ಯವನ್ನು ಪರಿಶೀಲಿಸಿ fictional result 42-71", "start": 58, "end": 80, "category": "LAB_RESULT", "language": "kn", "family": 7, "split": "validation"}
+{"text": "ರೋಗಿಯ ಪ್ರಯೋಗಾಲಯ ರಕ್ತ ಪರೀಕ್ಷೆ ಫಲಿತಾಂಶ ಮೌಲ್ಯವನ್ನು ಪರಿಶೀಲಿಸಿ fictional result 42-72", "start": 58, "end": 80, "category": "LAB_RESULT", "language": "kn", "family": 7, "split": "validation"}
+{"text": "ಪ್ರಯೋಗಾಲಯ ರಕ್ತ ಪರೀಕ್ಷೆ ಫಲಿತಾಂಶ ರೋಗಿಯ ಮೌಲ್ಯವನ್ನು ಪರಿಶೀಲಿಸಿ fictional result 42-73", "start": 58, "end": 80, "category": "LAB_RESULT", "language": "kn", "family": 7, "split": "validation"}
+{"text": "Review ರೋಗಿಯ ಪ್ರಯೋಗಾಲಯ ರಕ್ತ ಪರೀಕ್ಷೆ ಫಲಿತಾಂಶ patient laboratory blood test result with value fictional result 42-70", "start": 92, "end": 114, "category": "LAB_RESULT", "language": "mixed", "family": 7, "split": "validation"}
+{"text": "Review ಪ್ರಯೋಗಾಲಯ ರಕ್ತ ಪರೀಕ್ಷೆ ಫಲಿತಾಂಶ patient laboratory blood test result ರೋಗಿಯ with value fictional result 42-71", "start": 92, "end": 114, "category": "LAB_RESULT", "language": "mixed", "family": 7, "split": "validation"}
+{"text": "Review ರೋಗಿಯ ಪ್ರಯೋಗಾಲಯ ರಕ್ತ ಪರೀಕ್ಷೆ ಫಲಿತಾಂಶ patient laboratory blood test result with value fictional result 42-72", "start": 92, "end": 114, "category": "LAB_RESULT", "language": "mixed", "family": 7, "split": "validation"}
+{"text": "Review ಪ್ರಯೋಗಾಲಯ ರಕ್ತ ಪರೀಕ್ಷೆ ಫಲಿತಾಂಶ patient laboratory blood test result ರೋಗಿಯ with value fictional result 42-73", "start": 92, "end": 114, "category": "LAB_RESULT", "language": "mixed", "family": 7, "split": "validation"}
+{"text": "Updated student examination marks result: 82%-60", "start": 42, "end": 48, "category": "ACADEMIC_RESULT", "language": "en", "family": 6, "split": "validation"}
+{"text": "Updated examination marks result student: 82%-61", "start": 42, "end": 48, "category": "ACADEMIC_RESULT", "language": "en", "family": 6, "split": "validation"}
+{"text": "Updated student examination marks result: 82%-62", "start": 42, "end": 48, "category": "ACADEMIC_RESULT", "language": "en", "family": 6, "split": "validation"}
+{"text": "Updated examination marks result student: 82%-63", "start": 42, "end": 48, "category": "ACADEMIC_RESULT", "language": "en", "family": 6, "split": "validation"}
+{"text": "ನವೀಕರಿಸಿದ ವಿದ್ಯಾರ್ಥಿ ಪರೀಕ್ಷೆ ಅಂಕ ಫಲಿತಾಂಶ: 82%-60", "start": 42, "end": 48, "category": "ACADEMIC_RESULT", "language": "kn", "family": 6, "split": "validation"}
+{"text": "ನವೀಕರಿಸಿದ ಪರೀಕ್ಷೆ ಅಂಕ ಫಲಿತಾಂಶ ವಿದ್ಯಾರ್ಥಿ: 82%-61", "start": 42, "end": 48, "category": "ACADEMIC_RESULT", "language": "kn", "family": 6, "split": "validation"}
+{"text": "ನವೀಕರಿಸಿದ ವಿದ್ಯಾರ್ಥಿ ಪರೀಕ್ಷೆ ಅಂಕ ಫಲಿತಾಂಶ: 82%-62", "start": 42, "end": 48, "category": "ACADEMIC_RESULT", "language": "kn", "family": 6, "split": "validation"}
+{"text": "ನವೀಕರಿಸಿದ ಪರೀಕ್ಷೆ ಅಂಕ ಫಲಿತಾಂಶ ವಿದ್ಯಾರ್ಥಿ: 82%-63", "start": 42, "end": 48, "category": "ACADEMIC_RESULT", "language": "kn", "family": 6, "split": "validation"}
+{"text": "Updated ವಿದ್ಯಾರ್ಥಿ ಪರೀಕ್ಷೆ ಅಂಕ ಫಲಿತಾಂಶ student examination marks result: 82%-60", "start": 73, "end": 79, "category": "ACADEMIC_RESULT", "language": "mixed", "family": 6, "split": "validation"}
+{"text": "Updated ಪರೀಕ್ಷೆ ಅಂಕ ಫಲಿತಾಂಶ student examination marks result ವಿದ್ಯಾರ್ಥಿ: 82%-61", "start": 73, "end": 79, "category": "ACADEMIC_RESULT", "language": "mixed", "family": 6, "split": "validation"}
+{"text": "Updated ವಿದ್ಯಾರ್ಥಿ ಪರೀಕ್ಷೆ ಅಂಕ ಫಲಿತಾಂಶ student examination marks result: 82%-62", "start": 73, "end": 79, "category": "ACADEMIC_RESULT", "language": "mixed", "family": 6, "split": "validation"}
+{"text": "Updated ಪರೀಕ್ಷೆ ಅಂಕ ಫಲಿತಾಂಶ student examination marks result ವಿದ್ಯಾರ್ಥಿ: 82%-63", "start": 73, "end": 79, "category": "ACADEMIC_RESULT", "language": "mixed", "family": 6, "split": "validation"}
+{"text": "Review student examination marks result with value 82%-70", "start": 51, "end": 57, "category": "ACADEMIC_RESULT", "language": "en", "family": 7, "split": "validation"}
+{"text": "Review examination marks result student with value 82%-71", "start": 51, "end": 57, "category": "ACADEMIC_RESULT", "language": "en", "family": 7, "split": "validation"}
+{"text": "Review student examination marks result with value 82%-72", "start": 51, "end": 57, "category": "ACADEMIC_RESULT", "language": "en", "family": 7, "split": "validation"}
+{"text": "Review examination marks result student with value 82%-73", "start": 51, "end": 57, "category": "ACADEMIC_RESULT", "language": "en", "family": 7, "split": "validation"}
+{"text": "ವಿದ್ಯಾರ್ಥಿ ಪರೀಕ್ಷೆ ಅಂಕ ಫಲಿತಾಂಶ ಮೌಲ್ಯವನ್ನು ಪರಿಶೀಲಿಸಿ 82%-70", "start": 52, "end": 58, "category": "ACADEMIC_RESULT", "language": "kn", "family": 7, "split": "validation"}
+{"text": "ಪರೀಕ್ಷೆ ಅಂಕ ಫಲಿತಾಂಶ ವಿದ್ಯಾರ್ಥಿ ಮೌಲ್ಯವನ್ನು ಪರಿಶೀಲಿಸಿ 82%-71", "start": 52, "end": 58, "category": "ACADEMIC_RESULT", "language": "kn", "family": 7, "split": "validation"}
+{"text": "ವಿದ್ಯಾರ್ಥಿ ಪರೀಕ್ಷೆ ಅಂಕ ಫಲಿತಾಂಶ ಮೌಲ್ಯವನ್ನು ಪರಿಶೀಲಿಸಿ 82%-72", "start": 52, "end": 58, "category": "ACADEMIC_RESULT", "language": "kn", "family": 7, "split": "validation"}
+{"text": "ಪರೀಕ್ಷೆ ಅಂಕ ಫಲಿತಾಂಶ ವಿದ್ಯಾರ್ಥಿ ಮೌಲ್ಯವನ್ನು ಪರಿಶೀಲಿಸಿ 82%-73", "start": 52, "end": 58, "category": "ACADEMIC_RESULT", "language": "kn", "family": 7, "split": "validation"}
+{"text": "Review ವಿದ್ಯಾರ್ಥಿ ಪರೀಕ್ಷೆ ಅಂಕ ಫಲಿತಾಂಶ student examination marks result with value 82%-70", "start": 82, "end": 88, "category": "ACADEMIC_RESULT", "language": "mixed", "family": 7, "split": "validation"}
+{"text": "Review ಪರೀಕ್ಷೆ ಅಂಕ ಫಲಿತಾಂಶ student examination marks result ವಿದ್ಯಾರ್ಥಿ with value 82%-71", "start": 82, "end": 88, "category": "ACADEMIC_RESULT", "language": "mixed", "family": 7, "split": "validation"}
+{"text": "Review ವಿದ್ಯಾರ್ಥಿ ಪರೀಕ್ಷೆ ಅಂಕ ಫಲಿತಾಂಶ student examination marks result with value 82%-72", "start": 82, "end": 88, "category": "ACADEMIC_RESULT", "language": "mixed", "family": 7, "split": "validation"}
+{"text": "Review ಪರೀಕ್ಷೆ ಅಂಕ ಫಲಿತಾಂಶ student examination marks result ವಿದ್ಯಾರ್ಥಿ with value 82%-73", "start": 82, "end": 88, "category": "ACADEMIC_RESULT", "language": "mixed", "family": 7, "split": "validation"}
+{"text": "Updated government Aadhaar identity number: 234567890160", "start": 44, "end": 56, "category": "AADHAAR_REVIEW", "language": "en", "family": 6, "split": "validation"}
+{"text": "Updated Aadhaar identity number government: 234567890161", "start": 44, "end": 56, "category": "AADHAAR_REVIEW", "language": "en", "family": 6, "split": "validation"}
+{"text": "Updated government Aadhaar identity number: 234567890162", "start": 44, "end": 56, "category": "AADHAAR_REVIEW", "language": "en", "family": 6, "split": "validation"}
+{"text": "Updated Aadhaar identity number government: 234567890163", "start": 44, "end": 56, "category": "AADHAAR_REVIEW", "language": "en", "family": 6, "split": "validation"}
+{"text": "ನವೀಕರಿಸಿದ ಸರ್ಕಾರಿ ಆಧಾರ್ ಗುರುತಿನ ಸಂಖ್ಯೆ: 234567890160", "start": 40, "end": 52, "category": "AADHAAR_REVIEW", "language": "kn", "family": 6, "split": "validation"}
+{"text": "ನವೀಕರಿಸಿದ ಆಧಾರ್ ಗುರುತಿನ ಸಂಖ್ಯೆ ಸರ್ಕಾರಿ: 234567890161", "start": 40, "end": 52, "category": "AADHAAR_REVIEW", "language": "kn", "family": 6, "split": "validation"}
+{"text": "ನವೀಕರಿಸಿದ ಸರ್ಕಾರಿ ಆಧಾರ್ ಗುರುತಿನ ಸಂಖ್ಯೆ: 234567890162", "start": 40, "end": 52, "category": "AADHAAR_REVIEW", "language": "kn", "family": 6, "split": "validation"}
+{"text": "ನವೀಕರಿಸಿದ ಆಧಾರ್ ಗುರುತಿನ ಸಂಖ್ಯೆ ಸರ್ಕಾರಿ: 234567890163", "start": 40, "end": 52, "category": "AADHAAR_REVIEW", "language": "kn", "family": 6, "split": "validation"}
+{"text": "Updated ಸರ್ಕಾರಿ ಆಧಾರ್ ಗುರುತಿನ ಸಂಖ್ಯೆ government Aadhaar identity number: 234567890160", "start": 73, "end": 85, "category": "AADHAAR_REVIEW", "language": "mixed", "family": 6, "split": "validation"}
+{"text": "Updated ಆಧಾರ್ ಗುರುತಿನ ಸಂಖ್ಯೆ government Aadhaar identity number ಸರ್ಕಾರಿ: 234567890161", "start": 73, "end": 85, "category": "AADHAAR_REVIEW", "language": "mixed", "family": 6, "split": "validation"}
+{"text": "Updated ಸರ್ಕಾರಿ ಆಧಾರ್ ಗುರುತಿನ ಸಂಖ್ಯೆ government Aadhaar identity number: 234567890162", "start": 73, "end": 85, "category": "AADHAAR_REVIEW", "language": "mixed", "family": 6, "split": "validation"}
+{"text": "Updated ಆಧಾರ್ ಗುರುತಿನ ಸಂಖ್ಯೆ government Aadhaar identity number ಸರ್ಕಾರಿ: 234567890163", "start": 73, "end": 85, "category": "AADHAAR_REVIEW", "language": "mixed", "family": 6, "split": "validation"}
+{"text": "Review government Aadhaar identity number with value 234567890170", "start": 53, "end": 65, "category": "AADHAAR_REVIEW", "language": "en", "family": 7, "split": "validation"}
+{"text": "Review Aadhaar identity number government with value 234567890171", "start": 53, "end": 65, "category": "AADHAAR_REVIEW", "language": "en", "family": 7, "split": "validation"}
+{"text": "Review government Aadhaar identity number with value 234567890172", "start": 53, "end": 65, "category": "AADHAAR_REVIEW", "language": "en", "family": 7, "split": "validation"}
+{"text": "Review Aadhaar identity number government with value 234567890173", "start": 53, "end": 65, "category": "AADHAAR_REVIEW", "language": "en", "family": 7, "split": "validation"}
+{"text": "ಸರ್ಕಾರಿ ಆಧಾರ್ ಗುರುತಿನ ಸಂಖ್ಯೆ ಮೌಲ್ಯವನ್ನು ಪರಿಶೀಲಿಸಿ 234567890170", "start": 50, "end": 62, "category": "AADHAAR_REVIEW", "language": "kn", "family": 7, "split": "validation"}
+{"text": "ಆಧಾರ್ ಗುರುತಿನ ಸಂಖ್ಯೆ ಸರ್ಕಾರಿ ಮೌಲ್ಯವನ್ನು ಪರಿಶೀಲಿಸಿ 234567890171", "start": 50, "end": 62, "category": "AADHAAR_REVIEW", "language": "kn", "family": 7, "split": "validation"}
+{"text": "ಸರ್ಕಾರಿ ಆಧಾರ್ ಗುರುತಿನ ಸಂಖ್ಯೆ ಮೌಲ್ಯವನ್ನು ಪರಿಶೀಲಿಸಿ 234567890172", "start": 50, "end": 62, "category": "AADHAAR_REVIEW", "language": "kn", "family": 7, "split": "validation"}
+{"text": "ಆಧಾರ್ ಗುರುತಿನ ಸಂಖ್ಯೆ ಸರ್ಕಾರಿ ಮೌಲ್ಯವನ್ನು ಪರಿಶೀಲಿಸಿ 234567890173", "start": 50, "end": 62, "category": "AADHAAR_REVIEW", "language": "kn", "family": 7, "split": "validation"}
+{"text": "Review ಸರ್ಕಾರಿ ಆಧಾರ್ ಗುರುತಿನ ಸಂಖ್ಯೆ government Aadhaar identity number with value 234567890170", "start": 82, "end": 94, "category": "AADHAAR_REVIEW", "language": "mixed", "family": 7, "split": "validation"}
+{"text": "Review ಆಧಾರ್ ಗುರುತಿನ ಸಂಖ್ಯೆ government Aadhaar identity number ಸರ್ಕಾರಿ with value 234567890171", "start": 82, "end": 94, "category": "AADHAAR_REVIEW", "language": "mixed", "family": 7, "split": "validation"}
+{"text": "Review ಸರ್ಕಾರಿ ಆಧಾರ್ ಗುರುತಿನ ಸಂಖ್ಯೆ government Aadhaar identity number with value 234567890172", "start": 82, "end": 94, "category": "AADHAAR_REVIEW", "language": "mixed", "family": 7, "split": "validation"}
+{"text": "Review ಆಧಾರ್ ಗುರುತಿನ ಸಂಖ್ಯೆ government Aadhaar identity number ಸರ್ಕಾರಿ with value 234567890173", "start": 82, "end": 94, "category": "AADHAAR_REVIEW", "language": "mixed", "family": 7, "split": "validation"}
+{"text": "Updated government PAN income tax identity: ABCPA1234Z-60", "start": 44, "end": 57, "category": "PAN_CANDIDATE", "language": "en", "family": 6, "split": "validation"}
+{"text": "Updated PAN income tax identity government: ABCPA1234Z-61", "start": 44, "end": 57, "category": "PAN_CANDIDATE", "language": "en", "family": 6, "split": "validation"}
+{"text": "Updated government PAN income tax identity: ABCPA1234Z-62", "start": 44, "end": 57, "category": "PAN_CANDIDATE", "language": "en", "family": 6, "split": "validation"}
+{"text": "Updated PAN income tax identity government: ABCPA1234Z-63", "start": 44, "end": 57, "category": "PAN_CANDIDATE", "language": "en", "family": 6, "split": "validation"}
+{"text": "ನವೀಕರಿಸಿದ ಸರ್ಕಾರಿ ಪ್ಯಾನ್ ಆದಾಯ ತೆರಿಗೆ: ABCPA1234Z-60", "start": 38, "end": 51, "category": "PAN_CANDIDATE", "language": "kn", "family": 6, "split": "validation"}
+{"text": "ನವೀಕರಿಸಿದ ಪ್ಯಾನ್ ಆದಾಯ ತೆರಿಗೆ ಸರ್ಕಾರಿ: ABCPA1234Z-61", "start": 38, "end": 51, "category": "PAN_CANDIDATE", "language": "kn", "family": 6, "split": "validation"}
+{"text": "ನವೀಕರಿಸಿದ ಸರ್ಕಾರಿ ಪ್ಯಾನ್ ಆದಾಯ ತೆರಿಗೆ: ABCPA1234Z-62", "start": 38, "end": 51, "category": "PAN_CANDIDATE", "language": "kn", "family": 6, "split": "validation"}
+{"text": "ನವೀಕರಿಸಿದ ಪ್ಯಾನ್ ಆದಾಯ ತೆರಿಗೆ ಸರ್ಕಾರಿ: ABCPA1234Z-63", "start": 38, "end": 51, "category": "PAN_CANDIDATE", "language": "kn", "family": 6, "split": "validation"}
+{"text": "Updated ಸರ್ಕಾರಿ ಪ್ಯಾನ್ ಆದಾಯ ತೆರಿಗೆ government PAN income tax identity: ABCPA1234Z-60", "start": 71, "end": 84, "category": "PAN_CANDIDATE", "language": "mixed", "family": 6, "split": "validation"}
+{"text": "Updated ಪ್ಯಾನ್ ಆದಾಯ ತೆರಿಗೆ government PAN income tax identity ಸರ್ಕಾರಿ: ABCPA1234Z-61", "start": 71, "end": 84, "category": "PAN_CANDIDATE", "language": "mixed", "family": 6, "split": "validation"}
+{"text": "Updated ಸರ್ಕಾರಿ ಪ್ಯಾನ್ ಆದಾಯ ತೆರಿಗೆ government PAN income tax identity: ABCPA1234Z-62", "start": 71, "end": 84, "category": "PAN_CANDIDATE", "language": "mixed", "family": 6, "split": "validation"}
+{"text": "Updated ಪ್ಯಾನ್ ಆದಾಯ ತೆರಿಗೆ government PAN income tax identity ಸರ್ಕಾರಿ: ABCPA1234Z-63", "start": 71, "end": 84, "category": "PAN_CANDIDATE", "language": "mixed", "family": 6, "split": "validation"}
+{"text": "Review government PAN income tax identity with value ABCPA1234Z-70", "start": 53, "end": 66, "category": "PAN_CANDIDATE", "language": "en", "family": 7, "split": "validation"}
+{"text": "Review PAN income tax identity government with value ABCPA1234Z-71", "start": 53, "end": 66, "category": "PAN_CANDIDATE", "language": "en", "family": 7, "split": "validation"}
+{"text": "Review government PAN income tax identity with value ABCPA1234Z-72", "start": 53, "end": 66, "category": "PAN_CANDIDATE", "language": "en", "family": 7, "split": "validation"}
+{"text": "Review PAN income tax identity government with value ABCPA1234Z-73", "start": 53, "end": 66, "category": "PAN_CANDIDATE", "language": "en", "family": 7, "split": "validation"}
+{"text": "ಸರ್ಕಾರಿ ಪ್ಯಾನ್ ಆದಾಯ ತೆರಿಗೆ ಮೌಲ್ಯವನ್ನು ಪರಿಶೀಲಿಸಿ ABCPA1234Z-70", "start": 48, "end": 61, "category": "PAN_CANDIDATE", "language": "kn", "family": 7, "split": "validation"}
+{"text": "ಪ್ಯಾನ್ ಆದಾಯ ತೆರಿಗೆ ಸರ್ಕಾರಿ ಮೌಲ್ಯವನ್ನು ಪರಿಶೀಲಿಸಿ ABCPA1234Z-71", "start": 48, "end": 61, "category": "PAN_CANDIDATE", "language": "kn", "family": 7, "split": "validation"}
+{"text": "ಸರ್ಕಾರಿ ಪ್ಯಾನ್ ಆದಾಯ ತೆರಿಗೆ ಮೌಲ್ಯವನ್ನು ಪರಿಶೀಲಿಸಿ ABCPA1234Z-72", "start": 48, "end": 61, "category": "PAN_CANDIDATE", "language": "kn", "family": 7, "split": "validation"}
+{"text": "ಪ್ಯಾನ್ ಆದಾಯ ತೆರಿಗೆ ಸರ್ಕಾರಿ ಮೌಲ್ಯವನ್ನು ಪರಿಶೀಲಿಸಿ ABCPA1234Z-73", "start": 48, "end": 61, "category": "PAN_CANDIDATE", "language": "kn", "family": 7, "split": "validation"}
+{"text": "Review ಸರ್ಕಾರಿ ಪ್ಯಾನ್ ಆದಾಯ ತೆರಿಗೆ government PAN income tax identity with value ABCPA1234Z-70", "start": 80, "end": 93, "category": "PAN_CANDIDATE", "language": "mixed", "family": 7, "split": "validation"}
+{"text": "Review ಪ್ಯಾನ್ ಆದಾಯ ತೆರಿಗೆ government PAN income tax identity ಸರ್ಕಾರಿ with value ABCPA1234Z-71", "start": 80, "end": 93, "category": "PAN_CANDIDATE", "language": "mixed", "family": 7, "split": "validation"}
+{"text": "Review ಸರ್ಕಾರಿ ಪ್ಯಾನ್ ಆದಾಯ ತೆರಿಗೆ government PAN income tax identity with value ABCPA1234Z-72", "start": 80, "end": 93, "category": "PAN_CANDIDATE", "language": "mixed", "family": 7, "split": "validation"}
+{"text": "Review ಪ್ಯಾನ್ ಆದಾಯ ತೆರಿಗೆ government PAN income tax identity ಸರ್ಕಾರಿ with value ABCPA1234Z-73", "start": 80, "end": 93, "category": "PAN_CANDIDATE", "language": "mixed", "family": 7, "split": "validation"}
+{"text": "Updated government passport travel identity: Z1234567-60", "start": 45, "end": 56, "category": "PASSPORT_NUMBER", "language": "en", "family": 6, "split": "validation"}
+{"text": "Updated passport travel identity government: Z1234567-61", "start": 45, "end": 56, "category": "PASSPORT_NUMBER", "language": "en", "family": 6, "split": "validation"}
+{"text": "Updated government passport travel identity: Z1234567-62", "start": 45, "end": 56, "category": "PASSPORT_NUMBER", "language": "en", "family": 6, "split": "validation"}
+{"text": "Updated passport travel identity government: Z1234567-63", "start": 45, "end": 56, "category": "PASSPORT_NUMBER", "language": "en", "family": 6, "split": "validation"}
+{"text": "ನವೀಕರಿಸಿದ ಸರ್ಕಾರಿ ಪಾಸ್ಪೋರ್ಟ್ ಪ್ರಯಾಣ ಗುರುತು: Z1234567-60", "start": 44, "end": 55, "category": "PASSPORT_NUMBER", "language": "kn", "family": 6, "split": "validation"}
+{"text": "ನವೀಕರಿಸಿದ ಪಾಸ್ಪೋರ್ಟ್ ಪ್ರಯಾಣ ಗುರುತು ಸರ್ಕಾರಿ: Z1234567-61", "start": 44, "end": 55, "category": "PASSPORT_NUMBER", "language": "kn", "family": 6, "split": "validation"}
+{"text": "ನವೀಕರಿಸಿದ ಸರ್ಕಾರಿ ಪಾಸ್ಪೋರ್ಟ್ ಪ್ರಯಾಣ ಗುರುತು: Z1234567-62", "start": 44, "end": 55, "category": "PASSPORT_NUMBER", "language": "kn", "family": 6, "split": "validation"}
+{"text": "ನವೀಕರಿಸಿದ ಪಾಸ್ಪೋರ್ಟ್ ಪ್ರಯಾಣ ಗುರುತು ಸರ್ಕಾರಿ: Z1234567-63", "start": 44, "end": 55, "category": "PASSPORT_NUMBER", "language": "kn", "family": 6, "split": "validation"}
+{"text": "Updated ಸರ್ಕಾರಿ ಪಾಸ್ಪೋರ್ಟ್ ಪ್ರಯಾಣ ಗುರುತು government passport travel identity: Z1234567-60", "start": 78, "end": 89, "category": "PASSPORT_NUMBER", "language": "mixed", "family": 6, "split": "validation"}
+{"text": "Updated ಪಾಸ್ಪೋರ್ಟ್ ಪ್ರಯಾಣ ಗುರುತು government passport travel identity ಸರ್ಕಾರಿ: Z1234567-61", "start": 78, "end": 89, "category": "PASSPORT_NUMBER", "language": "mixed", "family": 6, "split": "validation"}
+{"text": "Updated ಸರ್ಕಾರಿ ಪಾಸ್ಪೋರ್ಟ್ ಪ್ರಯಾಣ ಗುರುತು government passport travel identity: Z1234567-62", "start": 78, "end": 89, "category": "PASSPORT_NUMBER", "language": "mixed", "family": 6, "split": "validation"}
+{"text": "Updated ಪಾಸ್ಪೋರ್ಟ್ ಪ್ರಯಾಣ ಗುರುತು government passport travel identity ಸರ್ಕಾರಿ: Z1234567-63", "start": 78, "end": 89, "category": "PASSPORT_NUMBER", "language": "mixed", "family": 6, "split": "validation"}
+{"text": "Review government passport travel identity with value Z1234567-70", "start": 54, "end": 65, "category": "PASSPORT_NUMBER", "language": "en", "family": 7, "split": "validation"}
+{"text": "Review passport travel identity government with value Z1234567-71", "start": 54, "end": 65, "category": "PASSPORT_NUMBER", "language": "en", "family": 7, "split": "validation"}
+{"text": "Review government passport travel identity with value Z1234567-72", "start": 54, "end": 65, "category": "PASSPORT_NUMBER", "language": "en", "family": 7, "split": "validation"}
+{"text": "Review passport travel identity government with value Z1234567-73", "start": 54, "end": 65, "category": "PASSPORT_NUMBER", "language": "en", "family": 7, "split": "validation"}
+{"text": "ಸರ್ಕಾರಿ ಪಾಸ್ಪೋರ್ಟ್ ಪ್ರಯಾಣ ಗುರುತು ಮೌಲ್ಯವನ್ನು ಪರಿಶೀಲಿಸಿ Z1234567-70", "start": 54, "end": 65, "category": "PASSPORT_NUMBER", "language": "kn", "family": 7, "split": "validation"}
+{"text": "ಪಾಸ್ಪೋರ್ಟ್ ಪ್ರಯಾಣ ಗುರುತು ಸರ್ಕಾರಿ ಮೌಲ್ಯವನ್ನು ಪರಿಶೀಲಿಸಿ Z1234567-71", "start": 54, "end": 65, "category": "PASSPORT_NUMBER", "language": "kn", "family": 7, "split": "validation"}
+{"text": "ಸರ್ಕಾರಿ ಪಾಸ್ಪೋರ್ಟ್ ಪ್ರಯಾಣ ಗುರುತು ಮೌಲ್ಯವನ್ನು ಪರಿಶೀಲಿಸಿ Z1234567-72", "start": 54, "end": 65, "category": "PASSPORT_NUMBER", "language": "kn", "family": 7, "split": "validation"}
+{"text": "ಪಾಸ್ಪೋರ್ಟ್ ಪ್ರಯಾಣ ಗುರುತು ಸರ್ಕಾರಿ ಮೌಲ್ಯವನ್ನು ಪರಿಶೀಲಿಸಿ Z1234567-73", "start": 54, "end": 65, "category": "PASSPORT_NUMBER", "language": "kn", "family": 7, "split": "validation"}
+{"text": "Review ಸರ್ಕಾರಿ ಪಾಸ್ಪೋರ್ಟ್ ಪ್ರಯಾಣ ಗುರುತು government passport travel identity with value Z1234567-70", "start": 87, "end": 98, "category": "PASSPORT_NUMBER", "language": "mixed", "family": 7, "split": "validation"}
+{"text": "Review ಪಾಸ್ಪೋರ್ಟ್ ಪ್ರಯಾಣ ಗುರುತು government passport travel identity ಸರ್ಕಾರಿ with value Z1234567-71", "start": 87, "end": 98, "category": "PASSPORT_NUMBER", "language": "mixed", "family": 7, "split": "validation"}
+{"text": "Review ಸರ್ಕಾರಿ ಪಾಸ್ಪೋರ್ಟ್ ಪ್ರಯಾಣ ಗುರುತು government passport travel identity with value Z1234567-72", "start": 87, "end": 98, "category": "PASSPORT_NUMBER", "language": "mixed", "family": 7, "split": "validation"}
+{"text": "Review ಪಾಸ್ಪೋರ್ಟ್ ಪ್ರಯಾಣ ಗುರುತು government passport travel identity ಸರ್ಕಾರಿ with value Z1234567-73", "start": 87, "end": 98, "category": "PASSPORT_NUMBER", "language": "mixed", "family": 7, "split": "validation"}
+{"text": "Updated government voter election identity: ZZZ1234567-60", "start": 44, "end": 57, "category": "VOTER_ID", "language": "en", "family": 6, "split": "validation"}
+{"text": "Updated voter election identity government: ZZZ1234567-61", "start": 44, "end": 57, "category": "VOTER_ID", "language": "en", "family": 6, "split": "validation"}
+{"text": "Updated government voter election identity: ZZZ1234567-62", "start": 44, "end": 57, "category": "VOTER_ID", "language": "en", "family": 6, "split": "validation"}
+{"text": "Updated voter election identity government: ZZZ1234567-63", "start": 44, "end": 57, "category": "VOTER_ID", "language": "en", "family": 6, "split": "validation"}
+{"text": "ನವೀಕರಿಸಿದ ಸರ್ಕಾರಿ ಮತದಾರ ಚುನಾವಣೆ ಗುರುತು: ZZZ1234567-60", "start": 40, "end": 53, "category": "VOTER_ID", "language": "kn", "family": 6, "split": "validation"}
+{"text": "ನವೀಕರಿಸಿದ ಮತದಾರ ಚುನಾವಣೆ ಗುರುತು ಸರ್ಕಾರಿ: ZZZ1234567-61", "start": 40, "end": 53, "category": "VOTER_ID", "language": "kn", "family": 6, "split": "validation"}
+{"text": "ನವೀಕರಿಸಿದ ಸರ್ಕಾರಿ ಮತದಾರ ಚುನಾವಣೆ ಗುರುತು: ZZZ1234567-62", "start": 40, "end": 53, "category": "VOTER_ID", "language": "kn", "family": 6, "split": "validation"}
+{"text": "ನವೀಕರಿಸಿದ ಮತದಾರ ಚುನಾವಣೆ ಗುರುತು ಸರ್ಕಾರಿ: ZZZ1234567-63", "start": 40, "end": 53, "category": "VOTER_ID", "language": "kn", "family": 6, "split": "validation"}
+{"text": "Updated ಸರ್ಕಾರಿ ಮತದಾರ ಚುನಾವಣೆ ಗುರುತು government voter election identity: ZZZ1234567-60", "start": 73, "end": 86, "category": "VOTER_ID", "language": "mixed", "family": 6, "split": "validation"}
+{"text": "Updated ಮತದಾರ ಚುನಾವಣೆ ಗುರುತು government voter election identity ಸರ್ಕಾರಿ: ZZZ1234567-61", "start": 73, "end": 86, "category": "VOTER_ID", "language": "mixed", "family": 6, "split": "validation"}
+{"text": "Updated ಸರ್ಕಾರಿ ಮತದಾರ ಚುನಾವಣೆ ಗುರುತು government voter election identity: ZZZ1234567-62", "start": 73, "end": 86, "category": "VOTER_ID", "language": "mixed", "family": 6, "split": "validation"}
+{"text": "Updated ಮತದಾರ ಚುನಾವಣೆ ಗುರುತು government voter election identity ಸರ್ಕಾರಿ: ZZZ1234567-63", "start": 73, "end": 86, "category": "VOTER_ID", "language": "mixed", "family": 6, "split": "validation"}
+{"text": "Review government voter election identity with value ZZZ1234567-70", "start": 53, "end": 66, "category": "VOTER_ID", "language": "en", "family": 7, "split": "validation"}
+{"text": "Review voter election identity government with value ZZZ1234567-71", "start": 53, "end": 66, "category": "VOTER_ID", "language": "en", "family": 7, "split": "validation"}
+{"text": "Review government voter election identity with value ZZZ1234567-72", "start": 53, "end": 66, "category": "VOTER_ID", "language": "en", "family": 7, "split": "validation"}
+{"text": "Review voter election identity government with value ZZZ1234567-73", "start": 53, "end": 66, "category": "VOTER_ID", "language": "en", "family": 7, "split": "validation"}
+{"text": "ಸರ್ಕಾರಿ ಮತದಾರ ಚುನಾವಣೆ ಗುರುತು ಮೌಲ್ಯವನ್ನು ಪರಿಶೀಲಿಸಿ ZZZ1234567-70", "start": 50, "end": 63, "category": "VOTER_ID", "language": "kn", "family": 7, "split": "validation"}
+{"text": "ಮತದಾರ ಚುನಾವಣೆ ಗುರುತು ಸರ್ಕಾರಿ ಮೌಲ್ಯವನ್ನು ಪರಿಶೀಲಿಸಿ ZZZ1234567-71", "start": 50, "end": 63, "category": "VOTER_ID", "language": "kn", "family": 7, "split": "validation"}
+{"text": "ಸರ್ಕಾರಿ ಮತದಾರ ಚುನಾವಣೆ ಗುರುತು ಮೌಲ್ಯವನ್ನು ಪರಿಶೀಲಿಸಿ ZZZ1234567-72", "start": 50, "end": 63, "category": "VOTER_ID", "language": "kn", "family": 7, "split": "validation"}
+{"text": "ಮತದಾರ ಚುನಾವಣೆ ಗುರುತು ಸರ್ಕಾರಿ ಮೌಲ್ಯವನ್ನು ಪರಿಶೀಲಿಸಿ ZZZ1234567-73", "start": 50, "end": 63, "category": "VOTER_ID", "language": "kn", "family": 7, "split": "validation"}
+{"text": "Review ಸರ್ಕಾರಿ ಮತದಾರ ಚುನಾವಣೆ ಗುರುತು government voter election identity with value ZZZ1234567-70", "start": 82, "end": 95, "category": "VOTER_ID", "language": "mixed", "family": 7, "split": "validation"}
+{"text": "Review ಮತದಾರ ಚುನಾವಣೆ ಗುರುತು government voter election identity ಸರ್ಕಾರಿ with value ZZZ1234567-71", "start": 82, "end": 95, "category": "VOTER_ID", "language": "mixed", "family": 7, "split": "validation"}
+{"text": "Review ಸರ್ಕಾರಿ ಮತದಾರ ಚುನಾವಣೆ ಗುರುತು government voter election identity with value ZZZ1234567-72", "start": 82, "end": 95, "category": "VOTER_ID", "language": "mixed", "family": 7, "split": "validation"}
+{"text": "Review ಮತದಾರ ಚುನಾವಣೆ ಗುರುತು government voter election identity ಸರ್ಕಾರಿ with value ZZZ1234567-73", "start": 82, "end": 95, "category": "VOTER_ID", "language": "mixed", "family": 7, "split": "validation"}
+{"text": "Updated government driving licence motor vehicle: KA0120260000042-60", "start": 50, "end": 68, "category": "DRIVING_LICENCE_NUMBER", "language": "en", "family": 6, "split": "validation"}
+{"text": "Updated driving licence motor vehicle government: KA0120260000042-61", "start": 50, "end": 68, "category": "DRIVING_LICENCE_NUMBER", "language": "en", "family": 6, "split": "validation"}
+{"text": "Updated government driving licence motor vehicle: KA0120260000042-62", "start": 50, "end": 68, "category": "DRIVING_LICENCE_NUMBER", "language": "en", "family": 6, "split": "validation"}
+{"text": "Updated driving licence motor vehicle government: KA0120260000042-63", "start": 50, "end": 68, "category": "DRIVING_LICENCE_NUMBER", "language": "en", "family": 6, "split": "validation"}
+{"text": "ನವೀಕರಿಸಿದ ಸರ್ಕಾರಿ ಚಾಲನಾ ಪರವಾನಗಿ ವಾಹನ: KA0120260000042-60", "start": 38, "end": 56, "category": "DRIVING_LICENCE_NUMBER", "language": "kn", "family": 6, "split": "validation"}
+{"text": "ನವೀಕರಿಸಿದ ಚಾಲನಾ ಪರವಾನಗಿ ವಾಹನ ಸರ್ಕಾರಿ: KA0120260000042-61", "start": 38, "end": 56, "category": "DRIVING_LICENCE_NUMBER", "language": "kn", "family": 6, "split": "validation"}
+{"text": "ನವೀಕರಿಸಿದ ಸರ್ಕಾರಿ ಚಾಲನಾ ಪರವಾನಗಿ ವಾಹನ: KA0120260000042-62", "start": 38, "end": 56, "category": "DRIVING_LICENCE_NUMBER", "language": "kn", "family": 6, "split": "validation"}
+{"text": "ನವೀಕರಿಸಿದ ಚಾಲನಾ ಪರವಾನಗಿ ವಾಹನ ಸರ್ಕಾರಿ: KA0120260000042-63", "start": 38, "end": 56, "category": "DRIVING_LICENCE_NUMBER", "language": "kn", "family": 6, "split": "validation"}
+{"text": "Updated ಸರ್ಕಾರಿ ಚಾಲನಾ ಪರವಾನಗಿ ವಾಹನ government driving licence motor vehicle: KA0120260000042-60", "start": 77, "end": 95, "category": "DRIVING_LICENCE_NUMBER", "language": "mixed", "family": 6, "split": "validation"}
+{"text": "Updated ಚಾಲನಾ ಪರವಾನಗಿ ವಾಹನ government driving licence motor vehicle ಸರ್ಕಾರಿ: KA0120260000042-61", "start": 77, "end": 95, "category": "DRIVING_LICENCE_NUMBER", "language": "mixed", "family": 6, "split": "validation"}
+{"text": "Updated ಸರ್ಕಾರಿ ಚಾಲನಾ ಪರವಾನಗಿ ವಾಹನ government driving licence motor vehicle: KA0120260000042-62", "start": 77, "end": 95, "category": "DRIVING_LICENCE_NUMBER", "language": "mixed", "family": 6, "split": "validation"}
+{"text": "Updated ಚಾಲನಾ ಪರವಾನಗಿ ವಾಹನ government driving licence motor vehicle ಸರ್ಕಾರಿ: KA0120260000042-63", "start": 77, "end": 95, "category": "DRIVING_LICENCE_NUMBER", "language": "mixed", "family": 6, "split": "validation"}
+{"text": "Review government driving licence motor vehicle with value KA0120260000042-70", "start": 59, "end": 77, "category": "DRIVING_LICENCE_NUMBER", "language": "en", "family": 7, "split": "validation"}
+{"text": "Review driving licence motor vehicle government with value KA0120260000042-71", "start": 59, "end": 77, "category": "DRIVING_LICENCE_NUMBER", "language": "en", "family": 7, "split": "validation"}
+{"text": "Review government driving licence motor vehicle with value KA0120260000042-72", "start": 59, "end": 77, "category": "DRIVING_LICENCE_NUMBER", "language": "en", "family": 7, "split": "validation"}
+{"text": "Review driving licence motor vehicle government with value KA0120260000042-73", "start": 59, "end": 77, "category": "DRIVING_LICENCE_NUMBER", "language": "en", "family": 7, "split": "validation"}
+{"text": "ಸರ್ಕಾರಿ ಚಾಲನಾ ಪರವಾನಗಿ ವಾಹನ ಮೌಲ್ಯವನ್ನು ಪರಿಶೀಲಿಸಿ KA0120260000042-70", "start": 48, "end": 66, "category": "DRIVING_LICENCE_NUMBER", "language": "kn", "family": 7, "split": "validation"}
+{"text": "ಚಾಲನಾ ಪರವಾನಗಿ ವಾಹನ ಸರ್ಕಾರಿ ಮೌಲ್ಯವನ್ನು ಪರಿಶೀಲಿಸಿ KA0120260000042-71", "start": 48, "end": 66, "category": "DRIVING_LICENCE_NUMBER", "language": "kn", "family": 7, "split": "validation"}
+{"text": "ಸರ್ಕಾರಿ ಚಾಲನಾ ಪರವಾನಗಿ ವಾಹನ ಮೌಲ್ಯವನ್ನು ಪರಿಶೀಲಿಸಿ KA0120260000042-72", "start": 48, "end": 66, "category": "DRIVING_LICENCE_NUMBER", "language": "kn", "family": 7, "split": "validation"}
+{"text": "ಚಾಲನಾ ಪರವಾನಗಿ ವಾಹನ ಸರ್ಕಾರಿ ಮೌಲ್ಯವನ್ನು ಪರಿಶೀಲಿಸಿ KA0120260000042-73", "start": 48, "end": 66, "category": "DRIVING_LICENCE_NUMBER", "language": "kn", "family": 7, "split": "validation"}
+{"text": "Review ಸರ್ಕಾರಿ ಚಾಲನಾ ಪರವಾನಗಿ ವಾಹನ government driving licence motor vehicle with value KA0120260000042-70", "start": 86, "end": 104, "category": "DRIVING_LICENCE_NUMBER", "language": "mixed", "family": 7, "split": "validation"}
+{"text": "Review ಚಾಲನಾ ಪರವಾನಗಿ ವಾಹನ government driving licence motor vehicle ಸರ್ಕಾರಿ with value KA0120260000042-71", "start": 86, "end": 104, "category": "DRIVING_LICENCE_NUMBER", "language": "mixed", "family": 7, "split": "validation"}
+{"text": "Review ಸರ್ಕಾರಿ ಚಾಲನಾ ಪರವಾನಗಿ ವಾಹನ government driving licence motor vehicle with value KA0120260000042-72", "start": 86, "end": 104, "category": "DRIVING_LICENCE_NUMBER", "language": "mixed", "family": 7, "split": "validation"}
+{"text": "Review ಚಾಲನಾ ಪರವಾನಗಿ ವಾಹನ government driving licence motor vehicle ಸರ್ಕಾರಿ with value KA0120260000042-73", "start": 86, "end": 104, "category": "DRIVING_LICENCE_NUMBER", "language": "mixed", "family": 7, "split": "validation"}
+{"text": "Updated bank branch IFSC routing: TEST0123456-60", "start": 34, "end": 48, "category": "IFSC", "language": "en", "family": 6, "split": "validation"}
+{"text": "Updated branch IFSC routing bank: TEST0123456-61", "start": 34, "end": 48, "category": "IFSC", "language": "en", "family": 6, "split": "validation"}
+{"text": "Updated bank branch IFSC routing: TEST0123456-62", "start": 34, "end": 48, "category": "IFSC", "language": "en", "family": 6, "split": "validation"}
+{"text": "Updated branch IFSC routing bank: TEST0123456-63", "start": 34, "end": 48, "category": "IFSC", "language": "en", "family": 6, "split": "validation"}
+{"text": "ನವೀಕರಿಸಿದ ಬ್ಯಾಂಕ್ ಶಾಖೆ ಐಎಫ್ಎಸ್ಸಿ: TEST0123456-60", "start": 34, "end": 48, "category": "IFSC", "language": "kn", "family": 6, "split": "validation"}
+{"text": "ನವೀಕರಿಸಿದ ಶಾಖೆ ಐಎಫ್ಎಸ್ಸಿ ಬ್ಯಾಂಕ್: TEST0123456-61", "start": 34, "end": 48, "category": "IFSC", "language": "kn", "family": 6, "split": "validation"}
+{"text": "ನವೀಕರಿಸಿದ ಬ್ಯಾಂಕ್ ಶಾಖೆ ಐಎಫ್ಎಸ್ಸಿ: TEST0123456-62", "start": 34, "end": 48, "category": "IFSC", "language": "kn", "family": 6, "split": "validation"}
+{"text": "ನವೀಕರಿಸಿದ ಶಾಖೆ ಐಎಫ್ಎಸ್ಸಿ ಬ್ಯಾಂಕ್: TEST0123456-63", "start": 34, "end": 48, "category": "IFSC", "language": "kn", "family": 6, "split": "validation"}
+{"text": "Updated ಬ್ಯಾಂಕ್ ಶಾಖೆ ಐಎಫ್ಎಸ್ಸಿ bank branch IFSC routing: TEST0123456-60", "start": 57, "end": 71, "category": "IFSC", "language": "mixed", "family": 6, "split": "validation"}
+{"text": "Updated ಶಾಖೆ ಐಎಫ್ಎಸ್ಸಿ bank branch IFSC routing ಬ್ಯಾಂಕ್: TEST0123456-61", "start": 57, "end": 71, "category": "IFSC", "language": "mixed", "family": 6, "split": "validation"}
+{"text": "Updated ಬ್ಯಾಂಕ್ ಶಾಖೆ ಐಎಫ್ಎಸ್ಸಿ bank branch IFSC routing: TEST0123456-62", "start": 57, "end": 71, "category": "IFSC", "language": "mixed", "family": 6, "split": "validation"}
+{"text": "Updated ಶಾಖೆ ಐಎಫ್ಎಸ್ಸಿ bank branch IFSC routing ಬ್ಯಾಂಕ್: TEST0123456-63", "start": 57, "end": 71, "category": "IFSC", "language": "mixed", "family": 6, "split": "validation"}
+{"text": "Review bank branch IFSC routing with value TEST0123456-70", "start": 43, "end": 57, "category": "IFSC", "language": "en", "family": 7, "split": "validation"}
+{"text": "Review branch IFSC routing bank with value TEST0123456-71", "start": 43, "end": 57, "category": "IFSC", "language": "en", "family": 7, "split": "validation"}
+{"text": "Review bank branch IFSC routing with value TEST0123456-72", "start": 43, "end": 57, "category": "IFSC", "language": "en", "family": 7, "split": "validation"}
+{"text": "Review branch IFSC routing bank with value TEST0123456-73", "start": 43, "end": 57, "category": "IFSC", "language": "en", "family": 7, "split": "validation"}
+{"text": "ಬ್ಯಾಂಕ್ ಶಾಖೆ ಐಎಫ್ಎಸ್ಸಿ ಮೌಲ್ಯವನ್ನು ಪರಿಶೀಲಿಸಿ TEST0123456-70", "start": 44, "end": 58, "category": "IFSC", "language": "kn", "family": 7, "split": "validation"}
+{"text": "ಶಾಖೆ ಐಎಫ್ಎಸ್ಸಿ ಬ್ಯಾಂಕ್ ಮೌಲ್ಯವನ್ನು ಪರಿಶೀಲಿಸಿ TEST0123456-71", "start": 44, "end": 58, "category": "IFSC", "language": "kn", "family": 7, "split": "validation"}
+{"text": "ಬ್ಯಾಂಕ್ ಶಾಖೆ ಐಎಫ್ಎಸ್ಸಿ ಮೌಲ್ಯವನ್ನು ಪರಿಶೀಲಿಸಿ TEST0123456-72", "start": 44, "end": 58, "category": "IFSC", "language": "kn", "family": 7, "split": "validation"}
+{"text": "ಶಾಖೆ ಐಎಫ್ಎಸ್ಸಿ ಬ್ಯಾಂಕ್ ಮೌಲ್ಯವನ್ನು ಪರಿಶೀಲಿಸಿ TEST0123456-73", "start": 44, "end": 58, "category": "IFSC", "language": "kn", "family": 7, "split": "validation"}
+{"text": "Review ಬ್ಯಾಂಕ್ ಶಾಖೆ ಐಎಫ್ಎಸ್ಸಿ bank branch IFSC routing with value TEST0123456-70", "start": 66, "end": 80, "category": "IFSC", "language": "mixed", "family": 7, "split": "validation"}
+{"text": "Review ಶಾಖೆ ಐಎಫ್ಎಸ್ಸಿ bank branch IFSC routing ಬ್ಯಾಂಕ್ with value TEST0123456-71", "start": 66, "end": 80, "category": "IFSC", "language": "mixed", "family": 7, "split": "validation"}
+{"text": "Review ಬ್ಯಾಂಕ್ ಶಾಖೆ ಐಎಫ್ಎಸ್ಸಿ bank branch IFSC routing with value TEST0123456-72", "start": 66, "end": 80, "category": "IFSC", "language": "mixed", "family": 7, "split": "validation"}
+{"text": "Review ಶಾಖೆ ಐಎಫ್ಎಸ್ಸಿ bank branch IFSC routing ಬ್ಯಾಂಕ್ with value TEST0123456-73", "start": 66, "end": 80, "category": "IFSC", "language": "mixed", "family": 7, "split": "validation"}
+{"text": "Updated bank payment UPI transfer handle: fictional@upi-60", "start": 42, "end": 58, "category": "UPI_ID", "language": "en", "family": 6, "split": "validation"}
+{"text": "Updated payment UPI transfer handle bank: fictional@upi-61", "start": 42, "end": 58, "category": "UPI_ID", "language": "en", "family": 6, "split": "validation"}
+{"text": "Updated bank payment UPI transfer handle: fictional@upi-62", "start": 42, "end": 58, "category": "UPI_ID", "language": "en", "family": 6, "split": "validation"}
+{"text": "Updated payment UPI transfer handle bank: fictional@upi-63", "start": 42, "end": 58, "category": "UPI_ID", "language": "en", "family": 6, "split": "validation"}
+{"text": "ನವೀಕರಿಸಿದ ಬ್ಯಾಂಕ್ ಪಾವತಿ ಯುಪಿಐ ವರ್ಗಾವಣೆ: fictional@upi-60", "start": 40, "end": 56, "category": "UPI_ID", "language": "kn", "family": 6, "split": "validation"}
+{"text": "ನವೀಕರಿಸಿದ ಪಾವತಿ ಯುಪಿಐ ವರ್ಗಾವಣೆ ಬ್ಯಾಂಕ್: fictional@upi-61", "start": 40, "end": 56, "category": "UPI_ID", "language": "kn", "family": 6, "split": "validation"}
+{"text": "ನವೀಕರಿಸಿದ ಬ್ಯಾಂಕ್ ಪಾವತಿ ಯುಪಿಐ ವರ್ಗಾವಣೆ: fictional@upi-62", "start": 40, "end": 56, "category": "UPI_ID", "language": "kn", "family": 6, "split": "validation"}
+{"text": "ನವೀಕರಿಸಿದ ಪಾವತಿ ಯುಪಿಐ ವರ್ಗಾವಣೆ ಬ್ಯಾಂಕ್: fictional@upi-63", "start": 40, "end": 56, "category": "UPI_ID", "language": "kn", "family": 6, "split": "validation"}
+{"text": "Updated ಬ್ಯಾಂಕ್ ಪಾವತಿ ಯುಪಿಐ ವರ್ಗಾವಣೆ bank payment UPI transfer handle: fictional@upi-60", "start": 71, "end": 87, "category": "UPI_ID", "language": "mixed", "family": 6, "split": "validation"}
+{"text": "Updated ಪಾವತಿ ಯುಪಿಐ ವರ್ಗಾವಣೆ bank payment UPI transfer handle ಬ್ಯಾಂಕ್: fictional@upi-61", "start": 71, "end": 87, "category": "UPI_ID", "language": "mixed", "family": 6, "split": "validation"}
+{"text": "Updated ಬ್ಯಾಂಕ್ ಪಾವತಿ ಯುಪಿಐ ವರ್ಗಾವಣೆ bank payment UPI transfer handle: fictional@upi-62", "start": 71, "end": 87, "category": "UPI_ID", "language": "mixed", "family": 6, "split": "validation"}
+{"text": "Updated ಪಾವತಿ ಯುಪಿಐ ವರ್ಗಾವಣೆ bank payment UPI transfer handle ಬ್ಯಾಂಕ್: fictional@upi-63", "start": 71, "end": 87, "category": "UPI_ID", "language": "mixed", "family": 6, "split": "validation"}
+{"text": "Review bank payment UPI transfer handle with value fictional@upi-70", "start": 51, "end": 67, "category": "UPI_ID", "language": "en", "family": 7, "split": "validation"}
+{"text": "Review payment UPI transfer handle bank with value fictional@upi-71", "start": 51, "end": 67, "category": "UPI_ID", "language": "en", "family": 7, "split": "validation"}
+{"text": "Review bank payment UPI transfer handle with value fictional@upi-72", "start": 51, "end": 67, "category": "UPI_ID", "language": "en", "family": 7, "split": "validation"}
+{"text": "Review payment UPI transfer handle bank with value fictional@upi-73", "start": 51, "end": 67, "category": "UPI_ID", "language": "en", "family": 7, "split": "validation"}
+{"text": "ಬ್ಯಾಂಕ್ ಪಾವತಿ ಯುಪಿಐ ವರ್ಗಾವಣೆ ಮೌಲ್ಯವನ್ನು ಪರಿಶೀಲಿಸಿ fictional@upi-70", "start": 50, "end": 66, "category": "UPI_ID", "language": "kn", "family": 7, "split": "validation"}
+{"text": "ಪಾವತಿ ಯುಪಿಐ ವರ್ಗಾವಣೆ ಬ್ಯಾಂಕ್ ಮೌಲ್ಯವನ್ನು ಪರಿಶೀಲಿಸಿ fictional@upi-71", "start": 50, "end": 66, "category": "UPI_ID", "language": "kn", "family": 7, "split": "validation"}
+{"text": "ಬ್ಯಾಂಕ್ ಪಾವತಿ ಯುಪಿಐ ವರ್ಗಾವಣೆ ಮೌಲ್ಯವನ್ನು ಪರಿಶೀಲಿಸಿ fictional@upi-72", "start": 50, "end": 66, "category": "UPI_ID", "language": "kn", "family": 7, "split": "validation"}
+{"text": "ಪಾವತಿ ಯುಪಿಐ ವರ್ಗಾವಣೆ ಬ್ಯಾಂಕ್ ಮೌಲ್ಯವನ್ನು ಪರಿಶೀಲಿಸಿ fictional@upi-73", "start": 50, "end": 66, "category": "UPI_ID", "language": "kn", "family": 7, "split": "validation"}
+{"text": "Review ಬ್ಯಾಂಕ್ ಪಾವತಿ ಯುಪಿಐ ವರ್ಗಾವಣೆ bank payment UPI transfer handle with value fictional@upi-70", "start": 80, "end": 96, "category": "UPI_ID", "language": "mixed", "family": 7, "split": "validation"}
+{"text": "Review ಪಾವತಿ ಯುಪಿಐ ವರ್ಗಾವಣೆ bank payment UPI transfer handle ಬ್ಯಾಂಕ್ with value fictional@upi-71", "start": 80, "end": 96, "category": "UPI_ID", "language": "mixed", "family": 7, "split": "validation"}
+{"text": "Review ಬ್ಯಾಂಕ್ ಪಾವತಿ ಯುಪಿಐ ವರ್ಗಾವಣೆ bank payment UPI transfer handle with value fictional@upi-72", "start": 80, "end": 96, "category": "UPI_ID", "language": "mixed", "family": 7, "split": "validation"}
+{"text": "Review ಪಾವತಿ ಯುಪಿಐ ವರ್ಗಾವಣೆ bank payment UPI transfer handle ಬ್ಯಾಂಕ್ with value fictional@upi-73", "start": 80, "end": 96, "category": "UPI_ID", "language": "mixed", "family": 7, "split": "validation"}
+{"text": "Updated bank debit credit payment card: 4111111111111160", "start": 40, "end": 56, "category": "PAYMENT_CARD_REVIEW", "language": "en", "family": 6, "split": "validation"}
+{"text": "Updated debit credit payment card bank: 4111111111111161", "start": 40, "end": 56, "category": "PAYMENT_CARD_REVIEW", "language": "en", "family": 6, "split": "validation"}
+{"text": "Updated bank debit credit payment card: 4111111111111162", "start": 40, "end": 56, "category": "PAYMENT_CARD_REVIEW", "language": "en", "family": 6, "split": "validation"}
+{"text": "Updated debit credit payment card bank: 4111111111111163", "start": 40, "end": 56, "category": "PAYMENT_CARD_REVIEW", "language": "en", "family": 6, "split": "validation"}
+{"text": "ನವೀಕರಿಸಿದ ಬ್ಯಾಂಕ್ ಡೆಬಿಟ್ ಕ್ರೆಡಿಟ್ ಪಾವತಿ ಕಾರ್ಡ್: 4111111111111160", "start": 48, "end": 64, "category": "PAYMENT_CARD_REVIEW", "language": "kn", "family": 6, "split": "validation"}
+{"text": "ನವೀಕರಿಸಿದ ಡೆಬಿಟ್ ಕ್ರೆಡಿಟ್ ಪಾವತಿ ಕಾರ್ಡ್ ಬ್ಯಾಂಕ್: 4111111111111161", "start": 48, "end": 64, "category": "PAYMENT_CARD_REVIEW", "language": "kn", "family": 6, "split": "validation"}
+{"text": "ನವೀಕರಿಸಿದ ಬ್ಯಾಂಕ್ ಡೆಬಿಟ್ ಕ್ರೆಡಿಟ್ ಪಾವತಿ ಕಾರ್ಡ್: 4111111111111162", "start": 48, "end": 64, "category": "PAYMENT_CARD_REVIEW", "language": "kn", "family": 6, "split": "validation"}
+{"text": "ನವೀಕರಿಸಿದ ಡೆಬಿಟ್ ಕ್ರೆಡಿಟ್ ಪಾವತಿ ಕಾರ್ಡ್ ಬ್ಯಾಂಕ್: 4111111111111163", "start": 48, "end": 64, "category": "PAYMENT_CARD_REVIEW", "language": "kn", "family": 6, "split": "validation"}
+{"text": "Updated ಬ್ಯಾಂಕ್ ಡೆಬಿಟ್ ಕ್ರೆಡಿಟ್ ಪಾವತಿ ಕಾರ್ಡ್ bank debit credit payment card: 4111111111111160", "start": 77, "end": 93, "category": "PAYMENT_CARD_REVIEW", "language": "mixed", "family": 6, "split": "validation"}
+{"text": "Updated ಡೆಬಿಟ್ ಕ್ರೆಡಿಟ್ ಪಾವತಿ ಕಾರ್ಡ್ bank debit credit payment card ಬ್ಯಾಂಕ್: 4111111111111161", "start": 77, "end": 93, "category": "PAYMENT_CARD_REVIEW", "language": "mixed", "family": 6, "split": "validation"}
+{"text": "Updated ಬ್ಯಾಂಕ್ ಡೆಬಿಟ್ ಕ್ರೆಡಿಟ್ ಪಾವತಿ ಕಾರ್ಡ್ bank debit credit payment card: 4111111111111162", "start": 77, "end": 93, "category": "PAYMENT_CARD_REVIEW", "language": "mixed", "family": 6, "split": "validation"}
+{"text": "Updated ಡೆಬಿಟ್ ಕ್ರೆಡಿಟ್ ಪಾವತಿ ಕಾರ್ಡ್ bank debit credit payment card ಬ್ಯಾಂಕ್: 4111111111111163", "start": 77, "end": 93, "category": "PAYMENT_CARD_REVIEW", "language": "mixed", "family": 6, "split": "validation"}
+{"text": "Review bank debit credit payment card with value 4111111111111170", "start": 49, "end": 65, "category": "PAYMENT_CARD_REVIEW", "language": "en", "family": 7, "split": "validation"}
+{"text": "Review debit credit payment card bank with value 4111111111111171", "start": 49, "end": 65, "category": "PAYMENT_CARD_REVIEW", "language": "en", "family": 7, "split": "validation"}
+{"text": "Review bank debit credit payment card with value 4111111111111172", "start": 49, "end": 65, "category": "PAYMENT_CARD_REVIEW", "language": "en", "family": 7, "split": "validation"}
+{"text": "Review debit credit payment card bank with value 4111111111111173", "start": 49, "end": 65, "category": "PAYMENT_CARD_REVIEW", "language": "en", "family": 7, "split": "validation"}
+{"text": "ಬ್ಯಾಂಕ್ ಡೆಬಿಟ್ ಕ್ರೆಡಿಟ್ ಪಾವತಿ ಕಾರ್ಡ್ ಮೌಲ್ಯವನ್ನು ಪರಿಶೀಲಿಸಿ 4111111111111170", "start": 58, "end": 74, "category": "PAYMENT_CARD_REVIEW", "language": "kn", "family": 7, "split": "validation"}
+{"text": "ಡೆಬಿಟ್ ಕ್ರೆಡಿಟ್ ಪಾವತಿ ಕಾರ್ಡ್ ಬ್ಯಾಂಕ್ ಮೌಲ್ಯವನ್ನು ಪರಿಶೀಲಿಸಿ 4111111111111171", "start": 58, "end": 74, "category": "PAYMENT_CARD_REVIEW", "language": "kn", "family": 7, "split": "validation"}
+{"text": "ಬ್ಯಾಂಕ್ ಡೆಬಿಟ್ ಕ್ರೆಡಿಟ್ ಪಾವತಿ ಕಾರ್ಡ್ ಮೌಲ್ಯವನ್ನು ಪರಿಶೀಲಿಸಿ 4111111111111172", "start": 58, "end": 74, "category": "PAYMENT_CARD_REVIEW", "language": "kn", "family": 7, "split": "validation"}
+{"text": "ಡೆಬಿಟ್ ಕ್ರೆಡಿಟ್ ಪಾವತಿ ಕಾರ್ಡ್ ಬ್ಯಾಂಕ್ ಮೌಲ್ಯವನ್ನು ಪರಿಶೀಲಿಸಿ 4111111111111173", "start": 58, "end": 74, "category": "PAYMENT_CARD_REVIEW", "language": "kn", "family": 7, "split": "validation"}
+{"text": "Review ಬ್ಯಾಂಕ್ ಡೆಬಿಟ್ ಕ್ರೆಡಿಟ್ ಪಾವತಿ ಕಾರ್ಡ್ bank debit credit payment card with value 4111111111111170", "start": 86, "end": 102, "category": "PAYMENT_CARD_REVIEW", "language": "mixed", "family": 7, "split": "validation"}
+{"text": "Review ಡೆಬಿಟ್ ಕ್ರೆಡಿಟ್ ಪಾವತಿ ಕಾರ್ಡ್ bank debit credit payment card ಬ್ಯಾಂಕ್ with value 4111111111111171", "start": 86, "end": 102, "category": "PAYMENT_CARD_REVIEW", "language": "mixed", "family": 7, "split": "validation"}
+{"text": "Review ಬ್ಯಾಂಕ್ ಡೆಬಿಟ್ ಕ್ರೆಡಿಟ್ ಪಾವತಿ ಕಾರ್ಡ್ bank debit credit payment card with value 4111111111111172", "start": 86, "end": 102, "category": "PAYMENT_CARD_REVIEW", "language": "mixed", "family": 7, "split": "validation"}
+{"text": "Review ಡೆಬಿಟ್ ಕ್ರೆಡಿಟ್ ಪಾವತಿ ಕಾರ್ಡ್ bank debit credit payment card ಬ್ಯಾಂಕ್ with value 4111111111111173", "start": 86, "end": 102, "category": "PAYMENT_CARD_REVIEW", "language": "mixed", "family": 7, "split": "validation"}
+{"text": "Updated public reference inventory order catalogue: 4829160", "start": 52, "end": 59, "category": "NONE", "language": "en", "family": 6, "split": "validation"}
+{"text": "Updated reference inventory order catalogue public: 4829161", "start": 52, "end": 59, "category": "NONE", "language": "en", "family": 6, "split": "validation"}
+{"text": "Updated public reference inventory order catalogue: 4829162", "start": 52, "end": 59, "category": "NONE", "language": "en", "family": 6, "split": "validation"}
+{"text": "Updated reference inventory order catalogue public: 4829163", "start": 52, "end": 59, "category": "NONE", "language": "en", "family": 6, "split": "validation"}
+{"text": "ನವೀಕರಿಸಿದ ಸಾರ್ವಜನಿಕ ಉಲ್ಲೇಖ ದಾಸ್ತಾನು ಆದೇಶ: 4829160", "start": 42, "end": 49, "category": "NONE", "language": "kn", "family": 6, "split": "validation"}
+{"text": "ನವೀಕರಿಸಿದ ಉಲ್ಲೇಖ ದಾಸ್ತಾನು ಆದೇಶ ಸಾರ್ವಜನಿಕ: 4829161", "start": 42, "end": 49, "category": "NONE", "language": "kn", "family": 6, "split": "validation"}
+{"text": "ನವೀಕರಿಸಿದ ಸಾರ್ವಜನಿಕ ಉಲ್ಲೇಖ ದಾಸ್ತಾನು ಆದೇಶ: 4829162", "start": 42, "end": 49, "category": "NONE", "language": "kn", "family": 6, "split": "validation"}
+{"text": "ನವೀಕರಿಸಿದ ಉಲ್ಲೇಖ ದಾಸ್ತಾನು ಆದೇಶ ಸಾರ್ವಜನಿಕ: 4829163", "start": 42, "end": 49, "category": "NONE", "language": "kn", "family": 6, "split": "validation"}
+{"text": "Updated ಸಾರ್ವಜನಿಕ ಉಲ್ಲೇಖ ದಾಸ್ತಾನು ಆದೇಶ public reference inventory order catalogue: 4829160", "start": 83, "end": 90, "category": "NONE", "language": "mixed", "family": 6, "split": "validation"}
+{"text": "Updated ಉಲ್ಲೇಖ ದಾಸ್ತಾನು ಆದೇಶ public reference inventory order catalogue ಸಾರ್ವಜನಿಕ: 4829161", "start": 83, "end": 90, "category": "NONE", "language": "mixed", "family": 6, "split": "validation"}
+{"text": "Updated ಸಾರ್ವಜನಿಕ ಉಲ್ಲೇಖ ದಾಸ್ತಾನು ಆದೇಶ public reference inventory order catalogue: 4829162", "start": 83, "end": 90, "category": "NONE", "language": "mixed", "family": 6, "split": "validation"}
+{"text": "Updated ಉಲ್ಲೇಖ ದಾಸ್ತಾನು ಆದೇಶ public reference inventory order catalogue ಸಾರ್ವಜನಿಕ: 4829163", "start": 83, "end": 90, "category": "NONE", "language": "mixed", "family": 6, "split": "validation"}
+{"text": "Review public reference inventory order catalogue with value 4829170", "start": 61, "end": 68, "category": "NONE", "language": "en", "family": 7, "split": "validation"}
+{"text": "Review reference inventory order catalogue public with value 4829171", "start": 61, "end": 68, "category": "NONE", "language": "en", "family": 7, "split": "validation"}
+{"text": "Review public reference inventory order catalogue with value 4829172", "start": 61, "end": 68, "category": "NONE", "language": "en", "family": 7, "split": "validation"}
+{"text": "Review reference inventory order catalogue public with value 4829173", "start": 61, "end": 68, "category": "NONE", "language": "en", "family": 7, "split": "validation"}
+{"text": "ಸಾರ್ವಜನಿಕ ಉಲ್ಲೇಖ ದಾಸ್ತಾನು ಆದೇಶ ಮೌಲ್ಯವನ್ನು ಪರಿಶೀಲಿಸಿ 4829170", "start": 52, "end": 59, "category": "NONE", "language": "kn", "family": 7, "split": "validation"}
+{"text": "ಉಲ್ಲೇಖ ದಾಸ್ತಾನು ಆದೇಶ ಸಾರ್ವಜನಿಕ ಮೌಲ್ಯವನ್ನು ಪರಿಶೀಲಿಸಿ 4829171", "start": 52, "end": 59, "category": "NONE", "language": "kn", "family": 7, "split": "validation"}
+{"text": "ಸಾರ್ವಜನಿಕ ಉಲ್ಲೇಖ ದಾಸ್ತಾನು ಆದೇಶ ಮೌಲ್ಯವನ್ನು ಪರಿಶೀಲಿಸಿ 4829172", "start": 52, "end": 59, "category": "NONE", "language": "kn", "family": 7, "split": "validation"}
+{"text": "ಉಲ್ಲೇಖ ದಾಸ್ತಾನು ಆದೇಶ ಸಾರ್ವಜನಿಕ ಮೌಲ್ಯವನ್ನು ಪರಿಶೀಲಿಸಿ 4829173", "start": 52, "end": 59, "category": "NONE", "language": "kn", "family": 7, "split": "validation"}
+{"text": "Review ಸಾರ್ವಜನಿಕ ಉಲ್ಲೇಖ ದಾಸ್ತಾನು ಆದೇಶ public reference inventory order catalogue with value 4829170", "start": 92, "end": 99, "category": "NONE", "language": "mixed", "family": 7, "split": "validation"}
+{"text": "Review ಉಲ್ಲೇಖ ದಾಸ್ತಾನು ಆದೇಶ public reference inventory order catalogue ಸಾರ್ವಜನಿಕ with value 4829171", "start": 92, "end": 99, "category": "NONE", "language": "mixed", "family": 7, "split": "validation"}
+{"text": "Review ಸಾರ್ವಜನಿಕ ಉಲ್ಲೇಖ ದಾಸ್ತಾನು ಆದೇಶ public reference inventory order catalogue with value 4829172", "start": 92, "end": 99, "category": "NONE", "language": "mixed", "family": 7, "split": "validation"}
+{"text": "Review ಉಲ್ಲೇಖ ದಾಸ್ತಾನು ಆದೇಶ public reference inventory order catalogue ಸಾರ್ವಜನಿಕ with value 4829173", "start": 92, "end": 99, "category": "NONE", "language": "mixed", "family": 7, "split": "validation"}
+{"text": "Updated organization company business name: Fictional Labs-60", "start": 44, "end": 61, "category": "NONE", "language": "en", "family": 6, "split": "validation"}
+{"text": "Updated company business name organization: Fictional Labs-61", "start": 44, "end": 61, "category": "NONE", "language": "en", "family": 6, "split": "validation"}
+{"text": "Updated organization company business name: Fictional Labs-62", "start": 44, "end": 61, "category": "NONE", "language": "en", "family": 6, "split": "validation"}
+{"text": "Updated company business name organization: Fictional Labs-63", "start": 44, "end": 61, "category": "NONE", "language": "en", "family": 6, "split": "validation"}
+{"text": "ನವೀಕರಿಸಿದ ಸಂಸ್ಥೆ ಕಂಪನಿ ವ್ಯಾಪಾರ ಹೆಸರು: Fictional Labs-60", "start": 38, "end": 55, "category": "NONE", "language": "kn", "family": 6, "split": "validation"}
+{"text": "ನವೀಕರಿಸಿದ ಕಂಪನಿ ವ್ಯಾಪಾರ ಹೆಸರು ಸಂಸ್ಥೆ: Fictional Labs-61", "start": 38, "end": 55, "category": "NONE", "language": "kn", "family": 6, "split": "validation"}
+{"text": "ನವೀಕರಿಸಿದ ಸಂಸ್ಥೆ ಕಂಪನಿ ವ್ಯಾಪಾರ ಹೆಸರು: Fictional Labs-62", "start": 38, "end": 55, "category": "NONE", "language": "kn", "family": 6, "split": "validation"}
+{"text": "ನವೀಕರಿಸಿದ ಕಂಪನಿ ವ್ಯಾಪಾರ ಹೆಸರು ಸಂಸ್ಥೆ: Fictional Labs-63", "start": 38, "end": 55, "category": "NONE", "language": "kn", "family": 6, "split": "validation"}
+{"text": "Updated ಸಂಸ್ಥೆ ಕಂಪನಿ ವ್ಯಾಪಾರ ಹೆಸರು organization company business name: Fictional Labs-60", "start": 71, "end": 88, "category": "NONE", "language": "mixed", "family": 6, "split": "validation"}
+{"text": "Updated ಕಂಪನಿ ವ್ಯಾಪಾರ ಹೆಸರು organization company business name ಸಂಸ್ಥೆ: Fictional Labs-61", "start": 71, "end": 88, "category": "NONE", "language": "mixed", "family": 6, "split": "validation"}
+{"text": "Updated ಸಂಸ್ಥೆ ಕಂಪನಿ ವ್ಯಾಪಾರ ಹೆಸರು organization company business name: Fictional Labs-62", "start": 71, "end": 88, "category": "NONE", "language": "mixed", "family": 6, "split": "validation"}
+{"text": "Updated ಕಂಪನಿ ವ್ಯಾಪಾರ ಹೆಸರು organization company business name ಸಂಸ್ಥೆ: Fictional Labs-63", "start": 71, "end": 88, "category": "NONE", "language": "mixed", "family": 6, "split": "validation"}
+{"text": "Review organization company business name with value Fictional Labs-70", "start": 53, "end": 70, "category": "NONE", "language": "en", "family": 7, "split": "validation"}
+{"text": "Review company business name organization with value Fictional Labs-71", "start": 53, "end": 70, "category": "NONE", "language": "en", "family": 7, "split": "validation"}
+{"text": "Review organization company business name with value Fictional Labs-72", "start": 53, "end": 70, "category": "NONE", "language": "en", "family": 7, "split": "validation"}
+{"text": "Review company business name organization with value Fictional Labs-73", "start": 53, "end": 70, "category": "NONE", "language": "en", "family": 7, "split": "validation"}
+{"text": "ಸಂಸ್ಥೆ ಕಂಪನಿ ವ್ಯಾಪಾರ ಹೆಸರು ಮೌಲ್ಯವನ್ನು ಪರಿಶೀಲಿಸಿ Fictional Labs-70", "start": 48, "end": 65, "category": "NONE", "language": "kn", "family": 7, "split": "validation"}
+{"text": "ಕಂಪನಿ ವ್ಯಾಪಾರ ಹೆಸರು ಸಂಸ್ಥೆ ಮೌಲ್ಯವನ್ನು ಪರಿಶೀಲಿಸಿ Fictional Labs-71", "start": 48, "end": 65, "category": "NONE", "language": "kn", "family": 7, "split": "validation"}
+{"text": "ಸಂಸ್ಥೆ ಕಂಪನಿ ವ್ಯಾಪಾರ ಹೆಸರು ಮೌಲ್ಯವನ್ನು ಪರಿಶೀಲಿಸಿ Fictional Labs-72", "start": 48, "end": 65, "category": "NONE", "language": "kn", "family": 7, "split": "validation"}
+{"text": "ಕಂಪನಿ ವ್ಯಾಪಾರ ಹೆಸರು ಸಂಸ್ಥೆ ಮೌಲ್ಯವನ್ನು ಪರಿಶೀಲಿಸಿ Fictional Labs-73", "start": 48, "end": 65, "category": "NONE", "language": "kn", "family": 7, "split": "validation"}
+{"text": "Review ಸಂಸ್ಥೆ ಕಂಪನಿ ವ್ಯಾಪಾರ ಹೆಸರು organization company business name with value Fictional Labs-70", "start": 80, "end": 97, "category": "NONE", "language": "mixed", "family": 7, "split": "validation"}
+{"text": "Review ಕಂಪನಿ ವ್ಯಾಪಾರ ಹೆಸರು organization company business name ಸಂಸ್ಥೆ with value Fictional Labs-71", "start": 80, "end": 97, "category": "NONE", "language": "mixed", "family": 7, "split": "validation"}
+{"text": "Review ಸಂಸ್ಥೆ ಕಂಪನಿ ವ್ಯಾಪಾರ ಹೆಸರು organization company business name with value Fictional Labs-72", "start": 80, "end": 97, "category": "NONE", "language": "mixed", "family": 7, "split": "validation"}
+{"text": "Review ಕಂಪನಿ ವ್ಯಾಪಾರ ಹೆಸರು organization company business name ಸಂಸ್ಥೆ with value Fictional Labs-73", "start": 80, "end": 97, "category": "NONE", "language": "mixed", "family": 7, "split": "validation"}
+{"text": "Updated virtual VID BID excluded identifier: 1234567890123460", "start": 45, "end": 61, "category": "NONE", "language": "en", "family": 6, "split": "validation"}
+{"text": "Updated VID BID excluded identifier virtual: 1234567890123461", "start": 45, "end": 61, "category": "NONE", "language": "en", "family": 6, "split": "validation"}
+{"text": "Updated virtual VID BID excluded identifier: 1234567890123462", "start": 45, "end": 61, "category": "NONE", "language": "en", "family": 6, "split": "validation"}
+{"text": "Updated VID BID excluded identifier virtual: 1234567890123463", "start": 45, "end": 61, "category": "NONE", "language": "en", "family": 6, "split": "validation"}
+{"text": "ನವೀಕರಿಸಿದ ವರ್ಚುವಲ್ ವಿಐಡಿ ಬಿಐಡಿ ಗುರುತು: 1234567890123460", "start": 39, "end": 55, "category": "NONE", "language": "kn", "family": 6, "split": "validation"}
+{"text": "ನವೀಕರಿಸಿದ ವಿಐಡಿ ಬಿಐಡಿ ಗುರುತು ವರ್ಚುವಲ್: 1234567890123461", "start": 39, "end": 55, "category": "NONE", "language": "kn", "family": 6, "split": "validation"}
+{"text": "ನವೀಕರಿಸಿದ ವರ್ಚುವಲ್ ವಿಐಡಿ ಬಿಐಡಿ ಗುರುತು: 1234567890123462", "start": 39, "end": 55, "category": "NONE", "language": "kn", "family": 6, "split": "validation"}
+{"text": "ನವೀಕರಿಸಿದ ವಿಐಡಿ ಬಿಐಡಿ ಗುರುತು ವರ್ಚುವಲ್: 1234567890123463", "start": 39, "end": 55, "category": "NONE", "language": "kn", "family": 6, "split": "validation"}
+{"text": "Updated ವರ್ಚುವಲ್ ವಿಐಡಿ ಬಿಐಡಿ ಗುರುತು virtual VID BID excluded identifier: 1234567890123460", "start": 73, "end": 89, "category": "NONE", "language": "mixed", "family": 6, "split": "validation"}
+{"text": "Updated ವಿಐಡಿ ಬಿಐಡಿ ಗುರುತು virtual VID BID excluded identifier ವರ್ಚುವಲ್: 1234567890123461", "start": 73, "end": 89, "category": "NONE", "language": "mixed", "family": 6, "split": "validation"}
+{"text": "Updated ವರ್ಚುವಲ್ ವಿಐಡಿ ಬಿಐಡಿ ಗುರುತು virtual VID BID excluded identifier: 1234567890123462", "start": 73, "end": 89, "category": "NONE", "language": "mixed", "family": 6, "split": "validation"}
+{"text": "Updated ವಿಐಡಿ ಬಿಐಡಿ ಗುರುತು virtual VID BID excluded identifier ವರ್ಚುವಲ್: 1234567890123463", "start": 73, "end": 89, "category": "NONE", "language": "mixed", "family": 6, "split": "validation"}
+{"text": "Review virtual VID BID excluded identifier with value 1234567890123470", "start": 54, "end": 70, "category": "NONE", "language": "en", "family": 7, "split": "validation"}
+{"text": "Review VID BID excluded identifier virtual with value 1234567890123471", "start": 54, "end": 70, "category": "NONE", "language": "en", "family": 7, "split": "validation"}
+{"text": "Review virtual VID BID excluded identifier with value 1234567890123472", "start": 54, "end": 70, "category": "NONE", "language": "en", "family": 7, "split": "validation"}
+{"text": "Review VID BID excluded identifier virtual with value 1234567890123473", "start": 54, "end": 70, "category": "NONE", "language": "en", "family": 7, "split": "validation"}
+{"text": "ವರ್ಚುವಲ್ ವಿಐಡಿ ಬಿಐಡಿ ಗುರುತು ಮೌಲ್ಯವನ್ನು ಪರಿಶೀಲಿಸಿ 1234567890123470", "start": 49, "end": 65, "category": "NONE", "language": "kn", "family": 7, "split": "validation"}
+{"text": "ವಿಐಡಿ ಬಿಐಡಿ ಗುರುತು ವರ್ಚುವಲ್ ಮೌಲ್ಯವನ್ನು ಪರಿಶೀಲಿಸಿ 1234567890123471", "start": 49, "end": 65, "category": "NONE", "language": "kn", "family": 7, "split": "validation"}
+{"text": "ವರ್ಚುವಲ್ ವಿಐಡಿ ಬಿಐಡಿ ಗುರುತು ಮೌಲ್ಯವನ್ನು ಪರಿಶೀಲಿಸಿ 1234567890123472", "start": 49, "end": 65, "category": "NONE", "language": "kn", "family": 7, "split": "validation"}
+{"text": "ವಿಐಡಿ ಬಿಐಡಿ ಗುರುತು ವರ್ಚುವಲ್ ಮೌಲ್ಯವನ್ನು ಪರಿಶೀಲಿಸಿ 1234567890123473", "start": 49, "end": 65, "category": "NONE", "language": "kn", "family": 7, "split": "validation"}
+{"text": "Review ವರ್ಚುವಲ್ ವಿಐಡಿ ಬಿಐಡಿ ಗುರುತು virtual VID BID excluded identifier with value 1234567890123470", "start": 82, "end": 98, "category": "NONE", "language": "mixed", "family": 7, "split": "validation"}
+{"text": "Review ವಿಐಡಿ ಬಿಐಡಿ ಗುರುತು virtual VID BID excluded identifier ವರ್ಚುವಲ್ with value 1234567890123471", "start": 82, "end": 98, "category": "NONE", "language": "mixed", "family": 7, "split": "validation"}
+{"text": "Review ವರ್ಚುವಲ್ ವಿಐಡಿ ಬಿಐಡಿ ಗುರುತು virtual VID BID excluded identifier with value 1234567890123472", "start": 82, "end": 98, "category": "NONE", "language": "mixed", "family": 7, "split": "validation"}
+{"text": "Review ವಿಐಡಿ ಬಿಐಡಿ ಗುರುತು virtual VID BID excluded identifier ವರ್ಚುವಲ್ with value 1234567890123473", "start": 82, "end": 98, "category": "NONE", "language": "mixed", "family": 7, "split": "validation"}
+{"text": "Updated unlabelled unknown ambiguous reference: 4829160", "start": 48, "end": 55, "category": "NONE", "language": "en", "family": 6, "split": "validation"}
+{"text": "Updated unknown ambiguous reference unlabelled: 4829161", "start": 48, "end": 55, "category": "NONE", "language": "en", "family": 6, "split": "validation"}
+{"text": "Updated unlabelled unknown ambiguous reference: 4829162", "start": 48, "end": 55, "category": "NONE", "language": "en", "family": 6, "split": "validation"}
+{"text": "Updated unknown ambiguous reference unlabelled: 4829163", "start": 48, "end": 55, "category": "NONE", "language": "en", "family": 6, "split": "validation"}
+{"text": "ನವೀಕರಿಸಿದ ಲೇಬಲ್ ಇಲ್ಲದ ಅಜ್ಞಾತ ಉಲ್ಲೇಖ: 4829160", "start": 37, "end": 44, "category": "NONE", "language": "kn", "family": 6, "split": "validation"}
+{"text": "ನವೀಕರಿಸಿದ ಇಲ್ಲದ ಅಜ್ಞಾತ ಉಲ್ಲೇಖ ಲೇಬಲ್: 4829161", "start": 37, "end": 44, "category": "NONE", "language": "kn", "family": 6, "split": "validation"}
+{"text": "ನವೀಕರಿಸಿದ ಲೇಬಲ್ ಇಲ್ಲದ ಅಜ್ಞಾತ ಉಲ್ಲೇಖ: 4829162", "start": 37, "end": 44, "category": "NONE", "language": "kn", "family": 6, "split": "validation"}
+{"text": "ನವೀಕರಿಸಿದ ಇಲ್ಲದ ಅಜ್ಞಾತ ಉಲ್ಲೇಖ ಲೇಬಲ್: 4829163", "start": 37, "end": 44, "category": "NONE", "language": "kn", "family": 6, "split": "validation"}
+{"text": "Updated ಲೇಬಲ್ ಇಲ್ಲದ ಅಜ್ಞಾತ ಉಲ್ಲೇಖ unlabelled unknown ambiguous reference: 4829160", "start": 74, "end": 81, "category": "NONE", "language": "mixed", "family": 6, "split": "validation"}
+{"text": "Updated ಇಲ್ಲದ ಅಜ್ಞಾತ ಉಲ್ಲೇಖ unlabelled unknown ambiguous reference ಲೇಬಲ್: 4829161", "start": 74, "end": 81, "category": "NONE", "language": "mixed", "family": 6, "split": "validation"}
+{"text": "Updated ಲೇಬಲ್ ಇಲ್ಲದ ಅಜ್ಞಾತ ಉಲ್ಲೇಖ unlabelled unknown ambiguous reference: 4829162", "start": 74, "end": 81, "category": "NONE", "language": "mixed", "family": 6, "split": "validation"}
+{"text": "Updated ಇಲ್ಲದ ಅಜ್ಞಾತ ಉಲ್ಲೇಖ unlabelled unknown ambiguous reference ಲೇಬಲ್: 4829163", "start": 74, "end": 81, "category": "NONE", "language": "mixed", "family": 6, "split": "validation"}
+{"text": "Review unlabelled unknown ambiguous reference with value 4829170", "start": 57, "end": 64, "category": "NONE", "language": "en", "family": 7, "split": "validation"}
+{"text": "Review unknown ambiguous reference unlabelled with value 4829171", "start": 57, "end": 64, "category": "NONE", "language": "en", "family": 7, "split": "validation"}
+{"text": "Review unlabelled unknown ambiguous reference with value 4829172", "start": 57, "end": 64, "category": "NONE", "language": "en", "family": 7, "split": "validation"}
+{"text": "Review unknown ambiguous reference unlabelled with value 4829173", "start": 57, "end": 64, "category": "NONE", "language": "en", "family": 7, "split": "validation"}
+{"text": "ಲೇಬಲ್ ಇಲ್ಲದ ಅಜ್ಞಾತ ಉಲ್ಲೇಖ ಮೌಲ್ಯವನ್ನು ಪರಿಶೀಲಿಸಿ 4829170", "start": 47, "end": 54, "category": "NONE", "language": "kn", "family": 7, "split": "validation"}
+{"text": "ಇಲ್ಲದ ಅಜ್ಞಾತ ಉಲ್ಲೇಖ ಲೇಬಲ್ ಮೌಲ್ಯವನ್ನು ಪರಿಶೀಲಿಸಿ 4829171", "start": 47, "end": 54, "category": "NONE", "language": "kn", "family": 7, "split": "validation"}
+{"text": "ಲೇಬಲ್ ಇಲ್ಲದ ಅಜ್ಞಾತ ಉಲ್ಲೇಖ ಮೌಲ್ಯವನ್ನು ಪರಿಶೀಲಿಸಿ 4829172", "start": 47, "end": 54, "category": "NONE", "language": "kn", "family": 7, "split": "validation"}
+{"text": "ಇಲ್ಲದ ಅಜ್ಞಾತ ಉಲ್ಲೇಖ ಲೇಬಲ್ ಮೌಲ್ಯವನ್ನು ಪರಿಶೀಲಿಸಿ 4829173", "start": 47, "end": 54, "category": "NONE", "language": "kn", "family": 7, "split": "validation"}
+{"text": "Review ಲೇಬಲ್ ಇಲ್ಲದ ಅಜ್ಞಾತ ಉಲ್ಲೇಖ unlabelled unknown ambiguous reference with value 4829170", "start": 83, "end": 90, "category": "NONE", "language": "mixed", "family": 7, "split": "validation"}
+{"text": "Review ಇಲ್ಲದ ಅಜ್ಞಾತ ಉಲ್ಲೇಖ unlabelled unknown ambiguous reference ಲೇಬಲ್ with value 4829171", "start": 83, "end": 90, "category": "NONE", "language": "mixed", "family": 7, "split": "validation"}
+{"text": "Review ಲೇಬಲ್ ಇಲ್ಲದ ಅಜ್ಞಾತ ಉಲ್ಲೇಖ unlabelled unknown ambiguous reference with value 4829172", "start": 83, "end": 90, "category": "NONE", "language": "mixed", "family": 7, "split": "validation"}
+{"text": "Review ಇಲ್ಲದ ಅಜ್ಞಾತ ಉಲ್ಲೇಖ unlabelled unknown ambiguous reference ಲೇಬಲ್ with value 4829173", "start": 83, "end": 90, "category": "NONE", "language": "mixed", "family": 7, "split": "validation"}
+{"text": "4006000", "start": 0, "end": 7, "category": "NONE", "language": "en", "family": 6, "split": "validation"}
+{"text": "4006001", "start": 0, "end": 7, "category": "NONE", "language": "kn", "family": 6, "split": "validation"}
+{"text": "4006002", "start": 0, "end": 7, "category": "NONE", "language": "mixed", "family": 6, "split": "validation"}
+{"text": "4006003", "start": 0, "end": 7, "category": "NONE", "language": "en", "family": 6, "split": "validation"}
+{"text": "4006004", "start": 0, "end": 7, "category": "NONE", "language": "kn", "family": 6, "split": "validation"}
+{"text": "4006005", "start": 0, "end": 7, "category": "NONE", "language": "mixed", "family": 6, "split": "validation"}
+{"text": "4006006", "start": 0, "end": 7, "category": "NONE", "language": "en", "family": 6, "split": "validation"}
+{"text": "4006007", "start": 0, "end": 7, "category": "NONE", "language": "kn", "family": 6, "split": "validation"}
+{"text": "4006008", "start": 0, "end": 7, "category": "NONE", "language": "mixed", "family": 6, "split": "validation"}
+{"text": "4006009", "start": 0, "end": 7, "category": "NONE", "language": "en", "family": 6, "split": "validation"}
+{"text": "4006010", "start": 0, "end": 7, "category": "NONE", "language": "kn", "family": 6, "split": "validation"}
+{"text": "4006011", "start": 0, "end": 7, "category": "NONE", "language": "mixed", "family": 6, "split": "validation"}
+{"text": "4006012", "start": 0, "end": 7, "category": "NONE", "language": "en", "family": 6, "split": "validation"}
+{"text": "4006013", "start": 0, "end": 7, "category": "NONE", "language": "kn", "family": 6, "split": "validation"}
+{"text": "4006014", "start": 0, "end": 7, "category": "NONE", "language": "mixed", "family": 6, "split": "validation"}
+{"text": "4006015", "start": 0, "end": 7, "category": "NONE", "language": "en", "family": 6, "split": "validation"}
+{"text": "4006016", "start": 0, "end": 7, "category": "NONE", "language": "kn", "family": 6, "split": "validation"}
+{"text": "4006017", "start": 0, "end": 7, "category": "NONE", "language": "mixed", "family": 6, "split": "validation"}
+{"text": "4006018", "start": 0, "end": 7, "category": "NONE", "language": "en", "family": 6, "split": "validation"}
+{"text": "4006019", "start": 0, "end": 7, "category": "NONE", "language": "kn", "family": 6, "split": "validation"}
+{"text": "4006020", "start": 0, "end": 7, "category": "NONE", "language": "mixed", "family": 6, "split": "validation"}
+{"text": "4006021", "start": 0, "end": 7, "category": "NONE", "language": "en", "family": 6, "split": "validation"}
+{"text": "4006022", "start": 0, "end": 7, "category": "NONE", "language": "kn", "family": 6, "split": "validation"}
+{"text": "4006023", "start": 0, "end": 7, "category": "NONE", "language": "mixed", "family": 6, "split": "validation"}
+{"text": "4006024", "start": 0, "end": 7, "category": "NONE", "language": "en", "family": 6, "split": "validation"}
+{"text": "4006025", "start": 0, "end": 7, "category": "NONE", "language": "kn", "family": 6, "split": "validation"}
+{"text": "4006026", "start": 0, "end": 7, "category": "NONE", "language": "mixed", "family": 6, "split": "validation"}
+{"text": "4006027", "start": 0, "end": 7, "category": "NONE", "language": "en", "family": 6, "split": "validation"}
+{"text": "4006028", "start": 0, "end": 7, "category": "NONE", "language": "kn", "family": 6, "split": "validation"}
+{"text": "4006029", "start": 0, "end": 7, "category": "NONE", "language": "mixed", "family": 6, "split": "validation"}
+{"text": "4006030", "start": 0, "end": 7, "category": "NONE", "language": "en", "family": 6, "split": "validation"}
+{"text": "4006031", "start": 0, "end": 7, "category": "NONE", "language": "kn", "family": 6, "split": "validation"}
+{"text": "4006032", "start": 0, "end": 7, "category": "NONE", "language": "mixed", "family": 6, "split": "validation"}
+{"text": "4006033", "start": 0, "end": 7, "category": "NONE", "language": "en", "family": 6, "split": "validation"}
+{"text": "4006034", "start": 0, "end": 7, "category": "NONE", "language": "kn", "family": 6, "split": "validation"}
+{"text": "4006035", "start": 0, "end": 7, "category": "NONE", "language": "mixed", "family": 6, "split": "validation"}
+{"text": "4006036", "start": 0, "end": 7, "category": "NONE", "language": "en", "family": 6, "split": "validation"}
+{"text": "4006037", "start": 0, "end": 7, "category": "NONE", "language": "kn", "family": 6, "split": "validation"}
+{"text": "4006038", "start": 0, "end": 7, "category": "NONE", "language": "mixed", "family": 6, "split": "validation"}
+{"text": "4006039", "start": 0, "end": 7, "category": "NONE", "language": "en", "family": 6, "split": "validation"}
