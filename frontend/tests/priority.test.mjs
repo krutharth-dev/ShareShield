@@ -51,7 +51,7 @@ test('unreadable OCR is distinct from Kannada personal-detail candidates',()=>{
  assert.equal(isUncertainOcrRegion({category:'KANNADA_PARTY_IDENTITY_REVIEW'}),false);
 });
 
-test('official Aadhaar and labelled virtual IDs share the highest identifier priority',()=>{
+test('official Aadhaar retains rank one while virtual IDs are excluded from ranking',()=>{
  assert.equal(priorityForCategory('AADHAAR_CANDIDATE'),1);
  assert.equal(priorityForCategory('ENROLMENT_NUMBER'),5);
  assert.equal(priorityForCategory('AADHAAR_VIRTUAL_ID'),null);

@@ -40,7 +40,8 @@ test('international validation rejects embedded numbers and oversized fields',()
 test('VIDs never accept a 16-digit prefix of a longer grouped value',()=>{
  const found=detect('VID: 1234 5678 9012 3456 7890');
  assert.equal(found.some(f=>f.category==='AADHAAR_VIRTUAL_ID'&&f.validation.status==='passed'),false);
- assert.ok(found.some(requiresManualReview));
+ assert.ok(found.some(f=>f.category==='AADHAAR_VIRTUAL_ID'),'Detector may parse the malformed VID internally for Aadhaar-substring protection');
+ assert.ok(found.filter(f=>f.category==='AADHAAR_VIRTUAL_ID').every(f=>!requiresManualReview(f)),'VID must not require redaction review');
 });
 test('institutional IDs with delimiters are complete and do not become phones or Aadhaar',()=>{
  for(const [label,value] of [['MRN','HOSP/2026/9876543210'],['Patient ID','DEMO_2026/123'],['USN','4MC24CS099'],['Admission number','234567890124']]){
@@ -102,7 +103,7 @@ test('malformed numeric fields preserve all OCR text for review',()=>{
  for(const [source,category] of [['Card Number: 4111 111I 1111 1111','PAYMENT_CARD_REVIEW'],['Account Number: 1234 56O8 9012','BANK_ACCOUNT_CANDIDATE'],['VID: 1234 5678 9O12 3456','AADHAAR_VIRTUAL_ID']]){
   const found=hits(source,category);
   assert.equal(found.length,1);assert.equal(found[0].value,source.split(': ')[1]);
-  assert.equal(found[0].validation.status,'failed');assert.ok(requiresManualReview(found[0]));
+  assert.equal(found[0].validation.status,'failed');assert.equal(requiresManualReview(found[0]),category!=='AADHAAR_VIRTUAL_ID','VID is excluded, while failed card and bank checks still require review');
  }
 });
 test('literal short/placeholder-like passwords and YAML continuation values remain protected',()=>{
