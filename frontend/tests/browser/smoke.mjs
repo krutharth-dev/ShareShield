@@ -257,7 +257,7 @@ try{
  assert.notEqual((await page.locator('.report-heading h2').textContent())?.trim(),'SCOPED CLEAR',
   'No approved masks must never lead to a cleared result');
  console.log('PASS no fixed page cap: ten-page PDF analysis and reopened exported PDF');
- // Mini-project acceptance: 12-digit Aadhaar and separately labelled 16-digit virtual IDs.
+ // Mini-project acceptance: 12-digit Aadhaar stays selectable; virtual IDs are out of redaction scope.
  await page.getByRole('button',{name:/Clear workspace/}).click();
  assert.equal(await page.getByLabel('Identifier validation').count(),0,'Experimental 16-digit profile must be removed');
  const aadhaarValue='1234 5678 9012',vidValue='8765 4321 8765 4321',bidValue='9107 2702 3707 5395';
@@ -267,7 +267,7 @@ try{
  const aadhaarCard=page.locator('.finding-card').filter({hasText:'AADHAAR REVIEW'});
  await aadhaarCard.waitFor({state:'visible',timeout:30000});
  assert.equal(await aadhaarCard.count(),1,'One true 12-digit Aadhaar-labelled field must produce one review finding');
- assert.equal(await page.locator('.finding-card').filter({hasText:'VIRTUAL ID'}).count(),2,'Both labelled virtual identifiers must be reviewable');
+ assert.equal(await page.locator('.finding-card').filter({hasText:'VIRTUAL ID'}).count(),0,'VID/BID do not appear as selectable redaction findings');
  // BID is represented as a separate labelled virtual-ID finding.
  await page.getByRole('button',{name:'Select all',exact:true}).click();
  const selectedCategories=await page.locator('.finding-card input:checked').count();
