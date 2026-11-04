@@ -1,3 +1,4 @@
+import {detectExtended} from './extended-detection.ts';
 export type Risk = 'CRITICAL'|'HIGH'|'MEDIUM'|'LOW'|'CONTEXT_DEPENDENT';
 export type Candidate = {category:string;value:string;start:number;end:number;risk:Risk;detection_confidence:number;reason:string};
 const D=[[0,1,2,3,4,5,6,7,8,9],[1,2,3,4,0,6,7,8,9,5],[2,3,4,0,1,7,8,9,5,6],[3,4,0,1,2,8,9,5,6,7],[4,0,1,2,3,9,5,6,7,8],[5,9,8,7,6,0,4,3,2,1],[6,5,9,8,7,1,0,4,3,2],[7,6,5,9,8,2,1,0,4,3],[8,7,6,5,9,3,2,1,0,4],[9,8,7,6,5,4,3,2,1,0]];
@@ -224,7 +225,7 @@ export function detect(text:string):Candidate[]{
      found.push({category:'AADHAAR_OCR_REVIEW',value:m[0],start:m.index!,end:m.index!+m[0].length,risk:'HIGH',detection_confidence:.4,reason:'Possible Aadhaar digits distorted by OCR. Verify exact pixels manually.'});
    }
  }
- return found.filter(f=>f.category==='AADHAAR_VIRTUAL_ID'||!inVirtualField(f.start,f.end)).sort((a,b)=>a.start-b.start);
+ return [...found, ...detectExtended(text,found)].filter(f=>f.category==='AADHAAR_VIRTUAL_ID'||!inVirtualField(f.start,f.end)).sort((a,b)=>a.start-b.start);
 }
 export const masked=(value:string)=>value.length<=4?'••••':'••••'+value.slice(-3);
 export function verificationStatus(residuals:number,incomplete:boolean){return residuals?'FLAG':incomplete?'UNVERIFIED':'SCOPED_CLEAR';}
