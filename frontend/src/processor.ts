@@ -1,4 +1,5 @@
 import {classifyPriority,inferDocumentType,type SharingPurpose} from './priority';
+import {isVirtualId} from './selection-policy';
 import {coverageCheck} from './clearance';
 import {getDocument,GlobalWorkerOptions,type PDFDocumentProxy} from 'pdfjs-dist';
 import type {TextItem} from 'pdfjs-dist/types/src/display/api';
@@ -49,7 +50,7 @@ async function openPdf(bytes:Uint8Array){return getDocument({data:bytes.slice(),
 async function ocrWorker(lang:string,progress:(s:string)=>void){return createWorker(lang.includes('+')?lang.split('+'):lang,1,{workerPath:'/ocr/worker.min.js',corePath:'/ocr',langPath:'/ocr',workerBlobURL:false,cacheMethod:'none',logger:m=>{if(m.status)progress(`OCR · ${m.status} ${Math.round((m.progress??0)*100)}%`);}});}
 async function ocr(c:HTMLCanvasElement,worker:Worker){const r=await worker.recognize(c,{}, {blocks:true,text:true});const tokens:Token[]=[];let text='';for(const block of r.data.blocks??[])for(const para of block.paragraphs)for(const line of para.lines){for(const w of line.words){const start=text.length;text+=w.text+' ';tokens.push({text:w.text,start,end:start+w.text.length,box:{x:w.bbox.x0,y:w.bbox.y0,width:w.bbox.x1-w.bbox.x0,height:w.bbox.y1-w.bbox.y0},confidence:w.confidence/100});}text+='\n';}return {text:text||r.data.text,tokens,confidence:r.data.confidence/100};}
 function makeFindings(candidates:Candidate[],tokens:Token[],page:number,values:Map<string,string>,textSpans?:Map<string,TextSpan>){
- return candidates.map(f=>{
+ return candidates.filter(f=>!isVirtualId(f)).map(f=>{
    const matches=tokens.filter(t=>t.end>f.start&&t.start<f.end);
    const id=crypto.randomUUID();values.set(id,f.value);textSpans?.set(id,{start:f.start,end:f.end});
    const scores=matches.flatMap(t=>t.confidence===undefined?[]:[t.confidence]);
@@ -253,7 +254,7 @@ export async function redact(id:string,selected:string[],manual:Manual[],progres
  if(s.text===undefined)validateManualRegions(manual,s.analysis.pages);
  const values=selected.map(x=>s.values.get(x)).filter((v):v is string=>v!==undefined);let output:Uint8Array;let mime:string;let extension:string;const checks:Check[]=[];let remaining=0,incomplete=false;
  const warnings=['SCOPED_CLEAR is limited to the listed checks. It is not a guarantee of anonymity.'];
- warnings.push('Labelled VID/BID candidates can be detected and redacted; unlabelled, unreadable or OCR-damaged virtual IDs may still be missed. Review all pages.');
+ warnings.push('VID/BID are intentionally excluded from this redaction and verification scope. Exported documents may still expose them; inspect every page before sharing.');
  if(selected.length===0&&manual.length===0){
    incomplete=true;
    warnings.push('No redactions were approved or applied. A document with zero detected findings cannot be automatically declared safe.');
@@ -277,7 +278,7 @@ export async function redact(id:string,selected:string[],manual:Manual[],progres
  const recordResidual=(category:string,page:number,source:ResidualDetail['source'])=>{remaining++;if(residual_findings.length<50)residual_findings.push({category,page,source});};
  const testResidual=(text:string,page:number,source:ResidualDetail['source'],normalize=false)=>{
    const before=remaining;
-   for(const f of detect(text))if(classifyPriority(f.category,purpose,inferDocumentType(s.analysis.findings)).mandatory)recordResidual(f.category,page,source);
+   for(const f of detect(text))if(!isVirtualId(f)&&classifyPriority(f.category,purpose,inferDocumentType(s.analysis.findings)).mandatory)recordResidual(f.category,page,source);
    const val=(s:string)=>normalize?s.replace(/\s/g,'').toLowerCase():s;
    for(const original of values){if(original.length>2&&val(text).includes(val(original)))recordResidual('SELECTED_VALUE_REMAINS',page,source);}
    return remaining-before;
