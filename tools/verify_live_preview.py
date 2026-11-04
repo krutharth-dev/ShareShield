@@ -11,8 +11,8 @@ import sys
 import urllib.request
 from urllib.parse import urljoin, urlparse
 
-PREVIEW_ORIGIN = 'https://5d01da12.shareshield-mini.pages.dev'
-PREVIEW_SHA = 'f24fc6b51879a465ec7038b14113d0983b43b69a'
+PREVIEW_ORIGIN = 'https://d6db00f5.shareshield-mini.pages.dev'
+PREVIEW_SHA = '9331a30aeb4205b7350f4c7902f139c92289cd97'
 ROOT = Path(__file__).resolve().parents[1]
 EVIDENCE = Path(os.environ.get('SHARESHIELD_EVIDENCE_DIR', '/tmp/shareshield-live-evidence'))
 
@@ -49,7 +49,7 @@ def exports():
     from unittest.mock import patch
     import fitz
     from pypdf import PdfReader
-    selected = ['demo.person@example.test', 'ABCDE1234F', 'DemoSecret_4829']
+    selected = ['demo.person@example.test', 'ABCDE1234F', 'DemoSecret_4829', '2345 6789 0124']
     output = EVIDENCE / 'redacted-two-page.pdf'
     redacted = verify_pdf(VerificationInput(output, selected_findings=selected, timeout_seconds=90))
     assert redacted['status'] == 'SCOPED_CLEAR', redacted
