@@ -139,7 +139,7 @@ try{
  await page.getByRole('button',{name:/Clear workspace/}).click();
  const {PDFDocument,StandardFonts,PDFName}=await import('pdf-lib');
  const fixture=await PDFDocument.create(),font=await fixture.embedFont(StandardFonts.Helvetica);
- for(let i=0;i<2;i++){const p=fixture.addPage([595,420]);['FICTIONAL REVIEW SAMPLE '+(i+1),'Email: demo.person@example.test','PAN: ABCDE1234F','Password: DemoSecret_4829','Public note: share the summary.'].forEach((line,j)=>p.drawText(line,{x:48,y:365-j*48,size:16,font}));}
+ for(let i=0;i<2;i++){const p=fixture.addPage([595,420]);['FICTIONAL REVIEW SAMPLE '+(i+1),'Email: demo.person@example.test','PAN: ABCDE1234F','Password: DemoSecret_4829','Aadhaar: 2345 6789 0124','Aadhaar copy: 2345 6789 0124','Public note: share the summary.'].forEach((line,j)=>p.drawText(line,{x:48,y:365-j*48,size:16,font}));}
  await page.locator('input[type="file"]').setInputFiles({name:'fictional-two-pages.pdf',mimeType:'application/pdf',buffer:Buffer.from(await fixture.save())});
  await page.getByLabel('Printed OCR language').selectOption('eng');
  await page.getByRole('button',{name:/Analyze pending files/}).click();
@@ -152,6 +152,9 @@ try{
    const errors=await page.locator('.document-work [role="alert"]').allTextContents();
    throw Error('PDF analysis failed: '+JSON.stringify({pdfState,status,errors,processing:await page.locator('.processing').allTextContents()}));
  }
+ const repeatedAadhaar=await page.locator('.finding-card').filter({hasText:/AADHAAR/}).allTextContents();
+ for(const n of [1,2])assert.ok(repeatedAadhaar.filter(t=>t.includes('Page '+n)).length>=2,'Both Aadhaar occurrences must remain reviewable on page '+n);
+ console.log('PASS four repeated Aadhaar locations retained across two pages');
  assert.equal(await page.getByLabel('Preview page').locator('option').count(),2);
  assert.ok(await page.locator('.preview-area img').count()>0,'Original PDF preview must render');
  await page.getByRole('button',{name:'Mark region',exact:true}).click();

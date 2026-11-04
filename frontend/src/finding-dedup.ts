@@ -46,6 +46,11 @@ export function consolidateLocated<T extends Located>(candidates:readonly T[],va
   const old=kept[index],oldValue=digits(values.get(old.id)??''),incoming=digits(values.get(candidate.id)??'');
   const same=family==='fallback'||(oldValue!==''&&oldValue===incoming);
   if(!same&&family!=='aadhaar'){kept.push(candidate);continue;}
+  // OCR confidence describes recognition, not the accuracy of the crop.
+  // Keep every observed source region when consolidating one physical value;
+  // replacing a wider observation can leave trailing digits in the export.
+  old.boxes=[...old.boxes,...candidate.boxes.filter(b=>!old.boxes.some(a=>
+   a.x===b.x&&a.y===b.y&&a.width===b.width&&a.height===b.height))];
   if(!same&&family==='aadhaar'){
    old.category='AADHAAR_OCR_REVIEW';
    old.detection_confidence=Math.min(old.detection_confidence,.4);
@@ -54,9 +59,8 @@ export function consolidateLocated<T extends Located>(candidates:readonly T[],va
    disagreements++;
   }else if(family!=='fallback'&&candidate.category===old.category&&
    (candidate.ocr_confidence??candidate.detection_confidence)>(old.ocr_confidence??old.detection_confidence)){
-   // Preserve original finding ID and its selected value; only improve location
-   // from a stronger observation of the SAME normalized identifier.
-   old.boxes=candidate.boxes;
+   // Preserve original finding ID/value and all source coverage while updating
+   // recognition confidence for the SAME normalized identifier.
    old.ocr_confidence=candidate.ocr_confidence;
    old.detection_confidence=Math.max(old.detection_confidence,candidate.detection_confidence);
   }

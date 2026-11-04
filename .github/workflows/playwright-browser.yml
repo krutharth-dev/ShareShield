@@ -23,13 +23,13 @@ jobs:
           for i in {1..30}; do if curl -fsS http://127.0.0.1:4174/app >/dev/null; then break; fi; sleep 1; done
           node tests/browser/smoke.mjs
   live_preview:
-    if: github.event_name == 'push' && github.ref_name == 'fix/pages-release-acceptance-20261103'
+    if: github.event_name == 'push' && github.ref_name == 'fix/preserve-ocr-redaction-coverage-20261104'
     runs-on: ubuntu-latest
     timeout-minutes: 20
     permissions:
       contents: read
     env:
-      TEST_URL: https://5d01da12.shareshield-mini.pages.dev/app
+      TEST_URL: https://d6db00f5.shareshield-mini.pages.dev/app
       SHARESHIELD_EVIDENCE_DIR: /tmp/shareshield-live-evidence
     defaults:
       run:
