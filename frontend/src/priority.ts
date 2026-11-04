@@ -1,4 +1,4 @@
-import {isVirtualId} from './selection-policy';
+import {isVirtualId} from './selection-policy.ts';
 /**
  * ShareShield review queue: the user's preferred category order, NOT a
  * prediction of privacy harm, PII validity, or OCR confidence.
