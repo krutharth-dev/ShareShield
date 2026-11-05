@@ -4,7 +4,7 @@ import {validAadhaar} from './identifier-validation.ts';
 import {explainCandidate} from './finding-explanation.ts';
 import {detectExtended} from './extended-detection.ts';
 export type Risk = 'CRITICAL'|'HIGH'|'MEDIUM'|'LOW'|'CONTEXT_DEPENDENT';
-export type Candidate = {category:string;value:string;start:number;end:number;risk:Risk;detection_confidence:number;reason:string;validation?:import('./identifier-validation.ts').Validation;source_context?:string;confidence_meaning?:string;field_kind?:string;country_hint?:string};
+export type Candidate = {classification_conflict?:{suggested_category:string;model_version:string};recognition_source?:'deterministic'|'trained_ai'|'both';ai_model_version?:string;category:string;value:string;start:number;end:number;risk:Risk;detection_confidence:number;reason:string;validation?:import('./identifier-validation.ts').Validation;source_context?:string;confidence_meaning?:string;field_kind?:string;country_hint?:string};
 export {validAadhaar} from './identifier-validation.ts';
 function detectCanonical(text:string):Candidate[]{
  const found:Candidate[]=[];

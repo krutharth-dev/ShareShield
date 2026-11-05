@@ -128,9 +128,9 @@ export function inferDocumentType(findings:readonly RankedFinding[]):string{
 export function isUncertainOcrRegion(f:{category:string}):boolean{
  return /^(UNREADABLE_TEXT_LINE_REVIEW|UNREADABLE_PAGE_REVIEW|HANDWRITING_REVIEW)$/.test(f.category.toUpperCase());
 }
-export function requiresManualReview(f:{category:string;detection_confidence?:number;validation?:{status:string}}){
+export function requiresManualReview(f:{classification_conflict?:unknown;recognition_source?:string;category:string;detection_confidence?:number;validation?:{status:string}}){
  if(isVirtualId(f))return false;
- return f.validation?.status==='failed'||f.validation?.status==='not_checked'||needsMandatoryReview(f.category)||f.category.endsWith('_REVIEW')||(f.detection_confidence!==undefined&&f.detection_confidence<.6);
+ return Boolean(f.classification_conflict)||f.recognition_source==='trained_ai'||f.validation?.status==='failed'||f.validation?.status==='not_checked'||needsMandatoryReview(f.category)||f.category.endsWith('_REVIEW')||(f.detection_confidence!==undefined&&f.detection_confidence<.6);
 }
 export function rankGroups<T extends RankedFinding>(findings:readonly T[],purpose:SharingPurpose='public',documentType=inferDocumentType(findings)){
  const categories=[...new Set(findings.map(f=>f.category))];

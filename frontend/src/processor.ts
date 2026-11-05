@@ -1,3 +1,4 @@
+import {createContextRecognizer} from './context-client';
 import {classifyPriority,inferDocumentType,type SharingPurpose} from './priority';
 import {isVirtualId} from './selection-policy';
 import {coverageCheck} from './clearance';
@@ -17,7 +18,7 @@ import {redactSelectedSpans,type TextSpan} from './text-redaction';
 import {pdfTextBoundingBox} from './pdf-text-geometry';
 GlobalWorkerOptions.workerSrc=pdfWorker;
 export type Box={x:number;y:number;width:number;height:number};
-export type Finding={id:string;category:string;risk:Risk;detection_confidence:number;ocr_confidence?:number;preview:string;reason:string;validation?:Candidate['validation'];source_context?:string;confidence_meaning?:string;page:number;boxes:Box[]};
+export type Finding={classification_conflict?:Candidate['classification_conflict'];recognition_source?:Candidate['recognition_source'];ai_model_version?:string;id:string;category:string;risk:Risk;detection_confidence:number;ocr_confidence?:number;preview:string;reason:string;validation?:Candidate['validation'];source_context?:string;confidence_meaning?:string;page:number;boxes:Box[]};
 export type PageView={url:string;width:number;height:number};
 export type Check={name:string;status:'passed'|'failed'|'incomplete';detail:string};
 export type ResidualDetail={category:string;page:number;source:'PDF text'|'metadata'|'OCR'|'text export'|'DOCX export'|'face scan'|'QR scan'|'source coverage'};
@@ -64,7 +65,7 @@ function makeFindings(candidates:Candidate[],tokens:Token[],page:number,values:M
      const bottom=Math.max(...boxes.map(b=>b.y+b.height))+5;
      boxes=[{x,y,width:right-x,height:bottom-y}];
    }
-   return {id,category:f.category,risk:f.risk,detection_confidence:f.detection_confidence,
+   return {id,classification_conflict:f.classification_conflict,recognition_source:f.recognition_source,ai_model_version:f.ai_model_version,category:f.category,risk:f.risk,detection_confidence:f.detection_confidence,
      ocr_confidence:scores.length?Math.min(...scores):undefined,preview:masked(f.value),reason:f.reason,validation:f.validation,source_context:f.source_context,confidence_meaning:f.confidence_meaning,page,boxes};
  });
 }
@@ -83,6 +84,14 @@ export async function analyze(file:File,lang='eng',progress:(s:string)=>void=()=
  const a:Analysis={file_id:crypto.randomUUID(),filename:file.name,kind,findings:[],pages:[],warnings:['Detection can miss sensitive content. Review every page. Names, addresses, QR codes and handwriting require manual review.'],language:lang,expires:Date.now()+TTL};
  a.warnings.push('VID/BID values are excluded from the configured redaction and verification scope. Review original documents before public sharing.');
  const s:Stored={analysis:a,bytes,values:new Map(),textSpans:new Map(),tokens:[],outputs:[],visionIncomplete:false,multilingualReviewRequired:false,ocrReviewRequired:false};let worker:Worker|undefined,pdf:PDFDocumentProxy|undefined;
+ const recognizer=createContextRecognizer();
+ let modelNote=false;
+ const recognize=async(text:string)=>{
+  const r=await recognizer.recognize(text);
+  if(!r.available)a.warnings.push('Contextual model unavailable: deterministic detection remains active; review for missed contextual information.');
+  else if(!modelNote){a.warnings.push('Experimental trained contextual recognition is active locally in a background worker. Synthetic-data model; review AI-only findings and all unrecognised content.');modelNote=true;}
+  return r.candidates;
+ };
  let stage='initialization';
  try{
  if(kind==='txt'||kind==='csv'||kind==='docx'){
@@ -90,7 +99,7 @@ export async function analyze(file:File,lang='eng',progress:(s:string)=>void=()=
  if(text.includes('\0'))throw Error('Binary content is not supported as text.');if(text.length>500_000)throw Error('Text is limited to 500,000 characters.');
  s.text=text;
  if(/[\u0C80-\u0CFF]/u.test(text)){s.multilingualReviewRequired=true;a.warnings.push('Kannada script detected: identity and legal-party recognition is heuristic. Full manual review is mandatory before sharing.');}
- a.findings=makeFindings(detect(text),[],0,s.values,s.textSpans);
+ a.findings=makeFindings(await recognize(text),[],0,s.values,s.textSpans);
  if(kind==='docx')a.warnings.push('DOCX MVP: only extractable Word text is reviewed. Export creates a fresh plain-text Word document without original images, comments, tracked changes, styling, hyperlinks, headers, footers or metadata. Complex formats must be reviewed manually.');
  else a.warnings.push('UTF-8 text only. CSV redaction preserves the text structure; spreadsheet formulas are not evaluated.');
  }else{
@@ -148,8 +157,9 @@ export async function analyze(file:File,lang='eng',progress:(s:string)=>void=()=
    s.ocrReviewRequired=true;
    a.warnings.push('Page '+n+': OCR recognition may be incomplete. Export cannot be automatically cleared without review.');
  }
- const native=makeFindings(detect(text),tokens,n-1,s.values);
- const acrossPasses=ocrPasses.flatMap(pass=>makeFindings(detect(pass.text),pass.tokens,n-1,s.values));
+ const native=makeFindings(await recognize(text),tokens,n-1,s.values);
+ const acrossPasses:Finding[]=[];
+ for(const pass of ocrPasses)acrossPasses.push(...makeFindings(await recognize(pass.text),pass.tokens,n-1,s.values));
  // Compare all OCR passes using actual overlapping boxes after aggregation; small pixel shifts must not multiply findings.
  // Retain incomplete OCR status when even the best pass is weak; per-line
   // coverage below separately checks for omitted words and handwritten ink.
@@ -243,6 +253,7 @@ export async function analyze(file:File,lang='eng',progress:(s:string)=>void=()=
   const message=e instanceof Error?e.message:typeof e==='string'?e:'browser processing error without details';
   throw new Error('Analysis stopped during '+stage+': '+(message||'unknown error')+'. No redaction or clearance was completed.');
  }finally{
+  recognizer.close();
   try{await worker?.terminate();}catch{/* Worker already stopped. */}
   try{await pdf?.loadingTask.destroy();}catch{/* PDF already closed. */}
  }
@@ -253,6 +264,8 @@ export async function redact(id:string,selected:string[],manual:Manual[],progres
  if(new Set(selected).size!==selected.length||selected.some(x=>!s.analysis.findings.some(f=>f.id===x)))throw Error('Invalid finding selection.');
  if(manual.length>100)throw Error('Limit manual redactions to 100 regions.');
  if(s.text===undefined)validateManualRegions(manual,s.analysis.pages);
+ const exportRecognizer=createContextRecognizer();
+ try{
  const values=selected.map(x=>s.values.get(x)).filter((v):v is string=>v!==undefined);let output:Uint8Array;let mime:string;let extension:string;const checks:Check[]=[];let remaining=0,incomplete=false;
  const warnings=['SCOPED_CLEAR is limited to the listed checks. It is not a guarantee of anonymity.'];
  warnings.push('VID/BID values are intentionally excluded from automatic redaction and configured verification. The export may still expose those identifiers; review before sharing.');
@@ -277,9 +290,14 @@ export async function redact(id:string,selected:string[],manual:Manual[],progres
  if(coverage.unresolvedReview.length){incomplete=true;checks.push({name:'Uncertain-source review',status:'incomplete',detail:coverage.unresolvedReview.length+' uncertain source finding(s) remain uncovered; clearance is withheld.'});}
  const residual_findings:ResidualDetail[]=coverage.missingHigh.map(f=>({category:f.category,page:f.page+1,source:'source coverage'}));
  const recordResidual=(category:string,page:number,source:ResidualDetail['source'])=>{remaining++;if(residual_findings.length<50)residual_findings.push({category,page,source});};
- const testResidual=(text:string,page:number,source:ResidualDetail['source'],normalize=false)=>{
+ const testResidual=async(text:string,page:number,source:ResidualDetail['source'],normalize=false)=>{
    const before=remaining;
-   for(const f of detect(text))if(!isVirtualId(f)&&classifyPriority(f.category,purpose,inferDocumentType(s.analysis.findings)).mandatory)recordResidual(f.category,page,source);
+   const contextual=await exportRecognizer.recognize(text);
+   for(const f of contextual.candidates)if(f.recognition_source!=='trained_ai'&&!isVirtualId(f)&&classifyPriority(f.category,purpose,inferDocumentType(s.analysis.findings)).mandatory)recordResidual(f.category,page,source);
+   const review=contextual.candidates.filter(f=>f.recognition_source==='trained_ai'||f.classification_conflict);
+   if(!contextual.available||review.length){incomplete=true;}
+   checks.push({name:'Fresh contextual review · '+source+' '+page,status:!contextual.available||review.length?'incomplete':'passed',detail:!contextual.available?'Contextual worker/model unavailable; semantic review remains incomplete.':review.length+' AI-only or conflicting finding(s) require manual inspection. Same-model recheck is not independent semantic verification.'});
+   for(const f of review)if(residual_findings.length<50)residual_findings.push({category:f.category,page,source});
    const val=(s:string)=>normalize?s.replace(/\s/g,'').toLowerCase():s;
    for(const original of values){if(original.length>2&&val(text).includes(val(original)))recordResidual('SELECTED_VALUE_REMAINS',page,source);}
    return remaining-before;
@@ -303,13 +321,13 @@ export async function redact(id:string,selected:string[],manual:Manual[],progres
   incomplete=true;
   warnings.push('Word export is intentionally text-only, with original formatting, media and OOXML structures removed. Output is UNVERIFIED until you manually review its full contents.');
   const reopened=await readDocx(output);
-  const docxMatches=testResidual(reopened,0,'DOCX export');
+  const docxMatches=await testResidual(reopened,0,'DOCX export');
   checks.push({name:'Reopen rebuilt DOCX and scan extracted text',status:docxMatches?'failed':'passed',detail:'The newly generated Word document was reopened and scanned for residual configured patterns and selected values.'});
   checks.push({name:'Original Word layout and non-text content',status:'incomplete',detail:'Text-only reconstruction discards original media and layout; full visual fidelity and semantic privacy cannot be independently verified.'});
  }else{
   output=new TextEncoder().encode(text);mime='text/plain;charset=utf-8';extension=s.analysis.kind;
   const reopened=new TextDecoder('utf-8',{fatal:true}).decode(output);
-  const textMatches=testResidual(reopened,0,'text export');
+  const textMatches=await testResidual(reopened,0,'text export');
   checks.push({name:'Reopen exported UTF-8 bytes',status:textMatches?'failed':'passed',detail:'Selected-value comparison and fresh candidate detection completed.'});
  }
  }else{
@@ -325,14 +343,14 @@ export async function redact(id:string,selected:string[],manual:Manual[],progres
  warnings.push('Image-based export: original searchable text, forms, annotations, links, attachments and signatures are not preserved.');
  let worker:Worker|undefined,pdf:PDFDocumentProxy|undefined;
  try{
- progress('Reopening exported bytes');if(extension==='pdf'){pdf=await openPdf(output);for(let n=1;n<=pdf.numPages;n++){const page=await pdf.getPage(n);const tc=await page.getTextContent();const text=tc.items.map(i=>'str'in i?i.str:'').join(' ');testResidual(text,n,'PDF text');}
- const meta=await pdf.getMetadata();const mt=JSON.stringify(meta.info)+' '+(meta.metadata?.getRaw()??'');testResidual(mt,0,'metadata');if(await pdf.getAttachments())incomplete=true;
+ progress('Reopening exported bytes');if(extension==='pdf'){pdf=await openPdf(output);for(let n=1;n<=pdf.numPages;n++){const page=await pdf.getPage(n);const tc=await page.getTextContent();const text=tc.items.map(i=>'str'in i?i.str:'').join(' ');await testResidual(text,n,'PDF text');}
+ const meta=await pdf.getMetadata();const mt=JSON.stringify(meta.info)+' '+(meta.metadata?.getRaw()??'');await testResidual(mt,0,'metadata');if(await pdf.getAttachments())incomplete=true;
  checks.push({name:'Saved PDF text, metadata and attachments',status:remaining?'failed':incomplete?'incomplete':'passed',detail:'Reopened exported PDF with PDF.js; extracted text and inspected metadata/attachments.'});}
  worker=await ocrWorker(s.analysis.language,progress);
  const count=pdf?.numPages??1;let ocrResiduals=0;
  for(let n=1;n<=count;n++){
  let c:HTMLCanvasElement;if(pdf)c=(await render(pdf,n)).c;else{const image=await createImageBitmap(new Blob([output]));c=canvas(image.width,image.height);c.getContext('2d')!.drawImage(image,0,0);image.close();}
- const o=await ocr(c,worker);ocrResiduals+=testResidual(o.text,n,'OCR',true);
+ const o=await ocr(c,worker);ocrResiduals+=await testResidual(o.text,n,'OCR',true);
  // Independently scan the exported pixels for any remaining faces.
  // A failed face-model check must never produce a cleared result.
  try{
@@ -363,5 +381,6 @@ export async function redact(id:string,selected:string[],manual:Manual[],progres
  const hash=await crypto.subtle.digest('SHA-256',output as BufferSource);const sha256=[...new Uint8Array(hash)].map(v=>v.toString(16).padStart(2,'0')).join('');
  const url=URL.createObjectURL(new Blob([output as BlobPart],{type:mime}));s.outputs.push(url);
  return {url,filename:s.analysis.filename.replace(/\.[^.]+$/,'')+'-redacted.'+extension,report:{status:verificationStatus(remaining,incomplete),checks,warnings,remaining_count:remaining,residual_findings,scope:s.analysis.kind==='docx'?'Rebuilt text-only DOCX content and selected-value comparison. Original layout/media were discarded; manual final review mandatory.':s.text!==undefined?'UTF-8 text: mandatory High-priority categories for '+purpose+' sharing and all selected values. Optional Medium/Low content may remain.':'Exported text, rendered printed OCR, metadata and attachment presence. Handwriting, QR decoding and semantic identity inference are outside scope.',verified_at:new Date().toISOString(),sha256}};
+ }finally{exportRecognizer.close();}
 }
 export async function syntheticFile(){const doc=await PDFDocument.create();const font=await doc.embedFont(StandardFonts.Helvetica);const page=doc.addPage([595,420]);const lines=['SHARESHIELD / SYNTHETIC REVIEW SAMPLE','This file contains fictional demonstration data.','Email: demo.person@example.test','PAN: ABCDE1234F','Password: DemoSecret_4829','Public note: Please share the project summary.'];lines.forEach((t,i)=>page.drawText(t,{x:48,y:365-i*43,size:i===0?17:15,font,color:rgb(.1,.15,.2)}));return new File([await doc.save() as BlobPart],'ShareShield-synthetic.pdf',{type:'application/pdf'});}

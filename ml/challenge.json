@@ -1,0 +1,212 @@
+[
+  {
+    "language": "en",
+    "text": "The hospital chart belongs to record 4829107.",
+    "gold": [
+      {
+        "start": 37,
+        "end": 44,
+        "category": "MEDICAL_RECORD_NUMBER"
+      }
+    ]
+  },
+  {
+    "language": "en",
+    "text": "The university assigned 4829107 after admission.",
+    "gold": [
+      {
+        "start": 24,
+        "end": 31,
+        "category": "ACADEMIC_ADMISSION_ID"
+      }
+    ]
+  },
+  {
+    "language": "en",
+    "text": "Staff member 4829107 joined payroll today.",
+    "gold": [
+      {
+        "start": 13,
+        "end": 20,
+        "category": "STUDENT_OR_EMPLOYEE_ID"
+      }
+    ]
+  },
+  {
+    "language": "kn",
+    "text": "ಆಸ್ಪತ್ರೆಯಲ್ಲಿ ದಾಖಲಾಗಿರುವ ರೋಗಿಯ ಸಂಖ್ಯೆ 4829107",
+    "gold": [
+      {
+        "start": 38,
+        "end": 45,
+        "category": "PATIENT_ID"
+      }
+    ]
+  },
+  {
+    "language": "kn",
+    "text": "ಕಾಲೇಜಿನಲ್ಲಿ ಪ್ರವೇಶ ಪಡೆದವರ ಸಂಖ್ಯೆ 4829107",
+    "gold": [
+      {
+        "start": 33,
+        "end": 40,
+        "category": "ACADEMIC_ADMISSION_ID"
+      }
+    ]
+  },
+  {
+    "language": "mixed",
+    "text": "ಆಸ್ಪತ್ರೆ chart record: 4829107",
+    "gold": [
+      {
+        "start": 23,
+        "end": 30,
+        "category": "MEDICAL_RECORD_NUMBER"
+      }
+    ]
+  },
+  {
+    "language": "en",
+    "text": "Blood group: A+",
+    "gold": [
+      {
+        "start": 13,
+        "end": 15,
+        "category": "BLOOD_GROUP"
+      }
+    ]
+  },
+  {
+    "language": "en",
+    "text": "Grade: A+",
+    "gold": [
+      {
+        "start": 7,
+        "end": 9,
+        "category": "ACADEMIC_GRADE"
+      }
+    ]
+  },
+  {
+    "language": "en",
+    "text": "Bank account: 9876543210",
+    "gold": [
+      {
+        "start": 14,
+        "end": 24,
+        "category": "BANK_ACCOUNT_CANDIDATE"
+      }
+    ]
+  },
+  {
+    "language": "en",
+    "text": "Phone: 9876543210",
+    "gold": [
+      {
+        "start": 7,
+        "end": 17,
+        "category": "INDIAN_MOBILE"
+      }
+    ]
+  },
+  {
+    "language": "en",
+    "text": "Name: Fictional Mira",
+    "gold": [
+      {
+        "start": 6,
+        "end": 20,
+        "category": "PERSON_NAME_REVIEW"
+      }
+    ]
+  },
+  {
+    "language": "en",
+    "text": "Company: Fictional Labs",
+    "gold": []
+  },
+  {
+    "language": "en",
+    "text": "Reference: 4829107",
+    "gold": []
+  },
+  {
+    "language": "kn",
+    "text": "ಉಲ್ಲೇಖ: 4829107",
+    "gold": []
+  },
+  {
+    "language": "mixed",
+    "text": "Unknown ಸಂಖ್ಯೆ: 4829107",
+    "gold": []
+  },
+  {
+    "language": "en",
+    "text": "4829107",
+    "gold": []
+  },
+  {
+    "language": "en",
+    "text": "VID: 1234567890123456",
+    "gold": []
+  },
+  {
+    "language": "en",
+    "text": "BID: 1234567890123456",
+    "gold": []
+  },
+  {
+    "language": "en",
+    "text": "hospital medica1 rec0rd: 4829107",
+    "gold": [
+      {
+        "start": 25,
+        "end": 32,
+        "category": "MEDICAL_RECORD_NUMBER"
+      }
+    ]
+  },
+  {
+    "language": "kn",
+    "text": "ವೈದ್ಯಕೀಯ ದಾಖಲೆ ಸಂಖ್ಯೆ: 4829107",
+    "gold": [
+      {
+        "start": 23,
+        "end": 30,
+        "category": "MEDICAL_RECORD_NUMBER"
+      }
+    ]
+  },
+  {
+    "language": "en",
+    "text": "Aadhaar: 2345 6789 0123\nAadhaar: 2345 6789 0123",
+    "gold": [
+      {
+        "start": 9,
+        "end": 23,
+        "category": "AADHAAR_REVIEW"
+      },
+      {
+        "start": 33,
+        "end": 47,
+        "category": "AADHAAR_REVIEW"
+      }
+    ]
+  },
+  {
+    "language": "en",
+    "text": "Home address: 42 Fictional Lane\nHome address: 43 Fictional Lane",
+    "gold": [
+      {
+        "start": 14,
+        "end": 31,
+        "category": "ADDRESS_REVIEW"
+      },
+      {
+        "start": 46,
+        "end": 63,
+        "category": "ADDRESS_REVIEW"
+      }
+    ]
+  }
+]

@@ -1,0 +1,600 @@
+[
+  {
+    "id": "holdout-1",
+    "language": "en",
+    "text": "This clinical chart can be retrieved with medical record 8631042.",
+    "gold": [
+      {
+        "start": 57,
+        "end": 64,
+        "category": "MEDICAL_RECORD_NUMBER"
+      }
+    ],
+    "annotation_source": "coding-assistant-authored fictional example",
+    "human_review": "pending",
+    "split": "holdout"
+  },
+  {
+    "id": "holdout-2",
+    "language": "en",
+    "text": "University admission 9742153 is recorded for the applicant.",
+    "gold": [
+      {
+        "start": 21,
+        "end": 28,
+        "category": "ACADEMIC_ADMISSION_ID"
+      }
+    ],
+    "annotation_source": "coding-assistant-authored fictional example",
+    "human_review": "pending",
+    "split": "holdout"
+  },
+  {
+    "id": "holdout-3",
+    "language": "en",
+    "text": "Payroll lists employee 3853264 as active.",
+    "gold": [
+      {
+        "start": 23,
+        "end": 30,
+        "category": "STUDENT_OR_EMPLOYEE_ID"
+      }
+    ],
+    "annotation_source": "coding-assistant-authored fictional example",
+    "human_review": "pending",
+    "split": "holdout"
+  },
+  {
+    "id": "holdout-4",
+    "language": "en",
+    "text": "A patient was registered for care under 4964375.",
+    "gold": [
+      {
+        "start": 40,
+        "end": 47,
+        "category": "PATIENT_ID"
+      }
+    ],
+    "annotation_source": "coding-assistant-authored fictional example",
+    "human_review": "pending",
+    "split": "holdout"
+  },
+  {
+    "id": "holdout-5",
+    "language": "en",
+    "text": "Transfusion notes give blood group \"O-\".",
+    "gold": [
+      {
+        "start": 36,
+        "end": 38,
+        "category": "BLOOD_GROUP"
+      }
+    ],
+    "annotation_source": "coding-assistant-authored fictional example",
+    "human_review": "pending",
+    "split": "holdout"
+  },
+  {
+    "id": "holdout-6",
+    "language": "en",
+    "text": "The examination grade was \"A+\".",
+    "gold": [
+      {
+        "start": 27,
+        "end": 29,
+        "category": "ACADEMIC_GRADE"
+      }
+    ],
+    "annotation_source": "coding-assistant-authored fictional example",
+    "human_review": "pending",
+    "split": "holdout"
+  },
+  {
+    "id": "holdout-7",
+    "language": "en",
+    "text": "Deposit funds into bank account 23456789012.",
+    "gold": [
+      {
+        "start": 32,
+        "end": 43,
+        "category": "BANK_ACCOUNT_CANDIDATE"
+      }
+    ],
+    "annotation_source": "coding-assistant-authored fictional example",
+    "human_review": "pending",
+    "split": "holdout"
+  },
+  {
+    "id": "holdout-8",
+    "language": "en",
+    "text": "A telephone callback is possible on 8765432109.",
+    "gold": [
+      {
+        "start": 36,
+        "end": 46,
+        "category": "INDIAN_MOBILE"
+      }
+    ],
+    "annotation_source": "coding-assistant-authored fictional example",
+    "human_review": "pending",
+    "split": "holdout"
+  },
+  {
+    "id": "holdout-9",
+    "language": "en",
+    "text": "The applicant is named \"Fictional Ravi\".",
+    "gold": [
+      {
+        "start": 24,
+        "end": 38,
+        "category": "PERSON_NAME_REVIEW"
+      }
+    ],
+    "annotation_source": "coding-assistant-authored fictional example",
+    "human_review": "pending",
+    "split": "holdout"
+  },
+  {
+    "id": "holdout-10",
+    "language": "en",
+    "text": "Letters should go to the residential address \"55 Invented Street\".",
+    "gold": [
+      {
+        "start": 46,
+        "end": 64,
+        "category": "ADDRESS_REVIEW"
+      }
+    ],
+    "annotation_source": "coding-assistant-authored fictional example",
+    "human_review": "pending",
+    "split": "holdout"
+  },
+  {
+    "id": "holdout-11",
+    "language": "en",
+    "text": "Write to another@example.test for the fictional contact.",
+    "gold": [
+      {
+        "start": 9,
+        "end": 29,
+        "category": "EMAIL"
+      }
+    ],
+    "annotation_source": "coding-assistant-authored fictional example",
+    "human_review": "pending",
+    "split": "holdout"
+  },
+  {
+    "id": "holdout-12",
+    "language": "en",
+    "text": "DOB: 21/09/2002",
+    "gold": [
+      {
+        "start": 5,
+        "end": 15,
+        "category": "DATE_OF_BIRTH"
+      }
+    ],
+    "annotation_source": "coding-assistant-authored fictional example",
+    "human_review": "pending",
+    "split": "holdout"
+  },
+  {
+    "id": "holdout-13",
+    "language": "en",
+    "text": "Keep the API key \"TEST_ONLY_Another77\" confidential.",
+    "gold": [
+      {
+        "start": 18,
+        "end": 37,
+        "category": "CREDENTIAL_OR_SECRET"
+      }
+    ],
+    "annotation_source": "coding-assistant-authored fictional example",
+    "human_review": "pending",
+    "split": "holdout"
+  },
+  {
+    "id": "holdout-14",
+    "language": "en",
+    "text": "Court case CASE/2025/77 remains private.",
+    "gold": [
+      {
+        "start": 11,
+        "end": 23,
+        "category": "LEGAL_CASE_REFERENCE"
+      }
+    ],
+    "annotation_source": "coding-assistant-authored fictional example",
+    "human_review": "pending",
+    "split": "holdout"
+  },
+  {
+    "id": "holdout-15",
+    "language": "en",
+    "text": "The diagnosis was \"invented syndrome\".",
+    "gold": [
+      {
+        "start": 19,
+        "end": 36,
+        "category": "MEDICAL_CONDITION"
+      }
+    ],
+    "annotation_source": "coding-assistant-authored fictional example",
+    "human_review": "pending",
+    "split": "holdout"
+  },
+  {
+    "id": "holdout-16",
+    "language": "en",
+    "text": "A prescription for \"invented tablet\" was written.",
+    "gold": [
+      {
+        "start": 20,
+        "end": 35,
+        "category": "MEDICATION"
+      }
+    ],
+    "annotation_source": "coding-assistant-authored fictional example",
+    "human_review": "pending",
+    "split": "holdout"
+  },
+  {
+    "id": "holdout-17",
+    "language": "en",
+    "text": "Lab result: invented assay 77",
+    "gold": [
+      {
+        "start": 12,
+        "end": 29,
+        "category": "LAB_RESULT"
+      }
+    ],
+    "annotation_source": "coding-assistant-authored fictional example",
+    "human_review": "pending",
+    "split": "holdout"
+  },
+  {
+    "id": "holdout-18",
+    "language": "en",
+    "text": "An inventory reference 6075486 identifies a shelf.",
+    "gold": [],
+    "annotation_source": "coding-assistant-authored fictional example",
+    "human_review": "pending",
+    "split": "holdout"
+  },
+  {
+    "id": "holdout-19",
+    "language": "en",
+    "text": "An organization called \"Invented Services\" opened yesterday.",
+    "gold": [],
+    "annotation_source": "coding-assistant-authored fictional example",
+    "human_review": "pending",
+    "split": "holdout"
+  },
+  {
+    "id": "holdout-20",
+    "language": "en",
+    "text": "No context is available for 7186597.",
+    "gold": [],
+    "annotation_source": "coding-assistant-authored fictional example",
+    "human_review": "pending",
+    "split": "holdout"
+  },
+  {
+    "id": "holdout-21",
+    "language": "kn",
+    "text": "ಈ ವೈದ್ಯಕೀಯ ದಾಖಲೆ 8631042 ಆಸ್ಪತ್ರೆಯಲ್ಲಿ ಇದೆ.",
+    "gold": [
+      {
+        "start": 17,
+        "end": 24,
+        "category": "MEDICAL_RECORD_NUMBER"
+      }
+    ],
+    "annotation_source": "coding-assistant-authored fictional example",
+    "human_review": "pending",
+    "split": "holdout"
+  },
+  {
+    "id": "holdout-22",
+    "language": "kn",
+    "text": "ವಿದ್ಯಾರ್ಥಿಯ ಕಾಲೇಜು ಪ್ರವೇಶ 9742153 ಪೂರ್ಣವಾಗಿದೆ.",
+    "gold": [
+      {
+        "start": 26,
+        "end": 33,
+        "category": "ACADEMIC_ADMISSION_ID"
+      }
+    ],
+    "annotation_source": "coding-assistant-authored fictional example",
+    "human_review": "pending",
+    "split": "holdout"
+  },
+  {
+    "id": "holdout-23",
+    "language": "kn",
+    "text": "ಸಿಬ್ಬಂದಿಯ ಉದ್ಯೋಗಿ ಗುರುತು 3853264 ದಾಖಲಿಸಲಾಗಿದೆ.",
+    "gold": [
+      {
+        "start": 25,
+        "end": 32,
+        "category": "STUDENT_OR_EMPLOYEE_ID"
+      }
+    ],
+    "annotation_source": "coding-assistant-authored fictional example",
+    "human_review": "pending",
+    "split": "holdout"
+  },
+  {
+    "id": "holdout-24",
+    "language": "kn",
+    "text": "ರೋಗಿಯ ಚಿಕಿತ್ಸೆ ಸಂಖ್ಯೆ 4964375 ಗೌಪ್ಯವಾಗಿದೆ.",
+    "gold": [
+      {
+        "start": 22,
+        "end": 29,
+        "category": "PATIENT_ID"
+      }
+    ],
+    "annotation_source": "coding-assistant-authored fictional example",
+    "human_review": "pending",
+    "split": "holdout"
+  },
+  {
+    "id": "holdout-25",
+    "language": "kn",
+    "text": "ರಕ್ತದ ಗುಂಪು: O-",
+    "gold": [
+      {
+        "start": 13,
+        "end": 15,
+        "category": "BLOOD_GROUP"
+      }
+    ],
+    "annotation_source": "coding-assistant-authored fictional example",
+    "human_review": "pending",
+    "split": "holdout"
+  },
+  {
+    "id": "holdout-26",
+    "language": "kn",
+    "text": "ವಸತಿ ವಿಳಾಸ \"55 ಕಾಲ್ಪನಿಕ ಬೀದಿ\" ದಾಖಲಿಸಲಾಗಿದೆ.",
+    "gold": [
+      {
+        "start": 12,
+        "end": 28,
+        "category": "ADDRESS_REVIEW"
+      }
+    ],
+    "annotation_source": "coding-assistant-authored fictional example",
+    "human_review": "pending",
+    "split": "holdout"
+  },
+  {
+    "id": "holdout-27",
+    "language": "kn",
+    "text": "ವ್ಯಕ್ತಿಯ ಹೆಸರು \"ಕಾಲ್ಪನಿಕ ರವಿ\" ಆಗಿದೆ.",
+    "gold": [
+      {
+        "start": 16,
+        "end": 28,
+        "category": "PERSON_NAME_REVIEW"
+      }
+    ],
+    "annotation_source": "coding-assistant-authored fictional example",
+    "human_review": "pending",
+    "split": "holdout"
+  },
+  {
+    "id": "holdout-28",
+    "language": "kn",
+    "text": "ಪಾವತಿಯ ಬ್ಯಾಂಕ್ ಖಾತೆ 23456789012 ಆಗಿದೆ.",
+    "gold": [
+      {
+        "start": 20,
+        "end": 31,
+        "category": "BANK_ACCOUNT_CANDIDATE"
+      }
+    ],
+    "annotation_source": "coding-assistant-authored fictional example",
+    "human_review": "pending",
+    "split": "holdout"
+  },
+  {
+    "id": "holdout-29",
+    "language": "kn",
+    "text": "ಸಾರ್ವಜನಿಕ ದಾಸ್ತಾನು ಸಂಖ್ಯೆ 6075486 ಆಗಿದೆ.",
+    "gold": [],
+    "annotation_source": "coding-assistant-authored fictional example",
+    "human_review": "pending",
+    "split": "holdout"
+  },
+  {
+    "id": "holdout-30",
+    "language": "kn",
+    "text": "ಸಂಸ್ಥೆಯ ಹೆಸರು \"ಕಾಲ್ಪನಿಕ ವ್ಯಾಪಾರ\" ಆಗಿದೆ.",
+    "gold": [],
+    "annotation_source": "coding-assistant-authored fictional example",
+    "human_review": "pending",
+    "split": "holdout"
+  },
+  {
+    "id": "holdout-31",
+    "language": "mixed",
+    "text": "Medical chart ದಾಖಲೆ 8631042 was found in hospital.",
+    "gold": [
+      {
+        "start": 20,
+        "end": 27,
+        "category": "MEDICAL_RECORD_NUMBER"
+      }
+    ],
+    "annotation_source": "coding-assistant-authored fictional example",
+    "human_review": "pending",
+    "split": "holdout"
+  },
+  {
+    "id": "holdout-32",
+    "language": "mixed",
+    "text": "University ಪ್ರವೇಶ 9742153 identifies this student.",
+    "gold": [
+      {
+        "start": 18,
+        "end": 25,
+        "category": "ACADEMIC_ADMISSION_ID"
+      }
+    ],
+    "annotation_source": "coding-assistant-authored fictional example",
+    "human_review": "pending",
+    "split": "holdout"
+  },
+  {
+    "id": "holdout-33",
+    "language": "mixed",
+    "text": "Employee ಸಿಬ್ಬಂದಿ ಸಂಖ್ಯೆ 3853264 belongs to payroll.",
+    "gold": [
+      {
+        "start": 25,
+        "end": 32,
+        "category": "STUDENT_OR_EMPLOYEE_ID"
+      }
+    ],
+    "annotation_source": "coding-assistant-authored fictional example",
+    "human_review": "pending",
+    "split": "holdout"
+  },
+  {
+    "id": "holdout-34",
+    "language": "mixed",
+    "text": "Guardian ಹೆಸರು \"Fictional Ravi\" is on the form.",
+    "gold": [
+      {
+        "start": 16,
+        "end": 30,
+        "category": "PERSON_NAME_REVIEW"
+      }
+    ],
+    "annotation_source": "coding-assistant-authored fictional example",
+    "human_review": "pending",
+    "split": "holdout"
+  },
+  {
+    "id": "holdout-35",
+    "language": "mixed",
+    "text": "Residential ವಿಳಾಸ \"55 Invented Street\" is recorded.",
+    "gold": [
+      {
+        "start": 19,
+        "end": 37,
+        "category": "ADDRESS_REVIEW"
+      }
+    ],
+    "annotation_source": "coding-assistant-authored fictional example",
+    "human_review": "pending",
+    "split": "holdout"
+  },
+  {
+    "id": "holdout-36",
+    "language": "mixed",
+    "text": "Reference ಸಂಖ್ಯೆ 7186597 is not identified as personal.",
+    "gold": [],
+    "annotation_source": "coding-assistant-authored fictional example",
+    "human_review": "pending",
+    "split": "holdout"
+  },
+  {
+    "id": "holdout-37",
+    "language": "en",
+    "text": "Aadhaar: 2345 6789 0123\nAadhaar: 2345 6789 0123",
+    "gold": [
+      {
+        "start": 9,
+        "end": 23,
+        "category": "AADHAAR_REVIEW"
+      },
+      {
+        "start": 33,
+        "end": 47,
+        "category": "AADHAAR_REVIEW"
+      }
+    ],
+    "annotation_source": "coding-assistant-authored fictional example",
+    "human_review": "pending",
+    "split": "holdout"
+  },
+  {
+    "id": "holdout-38",
+    "language": "en",
+    "text": "VID: 1234567890123456\nBID: 1234567890123456",
+    "gold": [],
+    "annotation_source": "coding-assistant-authored fictional example",
+    "human_review": "pending",
+    "split": "holdout"
+  },
+  {
+    "id": "holdout-39",
+    "language": "en",
+    "text": "Address: 55 Invented Street\nAddress: 56 Invented Street",
+    "gold": [
+      {
+        "start": 9,
+        "end": 27,
+        "category": "ADDRESS_REVIEW"
+      },
+      {
+        "start": 37,
+        "end": 55,
+        "category": "ADDRESS_REVIEW"
+      }
+    ],
+    "annotation_source": "coding-assistant-authored fictional example",
+    "human_review": "pending",
+    "split": "holdout"
+  },
+  {
+    "id": "holdout-40",
+    "language": "mixed",
+    "text": "😀 ಆಸ್ಪತ್ರೆ medical record: 8631042",
+    "gold": [
+      {
+        "start": 28,
+        "end": 35,
+        "category": "MEDICAL_RECORD_NUMBER"
+      }
+    ],
+    "annotation_source": "coding-assistant-authored fictional example",
+    "human_review": "pending",
+    "split": "holdout"
+  },
+  {
+    "id": "holdout-41",
+    "language": "en",
+    "text": "Hospital medica1 rec0rd 8631042 is difficult to read.",
+    "gold": [
+      {
+        "start": 24,
+        "end": 31,
+        "category": "MEDICAL_RECORD_NUMBER"
+      }
+    ],
+    "annotation_source": "coding-assistant-authored fictional example",
+    "human_review": "pending",
+    "split": "holdout"
+  },
+  {
+    "id": "holdout-42",
+    "language": "kn",
+    "text": "ವೈದ್ಯಕೀಯ ದಾಖಲೆ: ೮೬೩೧೦೪೨",
+    "gold": [
+      {
+        "start": 16,
+        "end": 23,
+        "category": "MEDICAL_RECORD_NUMBER"
+      }
+    ],
+    "annotation_source": "coding-assistant-authored fictional example",
+    "human_review": "pending",
+    "split": "holdout"
+  }
+]

@@ -3,7 +3,7 @@
  * values in different source locations. Uncertain ink and broad Kannada
  * context review are not suppressed by this numerical de-duplication.
  */
-export type Located={id:string;page:number;category:string;boxes:{x:number;y:number;width:number;height:number}[];
+export type Located={classification_conflict?:{suggested_category:string;model_version:string};recognition_source?:string;id:string;page:number;category:string;boxes:{x:number;y:number;width:number;height:number}[];
  detection_confidence:number;ocr_confidence?:number;reason:string;validation?:{status:string;method:string;detail:string}};
 const group=(s:string)=>{
  if(s==='AADHAAR_NUMBER_REGION_REVIEW')return 'fallback';
@@ -29,21 +29,23 @@ const intersects=(a:{x:number;y:number;width:number;height:number},b:typeof a)=>
 };
 export function consolidateLocated<T extends Located>(candidates:readonly T[],values:ReadonlyMap<string,string>){
  const kept:T[]=[],removed:string[]=[];let disagreements=0;
- for(const candidate of candidates){
+ for(const candidate of [...candidates].sort((a,b)=>Number(a.recognition_source==='trained_ai')-Number(b.recognition_source==='trained_ai'))){
   const family=group(candidate.category);
   // Dedupe repeated *identical* textual observations at the same pixels only.
   // Preserve different Kannada address blocks and all uncertain/unreadable regions.
   if(!family&&candidate.boxes.length&&!/^(UNREADABLE|HANDWRITING|FACE|QR_CODE)/.test(candidate.category)){
    const value=values.get(candidate.id)?.trim().normalize('NFKC');
-   if(value&&kept.some(existing=>existing.page===candidate.page&&existing.category===candidate.category&&
+   const duplicate=value?kept.find(existing=>existing.page===candidate.page&&existing.category===candidate.category&&
     values.get(existing.id)?.trim().normalize('NFKC')===value&&
-    existing.boxes.some(a=>candidate.boxes.some(b=>strictlyOverlaps(a,b))))){removed.push(candidate.id);continue;}
+    existing.boxes.some(a=>candidate.boxes.some(b=>strictlyOverlaps(a,b)))):undefined;
+   if(duplicate){duplicate.classification_conflict??=candidate.classification_conflict;removed.push(candidate.id);continue;}
   }
   if(!family||!candidate.boxes.length){kept.push(candidate);continue;}
   const index=kept.findIndex(existing=>existing.page===candidate.page&&group(existing.category)===family&&
    existing.boxes.length>0&&existing.boxes.some(a=>candidate.boxes.some(b=>intersects(a,b))));
   if(index<0){kept.push(candidate);continue;}
-  const old=kept[index],oldValue=digits(values.get(old.id)??''),incoming=digits(values.get(candidate.id)??'');
+  const old=kept[index];old.classification_conflict??=candidate.classification_conflict;
+  const oldValue=digits(values.get(old.id)??''),incoming=digits(values.get(candidate.id)??'');
   const same=family==='fallback'||(oldValue!==''&&oldValue===incoming);
   if(!same&&family!=='aadhaar'){kept.push(candidate);continue;}
   if(!same&&family==='aadhaar'){
