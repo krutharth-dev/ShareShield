@@ -23,6 +23,7 @@ jobs:
           for i in {1..30}; do if curl -fsS http://127.0.0.1:4174/app >/dev/null; then break; fi; sleep 1; done
           node tests/browser/smoke.mjs
           node tests/browser/context-model.mjs
+          SHARESHIELD_PERFORMANCE_REPORT=/tmp/context-performance.json node tests/browser/context-performance.mjs
   live_preview:
     if: github.event_name == 'push' && github.ref_name == 'fix/pages-release-acceptance-20261103'
     runs-on: ubuntu-latest
@@ -66,3 +67,38 @@ jobs:
           path: /tmp/shareshield-live-evidence
           if-no-files-found: warn
           retention-days: 7
+  contextual_live_preview:
+    if: github.event_name == 'push' && github.ref_name == 'feat/local-multilingual-ai-20261104'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read
+    env:
+      TEST_URL: https://feat-local-multilingual-ai-2.shareshield-mini.pages.dev/app
+      SHARESHIELD_EVIDENCE_DIR: /tmp/context-live-evidence
+      SHARESHIELD_AI_REPORT: /tmp/context-live-evidence/ai-browser.json
+      SHARESHIELD_PERFORMANCE_REPORT: /tmp/context-live-evidence/performance.json
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: npm ci --no-audit --no-fund && npm run build
+        working-directory: frontend
+      - name: Wait for exact preview commit and verify asset hashes
+        run: python tools/verify_context_preview.py
+      - run: npm install --no-save --ignore-scripts playwright@1.56.1 && npx playwright install --with-deps chromium
+        working-directory: frontend
+      - name: Full live upload, review and export acceptance
+        run: node tests/browser/smoke.mjs && node tests/browser/context-model.mjs && node tests/browser/context-performance.mjs
+        working-directory: frontend
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: contextual-live-preview-${{ github.sha }}
+          path: /tmp/context-live-evidence

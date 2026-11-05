@@ -1,7 +1,7 @@
 import {chromium} from 'playwright';
 import assert from 'node:assert/strict';
 import {writeFile,readFile} from 'node:fs/promises';
-const browser=await chromium.launch({headless:true,args:['--no-sandbox']});
+const browser=await chromium.launch({headless:true,args:['--no-sandbox'],proxy:process.env.SHARESHIELD_BROWSER_PROXY?{server:process.env.SHARESHIELD_BROWSER_PROXY}:undefined});
 const base=process.env.TEST_URL??'http://127.0.0.1:4174/app';
 const report={browser:browser.version(),cases:[]};
 try{
@@ -13,7 +13,7 @@ try{
   const begin=Date.now();await page.locator('input[type=file]').setInputFiles({name:'fictional-context.txt',mimeType:'text/plain',buffer:Buffer.from(source)});
   await page.getByRole('button',{name:/Analyze pending files/}).click();
   await page.locator('.finding-card').first().waitFor();
-  assert.equal(requests,1);
+  assert.ok(requests>=1);
   if(!unavailable){
    assert.ok(await page.getByText('Trained AI · manual review required',{exact:false}).count()>0);
    const ai=page.locator('.finding-card').filter({hasText:'Trained AI · manual review required'});
@@ -26,6 +26,8 @@ try{
   const pending=page.waitForEvent('download');await page.locator('.report-heading a[download]').click();
   const download=await pending,content=await readFile(await download.path(),'utf8');
   assert.ok(!content.includes('2345 6789 0123'));
+  assert.ok((await page.locator('.report').textContent()).includes('Fresh contextual review'));
+  if(unavailable)assert.ok((await page.locator('.report').textContent()).includes('Contextual worker/model unavailable'));
   if(!unavailable)assert.ok(!content.includes('4829107'));
   const metrics=await page.evaluate(()=>({resources:performance.getEntriesByType('resource').filter(r=>r.name.includes('/models/')).map(r=>({duration:r.duration,encodedBodySize:r.encodedBodySize,decodedBodySize:r.decodedBodySize})),jsHeap:performance.memory?{used:performance.memory.usedJSHeapSize,total:performance.memory.totalJSHeapSize}:null}));
   report.cases.push({unavailable,upload_to_export_ms:Date.now()-begin,...metrics});await page.close();

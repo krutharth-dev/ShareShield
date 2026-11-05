@@ -15,15 +15,18 @@ jobs:
           node-version: '24'
       - run: pip install -r ml/requirements.txt
       - run: cp frontend/public/models/context-v1.json /tmp/checked-model.json
+      - run: node --test ml/review-corpus.test.mjs
       - run: python ml/train.py
       - run: cmp /tmp/checked-model.json frontend/public/models/context-v1.json
       - run: npm ci --no-audit --no-fund
         working-directory: frontend
       - run: node --experimental-strip-types --test frontend/tests/context-model.test.mjs
       - run: node --experimental-strip-types ml/evaluate.mjs
+      - run: node --experimental-strip-types ml/review-evaluate.mjs
       - uses: actions/upload-artifact@v4
         with:
           name: contextual-model-evaluation-${{ github.sha }}
           path: |
             ml/metrics.json
             ml/evaluation.json
+            ml/review-results.json

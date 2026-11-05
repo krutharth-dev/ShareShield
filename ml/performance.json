@@ -1,0 +1,25 @@
+{
+  "browser": "141.0.7390.37",
+  "samples": [
+    {
+      "viewport": "desktop",
+      "input_characters": 104029,
+      "upload_to_findings_ms": 436,
+      "workers": 1,
+      "heartbeat_ticks": 26,
+      "max_heartbeat_gap_ms": 31.599999999976717
+    },
+    {
+      "viewport": "mobile emulation (desktop CPU)",
+      "input_characters": 104029,
+      "upload_to_findings_ms": 422,
+      "workers": 1,
+      "heartbeat_ticks": 26,
+      "max_heartbeat_gap_ms": 27
+    }
+  ],
+  "memory_scope": "Peak sampled aggregate RSS of this Node process and Chromium descendants, including browser overhead; NOT model-only memory. 100 ms samples may miss short peaks.",
+  "peak_sampled_process_tree_rss_bytes": null,
+  "memory_available": false,
+  "memory_blocker": "This runtime cannot execute ps successfully; no process peak RSS measurement is claimed."
+}

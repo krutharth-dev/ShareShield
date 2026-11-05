@@ -5,11 +5,13 @@
     "validation": 760,
     "test": 760
   },
-  "training_seconds": 0.2773392909999757,
+  "training_seconds": 0.4993334100000766,
+  "development_training_spans": 36,
+  "development_sha256": "af457c7344827bf9fad9a48b116518c0abd8b222c3b178bb75c945c3676fa293",
   "iterations": [
-    15
+    17
   ],
-  "validation_log_loss": 0.004999125795278666,
+  "validation_log_loss": 0.004663689371054507,
   "threshold": 0.5,
   "report": {
     "AADHAAR_REVIEW": {
@@ -721,10 +723,10 @@
       }
     }
   },
-  "batch_inference_ms": 1.5627210000275227,
-  "peak_training_process_rss_kib": 172944,
-  "model_bytes": 1520583,
-  "model_sha256": "3aca9f3fcd1d90a0575378bf674241a8c8e69bb2fcea0889e88a3b231f71d551",
+  "batch_inference_ms": 2.2353150000071764,
+  "peak_training_process_rss_kib": 180556,
+  "model_bytes": 1724970,
+  "model_sha256": "4eea0b5ec09e69bd184df51db4686d1498ff162dc39de2334285f2881bae83db",
   "python": "3.12.14",
   "sklearn": "1.8.0",
   "numpy": "2.3.5"

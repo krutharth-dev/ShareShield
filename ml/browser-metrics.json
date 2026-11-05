@@ -3,32 +3,20 @@
   "cases": [
     {
       "unavailable": false,
-      "upload_to_export_ms": 433,
-      "resources": [
-        {
-          "duration": 59.40000000002328,
-          "encodedBodySize": 340636,
-          "decodedBodySize": 1520583
-        }
-      ],
+      "upload_to_export_ms": 695,
+      "resources": [],
       "jsHeap": {
-        "used": 16100000,
-        "total": 23100000
+        "used": 10000000,
+        "total": 15200000
       }
     },
     {
       "unavailable": true,
-      "upload_to_export_ms": 272,
-      "resources": [
-        {
-          "duration": 1.599999999976717,
-          "encodedBodySize": 0,
-          "decodedBodySize": 0
-        }
-      ],
+      "upload_to_export_ms": 492,
+      "resources": [],
       "jsHeap": {
-        "used": 11200000,
-        "total": 15200000
+        "used": 10000000,
+        "total": 13400000
       }
     }
   ],

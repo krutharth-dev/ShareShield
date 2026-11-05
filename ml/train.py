@@ -89,10 +89,27 @@ def main():
  for split in ['train','validation','test']:
   subset=[r for r in rows if r['split']==split]
   (out/'data'/f'{split}.jsonl').write_text(''.join(json.dumps(r,ensure_ascii=False)+'\n' for r in subset))
- train=[r for r in rows if r['split']=='train']; val=[r for r in rows if r['split']=='validation']; test=[r for r in rows if r['split']=='test']
+ train=[r for r in rows if r['split']=='train']
+ # Only the explicitly development-labelled corpus is eligible for fitting.
+ # Holdout is never opened by training or threshold selection.
+ development=json.loads((out/'review-development.json').read_text())
+ extra=[]
+ for row in development:
+  assert row['split']=='development' and row['human_review']=='pending'
+  for span in row['gold']:
+   # Fixture offsets are UTF-16; convert to Python codepoint positions.
+   start=len(row['text'].encode('utf-16-le')[:span['start']*2].decode('utf-16-le'))
+   end=len(row['text'].encode('utf-16-le')[:span['end']*2].decode('utf-16-le'))
+   extra.append(dict(text=row['text'],start=start,end=end,category=span['category']))
+  if not row['gold']:
+   for match in re.finditer(r'\d{4,}|"([^"]+)"',row['text']):
+    start,end=match.span(1) if match.group(1) else match.span()
+    extra.append(dict(text=row['text'],start=start,end=end,category='NONE'))
+ base_count=len(train);train+=extra
+ val=[r for r in rows if r['split']=='validation']; test=[r for r in rows if r['split']=='test']
  vec=CountVectorizer(analyzer='char',ngram_range=(2,4),lowercase=False,binary=True,max_features=6000)
  x=vec.fit_transform([features(r['text'],r['start'],r['end']) for r in train]); y=[r['category'] for r in train]
- start=time.perf_counter(); clf=LogisticRegression(C=1,solver='lbfgs',max_iter=300,random_state=42).fit(x,y); elapsed=time.perf_counter()-start
+ start=time.perf_counter(); clf=LogisticRegression(C=1,solver='lbfgs',max_iter=300,random_state=42).fit(x,y,sample_weight=np.array([1.]*base_count+[12.]*len(extra))); elapsed=time.perf_counter()-start
  vx=vec.transform([features(r['text'],r['start'],r['end']) for r in val]); vp=clf.predict_proba(vx)
  # Validation-only threshold selection; uncalibrated scores are NOT probabilities in UI.
  threshold=.5
@@ -100,12 +117,12 @@ def main():
   predictions=[clf.classes_[p.argmax()] if p.max()>=t else 'NONE' for p in vp]
   report=classification_report([r['category'] for r in val],predictions,output_dict=True,zero_division=0)
   if report['macro avg']['precision']>=.95: threshold=t;break
- model=dict(version='synthetic-context-linear-v1',architecture='binary-char-ngram-multinomial-logistic',ngram=[2,4],window=[96,48],vocabulary=vec.vocabulary_,classes=clf.classes_.tolist(),weights=np.round(clf.coef_,8).tolist(),bias=np.round(clf.intercept_,8).tolist(),threshold=threshold,calibrated=False)
+ model=dict(version='synthetic-context-linear-v2',architecture='binary-char-ngram-multinomial-logistic',ngram=[2,4],window=[96,48],vocabulary=vec.vocabulary_,classes=clf.classes_.tolist(),weights=np.round(clf.coef_,8).tolist(),bias=np.round(clf.intercept_,8).tolist(),threshold=threshold,calibrated=False)
  model['vocabulary']={k:int(v) for k,v in model['vocabulary'].items()}
  path=ROOT/'frontend/public/models/context-v1.json'; path.write_text(json.dumps(model,ensure_ascii=False,separators=(',',':')))
  tx=vec.transform([features(r['text'],r['start'],r['end']) for r in test]); t=time.perf_counter(); probs=clf.predict_proba(tx); inference=time.perf_counter()-t
  pred=[clf.classes_[p.argmax()] if p.max()>=threshold else 'NONE' for p in probs]
- metrics=dict(scope='Synthetic held-out family classification GIVEN GOLD SPANS; not end-to-end NER recall.',counts={s:sum(r['split']==s for r in rows) for s in ['train','validation','test']},training_seconds=elapsed,iterations=clf.n_iter_.tolist(),validation_log_loss=float(log_loss([r['category'] for r in val],vp,labels=clf.classes_)),threshold=threshold,report=classification_report([r['category'] for r in test],pred,output_dict=True,zero_division=0),languages={lang:classification_report([r['category'] for r in test if r['language']==lang],[p for r,p in zip(test,pred) if r['language']==lang],output_dict=True,zero_division=0) for lang in ['en','kn','mixed']},batch_inference_ms=inference*1000,peak_training_process_rss_kib=resource.getrusage(resource.RUSAGE_SELF).ru_maxrss,model_bytes=path.stat().st_size,model_sha256=hashlib.sha256(path.read_bytes()).hexdigest(),python=platform.python_version(),sklearn=sklearn.__version__,numpy=np.__version__)
+ metrics=dict(scope='Synthetic held-out family classification GIVEN GOLD SPANS; not end-to-end NER recall.',counts={s:sum(r['split']==s for r in rows) for s in ['train','validation','test']},training_seconds=elapsed,development_training_spans=len(extra),development_sha256=hashlib.sha256((out/'review-development.json').read_bytes()).hexdigest(),iterations=clf.n_iter_.tolist(),validation_log_loss=float(log_loss([r['category'] for r in val],vp,labels=clf.classes_)),threshold=threshold,report=classification_report([r['category'] for r in test],pred,output_dict=True,zero_division=0),languages={lang:classification_report([r['category'] for r in test if r['language']==lang],[p for r,p in zip(test,pred) if r['language']==lang],output_dict=True,zero_division=0) for lang in ['en','kn','mixed']},batch_inference_ms=inference*1000,peak_training_process_rss_kib=resource.getrusage(resource.RUSAGE_SELF).ru_maxrss,model_bytes=path.stat().st_size,model_sha256=hashlib.sha256(path.read_bytes()).hexdigest(),python=platform.python_version(),sklearn=sklearn.__version__,numpy=np.__version__)
  (out/'metrics.json').write_text(json.dumps(metrics,indent=2))
  (out/'parity.json').write_text(json.dumps([dict(r,expected=p,score=float(prob.max())) for r,p,prob in zip(test[:36],pred[:36],probs[:36])],ensure_ascii=False))
  print(json.dumps({k:v for k,v in metrics.items() if k not in ['report','languages']},indent=2));print('test macro',metrics['report']['macro avg'])

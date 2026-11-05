@@ -263,8 +263,8 @@
         }
       },
       "latency_ms": {
-        "median": 0.09862700000002178,
-        "p95": 0.24220099999999434
+        "median": 0.09987899999998717,
+        "p95": 0.28437399999995705
       },
       "errors": [
         {
@@ -9833,8 +9833,8 @@
         }
       },
       "latency_ms": {
-        "median": 0.07523199999997132,
-        "p95": 0.18110000000001492
+        "median": 0.07745499999998628,
+        "p95": 0.19449999999994816
       },
       "errors": [
         {
@@ -12525,8 +12525,8 @@
         }
       },
       "latency_ms": {
-        "median": 0.15697399999999107,
-        "p95": 0.2682399999999916
+        "median": 0.15848699999997962,
+        "p95": 0.3192769999999996
       },
       "errors": [
         {
@@ -16513,8 +16513,8 @@
         }
       },
       "latency_ms": {
-        "median": 0.10865200000000641,
-        "p95": 0.2927569999999946
+        "median": 0.1466389999999933,
+        "p95": 0.6450829999999996
       },
       "errors": [
         {
@@ -16622,29 +16622,29 @@
     },
     "model": {
       "overall": {
-        "tp": 3,
+        "tp": 6,
         "fp": 0,
-        "fn": 14,
+        "fn": 11,
         "precision": 1,
-        "recall": 0.17647058823529413,
-        "f1": 0.3
+        "recall": 0.35294117647058826,
+        "f1": 0.5217391304347826
       },
       "languages": {
         "en": {
-          "tp": 1,
+          "tp": 3,
           "fp": 0,
-          "fn": 12,
+          "fn": 10,
           "precision": 1,
-          "recall": 0.07692307692307693,
-          "f1": 0.14285714285714285
+          "recall": 0.23076923076923078,
+          "f1": 0.375
         },
         "kn": {
-          "tp": 1,
+          "tp": 2,
           "fp": 0,
-          "fn": 2,
+          "fn": 1,
           "precision": 1,
-          "recall": 0.3333333333333333,
-          "f1": 0.5
+          "recall": 0.6666666666666666,
+          "f1": 0.8
         },
         "mixed": {
           "tp": 1,
@@ -16657,20 +16657,20 @@
       },
       "categories": {
         "MEDICAL_RECORD_NUMBER": {
-          "tp": 3,
+          "tp": 4,
           "fp": 0,
-          "fn": 1,
+          "fn": 0,
           "precision": 1,
-          "recall": 0.75,
-          "f1": 0.8571428571428571
+          "recall": 1,
+          "f1": 1
         },
         "ACADEMIC_ADMISSION_ID": {
-          "tp": 0,
+          "tp": 2,
           "fp": 0,
-          "fn": 2,
-          "precision": 0,
-          "recall": 0,
-          "f1": 0
+          "fn": 0,
+          "precision": 1,
+          "recall": 1,
+          "f1": 1
         },
         "STUDENT_OR_EMPLOYEE_ID": {
           "tp": 0,
@@ -16746,34 +16746,10 @@
         }
       },
       "latency_ms": {
-        "median": 0.0379069999999615,
-        "p95": 0.08842099999998254
+        "median": 0.04043100000001232,
+        "p95": 0.20443599999998696
       },
       "errors": [
-        {
-          "text": "The hospital chart belongs to record 4829107.",
-          "language": "en",
-          "gold": [
-            {
-              "start": 37,
-              "end": 44,
-              "category": "MEDICAL_RECORD_NUMBER"
-            }
-          ],
-          "pred": []
-        },
-        {
-          "text": "The university assigned 4829107 after admission.",
-          "language": "en",
-          "gold": [
-            {
-              "start": 24,
-              "end": 31,
-              "category": "ACADEMIC_ADMISSION_ID"
-            }
-          ],
-          "pred": []
-        },
         {
           "text": "Staff member 4829107 joined payroll today.",
           "language": "en",
@@ -16794,18 +16770,6 @@
               "start": 38,
               "end": 45,
               "category": "PATIENT_ID"
-            }
-          ],
-          "pred": []
-        },
-        {
-          "text": "ಕಾಲೇಜಿನಲ್ಲಿ ಪ್ರವೇಶ ಪಡೆದವರ ಸಂಖ್ಯೆ 4829107",
-          "language": "kn",
-          "gold": [
-            {
-              "start": 33,
-              "end": 40,
-              "category": "ACADEMIC_ADMISSION_ID"
             }
           ],
           "pred": []
@@ -16908,29 +16872,29 @@
     },
     "hybrid": {
       "overall": {
-        "tp": 10,
+        "tp": 13,
         "fp": 0,
-        "fn": 7,
+        "fn": 4,
         "precision": 1,
-        "recall": 0.5882352941176471,
-        "f1": 0.7407407407407407
+        "recall": 0.7647058823529411,
+        "f1": 0.8666666666666667
       },
       "languages": {
         "en": {
-          "tp": 8,
+          "tp": 10,
           "fp": 0,
-          "fn": 5,
+          "fn": 3,
           "precision": 1,
-          "recall": 0.6153846153846154,
-          "f1": 0.7619047619047619
+          "recall": 0.7692307692307693,
+          "f1": 0.8695652173913043
         },
         "kn": {
-          "tp": 1,
+          "tp": 2,
           "fp": 0,
-          "fn": 2,
+          "fn": 1,
           "precision": 1,
-          "recall": 0.3333333333333333,
-          "f1": 0.5
+          "recall": 0.6666666666666666,
+          "f1": 0.8
         },
         "mixed": {
           "tp": 1,
@@ -16943,20 +16907,20 @@
       },
       "categories": {
         "MEDICAL_RECORD_NUMBER": {
-          "tp": 3,
+          "tp": 4,
           "fp": 0,
-          "fn": 1,
+          "fn": 0,
           "precision": 1,
-          "recall": 0.75,
-          "f1": 0.8571428571428571
+          "recall": 1,
+          "f1": 1
         },
         "ACADEMIC_ADMISSION_ID": {
-          "tp": 0,
+          "tp": 2,
           "fp": 0,
-          "fn": 2,
-          "precision": 0,
-          "recall": 0,
-          "f1": 0
+          "fn": 0,
+          "precision": 1,
+          "recall": 1,
+          "f1": 1
         },
         "STUDENT_OR_EMPLOYEE_ID": {
           "tp": 0,
@@ -17032,34 +16996,10 @@
         }
       },
       "latency_ms": {
-        "median": 0.15099500000002308,
-        "p95": 0.24203200000005154
+        "median": 0.1643659999999727,
+        "p95": 0.43924600000002556
       },
       "errors": [
-        {
-          "text": "The hospital chart belongs to record 4829107.",
-          "language": "en",
-          "gold": [
-            {
-              "start": 37,
-              "end": 44,
-              "category": "MEDICAL_RECORD_NUMBER"
-            }
-          ],
-          "pred": []
-        },
-        {
-          "text": "The university assigned 4829107 after admission.",
-          "language": "en",
-          "gold": [
-            {
-              "start": 24,
-              "end": 31,
-              "category": "ACADEMIC_ADMISSION_ID"
-            }
-          ],
-          "pred": []
-        },
         {
           "text": "Staff member 4829107 joined payroll today.",
           "language": "en",
@@ -17085,18 +17025,6 @@
           "pred": []
         },
         {
-          "text": "ಕಾಲೇಜಿನಲ್ಲಿ ಪ್ರವೇಶ ಪಡೆದವರ ಸಂಖ್ಯೆ 4829107",
-          "language": "kn",
-          "gold": [
-            {
-              "start": 33,
-              "end": 40,
-              "category": "ACADEMIC_ADMISSION_ID"
-            }
-          ],
-          "pred": []
-        },
-        {
           "text": "Home address: 42 Fictional Lane\nHome address: 43 Fictional Lane",
           "language": "en",
           "gold": [
@@ -17116,6 +17044,6 @@
       ]
     }
   },
-  "peak_node_rss_bytes": 106061824,
+  "peak_node_rss_bytes": 106573824,
   "node": "v24.22.1"
 }

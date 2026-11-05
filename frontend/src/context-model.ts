@@ -3,7 +3,7 @@ export type ContextModel={version:string;architecture:string;classes:string[];vo
 export type Span={start:number;end:number};
 export function validateModel(raw:unknown):ContextModel {
  const m=raw as ContextModel;
- if(!m||m.version!=='synthetic-context-linear-v1'||m.architecture!=='binary-char-ngram-multinomial-logistic'||m.calibrated!==false||!Array.isArray(m.classes)||m.classes.length<2||m.classes.length>64||!m.classes.includes('NONE')||!m.vocabulary||typeof m.vocabulary!=='object')throw Error('Unsupported contextual model');
+ if(!m||!['synthetic-context-linear-v1','synthetic-context-linear-v2'].includes(m.version)||m.architecture!=='binary-char-ngram-multinomial-logistic'||m.calibrated!==false||!Array.isArray(m.classes)||m.classes.length<2||m.classes.length>64||!m.classes.includes('NONE')||!m.vocabulary||typeof m.vocabulary!=='object')throw Error('Unsupported contextual model');
  const n=Object.keys(m.vocabulary).length;
  if(n<1||n>6000||!Array.isArray(m.weights)||m.weights.length!==m.classes.length||!Array.isArray(m.bias)||m.bias.length!==m.classes.length||m.bias.some(x=>!Number.isFinite(x))||m.weights.some(w=>!Array.isArray(w)||w.length!==n||w.some(x=>!Number.isFinite(x)))||Object.values(m.vocabulary).some(i=>!Number.isInteger(i)||i<0||i>=n)||!Number.isFinite(m.threshold)||m.threshold<.5||m.threshold>1)throw Error('Invalid contextual model dimensions');
  return m;
@@ -30,12 +30,14 @@ export function proposeSpans(text:string):Span[]{
  const spans:Span[]=[];let offset=0;
  for(const line of text.split('\n')){
   if(line.length<=512&&!/(?:\bVID\b|\bBID\b|virtual\s*(?:id|identifier)|ವಿಐಡಿ|ಬಿಐಡಿ)/iu.test(line)){
+   const quoted=[...line.matchAll(/"([^"\r\n]{2,120})"/gu)];
+   for(const m of quoted){if(!m[1].includes('[REDACTED]'))spans.push({start:offset+m.index!+1,end:offset+m.index!+1+m[1].length});}
    const field=/[:：=][ \t]*([^\r\n]+)/u.exec(line);
-   if(field){const value=field[1].trimEnd();if(value&&!value.includes('[REDACTED]')){const start=offset+field.index+field[0].indexOf(field[1]);spans.push({start,end:start+value.length});}}
+   if(field&&!quoted.length){const value=field[1].trimEnd();if(value&&!value.includes('[REDACTED]')){const start=offset+field.index+field[0].indexOf(field[1]);spans.push({start,end:start+value.length});}}
    for(const m of line.matchAll(/(?<![\p{L}\p{N}_/-])[\p{L}\p{N}][\p{L}\p{N}_/-]{3,29}(?![\p{L}\p{N}_/-])/gu)){
     if(!/[0-9೦-೯]/u.test(m[0]))continue;
     const start=offset+m.index!,end=start+m[0].length;
-    if(!field||!(offset+field.index<=start&&offset+line.length>=end))spans.push({start,end});
+    if(!(quoted.some(q=>q.index!<=m.index!&&q.index!+q[0].length>=m.index!+m[0].length))&&(!field||!!quoted.length||!(offset+field.index<=start&&offset+line.length>=end)))spans.push({start,end});
    }
   }
   offset+=line.length+1;

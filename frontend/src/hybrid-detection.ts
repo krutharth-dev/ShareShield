@@ -12,7 +12,13 @@ export function detectHybrid(text:string,model:ContextModel|null):Candidate[]{
   if(p.category==='NONE'||!categoryDefinition(p.category)||!selectableFinding({category:p.category}))continue;
   const overlap=result.filter(c=>c.start<span.end&&c.end>span.start);
   if(overlap.length){
-   for(const c of overlap)if(c.start===span.start&&c.end===span.end&&c.category===p.category){c.recognition_source='both';c.ai_model_version=p.version;}
+   for(const c of overlap){
+    if(c.start===span.start&&c.end===span.end&&c.category===p.category){c.recognition_source='both';c.ai_model_version=p.version;}
+    else if(c.category!==p.category){
+     // Keep the authoritative category and span; add a review reason, never another mask.
+     c.classification_conflict={suggested_category:p.category,model_version:p.version};
+    }
+   }
    // Learned output never removes, widens, reclassifies or lowers existing rule findings.
    continue;
   }
