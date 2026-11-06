@@ -9,6 +9,17 @@ export type Rule = {
 
 /** Match the value capture only, not the label; never consume a neighbouring field. */
 export const labelledRules: Rule[] = [
+  // OCR often preserves the column gap but drops the separator. Restrict this
+  // fallback to complete form rows so prose and neighbouring fields stay separate.
+  ...([
+    ['PATIENT_ID', 'ರೋಗಿಯ?[ \t]+(?:ಗುರುತಿನ[ \t]+)?(?:ಸಂಖ್ಯೆ|ಐಡಿ)'],
+    ['MEDICAL_RECORD_NUMBER', '(?:ವೈದ್ಯಕೀಯ[ \t]+(?:ದಾಖಲೆ|ರೆಕಾರ್ಡ್)|ಆಸ್ಪತ್ರೆ[ \t]+(?:ನೋಂದಣಿ|ದಾಖಲೆ))[ \t]+(?:ಸಂಖ್ಯೆ|ನಂಬರ್)'],
+    ['ACADEMIC_ADMISSION_ID', 'ಪ್ರವೇಶ[ \t]+ಸಂಖ್ಯೆ'],
+  ] as const).map(([category, label]): Rule => ({
+    category,
+    pattern: new RegExp('^[ \\t]*' + label + '[ \\t]+([0-9೦-೯]{3,11})[ \\t]*\\r?$', 'gmu'),
+    risk: 'HIGH', confidence: .85, reason: 'Explicit Kannada form label with a numeric value on the same line'
+  })),
   {
     category: 'PATIENT_ID',
     pattern: /(?:ರೋಗಿಯ?\s*(?:ಗುರುತಿನ\s*)?(?:ಸಂಖ್ಯೆ|ಐಡಿ)|patient\s*registration\s*(?:id|no\.?|number))\s*[:：#=\-]\s*([A-Z0-9೦-೯-]{3,30})/giu,

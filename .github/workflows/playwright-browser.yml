@@ -22,6 +22,7 @@ jobs:
           npm run preview -- --host 127.0.0.1 --port 4174 > /tmp/shareshield-preview.log 2>&1 &
           for i in {1..30}; do if curl -fsS http://127.0.0.1:4174/app >/dev/null; then break; fi; sleep 1; done
           node tests/browser/smoke.mjs
+          node tests/browser/kannada-form.mjs
           node tests/browser/context-model.mjs
           SHARESHIELD_PERFORMANCE_REPORT=/tmp/context-performance.json node tests/browser/context-performance.mjs
       - name: Extend viewer isolated build and local-only browser acceptance
