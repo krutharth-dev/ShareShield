@@ -16,6 +16,8 @@ jobs:
       - run: pip install -r ml/requirements.txt
       - run: cp frontend/public/models/context-v1.json /tmp/checked-model.json
       - run: node --test ml/review-corpus.test.mjs
+      - run: python -m unittest discover -s ml -p test_validation.py
+      - run: python ml/calibrate.py
       - run: python ml/train.py
       - run: cmp /tmp/checked-model.json frontend/public/models/context-v1.json
       - run: npm ci --no-audit --no-fund
@@ -27,6 +29,7 @@ jobs:
         with:
           name: contextual-model-evaluation-${{ github.sha }}
           path: |
+            ml/calibration-report.json
             ml/metrics.json
             ml/evaluation.json
             ml/review-results.json

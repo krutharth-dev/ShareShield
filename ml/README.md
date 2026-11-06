@@ -61,3 +61,7 @@ The model still misses entities, produces false positives, struggles with unfami
 ONNX conversion and quantization are not required for this small direct-JS model and are not claimed. Flutter could port the features/weights but has not been implemented. Mobile viewport testing uses desktop Chromium CPU and is not physical-device validation. Sampled browser-process RSS is not exact peak or model-only memory. Benchmark meanings are recorded alongside measurements. Worker-unavailable fallback executes the pre-existing deterministic code on the main thread and may still block on very large documents.
 
 No main merge or production deployment. PR #17 remains stacked on the existing development chain. Local/CI/preview validation records are in `VALIDATION.md` and the PR.
+
+## Validation follow-up
+
+See [calibration rejection, OCR stress evidence and reviewer/device blockers](VALIDATION_FOLLOWUP.md). Run `python -m unittest discover -s ml -p test_validation.py` for annotation and calibration guards.

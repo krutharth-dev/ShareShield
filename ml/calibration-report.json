@@ -1,0 +1,2582 @@
+{
+  "model_sha256": "4eea0b5ec09e69bd184df51db4686d1498ff162dc39de2334285f2881bae83db",
+  "temperature": 0.11817277996050615,
+  "deployment_approved": false,
+  "scope": "Synthetic gold spans only; validation families already used for model threshold selection. Historical tests are regression evidence, not a fresh blind evaluation. No real-world calibration claim.",
+  "fit_family": 6,
+  "audit_family": 7,
+  "bounds": [
+    0.05,
+    20
+  ],
+  "groups": {
+    "fit_family_6": {
+      "raw": {
+        "count": 400,
+        "accuracy": 1.0,
+        "nll": 0.005423313166816217,
+        "multiclass_brier": 8.545880228992095e-05,
+        "ece_10_equal_width_bins": 0.005382128604439207,
+        "reliability_bins": [
+          {
+            "lower": 0.0,
+            "upper": 0.1,
+            "count": 0,
+            "accuracy": null,
+            "mean_score": null
+          },
+          {
+            "lower": 0.1,
+            "upper": 0.2,
+            "count": 0,
+            "accuracy": null,
+            "mean_score": null
+          },
+          {
+            "lower": 0.2,
+            "upper": 0.3,
+            "count": 0,
+            "accuracy": null,
+            "mean_score": null
+          },
+          {
+            "lower": 0.3,
+            "upper": 0.4,
+            "count": 0,
+            "accuracy": null,
+            "mean_score": null
+          },
+          {
+            "lower": 0.4,
+            "upper": 0.5,
+            "count": 0,
+            "accuracy": null,
+            "mean_score": null
+          },
+          {
+            "lower": 0.5,
+            "upper": 0.6,
+            "count": 0,
+            "accuracy": null,
+            "mean_score": null
+          },
+          {
+            "lower": 0.6,
+            "upper": 0.7,
+            "count": 0,
+            "accuracy": null,
+            "mean_score": null
+          },
+          {
+            "lower": 0.7,
+            "upper": 0.8,
+            "count": 0,
+            "accuracy": null,
+            "mean_score": null
+          },
+          {
+            "lower": 0.8,
+            "upper": 0.9,
+            "count": 0,
+            "accuracy": null,
+            "mean_score": null
+          },
+          {
+            "lower": 0.9,
+            "upper": 1.0,
+            "count": 400,
+            "accuracy": 1.0,
+            "mean_score": 0.9946178713955608
+          }
+        ]
+      },
+      "temperature_scaled": {
+        "count": 400,
+        "accuracy": 1.0,
+        "nll": 0.0,
+        "multiclass_brier": 6.786366265081809e-42,
+        "ece_10_equal_width_bins": 0.0,
+        "reliability_bins": [
+          {
+            "lower": 0.0,
+            "upper": 0.1,
+            "count": 0,
+            "accuracy": null,
+            "mean_score": null
+          },
+          {
+            "lower": 0.1,
+            "upper": 0.2,
+            "count": 0,
+            "accuracy": null,
+            "mean_score": null
+          },
+          {
+            "lower": 0.2,
+            "upper": 0.3,
+            "count": 0,
+            "accuracy": null,
+            "mean_score": null
+          },
+          {
+            "lower": 0.3,
+            "upper": 0.4,
+            "count": 0,
+            "accuracy": null,
+            "mean_score": null
+          },
+          {
+            "lower": 0.4,
+            "upper": 0.5,
+            "count": 0,
+            "accuracy": null,
+            "mean_score": null
+          },
+          {
+            "lower": 0.5,
+            "upper": 0.6,
+            "count": 0,
+            "accuracy": null,
+            "mean_score": null
+          },
+          {
+            "lower": 0.6,
+            "upper": 0.7,
+            "count": 0,
+            "accuracy": null,
+            "mean_score": null
+          },
+          {
+            "lower": 0.7,
+            "upper": 0.8,
+            "count": 0,
+            "accuracy": null,
+            "mean_score": null
+          },
+          {
+            "lower": 0.8,
+            "upper": 0.9,
+            "count": 0,
+            "accuracy": null,
+            "mean_score": null
+          },
+          {
+            "lower": 0.9,
+            "upper": 1.0,
+            "count": 400,
+            "accuracy": 1.0,
+            "mean_score": 1.0
+          }
+        ]
+      },
+      "languages": {
+        "en": {
+          "raw": {
+            "count": 134,
+            "accuracy": 1.0,
+            "nll": 0.006470328651710847,
+            "multiclass_brier": 9.16355709509851e-05,
+            "ece_10_equal_width_bins": 0.006426135089247831,
+            "reliability_bins": [
+              {
+                "lower": 0.0,
+                "upper": 0.1,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.1,
+                "upper": 0.2,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.2,
+                "upper": 0.3,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.3,
+                "upper": 0.4,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.4,
+                "upper": 0.5,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.5,
+                "upper": 0.6,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.6,
+                "upper": 0.7,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.7,
+                "upper": 0.8,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.8,
+                "upper": 0.9,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.9,
+                "upper": 1.0,
+                "count": 134,
+                "accuracy": 1.0,
+                "mean_score": 0.9935738649107522
+              }
+            ]
+          },
+          "temperature_scaled": {
+            "count": 134,
+            "accuracy": 1.0,
+            "nll": 0.0,
+            "multiclass_brier": 1.2165525357469045e-47,
+            "ece_10_equal_width_bins": 0.0,
+            "reliability_bins": [
+              {
+                "lower": 0.0,
+                "upper": 0.1,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.1,
+                "upper": 0.2,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.2,
+                "upper": 0.3,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.3,
+                "upper": 0.4,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.4,
+                "upper": 0.5,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.5,
+                "upper": 0.6,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.6,
+                "upper": 0.7,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.7,
+                "upper": 0.8,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.8,
+                "upper": 0.9,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.9,
+                "upper": 1.0,
+                "count": 134,
+                "accuracy": 1.0,
+                "mean_score": 1.0
+              }
+            ]
+          }
+        },
+        "kn": {
+          "raw": {
+            "count": 133,
+            "accuracy": 1.0,
+            "nll": 0.007238923919685845,
+            "multiclass_brier": 9.727248470948785e-05,
+            "ece_10_equal_width_bins": 0.007192529444986495,
+            "reliability_bins": [
+              {
+                "lower": 0.0,
+                "upper": 0.1,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.1,
+                "upper": 0.2,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.2,
+                "upper": 0.3,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.3,
+                "upper": 0.4,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.4,
+                "upper": 0.5,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.5,
+                "upper": 0.6,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.6,
+                "upper": 0.7,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.7,
+                "upper": 0.8,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.8,
+                "upper": 0.9,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.9,
+                "upper": 1.0,
+                "count": 133,
+                "accuracy": 1.0,
+                "mean_score": 0.9928074705550135
+              }
+            ]
+          },
+          "temperature_scaled": {
+            "count": 133,
+            "accuracy": 1.0,
+            "nll": 0.0,
+            "multiclass_brier": 2.0410111366941665e-41,
+            "ece_10_equal_width_bins": 0.0,
+            "reliability_bins": [
+              {
+                "lower": 0.0,
+                "upper": 0.1,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.1,
+                "upper": 0.2,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.2,
+                "upper": 0.3,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.3,
+                "upper": 0.4,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.4,
+                "upper": 0.5,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.5,
+                "upper": 0.6,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.6,
+                "upper": 0.7,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.7,
+                "upper": 0.8,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.8,
+                "upper": 0.9,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.9,
+                "upper": 1.0,
+                "count": 133,
+                "accuracy": 1.0,
+                "mean_score": 1.0
+              }
+            ]
+          }
+        },
+        "mixed": {
+          "raw": {
+            "count": 133,
+            "accuracy": 1.0,
+            "nll": 0.002552814632173053,
+            "multiclass_brier": 6.74219093396579e-05,
+            "ece_10_equal_width_bins": 0.0025198716062649895,
+            "reliability_bins": [
+              {
+                "lower": 0.0,
+                "upper": 0.1,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.1,
+                "upper": 0.2,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.2,
+                "upper": 0.3,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.3,
+                "upper": 0.4,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.4,
+                "upper": 0.5,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.5,
+                "upper": 0.6,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.6,
+                "upper": 0.7,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.7,
+                "upper": 0.8,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.8,
+                "upper": 0.9,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.9,
+                "upper": 1.0,
+                "count": 133,
+                "accuracy": 1.0,
+                "mean_score": 0.997480128393735
+              }
+            ]
+          },
+          "temperature_scaled": {
+            "count": 133,
+            "accuracy": 1.0,
+            "nll": 0.0,
+            "multiclass_brier": 4.815720580560416e-49,
+            "ece_10_equal_width_bins": 0.0,
+            "reliability_bins": [
+              {
+                "lower": 0.0,
+                "upper": 0.1,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.1,
+                "upper": 0.2,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.2,
+                "upper": 0.3,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.3,
+                "upper": 0.4,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.4,
+                "upper": 0.5,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.5,
+                "upper": 0.6,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.6,
+                "upper": 0.7,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.7,
+                "upper": 0.8,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.8,
+                "upper": 0.9,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.9,
+                "upper": 1.0,
+                "count": 133,
+                "accuracy": 1.0,
+                "mean_score": 1.0
+              }
+            ]
+          }
+        }
+      }
+    },
+    "audit_family_7": {
+      "raw": {
+        "count": 360,
+        "accuracy": 1.0,
+        "nll": 0.003819662675591889,
+        "multiclass_brier": 2.9374652439999054e-05,
+        "ece_10_equal_width_bins": 0.0038065679742247394,
+        "reliability_bins": [
+          {
+            "lower": 0.0,
+            "upper": 0.1,
+            "count": 0,
+            "accuracy": null,
+            "mean_score": null
+          },
+          {
+            "lower": 0.1,
+            "upper": 0.2,
+            "count": 0,
+            "accuracy": null,
+            "mean_score": null
+          },
+          {
+            "lower": 0.2,
+            "upper": 0.3,
+            "count": 0,
+            "accuracy": null,
+            "mean_score": null
+          },
+          {
+            "lower": 0.3,
+            "upper": 0.4,
+            "count": 0,
+            "accuracy": null,
+            "mean_score": null
+          },
+          {
+            "lower": 0.4,
+            "upper": 0.5,
+            "count": 0,
+            "accuracy": null,
+            "mean_score": null
+          },
+          {
+            "lower": 0.5,
+            "upper": 0.6,
+            "count": 0,
+            "accuracy": null,
+            "mean_score": null
+          },
+          {
+            "lower": 0.6,
+            "upper": 0.7,
+            "count": 0,
+            "accuracy": null,
+            "mean_score": null
+          },
+          {
+            "lower": 0.7,
+            "upper": 0.8,
+            "count": 0,
+            "accuracy": null,
+            "mean_score": null
+          },
+          {
+            "lower": 0.8,
+            "upper": 0.9,
+            "count": 0,
+            "accuracy": null,
+            "mean_score": null
+          },
+          {
+            "lower": 0.9,
+            "upper": 1.0,
+            "count": 360,
+            "accuracy": 1.0,
+            "mean_score": 0.9961934320257753
+          }
+        ]
+      },
+      "temperature_scaled": {
+        "count": 360,
+        "accuracy": 1.0,
+        "nll": 0.0,
+        "multiclass_brier": 2.8673628759402882e-37,
+        "ece_10_equal_width_bins": 0.0,
+        "reliability_bins": [
+          {
+            "lower": 0.0,
+            "upper": 0.1,
+            "count": 0,
+            "accuracy": null,
+            "mean_score": null
+          },
+          {
+            "lower": 0.1,
+            "upper": 0.2,
+            "count": 0,
+            "accuracy": null,
+            "mean_score": null
+          },
+          {
+            "lower": 0.2,
+            "upper": 0.3,
+            "count": 0,
+            "accuracy": null,
+            "mean_score": null
+          },
+          {
+            "lower": 0.3,
+            "upper": 0.4,
+            "count": 0,
+            "accuracy": null,
+            "mean_score": null
+          },
+          {
+            "lower": 0.4,
+            "upper": 0.5,
+            "count": 0,
+            "accuracy": null,
+            "mean_score": null
+          },
+          {
+            "lower": 0.5,
+            "upper": 0.6,
+            "count": 0,
+            "accuracy": null,
+            "mean_score": null
+          },
+          {
+            "lower": 0.6,
+            "upper": 0.7,
+            "count": 0,
+            "accuracy": null,
+            "mean_score": null
+          },
+          {
+            "lower": 0.7,
+            "upper": 0.8,
+            "count": 0,
+            "accuracy": null,
+            "mean_score": null
+          },
+          {
+            "lower": 0.8,
+            "upper": 0.9,
+            "count": 0,
+            "accuracy": null,
+            "mean_score": null
+          },
+          {
+            "lower": 0.9,
+            "upper": 1.0,
+            "count": 360,
+            "accuracy": 1.0,
+            "mean_score": 1.0
+          }
+        ]
+      },
+      "languages": {
+        "en": {
+          "raw": {
+            "count": 120,
+            "accuracy": 1.0,
+            "nll": 0.004727971883628701,
+            "multiclass_brier": 2.991532243718318e-05,
+            "ece_10_equal_width_bins": 0.004714555979688062,
+            "reliability_bins": [
+              {
+                "lower": 0.0,
+                "upper": 0.1,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.1,
+                "upper": 0.2,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.2,
+                "upper": 0.3,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.3,
+                "upper": 0.4,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.4,
+                "upper": 0.5,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.5,
+                "upper": 0.6,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.6,
+                "upper": 0.7,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.7,
+                "upper": 0.8,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.8,
+                "upper": 0.9,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.9,
+                "upper": 1.0,
+                "count": 120,
+                "accuracy": 1.0,
+                "mean_score": 0.9952854440203119
+              }
+            ]
+          },
+          "temperature_scaled": {
+            "count": 120,
+            "accuracy": 1.0,
+            "nll": 0.0,
+            "multiclass_brier": 1.468619316524804e-42,
+            "ece_10_equal_width_bins": 0.0,
+            "reliability_bins": [
+              {
+                "lower": 0.0,
+                "upper": 0.1,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.1,
+                "upper": 0.2,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.2,
+                "upper": 0.3,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.3,
+                "upper": 0.4,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.4,
+                "upper": 0.5,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.5,
+                "upper": 0.6,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.6,
+                "upper": 0.7,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.7,
+                "upper": 0.8,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.8,
+                "upper": 0.9,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.9,
+                "upper": 1.0,
+                "count": 120,
+                "accuracy": 1.0,
+                "mean_score": 1.0
+              }
+            ]
+          }
+        },
+        "kn": {
+          "raw": {
+            "count": 120,
+            "accuracy": 1.0,
+            "nll": 0.006727650395536037,
+            "multiclass_brier": 5.820858016988548e-05,
+            "ece_10_equal_width_bins": 0.0067017822163378815,
+            "reliability_bins": [
+              {
+                "lower": 0.0,
+                "upper": 0.1,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.1,
+                "upper": 0.2,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.2,
+                "upper": 0.3,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.3,
+                "upper": 0.4,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.4,
+                "upper": 0.5,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.5,
+                "upper": 0.6,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.6,
+                "upper": 0.7,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.7,
+                "upper": 0.8,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.8,
+                "upper": 0.9,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.9,
+                "upper": 1.0,
+                "count": 120,
+                "accuracy": 1.0,
+                "mean_score": 0.9932982177836621
+              }
+            ]
+          },
+          "temperature_scaled": {
+            "count": 120,
+            "accuracy": 1.0,
+            "nll": 0.0,
+            "multiclass_brier": 8.602073941627699e-37,
+            "ece_10_equal_width_bins": 0.0,
+            "reliability_bins": [
+              {
+                "lower": 0.0,
+                "upper": 0.1,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.1,
+                "upper": 0.2,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.2,
+                "upper": 0.3,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.3,
+                "upper": 0.4,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.4,
+                "upper": 0.5,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.5,
+                "upper": 0.6,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.6,
+                "upper": 0.7,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.7,
+                "upper": 0.8,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.8,
+                "upper": 0.9,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.9,
+                "upper": 1.0,
+                "count": 120,
+                "accuracy": 1.0,
+                "mean_score": 1.0
+              }
+            ]
+          }
+        },
+        "mixed": {
+          "raw": {
+            "count": 120,
+            "accuracy": 1.0,
+            "nll": 3.365747610928338e-06,
+            "multiclass_brier": 5.471292850210222e-11,
+            "ece_10_equal_width_bins": 3.3657266483855253e-06,
+            "reliability_bins": [
+              {
+                "lower": 0.0,
+                "upper": 0.1,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.1,
+                "upper": 0.2,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.2,
+                "upper": 0.3,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.3,
+                "upper": 0.4,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.4,
+                "upper": 0.5,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.5,
+                "upper": 0.6,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.6,
+                "upper": 0.7,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.7,
+                "upper": 0.8,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.8,
+                "upper": 0.9,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.9,
+                "upper": 1.0,
+                "count": 120,
+                "accuracy": 1.0,
+                "mean_score": 0.9999966342733516
+              }
+            ]
+          },
+          "temperature_scaled": {
+            "count": 120,
+            "accuracy": 1.0,
+            "nll": 0.0,
+            "multiclass_brier": 9.577495931798488e-84,
+            "ece_10_equal_width_bins": 0.0,
+            "reliability_bins": [
+              {
+                "lower": 0.0,
+                "upper": 0.1,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.1,
+                "upper": 0.2,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.2,
+                "upper": 0.3,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.3,
+                "upper": 0.4,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.4,
+                "upper": 0.5,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.5,
+                "upper": 0.6,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.6,
+                "upper": 0.7,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.7,
+                "upper": 0.8,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.8,
+                "upper": 0.9,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.9,
+                "upper": 1.0,
+                "count": 120,
+                "accuracy": 1.0,
+                "mean_score": 1.0
+              }
+            ]
+          }
+        }
+      }
+    },
+    "historical_test": {
+      "raw": {
+        "count": 760,
+        "accuracy": 1.0,
+        "nll": 0.004985956557423835,
+        "multiclass_brier": 6.488400464123244e-05,
+        "ece_10_equal_width_bins": 0.00495546420805737,
+        "reliability_bins": [
+          {
+            "lower": 0.0,
+            "upper": 0.1,
+            "count": 0,
+            "accuracy": null,
+            "mean_score": null
+          },
+          {
+            "lower": 0.1,
+            "upper": 0.2,
+            "count": 0,
+            "accuracy": null,
+            "mean_score": null
+          },
+          {
+            "lower": 0.2,
+            "upper": 0.3,
+            "count": 0,
+            "accuracy": null,
+            "mean_score": null
+          },
+          {
+            "lower": 0.3,
+            "upper": 0.4,
+            "count": 0,
+            "accuracy": null,
+            "mean_score": null
+          },
+          {
+            "lower": 0.4,
+            "upper": 0.5,
+            "count": 0,
+            "accuracy": null,
+            "mean_score": null
+          },
+          {
+            "lower": 0.5,
+            "upper": 0.6,
+            "count": 0,
+            "accuracy": null,
+            "mean_score": null
+          },
+          {
+            "lower": 0.6,
+            "upper": 0.7,
+            "count": 0,
+            "accuracy": null,
+            "mean_score": null
+          },
+          {
+            "lower": 0.7,
+            "upper": 0.8,
+            "count": 0,
+            "accuracy": null,
+            "mean_score": null
+          },
+          {
+            "lower": 0.8,
+            "upper": 0.9,
+            "count": 0,
+            "accuracy": null,
+            "mean_score": null
+          },
+          {
+            "lower": 0.9,
+            "upper": 1.0,
+            "count": 760,
+            "accuracy": 1.0,
+            "mean_score": 0.9950445357919426
+          }
+        ]
+      },
+      "temperature_scaled": {
+        "count": 760,
+        "accuracy": 1.0,
+        "nll": 0.0,
+        "multiclass_brier": 2.0963428042709e-32,
+        "ece_10_equal_width_bins": 0.0,
+        "reliability_bins": [
+          {
+            "lower": 0.0,
+            "upper": 0.1,
+            "count": 0,
+            "accuracy": null,
+            "mean_score": null
+          },
+          {
+            "lower": 0.1,
+            "upper": 0.2,
+            "count": 0,
+            "accuracy": null,
+            "mean_score": null
+          },
+          {
+            "lower": 0.2,
+            "upper": 0.3,
+            "count": 0,
+            "accuracy": null,
+            "mean_score": null
+          },
+          {
+            "lower": 0.3,
+            "upper": 0.4,
+            "count": 0,
+            "accuracy": null,
+            "mean_score": null
+          },
+          {
+            "lower": 0.4,
+            "upper": 0.5,
+            "count": 0,
+            "accuracy": null,
+            "mean_score": null
+          },
+          {
+            "lower": 0.5,
+            "upper": 0.6,
+            "count": 0,
+            "accuracy": null,
+            "mean_score": null
+          },
+          {
+            "lower": 0.6,
+            "upper": 0.7,
+            "count": 0,
+            "accuracy": null,
+            "mean_score": null
+          },
+          {
+            "lower": 0.7,
+            "upper": 0.8,
+            "count": 0,
+            "accuracy": null,
+            "mean_score": null
+          },
+          {
+            "lower": 0.8,
+            "upper": 0.9,
+            "count": 0,
+            "accuracy": null,
+            "mean_score": null
+          },
+          {
+            "lower": 0.9,
+            "upper": 1.0,
+            "count": 760,
+            "accuracy": 1.0,
+            "mean_score": 1.0
+          }
+        ]
+      },
+      "languages": {
+        "en": {
+          "raw": {
+            "count": 254,
+            "accuracy": 1.0,
+            "nll": 0.006704290754398756,
+            "multiclass_brier": 7.80211433176267e-05,
+            "ece_10_equal_width_bins": 0.006667277428462515,
+            "reliability_bins": [
+              {
+                "lower": 0.0,
+                "upper": 0.1,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.1,
+                "upper": 0.2,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.2,
+                "upper": 0.3,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.3,
+                "upper": 0.4,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.4,
+                "upper": 0.5,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.5,
+                "upper": 0.6,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.6,
+                "upper": 0.7,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.7,
+                "upper": 0.8,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.8,
+                "upper": 0.9,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.9,
+                "upper": 1.0,
+                "count": 254,
+                "accuracy": 1.0,
+                "mean_score": 0.9933327225715375
+              }
+            ]
+          },
+          "temperature_scaled": {
+            "count": 254,
+            "accuracy": 1.0,
+            "nll": 0.0,
+            "multiclass_brier": 4.100113041967802e-42,
+            "ece_10_equal_width_bins": 0.0,
+            "reliability_bins": [
+              {
+                "lower": 0.0,
+                "upper": 0.1,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.1,
+                "upper": 0.2,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.2,
+                "upper": 0.3,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.3,
+                "upper": 0.4,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.4,
+                "upper": 0.5,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.5,
+                "upper": 0.6,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.6,
+                "upper": 0.7,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.7,
+                "upper": 0.8,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.8,
+                "upper": 0.9,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.9,
+                "upper": 1.0,
+                "count": 254,
+                "accuracy": 1.0,
+                "mean_score": 1.0
+              }
+            ]
+          }
+        },
+        "kn": {
+          "raw": {
+            "count": 253,
+            "accuracy": 1.0,
+            "nll": 0.006893147412710264,
+            "multiclass_brier": 8.113179468892497e-05,
+            "ece_10_equal_width_bins": 0.006856028808052583,
+            "reliability_bins": [
+              {
+                "lower": 0.0,
+                "upper": 0.1,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.1,
+                "upper": 0.2,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.2,
+                "upper": 0.3,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.3,
+                "upper": 0.4,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.4,
+                "upper": 0.5,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.5,
+                "upper": 0.6,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.6,
+                "upper": 0.7,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.7,
+                "upper": 0.8,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.8,
+                "upper": 0.9,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.9,
+                "upper": 1.0,
+                "count": 253,
+                "accuracy": 1.0,
+                "mean_score": 0.9931439711919474
+              }
+            ]
+          },
+          "temperature_scaled": {
+            "count": 253,
+            "accuracy": 1.0,
+            "nll": 0.0,
+            "multiclass_brier": 6.297314352338898e-32,
+            "ece_10_equal_width_bins": 0.0,
+            "reliability_bins": [
+              {
+                "lower": 0.0,
+                "upper": 0.1,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.1,
+                "upper": 0.2,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.2,
+                "upper": 0.3,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.3,
+                "upper": 0.4,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.4,
+                "upper": 0.5,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.5,
+                "upper": 0.6,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.6,
+                "upper": 0.7,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.7,
+                "upper": 0.8,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.8,
+                "upper": 0.9,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.9,
+                "upper": 1.0,
+                "count": 253,
+                "accuracy": 1.0,
+                "mean_score": 1.0
+              }
+            ]
+          }
+        },
+        "mixed": {
+          "raw": {
+            "count": 253,
+            "accuracy": 1.0,
+            "nll": 0.0013536396703918323,
+            "multiclass_brier": 3.544715046783188e-05,
+            "ece_10_equal_width_bins": 0.001336320327496976,
+            "reliability_bins": [
+              {
+                "lower": 0.0,
+                "upper": 0.1,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.1,
+                "upper": 0.2,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.2,
+                "upper": 0.3,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.3,
+                "upper": 0.4,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.4,
+                "upper": 0.5,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.5,
+                "upper": 0.6,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.6,
+                "upper": 0.7,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.7,
+                "upper": 0.8,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.8,
+                "upper": 0.9,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.9,
+                "upper": 1.0,
+                "count": 253,
+                "accuracy": 1.0,
+                "mean_score": 0.998663679672503
+              }
+            ]
+          },
+          "temperature_scaled": {
+            "count": 253,
+            "accuracy": 1.0,
+            "nll": 0.0,
+            "multiclass_brier": 2.531584336816607e-49,
+            "ece_10_equal_width_bins": 0.0,
+            "reliability_bins": [
+              {
+                "lower": 0.0,
+                "upper": 0.1,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.1,
+                "upper": 0.2,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.2,
+                "upper": 0.3,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.3,
+                "upper": 0.4,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.4,
+                "upper": 0.5,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.5,
+                "upper": 0.6,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.6,
+                "upper": 0.7,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.7,
+                "upper": 0.8,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.8,
+                "upper": 0.9,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.9,
+                "upper": 1.0,
+                "count": 253,
+                "accuracy": 1.0,
+                "mean_score": 1.0
+              }
+            ]
+          }
+        }
+      }
+    },
+    "fictional_review_gold_spans": {
+      "raw": {
+        "count": 37,
+        "accuracy": 0.6756756756756757,
+        "nll": 0.9831914978445637,
+        "multiclass_brier": 0.4485449843699575,
+        "ece_10_equal_width_bins": 0.15584857198918856,
+        "reliability_bins": [
+          {
+            "lower": 0.0,
+            "upper": 0.1,
+            "count": 0,
+            "accuracy": null,
+            "mean_score": null
+          },
+          {
+            "lower": 0.1,
+            "upper": 0.2,
+            "count": 0,
+            "accuracy": null,
+            "mean_score": null
+          },
+          {
+            "lower": 0.2,
+            "upper": 0.3,
+            "count": 0,
+            "accuracy": null,
+            "mean_score": null
+          },
+          {
+            "lower": 0.3,
+            "upper": 0.4,
+            "count": 2,
+            "accuracy": 0.5,
+            "mean_score": 0.3660338912908423
+          },
+          {
+            "lower": 0.4,
+            "upper": 0.5,
+            "count": 6,
+            "accuracy": 0.3333333333333333,
+            "mean_score": 0.4600306637247133
+          },
+          {
+            "lower": 0.5,
+            "upper": 0.6,
+            "count": 1,
+            "accuracy": 0.0,
+            "mean_score": 0.5855843219857201
+          },
+          {
+            "lower": 0.6,
+            "upper": 0.7,
+            "count": 2,
+            "accuracy": 1.0,
+            "mean_score": 0.6862912119672091
+          },
+          {
+            "lower": 0.7,
+            "upper": 0.8,
+            "count": 3,
+            "accuracy": 0.6666666666666666,
+            "mean_score": 0.7679585496650038
+          },
+          {
+            "lower": 0.8,
+            "upper": 0.9,
+            "count": 9,
+            "accuracy": 0.5555555555555556,
+            "mean_score": 0.867667494585385
+          },
+          {
+            "lower": 0.9,
+            "upper": 1.0,
+            "count": 14,
+            "accuracy": 0.9285714285714286,
+            "mean_score": 0.9580282832513288
+          }
+        ]
+      },
+      "temperature_scaled": {
+        "count": 37,
+        "accuracy": 0.6756756756756757,
+        "nll": 5.887805431333167,
+        "multiclass_brier": 0.6378891480884674,
+        "ece_10_equal_width_bins": 0.3212453926704486,
+        "reliability_bins": [
+          {
+            "lower": 0.0,
+            "upper": 0.1,
+            "count": 0,
+            "accuracy": null,
+            "mean_score": null
+          },
+          {
+            "lower": 0.1,
+            "upper": 0.2,
+            "count": 0,
+            "accuracy": null,
+            "mean_score": null
+          },
+          {
+            "lower": 0.2,
+            "upper": 0.3,
+            "count": 0,
+            "accuracy": null,
+            "mean_score": null
+          },
+          {
+            "lower": 0.3,
+            "upper": 0.4,
+            "count": 0,
+            "accuracy": null,
+            "mean_score": null
+          },
+          {
+            "lower": 0.4,
+            "upper": 0.5,
+            "count": 0,
+            "accuracy": null,
+            "mean_score": null
+          },
+          {
+            "lower": 0.5,
+            "upper": 0.6,
+            "count": 0,
+            "accuracy": null,
+            "mean_score": null
+          },
+          {
+            "lower": 0.6,
+            "upper": 0.7,
+            "count": 0,
+            "accuracy": null,
+            "mean_score": null
+          },
+          {
+            "lower": 0.7,
+            "upper": 0.8,
+            "count": 0,
+            "accuracy": null,
+            "mean_score": null
+          },
+          {
+            "lower": 0.8,
+            "upper": 0.9,
+            "count": 0,
+            "accuracy": null,
+            "mean_score": null
+          },
+          {
+            "lower": 0.9,
+            "upper": 1.0,
+            "count": 37,
+            "accuracy": 0.6756756756756757,
+            "mean_score": 0.9969210683461243
+          }
+        ]
+      },
+      "languages": {
+        "en": {
+          "raw": {
+            "count": 22,
+            "accuracy": 0.5454545454545454,
+            "nll": 1.4882719951906005,
+            "multiclass_brier": 0.6702663025495414,
+            "ece_10_equal_width_bins": 0.22808005007030926,
+            "reliability_bins": [
+              {
+                "lower": 0.0,
+                "upper": 0.1,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.1,
+                "upper": 0.2,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.2,
+                "upper": 0.3,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.3,
+                "upper": 0.4,
+                "count": 2,
+                "accuracy": 0.5,
+                "mean_score": 0.3660338912908423
+              },
+              {
+                "lower": 0.4,
+                "upper": 0.5,
+                "count": 5,
+                "accuracy": 0.4,
+                "mean_score": 0.4564777507453849
+              },
+              {
+                "lower": 0.5,
+                "upper": 0.6,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.6,
+                "upper": 0.7,
+                "count": 1,
+                "accuracy": 1.0,
+                "mean_score": 0.6845224965462056
+              },
+              {
+                "lower": 0.7,
+                "upper": 0.8,
+                "count": 3,
+                "accuracy": 0.6666666666666666,
+                "mean_score": 0.7679585496650038
+              },
+              {
+                "lower": 0.8,
+                "upper": 0.9,
+                "count": 7,
+                "accuracy": 0.42857142857142855,
+                "mean_score": 0.870855930954181
+              },
+              {
+                "lower": 0.9,
+                "upper": 1.0,
+                "count": 4,
+                "accuracy": 0.75,
+                "mean_score": 0.9380238653183727
+              }
+            ]
+          },
+          "temperature_scaled": {
+            "count": 22,
+            "accuracy": 0.5454545454545454,
+            "nll": 9.390730717494732,
+            "multiclass_brier": 0.8926295954651924,
+            "ece_10_equal_width_bins": 0.4497777446105373,
+            "reliability_bins": [
+              {
+                "lower": 0.0,
+                "upper": 0.1,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.1,
+                "upper": 0.2,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.2,
+                "upper": 0.3,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.3,
+                "upper": 0.4,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.4,
+                "upper": 0.5,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.5,
+                "upper": 0.6,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.6,
+                "upper": 0.7,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.7,
+                "upper": 0.8,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.8,
+                "upper": 0.9,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.9,
+                "upper": 1.0,
+                "count": 22,
+                "accuracy": 0.5454545454545454,
+                "mean_score": 0.9952322900650827
+              }
+            ]
+          }
+        },
+        "kn": {
+          "raw": {
+            "count": 9,
+            "accuracy": 0.8888888888888888,
+            "nll": 0.21518588131775562,
+            "multiclass_brier": 0.10966982940599794,
+            "ece_10_equal_width_bins": 0.14677701622785422,
+            "reliability_bins": [
+              {
+                "lower": 0.0,
+                "upper": 0.1,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.1,
+                "upper": 0.2,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.2,
+                "upper": 0.3,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.3,
+                "upper": 0.4,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.4,
+                "upper": 0.5,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.5,
+                "upper": 0.6,
+                "count": 1,
+                "accuracy": 0.0,
+                "mean_score": 0.5855843219857201
+              },
+              {
+                "lower": 0.6,
+                "upper": 0.7,
+                "count": 1,
+                "accuracy": 1.0,
+                "mean_score": 0.6880599273882125
+              },
+              {
+                "lower": 0.7,
+                "upper": 0.8,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.8,
+                "upper": 0.9,
+                "count": 1,
+                "accuracy": 1.0,
+                "mean_score": 0.8450614152380016
+              },
+              {
+                "lower": 0.9,
+                "upper": 1.0,
+                "count": 6,
+                "accuracy": 1.0,
+                "mean_score": 0.9552449722181363
+              }
+            ]
+          },
+          "temperature_scaled": {
+            "count": 9,
+            "accuracy": 0.8888888888888888,
+            "nll": 0.5478972114433055,
+            "multiclass_brier": 0.21902542575554043,
+            "ece_10_equal_width_bins": 0.11030734877108905,
+            "reliability_bins": [
+              {
+                "lower": 0.0,
+                "upper": 0.1,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.1,
+                "upper": 0.2,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.2,
+                "upper": 0.3,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.3,
+                "upper": 0.4,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.4,
+                "upper": 0.5,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.5,
+                "upper": 0.6,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.6,
+                "upper": 0.7,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.7,
+                "upper": 0.8,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.8,
+                "upper": 0.9,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.9,
+                "upper": 1.0,
+                "count": 9,
+                "accuracy": 0.8888888888888888,
+                "mean_score": 0.9991962376599779
+              }
+            ]
+          }
+        },
+        "mixed": {
+          "raw": {
+            "count": 6,
+            "accuracy": 0.8333333333333334,
+            "nll": 0.2832380990326411,
+            "multiclass_brier": 0.14387955015742246,
+            "ece_10_equal_width_bins": 0.1135016730556442,
+            "reliability_bins": [
+              {
+                "lower": 0.0,
+                "upper": 0.1,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.1,
+                "upper": 0.2,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.2,
+                "upper": 0.3,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.3,
+                "upper": 0.4,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.4,
+                "upper": 0.5,
+                "count": 1,
+                "accuracy": 0.0,
+                "mean_score": 0.47779522862135515
+              },
+              {
+                "lower": 0.5,
+                "upper": 0.6,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.6,
+                "upper": 0.7,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.7,
+                "upper": 0.8,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.8,
+                "upper": 0.9,
+                "count": 1,
+                "accuracy": 1.0,
+                "mean_score": 0.8679545193511954
+              },
+              {
+                "lower": 0.9,
+                "upper": 1.0,
+                "count": 4,
+                "accuracy": 1.0,
+                "mean_score": 0.9822076677340736
+              }
+            ]
+          },
+          "temperature_scaled": {
+            "count": 6,
+            "accuracy": 0.8333333333333334,
+            "nll": 1.053608378575546,
+            "multiclass_brier": 0.3321364245398671,
+            "ece_10_equal_width_bins": 0.1663671680724974,
+            "reliability_bins": [
+              {
+                "lower": 0.0,
+                "upper": 0.1,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.1,
+                "upper": 0.2,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.2,
+                "upper": 0.3,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.3,
+                "upper": 0.4,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.4,
+                "upper": 0.5,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.5,
+                "upper": 0.6,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.6,
+                "upper": 0.7,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.7,
+                "upper": 0.8,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.8,
+                "upper": 0.9,
+                "count": 0,
+                "accuracy": null,
+                "mean_score": null
+              },
+              {
+                "lower": 0.9,
+                "upper": 1.0,
+                "count": 6,
+                "accuracy": 0.8333333333333334,
+                "mean_score": 0.9997005014058308
+              }
+            ]
+          }
+        }
+      }
+    }
+  }
+}
