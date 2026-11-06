@@ -21,3 +21,4 @@ frontend/public/ocr/
 frontend/.pages-functions-check/
 
 frontend/public/build-info.json
+frontend/dist-extend/
