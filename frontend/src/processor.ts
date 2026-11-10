@@ -1,5 +1,9 @@
+import {selectedValueRemains} from './residual-values';
+import {abortable} from './cancellation';
+import {shouldUpscaleOcr,upscaleCanvas} from './ocr-rescue';
+import {locateSourceSpan,unscaleBox} from './source-localization';
 import {createContextRecognizer} from './context-client';
-import {classifyPriority,inferDocumentType,type SharingPurpose} from './priority';
+import {classifyPriority,inferDocumentType,requiresManualReview,type SharingPurpose} from './priority';
 import {isVirtualId} from './selection-policy';
 import {coverageCheck} from './clearance';
 import {getDocument,GlobalWorkerOptions,type PDFDocumentProxy} from 'pdfjs-dist';
@@ -52,26 +56,17 @@ async function ocrWorker(lang:string,progress:(s:string)=>void){return createWor
 async function ocr(c:HTMLCanvasElement,worker:Worker){const r=await worker.recognize(c,{}, {blocks:true,text:true});const tokens:Token[]=[];let text='';for(const block of r.data.blocks??[])for(const para of block.paragraphs)for(const line of para.lines){for(const w of line.words){const start=text.length;text+=w.text+' ';tokens.push({text:w.text,start,end:start+w.text.length,box:{x:w.bbox.x0,y:w.bbox.y0,width:w.bbox.x1-w.bbox.x0,height:w.bbox.y1-w.bbox.y0},confidence:w.confidence/100});}text+='\n';}return {text:text||r.data.text,tokens,confidence:r.data.confidence/100};}
 function makeFindings(candidates:Candidate[],tokens:Token[],page:number,values:Map<string,string>,textSpans?:Map<string,TextSpan>){
  return candidates.filter(f=>!isVirtualId(f)).map(f=>{
-   const matches=tokens.filter(t=>t.end>f.start&&t.start<f.end);
    const id=crypto.randomUUID();values.set(id,f.value);textSpans?.set(id,{start:f.start,end:f.end});
-   const scores=matches.flatMap(t=>t.confidence===undefined?[]:[t.confidence]);
-   let boxes=matches.map(t=>t.box);
-   // Treat a multi-line legal party/address as one complete visual region,
-   // not a handful of correctly OCR'd words with potentially exposed gaps.
-   if(/^KANNADA_(?:PARTY|RESPONDENT)_ADDRESS_BLOCK_REVIEW$/.test(f.category)&&matches.length>=2){
-     const x=Math.max(0,Math.min(...boxes.map(b=>b.x))-5);
-     const y=Math.max(0,Math.min(...boxes.map(b=>b.y))-5);
-     const right=Math.max(...boxes.map(b=>b.x+b.width))+5;
-     const bottom=Math.max(...boxes.map(b=>b.y+b.height))+5;
-     boxes=[{x,y,width:right-x,height:bottom-y}];
-   }
+   const located=locateSourceSpan(f,tokens),boxes=located.boxes;
    return {id,classification_conflict:f.classification_conflict,recognition_source:f.recognition_source,ai_model_version:f.ai_model_version,category:f.category,risk:f.risk,detection_confidence:f.detection_confidence,
-     ocr_confidence:scores.length?Math.min(...scores):undefined,preview:masked(f.value),reason:f.reason,validation:f.validation,source_context:f.source_context,confidence_meaning:f.confidence_meaning,page,boxes};
+     ocr_confidence:located.confidence,preview:masked(f.value),reason:f.reason,validation:f.validation,source_context:f.source_context,confidence_meaning:f.confidence_meaning,page,boxes};
  });
 }
 export function forget(id:string){const s=records.get(id);if(s){s.analysis.pages.forEach(p=>URL.revokeObjectURL(p.url));s.outputs.forEach(u=>URL.revokeObjectURL(u));s.bytes.fill(0);s.values.clear();s.textSpans.clear();records.delete(id);}}
 export function clearAll(){for(const id of records.keys())forget(id);}
-export async function analyze(file:File,lang='eng',progress:(s:string)=>void=()=>{}):Promise<Analysis>{
+export async function analyze(file:File,lang='eng',suppliedProgress:(s:string)=>void=()=>{},signal?:AbortSignal):Promise<Analysis>{
+ const progress=(message:string)=>{if(!signal?.aborted)suppliedProgress(message);};
+ signal?.throwIfAborted();
  if(!['eng','hin','kan','eng+kan','eng+hin+kan'].includes(lang))throw Error('Unsupported OCR language.');
  if(!file.size||file.size>LIMIT)throw Error('Choose a non-empty file up to 8 MB.');
  if(records.size>=10)throw Error('Clear the workspace before adding more than 10 documents.');
@@ -87,7 +82,7 @@ export async function analyze(file:File,lang='eng',progress:(s:string)=>void=()=
  const recognizer=createContextRecognizer();
  let modelNote=false;
  const recognize=async(text:string)=>{
-  const r=await recognizer.recognize(text);
+  const r=await abortable(recognizer.recognize(text),signal);
   if(!r.available)a.warnings.push('Contextual model unavailable: deterministic detection remains active; review for missed contextual information.');
   else if(!modelNote){a.warnings.push('Experimental trained contextual recognition is active locally in a background worker. Synthetic-data model; review AI-only findings and all unrecognised content.');modelNote=true;}
   return r.candidates;
@@ -105,12 +100,13 @@ export async function analyze(file:File,lang='eng',progress:(s:string)=>void=()=
  }else{
  stage='opening and inspecting PDF';
  let count=1;if(kind==='pdf'){pdf=await openPdf(bytes);count=pdf.numPages;if(count<1)throw Error('The PDF contains no pages.');const meta=await pdf.getMetadata();if(meta.info&&Object.values(meta.info).some(v=>typeof v==='string'&&detect(v).length))a.warnings.push('Metadata contains candidate sensitive content. Export will discard source metadata.');if(await pdf.getAttachments())a.warnings.push('Embedded attachments are excluded from the exported file.');}
- try{worker=await ocrWorker(lang,progress);}
+ try{worker=await abortable(ocrWorker(lang,progress).then(w=>{if(signal?.aborted){void w.terminate();signal.throwIfAborted();}return w;}),signal);}
  catch{
   s.ocrReviewRequired=true;
   a.warnings.push('OCR initialization failed. Scanned text and embedded image fields are UNVERIFIED; review every page and add manual masks.');
  }
  for(let n=1;n<=count;n++){
+ signal?.throwIfAborted();
  stage=`page ${n} of ${count} — PDF rendering and text extraction`;
  progress(`Reading page ${n} of ${count}`);let c:HTMLCanvasElement;let text='',tokens:Token[]=[];
  if(pdf){const r=await render(pdf,n);c=r.c;const tc=await r.page.getTextContent();for(const item of tc.items){if(!('str' in item))continue;const t=item as TextItem;const tr=t.transform;const h=Math.max(Math.hypot(tr[2],tr[3]),Math.abs(t.height));const start=text.length;text+=t.str+(t.hasEOL?'\n':' ');const box=pdfTextBoundingBox(tr,t.width,h,r.viewport.transform,c.width,c.height);if(box)tokens.push({text:t.str,start,end:start+t.str.length,box});}
@@ -119,7 +115,7 @@ export async function analyze(file:File,lang='eng',progress:(s:string)=>void=()=
  stage=`page ${n} of ${count} — OCR`;
  let firstOcr:Awaited<ReturnType<typeof ocr>>|undefined;
  if(worker){
-  try{firstOcr=await ocr(c,worker);}
+  try{firstOcr=await abortable(ocr(c,worker),signal);}
   catch{
    s.ocrReviewRequired=true;
    a.warnings.push('Page '+n+': OCR failed. This page is UNVERIFIED and requires manual inspection.');
@@ -127,20 +123,26 @@ export async function analyze(file:File,lang='eng',progress:(s:string)=>void=()=
    worker=undefined;
   }
  }
+ signal?.throwIfAborted();
  const o=firstOcr??{text:'',tokens:[] as Token[],confidence:0};
  // Limit enhanced OCR to scan-heavy pages; full base OCR still runs for
  // text-bearing pages to detect additional embedded image content.
  const scanHeavy=text.trim().length<250;
  const ocrPasses=[o];
- if(worker&&c.width*c.height<=6_000_000&&scanHeavy&&(o.confidence<.85||lang.includes('kan')||/aadha(?:ar|r)?|uidai|ಆಧಾರ/iu.test(o.text))){
+ const upscale=shouldUpscaleOcr(c.width,c.height,o.tokens);
+ if(worker&&c.width*c.height<=6_000_000&&scanHeavy&&(upscale||o.confidence<.85||lang.includes('kan')||/aadha(?:ar|r)?|uidai|ಆಧಾರ/iu.test(o.text))){
    try{
-     progress('OCR second pass · correcting uneven lighting');
-     const enhanced=enhanceCanvas(c,'contrast');
-     try{ocrPasses.push(await ocr(enhanced,worker));}finally{enhanced.width=enhanced.height=0;}
+     progress(upscale?'OCR second pass · enlarging small printed text':'OCR second pass · correcting uneven lighting');
+     const enhanced=upscale?upscaleCanvas(c):enhanceCanvas(c,'contrast');
+     try{
+       const pass=await abortable(ocr(enhanced,worker),signal);
+       if(upscale)pass.tokens=pass.tokens.map(t=>({...t,box:unscaleBox(t.box,c.width,c.height,enhanced.width,enhanced.height)}));
+       ocrPasses.push(pass);
+     }finally{enhanced.width=enhanced.height=0;}
      if(ocrPasses.every(p=>p.confidence<.65)){
        progress('OCR third pass · adaptive thresholding');
        const binary=enhanceCanvas(c,'adaptive');
-       try{ocrPasses.push(await ocr(binary,worker));}finally{binary.width=binary.height=0;}
+       try{ocrPasses.push(await abortable(ocr(binary,worker),signal));}finally{binary.width=binary.height=0;}
      }
      a.warnings.push('Page '+n+': '+ocrPasses.length+' OCR passes processed without changing original source pixels.');
    }catch{
@@ -247,9 +249,11 @@ export async function analyze(file:File,lang='eng',progress:(s:string)=>void=()=
  a.pages.push({url:URL.createObjectURL(await blob(c)),width:c.width,height:c.height});c.width=c.height=0;await nextFrame();
  }
  }
+ signal?.throwIfAborted();
  records.set(a.file_id,s);setTimeout(()=>forget(a.file_id),TTL);return a;
  }catch(e){
   a.pages.forEach(p=>URL.revokeObjectURL(p.url));bytes.fill(0);s.values.clear();s.textSpans.clear();
+  if(signal?.aborted)throw signal.reason;
   const message=e instanceof Error?e.message:typeof e==='string'?e:'browser processing error without details';
   throw new Error('Analysis stopped during '+stage+': '+(message||'unknown error')+'. No redaction or clearance was completed.');
  }finally{
@@ -259,7 +263,8 @@ export async function analyze(file:File,lang='eng',progress:(s:string)=>void=()=
  }
 }
 export type Manual={page:number;box:Box};
-export async function redact(id:string,selected:string[],manual:Manual[],progress:(s:string)=>void=()=>{},purpose:SharingPurpose='public'):Promise<Output>{
+export async function redact(id:string,selected:string[],manual:Manual[],progress:(s:string)=>void=()=>{},purpose:SharingPurpose='public',signal?:AbortSignal):Promise<Output>{
+ signal?.throwIfAborted();
  const s=records.get(id);if(!s||Date.now()>s.analysis.expires)throw Error('Document session expired. Add the file again.');
  if(new Set(selected).size!==selected.length||selected.some(x=>!s.analysis.findings.some(f=>f.id===x)))throw Error('Invalid finding selection.');
  if(manual.length>100)throw Error('Limit manual redactions to 100 regions.');
@@ -292,14 +297,14 @@ export async function redact(id:string,selected:string[],manual:Manual[],progres
  const recordResidual=(category:string,page:number,source:ResidualDetail['source'])=>{remaining++;if(residual_findings.length<50)residual_findings.push({category,page,source});};
  const testResidual=async(text:string,page:number,source:ResidualDetail['source'],normalize=false)=>{
    const before=remaining;
-   const contextual=await exportRecognizer.recognize(text);
-   for(const f of contextual.candidates)if(f.recognition_source!=='trained_ai'&&!isVirtualId(f)&&classifyPriority(f.category,purpose,inferDocumentType(s.analysis.findings)).mandatory)recordResidual(f.category,page,source);
-   const review=contextual.candidates.filter(f=>f.recognition_source==='trained_ai'||f.classification_conflict);
+   const contextual=await abortable(exportRecognizer.recognize(text),signal);
+   for(const f of contextual.candidates)if(!requiresManualReview(f)&&!isVirtualId(f)&&classifyPriority(f.category,purpose,inferDocumentType(s.analysis.findings)).mandatory)recordResidual(f.category,page,source);
+   const review=contextual.candidates.filter(f=>!isVirtualId(f)&&requiresManualReview(f));
    if(!contextual.available||review.length){incomplete=true;}
-   checks.push({name:'Fresh contextual review · '+source+' '+page,status:!contextual.available||review.length?'incomplete':'passed',detail:!contextual.available?'Contextual worker/model unavailable; semantic review remains incomplete.':review.length+' AI-only or conflicting finding(s) require manual inspection. Same-model recheck is not independent semantic verification.'});
+   checks.push({name:'Fresh contextual review · '+source+' '+page,status:!contextual.available||review.length?'incomplete':'passed',detail:!contextual.available?'Contextual worker/model unavailable; semantic review remains incomplete.':review.length+' uncertain, AI-only or conflicting finding(s) require manual inspection. Same-model recheck is not independent semantic verification.'});
    for(const f of review)if(residual_findings.length<50)residual_findings.push({category:f.category,page,source});
-   const val=(s:string)=>normalize?s.replace(/\s/g,'').toLowerCase():s;
-   for(const original of values){if(original.length>2&&val(text).includes(val(original)))recordResidual('SELECTED_VALUE_REMAINS',page,source);}
+   const excluded=contextual.candidates.filter(isVirtualId);
+   for(const original of values){if(selectedValueRemains(text,original,excluded,normalize))recordResidual('SELECTED_VALUE_REMAINS',page,source);}
    return remaining-before;
  };
  if(s.visionIncomplete){incomplete=true;warnings.push('Automatic face detection was unavailable on at least one page. Verify portraits manually before sharing.');}
@@ -346,11 +351,12 @@ export async function redact(id:string,selected:string[],manual:Manual[],progres
  progress('Reopening exported bytes');if(extension==='pdf'){pdf=await openPdf(output);for(let n=1;n<=pdf.numPages;n++){const page=await pdf.getPage(n);const tc=await page.getTextContent();const text=tc.items.map(i=>'str'in i?i.str:'').join(' ');await testResidual(text,n,'PDF text');}
  const meta=await pdf.getMetadata();const mt=JSON.stringify(meta.info)+' '+(meta.metadata?.getRaw()??'');await testResidual(mt,0,'metadata');if(await pdf.getAttachments())incomplete=true;
  checks.push({name:'Saved PDF text, metadata and attachments',status:remaining?'failed':incomplete?'incomplete':'passed',detail:'Reopened exported PDF with PDF.js; extracted text and inspected metadata/attachments.'});}
- worker=await ocrWorker(s.analysis.language,progress);
+ worker=await abortable(ocrWorker(s.analysis.language,progress).then(w=>{if(signal?.aborted){void w.terminate();signal.throwIfAborted();}return w;}),signal);
  const count=pdf?.numPages??1;let ocrResiduals=0;
  for(let n=1;n<=count;n++){
  let c:HTMLCanvasElement;if(pdf)c=(await render(pdf,n)).c;else{const image=await createImageBitmap(new Blob([output]));c=canvas(image.width,image.height);c.getContext('2d')!.drawImage(image,0,0);image.close();}
- const o=await ocr(c,worker);ocrResiduals+=await testResidual(o.text,n,'OCR',true);
+ if(!worker)throw Error('Verification OCR worker unavailable');
+ const o=await abortable(ocr(c,worker),signal);ocrResiduals+=await testResidual(o.text,n,'OCR',true);
  // Independently scan the exported pixels for any remaining faces.
  // A failed face-model check must never produce a cleared result.
  try{
@@ -378,6 +384,7 @@ export async function redact(id:string,selected:string[],manual:Manual[],progres
  checks.push({name:'Fresh OCR of exported pixels',status:ocrResiduals?'failed':incomplete?'incomplete':'passed',detail:`Tesseract ${s.analysis.language}; selected-value comparison and fresh detection on ${count} page(s). ${ocrResiduals} unresolved OCR match(es).`});
  }catch{incomplete=true;checks.push({name:'Reopen and OCR verification',status:'failed',detail:'A required verification dependency or processing step failed.'});}finally{await worker?.terminate();await pdf?.loadingTask.destroy();}
  }
+ signal?.throwIfAborted();
  const hash=await crypto.subtle.digest('SHA-256',output as BufferSource);const sha256=[...new Uint8Array(hash)].map(v=>v.toString(16).padStart(2,'0')).join('');
  const url=URL.createObjectURL(new Blob([output as BlobPart],{type:mime}));s.outputs.push(url);
  return {url,filename:s.analysis.filename.replace(/\.[^.]+$/,'')+'-redacted.'+extension,report:{status:verificationStatus(remaining,incomplete),checks,warnings,remaining_count:remaining,residual_findings,scope:s.analysis.kind==='docx'?'Rebuilt text-only DOCX content and selected-value comparison. Original layout/media were discarded; manual final review mandatory.':s.text!==undefined?'UTF-8 text: mandatory High-priority categories for '+purpose+' sharing and all selected values. Optional Medium/Low content may remain.':'Exported text, rendered printed OCR, metadata and attachment presence. Handwriting, QR decoding and semantic identity inference are outside scope.',verified_at:new Date().toISOString(),sha256}};

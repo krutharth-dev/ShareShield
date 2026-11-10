@@ -17,6 +17,15 @@ class ValidationTests(unittest.TestCase):
         r=copy.deepcopy(self.review);r.update(reviewer_id='UNIT_TEST_ONLY',reviewed_at='2026-11-05',independently_annotated=True)
         for d in r['documents']: d['status']='complete'
         return r
+    def test_custom_source_stays_blind_and_hash_bound(self):
+        with tempfile.TemporaryDirectory() as d:
+            source=Path(d)/'source.json';output=Path(d)/'review.json'
+            source.write_text(json.dumps([dict(id='phase3',text='ರೋಗಿಯ ಸಂಖ್ಯೆ 4829107',language='kan')]))
+            export(output,source)
+            review=json.loads(output.read_text())
+            self.assertEqual(review['documents'][0]['id'],'phase3')
+            self.assertEqual(review['documents'][0]['spans'],[])
+            with self.assertRaises(AssertionError):validate(review,source.read_bytes(),self.categories)
     def test_duplicate_document_rejected(self):
         r=self.completed();r['documents'][1]=copy.deepcopy(r['documents'][0])
         with self.assertRaises(AssertionError):validate(r,self.source,self.categories)

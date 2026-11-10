@@ -5,8 +5,8 @@ import argparse, hashlib, json
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
 
-def export(output):
-    source=(ROOT/'ml/review-holdout.json').read_bytes()
+def export(output, source_path=None):
+    source=Path(source_path or ROOT/'ml/review-holdout.json').read_bytes()
     rows=json.loads(source)
     payload=dict(source_sha256=hashlib.sha256(source).hexdigest(), reviewer_id='',
                  kannada_fluent=False, independently_annotated=False, reviewed_at='',
@@ -36,9 +36,9 @@ def validate(review,source,categories):
         result[doc['id']]=spans
     return result
 
-def compare(a,b,output):
-    source=(ROOT/'ml/review-holdout.json').read_bytes()
-    categories=set(json.loads((ROOT/'frontend/public/models/context-v1.json').read_text())['classes'])
+def compare(a,b,output,source_path=None,categories_path=None):
+    source=Path(source_path or ROOT/'ml/review-holdout.json').read_bytes()
+    categories=set(json.loads(Path(categories_path).read_text()) if categories_path else json.loads((ROOT/'frontend/public/models/context-v1.json').read_text())['classes'])
     left,right=[json.loads(Path(p).read_text()) for p in [a,b]]
     assert left['reviewer_id']!=right['reviewer_id'], 'Two different reviewers required'
     assert left['kannada_fluent'] is True or right['kannada_fluent'] is True, 'At least one fluent Kannada reviewer required'
@@ -52,8 +52,8 @@ def compare(a,b,output):
 
 if __name__=='__main__':
     p=argparse.ArgumentParser(); s=p.add_subparsers(dest='command',required=True)
-    e=s.add_parser('export');e.add_argument('output')
-    c=s.add_parser('compare');c.add_argument('left');c.add_argument('right');c.add_argument('output')
+    e=s.add_parser('export');e.add_argument('output');e.add_argument('--source')
+    c=s.add_parser('compare');c.add_argument('left');c.add_argument('right');c.add_argument('output');c.add_argument('--source');c.add_argument('--categories')
     args=p.parse_args()
-    if args.command=='export': export(args.output)
-    else: compare(args.left,args.right,args.output)
+    if args.command=='export': export(args.output,args.source)
+    else: compare(args.left,args.right,args.output,args.source,args.categories)

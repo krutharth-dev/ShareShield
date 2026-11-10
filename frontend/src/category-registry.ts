@@ -168,3 +168,5 @@ register(['MEDICAL_TEXT_BLOCK_REVIEW'],{family:'health',baseRank:null,health:tru
 register(['ADDRESS_BLOCK_REVIEW'],{family:'address',baseRank:14,mandatoryReview:true});
 
 register(['OTHER_IDENTIFIER_REVIEW'],{family:'other_identifier',baseRank:16,high:true,mandatoryReview:true});
+
+register(['FORM_IDENTIFIER_REVIEW'],{family:'other_identifier',baseRank:16,high:true,mandatoryReview:true});
