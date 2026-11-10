@@ -1,0 +1,448 @@
+{
+  "scope": "13 sealed fictional scans (10 templates plus 3 small-text variants), generator annotations; not independently reviewed. One-to-one occurrence matching, compatible category family; duplicate aliases count as false positives. Browser findings require >=50% ground-truth value-box area coverage. Raw deterministic arm uses recognized value matching and is not a localization score.",
+  "ocr_scope": "Whitespace-normalized Unicode Levenshtein. Baseline first-pass text versus first-pass text with 2x resize rescue substituted on the fixed small-glyph gate. These are OCR-pass metrics, not a concatenation or gold-selected best result across all OCR passes. All pipeline findings below use actual analyze() multipass outputs.",
+  "languages": {
+    "all": {
+      "documents": 13,
+      "original_ocr_deterministic": {
+        "tp": 23,
+        "fp": 6,
+        "fn": 10,
+        "unlocalized": 0,
+        "precision": 0.7931034482758621,
+        "recall": 0.696969696969697,
+        "f1": 0.7419354838709677
+      },
+      "baseline_hybrid": {
+        "tp": 23,
+        "fp": 7,
+        "fn": 10,
+        "unlocalized": 1,
+        "precision": 0.7666666666666667,
+        "recall": 0.696969696969697,
+        "f1": 0.7301587301587301
+      },
+      "enhanced_hybrid": {
+        "tp": 32,
+        "fp": 7,
+        "fn": 1,
+        "unlocalized": 1,
+        "precision": 0.8205128205128205,
+        "recall": 0.9696969696969697,
+        "f1": 0.8888888888888888
+      },
+      "baseline_ocr": {
+        "character_errors": 72,
+        "characters": 1062,
+        "cer": 0.06779661016949153,
+        "word_errors": 13,
+        "words": 156,
+        "wer": 0.08333333333333333
+      },
+      "rescue_ocr": {
+        "character_errors": 11,
+        "characters": 1062,
+        "cer": 0.010357815442561206,
+        "word_errors": 10,
+        "words": 156,
+        "wer": 0.0641025641025641
+      },
+      "baseline_median_analysis_ms": 636.7999999999884,
+      "enhanced_median_analysis_ms": 630.2000000000116,
+      "enhanced_max_heartbeat_gap_ms": 50.5
+    },
+    "eng": {
+      "documents": 7,
+      "original_ocr_deterministic": {
+        "tp": 12,
+        "fp": 2,
+        "fn": 6,
+        "unlocalized": 0,
+        "precision": 0.8571428571428571,
+        "recall": 0.6666666666666666,
+        "f1": 0.75
+      },
+      "baseline_hybrid": {
+        "tp": 12,
+        "fp": 2,
+        "fn": 6,
+        "unlocalized": 0,
+        "precision": 0.8571428571428571,
+        "recall": 0.6666666666666666,
+        "f1": 0.75
+      },
+      "enhanced_hybrid": {
+        "tp": 17,
+        "fp": 3,
+        "fn": 1,
+        "unlocalized": 1,
+        "precision": 0.85,
+        "recall": 0.9444444444444444,
+        "f1": 0.8947368421052632
+      },
+      "baseline_ocr": {
+        "character_errors": 66,
+        "characters": 568,
+        "cer": 0.11619718309859155,
+        "word_errors": 12,
+        "words": 83,
+        "wer": 0.14457831325301204
+      },
+      "rescue_ocr": {
+        "character_errors": 5,
+        "characters": 568,
+        "cer": 0.008802816901408451,
+        "word_errors": 9,
+        "words": 83,
+        "wer": 0.10843373493975904
+      },
+      "baseline_median_analysis_ms": 575.3999999999651,
+      "enhanced_median_analysis_ms": 627.8999999999651,
+      "enhanced_max_heartbeat_gap_ms": 37
+    },
+    "kan": {
+      "documents": 3,
+      "original_ocr_deterministic": {
+        "tp": 5,
+        "fp": 3,
+        "fn": 3,
+        "unlocalized": 0,
+        "precision": 0.625,
+        "recall": 0.625,
+        "f1": 0.625
+      },
+      "baseline_hybrid": {
+        "tp": 5,
+        "fp": 4,
+        "fn": 3,
+        "unlocalized": 1,
+        "precision": 0.5555555555555556,
+        "recall": 0.625,
+        "f1": 0.5882352941176471
+      },
+      "enhanced_hybrid": {
+        "tp": 8,
+        "fp": 3,
+        "fn": 0,
+        "unlocalized": 0,
+        "precision": 0.7272727272727273,
+        "recall": 1.0,
+        "f1": 0.8421052631578947
+      },
+      "baseline_ocr": {
+        "character_errors": 6,
+        "characters": 225,
+        "cer": 0.02666666666666667,
+        "word_errors": 1,
+        "words": 34,
+        "wer": 0.029411764705882353
+      },
+      "rescue_ocr": {
+        "character_errors": 6,
+        "characters": 225,
+        "cer": 0.02666666666666667,
+        "word_errors": 1,
+        "words": 34,
+        "wer": 0.029411764705882353
+      },
+      "baseline_median_analysis_ms": 636.7999999999884,
+      "enhanced_median_analysis_ms": 593.0999999999767,
+      "enhanced_max_heartbeat_gap_ms": 40.70000000001164
+    },
+    "eng+kan": {
+      "documents": 3,
+      "original_ocr_deterministic": {
+        "tp": 6,
+        "fp": 1,
+        "fn": 1,
+        "unlocalized": 0,
+        "precision": 0.8571428571428571,
+        "recall": 0.8571428571428571,
+        "f1": 0.8571428571428571
+      },
+      "baseline_hybrid": {
+        "tp": 6,
+        "fp": 1,
+        "fn": 1,
+        "unlocalized": 0,
+        "precision": 0.8571428571428571,
+        "recall": 0.8571428571428571,
+        "f1": 0.8571428571428571
+      },
+      "enhanced_hybrid": {
+        "tp": 7,
+        "fp": 1,
+        "fn": 0,
+        "unlocalized": 0,
+        "precision": 0.875,
+        "recall": 1.0,
+        "f1": 0.9333333333333333
+      },
+      "baseline_ocr": {
+        "character_errors": 0,
+        "characters": 269,
+        "cer": 0.0,
+        "word_errors": 0,
+        "words": 39,
+        "wer": 0.0
+      },
+      "rescue_ocr": {
+        "character_errors": 0,
+        "characters": 269,
+        "cer": 0.0,
+        "word_errors": 0,
+        "words": 39,
+        "wer": 0.0
+      },
+      "baseline_median_analysis_ms": 931.8999999999651,
+      "enhanced_median_analysis_ms": 885.0999999999767,
+      "enhanced_max_heartbeat_gap_ms": 50.5
+    },
+    "small-text": {
+      "documents": 3,
+      "original_ocr_deterministic": {
+        "tp": 2,
+        "fp": 0,
+        "fn": 4,
+        "unlocalized": 0,
+        "precision": 1.0,
+        "recall": 0.3333333333333333,
+        "f1": 0.5
+      },
+      "baseline_hybrid": {
+        "tp": 2,
+        "fp": 0,
+        "fn": 4,
+        "unlocalized": 0,
+        "precision": 1.0,
+        "recall": 0.3333333333333333,
+        "f1": 0.5
+      },
+      "enhanced_hybrid": {
+        "tp": 5,
+        "fp": 1,
+        "fn": 1,
+        "unlocalized": 1,
+        "precision": 0.8333333333333334,
+        "recall": 0.8333333333333334,
+        "f1": 0.8333333333333334
+      },
+      "baseline_ocr": {
+        "character_errors": 66,
+        "characters": 189,
+        "cer": 0.3492063492063492,
+        "word_errors": 12,
+        "words": 27,
+        "wer": 0.4444444444444444
+      },
+      "rescue_ocr": {
+        "character_errors": 4,
+        "characters": 189,
+        "cer": 0.021164021164021163,
+        "word_errors": 7,
+        "words": 27,
+        "wer": 0.25925925925925924
+      },
+      "baseline_median_analysis_ms": 390.5999999999767,
+      "enhanced_median_analysis_ms": 500.5,
+      "enhanced_max_heartbeat_gap_ms": 19.29999999998836
+    }
+  },
+  "per_document": [
+    {
+      "id": "sealed-identity",
+      "baseline": {
+        "tp": 2,
+        "fp": 0,
+        "fn": 0,
+        "unlocalized": 0
+      },
+      "enhanced": {
+        "tp": 2,
+        "fp": 0,
+        "fn": 0,
+        "unlocalized": 0
+      }
+    },
+    {
+      "id": "sealed-marks",
+      "baseline": {
+        "tp": 1,
+        "fp": 0,
+        "fn": 1,
+        "unlocalized": 0
+      },
+      "enhanced": {
+        "tp": 2,
+        "fp": 0,
+        "fn": 0,
+        "unlocalized": 0
+      }
+    },
+    {
+      "id": "sealed-admission",
+      "baseline": {
+        "tp": 1,
+        "fp": 0,
+        "fn": 1,
+        "unlocalized": 0
+      },
+      "enhanced": {
+        "tp": 2,
+        "fp": 0,
+        "fn": 0,
+        "unlocalized": 0
+      }
+    },
+    {
+      "id": "sealed-hospital",
+      "baseline": {
+        "tp": 1,
+        "fp": 0,
+        "fn": 1,
+        "unlocalized": 0
+      },
+      "enhanced": {
+        "tp": 2,
+        "fp": 0,
+        "fn": 0,
+        "unlocalized": 0
+      }
+    },
+    {
+      "id": "sealed-medical",
+      "baseline": {
+        "tp": 1,
+        "fp": 1,
+        "fn": 2,
+        "unlocalized": 1
+      },
+      "enhanced": {
+        "tp": 3,
+        "fp": 0,
+        "fn": 0,
+        "unlocalized": 0
+      }
+    },
+    {
+      "id": "sealed-financial",
+      "baseline": {
+        "tp": 2,
+        "fp": 1,
+        "fn": 0,
+        "unlocalized": 0
+      },
+      "enhanced": {
+        "tp": 2,
+        "fp": 1,
+        "fn": 0,
+        "unlocalized": 0
+      }
+    },
+    {
+      "id": "sealed-application",
+      "baseline": {
+        "tp": 5,
+        "fp": 2,
+        "fn": 0,
+        "unlocalized": 0
+      },
+      "enhanced": {
+        "tp": 5,
+        "fp": 2,
+        "fn": 0,
+        "unlocalized": 0
+      }
+    },
+    {
+      "id": "sealed-legal",
+      "baseline": {
+        "tp": 3,
+        "fp": 3,
+        "fn": 0,
+        "unlocalized": 0
+      },
+      "enhanced": {
+        "tp": 3,
+        "fp": 3,
+        "fn": 0,
+        "unlocalized": 0
+      }
+    },
+    {
+      "id": "sealed-poor-scan",
+      "baseline": {
+        "tp": 3,
+        "fp": 0,
+        "fn": 0,
+        "unlocalized": 0
+      },
+      "enhanced": {
+        "tp": 3,
+        "fp": 0,
+        "fn": 0,
+        "unlocalized": 0
+      }
+    },
+    {
+      "id": "sealed-repeated",
+      "baseline": {
+        "tp": 2,
+        "fp": 0,
+        "fn": 1,
+        "unlocalized": 0
+      },
+      "enhanced": {
+        "tp": 3,
+        "fp": 0,
+        "fn": 0,
+        "unlocalized": 0
+      }
+    },
+    {
+      "id": "sealed-small-0.5",
+      "baseline": {
+        "tp": 0,
+        "fp": 0,
+        "fn": 2,
+        "unlocalized": 0
+      },
+      "enhanced": {
+        "tp": 1,
+        "fp": 0,
+        "fn": 1,
+        "unlocalized": 0
+      }
+    },
+    {
+      "id": "sealed-small-0.65",
+      "baseline": {
+        "tp": 1,
+        "fp": 0,
+        "fn": 1,
+        "unlocalized": 0
+      },
+      "enhanced": {
+        "tp": 2,
+        "fp": 0,
+        "fn": 0,
+        "unlocalized": 0
+      }
+    },
+    {
+      "id": "sealed-small-0.8",
+      "baseline": {
+        "tp": 1,
+        "fp": 0,
+        "fn": 1,
+        "unlocalized": 0
+      },
+      "enhanced": {
+        "tp": 2,
+        "fp": 1,
+        "fn": 0,
+        "unlocalized": 1
+      }
+    }
+  ]
+}

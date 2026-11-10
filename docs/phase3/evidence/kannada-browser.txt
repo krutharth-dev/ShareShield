@@ -1,0 +1,1 @@
+PASS Kannada scan: both Aadhaar occurrences and patient ID covered in reopened PNG [ 0.9010989010989011, 0.9010989010989011, 0.9897959183673469 ]

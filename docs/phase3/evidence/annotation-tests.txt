@@ -1,0 +1,14 @@
+.......
+----------------------------------------------------------------------
+Ran 7 tests in 0.144s
+
+OK
+✔ holdout is frozen; annotations are valid UTF-16 and honestly pending review (2.461034ms)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 1
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 111.58597

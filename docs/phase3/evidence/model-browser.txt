@@ -1,0 +1,24 @@
+{
+  "browser": "141.0.7390.37",
+  "cases": [
+    {
+      "unavailable": false,
+      "upload_to_export_ms": 738,
+      "resources": [],
+      "jsHeap": {
+        "used": 10000000,
+        "total": 15200000
+      }
+    },
+    {
+      "unavailable": true,
+      "upload_to_export_ms": 426,
+      "resources": [],
+      "jsHeap": {
+        "used": 10000000,
+        "total": 13400000
+      }
+    }
+  ],
+  "memory_scope": "JS heap observed after upload/export, NOT peak renderer RSS or model-only memory. Browser peak memory remains unmeasured."
+}

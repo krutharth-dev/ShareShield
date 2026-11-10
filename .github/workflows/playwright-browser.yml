@@ -23,8 +23,23 @@ jobs:
           for i in {1..30}; do if curl -fsS http://127.0.0.1:4174/app >/dev/null; then break; fi; sleep 1; done
           node tests/browser/smoke.mjs
           node tests/browser/kannada-form.mjs
+          node tests/browser/phase3-cancel.mjs
+          node tests/browser/phase3-export.mjs
           node tests/browser/context-model.mjs
           SHARESHIELD_PERFORMANCE_REPORT=/tmp/context-performance.json node tests/browser/context-performance.mjs
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Independently inspect phase 3 downloaded PDF pixels
+        run: |
+          python -m pip install PyMuPDF==1.26.6 Pillow==12.3.0
+          python ../tools/phase3/verify_exports.py /tmp/phase3-exports
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: phase3-export-evidence-${{ github.sha }}
+          path: /tmp/phase3-exports
+          retention-days: 7
       - name: Extend viewer isolated build and local-only browser acceptance
         run: |
           npm run extend:build

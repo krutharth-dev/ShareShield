@@ -117,7 +117,9 @@ test('a valid 12-digit Aadhaar and a VID may share a line without hiding Aadhaar
 });
 test('9, 11, 13 and 17 digits are not 12-digit Aadhaar',()=>{
  for(const digits of ['123456789','12345678901','1234567890123','12345678901234567']){
-  assert.equal(detect('Aadhaar Number: '+digits).filter(f=>f.category.startsWith('AADHAAR')).length,0,digits);
+  const hits=detect('Aadhaar Number: '+digits).filter(f=>f.category.startsWith('AADHAAR'));
+  assert.ok(hits.every(f=>f.category==='AADHAAR_OCR_REVIEW'&&f.detection_confidence<.5),digits);
+  if(digits.length>12)assert.equal(hits.length,0,digits);
  }
 });
 test('a VID line is not matched as another private numeric category',()=>{

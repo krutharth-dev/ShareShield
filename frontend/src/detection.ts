@@ -183,8 +183,8 @@ function detectCanonical(text:string):Candidate[]{
  // longer space-separated or ungrouped number; preserve source offsets.
  const numericDigit='[0-9०-९೦-೯]';
  const touchesOtherDigits=(start:number,end:number)=>
-   new RegExp(numericDigit+'[ \t._:/\\-]{0,6}$','u').test(text.slice(Math.max(0,start-9),start))||
-   new RegExp('^[ \t._:/\\-]{0,6}'+numericDigit,'u').test(text.slice(end,end+9));
+   new RegExp(numericDigit+'[ \t\r\n._:/\\-]{0,6}$','u').test(text.slice(Math.max(0,start-9),start))||
+   new RegExp('^[ \t\r\n._:/\\-]{0,6}'+numericDigit,'u').test(text.slice(end,end+9));
  const virtualIdField=/(?:\b(?:VID|BID)\b|virtual\s*(?:identification\s*)?id|ವರ್ಚುವಲ್\s*(?:ಐಡಿ|ಗುರುತಿನ\s*ಸಂಖ್ಯೆ))\s*[:#=\-]?\s*((?:[0-9०-९೦-೯][ \t-]?){15}[0-9०-९೦-೯])(?![0-9०-९೦-೯])/giu;
  const virtualIdMatches=[...text.matchAll(virtualIdField)].filter(m=>!touchesOtherDigits(m.index!+m[0].lastIndexOf(m[1]),m.index!+m[0].length));
  const excludedVirtualRanges=virtualIdMatches.map(m=>({start:m.index!,end:m.index!+m[0].length}));
@@ -225,6 +225,24 @@ function detectCanonical(text:string):Candidate[]{
      if(found.some(f=>f.start<=m.index!&&f.end>=m.index!+m[0].length&&f.category.startsWith('AADHAAR')))continue;
      found.push({category:'AADHAAR_OCR_REVIEW',value:m[0],start:m.index!,end:m.index!+m[0].length,risk:'HIGH',detection_confidence:.4,reason:'Possible Aadhaar digits distorted by OCR. Verify exact pixels manually.'});
    }
+ }
+ // Keep each incomplete labelled occurrence, even when another Aadhaar on the
+ // page was complete. Never infer a 12-digit value from a longer numeric run.
+ for(const m of text.matchAll(/(?:aadha(?:ar|r)?|aadhar|ಆಧಾರ್|ಆಧಾರ|आधार)[ \t]*(?:number|no\.?)?[ \t]*[:#=-]?[ \t]*([0-9OIlS][0-9OIlS \t-]{5,24})[ \t]*(?=\n|$)/giu)){
+  const value=m[1].trimEnd(),start=m.index!+m[0].indexOf(m[1]),end=start+value.length;
+  const length=value.replace(/[ \t-]/g,'').length;
+  if(length<6||length>=12||touchesOtherDigits(start,end)||inVirtualField(start,end))continue;
+  if(found.some(f=>f.category.startsWith('AADHAAR')&&f.start<=start&&f.end>=end))continue;
+  found.push({category:'AADHAAR_OCR_REVIEW',value,start,end,risk:'HIGH',detection_confidence:.35,
+   reason:'Incomplete labelled Aadhaar-like OCR. Inspect the source; never reconstruct missing digits automatically.'});
+ }
+ // A label-only row followed by one complete short numeric row is ambiguous
+ // in tables/columns. Offer review, never a confident patient/identity claim.
+ const separated=/(?:^|\n)[ \t]*(?:ರೋಗಿಯ?[ \t]+(?:ಗುರುತಿನ[ \t]+)?(?:ಸಂಖ್ಯೆ|ಐಡಿ)|ವೈದ್ಯಕೀಯ[ \t]+ದಾಖಲೆ[ \t]+ಸಂಖ್ಯೆ|ಪ್ರವೇಶ[ \t]+ಸಂಖ್ಯೆ|ವಿದ್ಯಾರ್ಥಿಯ?[ \t]+ಗುರುತಿನ[ \t]+ಸಂಖ್ಯೆ|(?:patient[ \t]+)?MRN|patient[ \t]+(?:id|number)|medical[ \t]+record[ \t]+(?:number|id)|admission[ \t]+(?:number|id)|student[ \t]+id|USN)[ \t]*[:#=]?[ \t]*\n[ \t]*([0-9]{3,11})[ \t]*(?=\n|$)/giu;
+ for(const m of text.matchAll(separated)){
+  const value=m[1],start=m.index!+m[0].lastIndexOf(value);
+  found.push({category:'FORM_IDENTIFIER_REVIEW',value,start,end:start+value.length,risk:'HIGH',detection_confidence:.55,
+   reason:'Identifier label and numeric value occupy separate rows. Verify column association manually.'});
  }
  const combined=[...found,...detectExtended(text,found),...detectContextFields(text)];
  // A local-number substring inside a +country-code number is not a second phone.

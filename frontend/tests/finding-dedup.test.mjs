@@ -57,3 +57,8 @@ test('OCR disagreement invalidates stale successful structural validation',()=>{
  assert.equal(result.findings[0].validation.status,'failed');
  assert.equal(result.findings[0].category,'AADHAAR_OCR_REVIEW');
 });
+test('two-word and three-word OCR segmentations of one number consolidate',()=>{
+ const a=f('a','AADHAAR_CANDIDATE',0,10,10);a.boxes=[box(10,10,40),box(55,10,40),box(100,10,40)];
+ const b={...a,id:'b',boxes:[box(10,10,85),box(100,10,40)]};
+ assert.equal(consolidateLocated([a,b],new Map([['a','2345 6789 0124'],['b','23456789 0124']])).findings.length,1);
+});

@@ -1,0 +1,24 @@
+{
+  "browser": "141.0.7390.37",
+  "samples": [
+    {
+      "viewport": "desktop",
+      "input_characters": 104029,
+      "upload_to_findings_ms": 466,
+      "workers": 1,
+      "heartbeat_ticks": 27,
+      "max_heartbeat_gap_ms": 39.70000000001164
+    },
+    {
+      "viewport": "mobile emulation (desktop CPU)",
+      "input_characters": 104029,
+      "upload_to_findings_ms": 913,
+      "workers": 1,
+      "heartbeat_ticks": 57,
+      "max_heartbeat_gap_ms": 30.70000000001164
+    }
+  ],
+  "memory_scope": "Peak sampled aggregate RSS of this Node process and Chromium descendants, including browser overhead; NOT model-only memory. 100 ms samples may miss short peaks.",
+  "peak_sampled_process_tree_rss_bytes": 545103872,
+  "memory_available": true
+}
