@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { chromium } from 'playwright';
 const url=process.env.EXTEND_TEST_URL??'http://127.0.0.1:4176/extend-preview.html';
 const origin=new URL(url).origin;
-const browser=await chromium.launch({headless:true});
+const browser=await chromium.launch({executablePath:process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE,headless:true});
 try {
  const context=await browser.newContext({serviceWorkers: "block"});
  const page=await context.newPage();

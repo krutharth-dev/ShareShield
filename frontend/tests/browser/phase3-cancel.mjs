@@ -1,7 +1,7 @@
 import {chromium} from 'playwright';
 import assert from 'node:assert/strict';
 import {fileURLToPath} from 'node:url';
-const browser=await chromium.launch({headless:true,args:['--no-sandbox']});
+const browser=await chromium.launch({executablePath:process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE,headless:true,args:['--no-sandbox']});
 try{
  const page=await browser.newPage();await page.goto(process.env.TEST_URL??'http://127.0.0.1:4174/app');
  await page.locator('input[type=file]').setInputFiles(fileURLToPath(new URL('../phase3/fixtures/development-multipage.pdf',import.meta.url)));
