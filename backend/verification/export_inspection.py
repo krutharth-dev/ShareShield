@@ -3,13 +3,14 @@ import hashlib
 import math
 from pathlib import Path
 from pypdf import PdfReader
-from pypdf.generic import ArrayObject, DictionaryObject, IndirectObject, ContentStream, TextStringObject
+from pypdf.generic import ArrayObject, DictionaryObject, IndirectObject, TextStringObject
 
 FORBIDDEN = {'/AcroForm','/Annots','/EmbeddedFiles','/Filespec','/JavaScript','/JS','/OpenAction','/AA','/OCProperties','/OC','/URI','/RichMedia','/XFA','/Metadata'}
 
 def inspect_structure(path, selected, require_raster=False):
     reader = PdfReader(str(path), strict=True)
     seen, strings, structures = set(), [], set()
+    image_objects=set();used_images=set()
     def walk(obj, depth=0):
         if depth > 80 or len(seen) > 100000:
             raise ValueError('Object inspection limit exceeded')
@@ -17,9 +18,12 @@ def inspect_structure(path, selected, require_raster=False):
             key=(obj.idnum,obj.generation)
             if key in seen: return
             seen.add(key); obj=obj.get_object()
+            if isinstance(obj,DictionaryObject) and obj.get('/Subtype')=='/Image':image_objects.add(key)
         if isinstance(obj, DictionaryObject):
             for key,value in obj.items():
-                if str(key) in FORBIDDEN: structures.add(str(key))
+                resolved=value.get_object() if isinstance(value,IndirectObject) else value
+                empty_annotations=str(key)=='/Annots' and isinstance(resolved,ArrayObject) and len(resolved)==0
+                if str(key) in FORBIDDEN and not empty_annotations: structures.add(str(key))
                 walk(value,depth+1)
         elif isinstance(obj, (ArrayObject,list)):
             for item in obj: walk(item,depth+1)
@@ -45,13 +49,15 @@ def inspect_structure(path, selected, require_raster=False):
             images=resources.get('/XObject',DictionaryObject()).get_object()
             if len(images)!=1: raster_ok=False
             for image in images.values():
+                if isinstance(image,IndirectObject):used_images.add((image.idnum,image.generation))
                 image=image.get_object()
                 if image.get('/Subtype')!='/Image' or any(k in image for k in ['/SMask','/Mask','/Alternates','/OPI']): raster_ok=False
             if resources.get('/Font'): raster_ok=False
+        if image_objects!=used_images:raster_ok=False
     data=Path(path).read_bytes()
     revisions=data.count(b'%%EOF')
     return {'residual':residual,'structures':sorted(structures),'raster_contract':raster_ok,
-            'revision_markers':revisions,'object_count':len(seen),'page_count':len(reader.pages),
+            'image_objects':len(image_objects),'painted_images':len(used_images),'revision_markers':revisions,'object_count':len(seen),'page_count':len(reader.pages),
             'sha256':hashlib.sha256(data).hexdigest()}
 
 def inspect_pixels(path, original_path, regions):

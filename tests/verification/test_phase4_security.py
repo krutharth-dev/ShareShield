@@ -92,3 +92,28 @@ def test_backend_vid_substring_is_excluded_but_repeated_aadhaar_preserved():
     value='2345 6789 0124'
     assert not [f for f in detect_sensitive_data('VID: '+value+' 5678') if f.category=='AADHAAR_CANDIDATE']
     assert len([f for f in detect_sensitive_data(('Aadhaar: '+value+'\n')*10) if f.category=='AADHAAR_CANDIDATE'])==10
+
+
+def test_original_image_object_cannot_hide_unpainted_in_rebuilt_pdf(tmp_path):
+    p=source(tmp_path/'s.pdf');o=redact_file(p,tmp_path/'o.pdf',[])
+    from pypdf.generic import DecodedStreamObject,NumberObject
+    w=PdfWriter(clone_from=o);hidden=DecodedStreamObject();hidden.set_data(b'\xff\xff\xff')
+    hidden.update({NameObject('/Type'):NameObject('/XObject'),NameObject('/Subtype'):NameObject('/Image'),NameObject('/Width'):NumberObject(1),NameObject('/Height'):NumberObject(1),NameObject('/BitsPerComponent'):NumberObject(8),NameObject('/ColorSpace'):NameObject('/DeviceRGB')})
+    w._add_object(hidden);w.write(tmp_path/'hidden.pdf')
+    assert not inspect_structure(tmp_path/'hidden.pdf',[],True)['raster_contract']
+
+
+def test_incremental_revision_retaining_secret_is_not_clear(tmp_path):
+    p=source(tmp_path/'s.pdf');d=fitz.open(p);d.set_metadata({'author':SECRET});d.saveIncr();d.close()
+    r=verify_pdf(VerificationInput(p,selected_findings=[SECRET],required_checks=['metadata_attachments'],require_raster=True))
+    assert r['status']=='FLAG'
+
+
+def test_empty_annotation_array_is_not_an_annotation(tmp_path):
+    p=source(tmp_path/'s.pdf');o=redact_file(p,tmp_path/'o.pdf',[])
+    w=PdfWriter(clone_from=o);w.pages[0][NameObject('/Annots')]=ArrayObject();w.write(tmp_path/'empty.pdf')
+    assert inspect_structure(tmp_path/'empty.pdf',[],True)['structures']==[]
+    annotation=DictionaryObject({NameObject('/Type'):NameObject('/Annot'),NameObject('/Contents'):TextStringObject(SECRET)})
+    w.pages[0][NameObject('/Annots')]=ArrayObject([w._add_object(annotation)]);w.write(tmp_path/'populated.pdf')
+    audit=inspect_structure(tmp_path/'populated.pdf',[SECRET],True)
+    assert '/Annots' in audit['structures'] and audit['residual']
