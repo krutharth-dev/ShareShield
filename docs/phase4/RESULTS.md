@@ -4,7 +4,7 @@
 
 Draft [PR #24](https://github.com/krutharth-dev/ShareShield/pull/24), branch `feat/phase4-redaction-security-20261111`, targets `feat/phase3-ocr-reliability-20261109`. Production/main and release approvals are unchanged. The baseline Phase 3 head and its parent were checked before implementation; no unrelated unfinished changes were imported.
 
-These saved download artifacts were produced by actual Chromium 141 on **`31a83105b1c2525c77c89f28c72b0d7ac73a9963`**. The workflow checks out the exact PR head and asserts the served build-info commit equals it. GitHub's artifact name contains the event merge SHA; that is not the tested runtime SHA. Follow-up evidence/test-only commits rerun all workflows; see the PR for the final head's checks.
+These saved download artifacts were produced by actual Chromium 141 on **`31a83105b1c2525c77c89f28c72b0d7ac73a9963`**. The workflow checks out the exact PR head and asserts the served build-info commit equals it. GitHub's artifact name contains the event merge SHA; that is not the tested runtime SHA. Follow-up verification/evidence commits rerun all workflows; see the PR for the final head's checks.
 
 | Workflow | Observed result on the artifact source commit |
 |---|---|
@@ -88,8 +88,12 @@ Observed browser requests contained no document POST or external request body. O
 
 ## Preview and release decision
 
-Cloudflare API confirmed an isolated **preview** deployment succeeded for commit `31a83105b1c2525c77c89f28c72b0d7ac73a9963`: [cfdb0f36.shareshield-mini.pages.dev](https://cfdb0f36.shareshield-mini.pages.dev), deployment `cfdb0f36-4d7a-4462-90cd-d443a4276f0b`. Production branch remains main; automatic preview settings were not changed. Served-byte/live-UI verification of that URL remains pending because available network/browser surfaces could not reach it. Do not treat API deployment success as live acceptance. Final evidence-only follow-ups are not claimed deployed.
+Cloudflare API confirmed an isolated **preview** deployment succeeded for commit `31a83105b1c2525c77c89f28c72b0d7ac73a9963`: [cfdb0f36.shareshield-mini.pages.dev](https://cfdb0f36.shareshield-mini.pages.dev), deployment `cfdb0f36-4d7a-4462-90cd-d443a4276f0b`. Production branch remains main; automatic preview settings were not changed. Served-byte/live-UI verification of that URL remains pending because available network/browser surfaces could not reach it. Do not treat API deployment success as live acceptance. Final follow-ups are not claimed deployed.
 
 **Not production-ready for unrestricted sensitive-document use.** Pending: independent fluent Kannada reviewers, authorized real-document evaluation, physical devices, representative faces/photographs/handwriting/QR decoding, difficult perspective/skew/dense columns, the Phase 3 tiny missed entity and duplicate proposals, and external face-model supply-chain hardening. Unlocalized or uncertain findings stay review-only. [Phase 3 reviewer instructions](../phase3/review/README.md) and [device protocol](../phase3/DEVICE_ACCEPTANCE.md) specify evidence to collect; no approvals or results are fabricated.
 
 Raster output deliberately sacrifices text search/accessibility, editable forms, digital signatures and vector fidelity for removal of source PDF objects. It can increase size. This work demonstrates removal for approved, correctly localized supported regions; it does not prove complete detection or destruction of the user's original file.
+
+### Final orphan-stream regression
+
+A post-evidence review reproduced an additional verifier gap on `281243d`: a pypdf orphan stream carrying the fictional selected secret was ignored and the otherwise painted PDF received SCOPED_CLEAR. The correction tracks every stream, rejects orphan streams, and requires strict raster exports to account for all content/image/container streams. The same specimen now returns FLAG under the raster contract and UNVERIFIED under general inspection. Backend output uses already-converted DeviceRGB pixels and discards auxiliary generated ICC streams. All 56 Python tests and the saved browser downloads pass after this correction; the final head reruns all CI. The preview still serves the earlier runtime commit and is not claimed to include this final verifier update.

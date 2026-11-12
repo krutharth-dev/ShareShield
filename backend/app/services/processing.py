@@ -144,7 +144,10 @@ def redact_file(source: Path, output: Path, regions):
                 import io
                 encoded=io.BytesIO();image.save(encoded,format='PNG')
                 target=rebuilt.new_page(width=page.rect.width,height=page.rect.height)
-                target.insert_image(target.rect,stream=encoded.getvalue())
+                image_xref=target.insert_image(target.rect,stream=encoded.getvalue())
+                # Pixels above are already RGB. Do not carry auxiliary ICC streams in
+                # the strict fresh-raster format; garbage collection removes them.
+                rebuilt.xref_set_key(image_xref,"ColorSpace","/DeviceRGB")
                 image.close()
             rebuilt.save(output,garbage=4,deflate=True)
         return output

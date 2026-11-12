@@ -5,6 +5,8 @@
       "residual": false,
       "structures": [],
       "raster_contract": true,
+      "stream_objects": 6,
+      "unaccounted_streams": 0,
       "image_objects": 3,
       "painted_images": 3,
       "revision_markers": 1,
@@ -41,6 +43,8 @@
           "residual": false,
           "structures": [],
           "raster_contract": true,
+          "stream_objects": 6,
+          "unaccounted_streams": 0,
           "image_objects": 3,
           "painted_images": 3,
           "revision_markers": 1,
@@ -106,11 +110,11 @@
       "location_information": {
         "details_withheld": false
       },
-      "verified_at": "2026-11-12T01:53:33.904426+00:00",
-      "duration_ms": 1375.24,
+      "verified_at": "2026-11-12T01:59:36.671368+00:00",
+      "duration_ms": 1076.28,
       "scope_note": "SCOPED_CLEAR covers only completed checks; it is not a universal security guarantee."
     },
-    "inspection_seconds": 1.47,
+    "inspection_seconds": 1.143,
     "size_bytes": 109153
   },
   {
@@ -119,6 +123,8 @@
       "residual": false,
       "structures": [],
       "raster_contract": true,
+      "stream_objects": 6,
+      "unaccounted_streams": 0,
       "image_objects": 3,
       "painted_images": 3,
       "revision_markers": 1,
@@ -162,6 +168,8 @@
           "residual": false,
           "structures": [],
           "raster_contract": true,
+          "stream_objects": 6,
+          "unaccounted_streams": 0,
           "image_objects": 3,
           "painted_images": 3,
           "revision_markers": 1,
@@ -218,11 +226,11 @@
       "location_information": {
         "details_withheld": false
       },
-      "verified_at": "2026-11-12T01:53:36.023102+00:00",
-      "duration_ms": 1495.53,
+      "verified_at": "2026-11-12T01:59:38.398895+00:00",
+      "duration_ms": 1184.16,
       "scope_note": "SCOPED_CLEAR covers only completed checks; it is not a universal security guarantee."
     },
-    "inspection_seconds": 2.119,
+    "inspection_seconds": 1.727,
     "size_bytes": 69923
   },
   {
@@ -231,6 +239,8 @@
       "residual": false,
       "structures": [],
       "raster_contract": true,
+      "stream_objects": 6,
+      "unaccounted_streams": 0,
       "image_objects": 3,
       "painted_images": 3,
       "revision_markers": 1,
@@ -271,6 +281,8 @@
           "residual": false,
           "structures": [],
           "raster_contract": true,
+          "stream_objects": 6,
+          "unaccounted_streams": 0,
           "image_objects": 3,
           "painted_images": 3,
           "revision_markers": 1,
@@ -327,11 +339,11 @@
       "location_information": {
         "details_withheld": false
       },
-      "verified_at": "2026-11-12T01:53:38.289543+00:00",
-      "duration_ms": 1703.67,
+      "verified_at": "2026-11-12T01:59:40.098637+00:00",
+      "duration_ms": 1131.61,
       "scope_note": "SCOPED_CLEAR covers only completed checks; it is not a universal security guarantee."
     },
-    "inspection_seconds": 2.267,
+    "inspection_seconds": 1.699,
     "size_bytes": 72263
   },
   {
@@ -340,6 +352,8 @@
       "residual": false,
       "structures": [],
       "raster_contract": true,
+      "stream_objects": 6,
+      "unaccounted_streams": 0,
       "image_objects": 3,
       "painted_images": 3,
       "revision_markers": 1,
@@ -380,6 +394,8 @@
           "residual": false,
           "structures": [],
           "raster_contract": true,
+          "stream_objects": 6,
+          "unaccounted_streams": 0,
           "image_objects": 3,
           "painted_images": 3,
           "revision_markers": 1,
@@ -449,11 +465,11 @@
       "location_information": {
         "details_withheld": false
       },
-      "verified_at": "2026-11-12T01:53:40.107986+00:00",
-      "duration_ms": 1276.03,
+      "verified_at": "2026-11-12T01:59:41.697932+00:00",
+      "duration_ms": 1133.07,
       "scope_note": "SCOPED_CLEAR covers only completed checks; it is not a universal security guarantee."
     },
-    "inspection_seconds": 1.818,
+    "inspection_seconds": 1.599,
     "size_bytes": 75663
   },
   {

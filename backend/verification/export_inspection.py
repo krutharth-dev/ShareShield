@@ -3,14 +3,14 @@ import hashlib
 import math
 from pathlib import Path
 from pypdf import PdfReader
-from pypdf.generic import ArrayObject, DictionaryObject, IndirectObject, TextStringObject
+from pypdf.generic import ArrayObject, DictionaryObject, IndirectObject, TextStringObject, StreamObject
 
 FORBIDDEN = {'/AcroForm','/Annots','/EmbeddedFiles','/Filespec','/JavaScript','/JS','/OpenAction','/AA','/OCProperties','/OC','/URI','/RichMedia','/XFA','/Metadata'}
 
 def inspect_structure(path, selected, require_raster=False):
     reader = PdfReader(str(path), strict=True)
     seen, strings, structures = set(), [], set()
-    image_objects=set();used_images=set()
+    image_objects=set();used_images=set();stream_objects=set();container_streams=set();content_streams=set()
     def walk(obj, depth=0):
         if depth > 80 or len(seen) > 100000:
             raise ValueError('Object inspection limit exceeded')
@@ -19,6 +19,9 @@ def inspect_structure(path, selected, require_raster=False):
             if key in seen: return
             seen.add(key); obj=obj.get_object()
             if isinstance(obj,DictionaryObject) and obj.get('/Subtype')=='/Image':image_objects.add(key)
+            if isinstance(obj,StreamObject):
+                stream_objects.add(key)
+                if obj.get('/Type') in ('/ObjStm','/XRef'):container_streams.add(key)
         if isinstance(obj, DictionaryObject):
             for key,value in obj.items():
                 resolved=value.get_object() if isinstance(value,IndirectObject) else value
@@ -29,6 +32,7 @@ def inspect_structure(path, selected, require_raster=False):
             for item in obj: walk(item,depth+1)
         elif isinstance(obj, TextStringObject): strings.append(str(obj))
     walk(reader.trailer)
+    reachable_streams=stream_objects.copy()
     # Include orphaned but recoverable objects, not only the reachable document graph.
     for generation, entries in reader.xref.items():
         if generation == 65535: continue
@@ -36,10 +40,15 @@ def inspect_structure(path, selected, require_raster=False):
             if number: walk(IndirectObject(number,generation,reader))
     for number in reader.xref_objStm:
         walk(IndirectObject(number,0,reader))
+    if stream_objects-reachable_streams-container_streams:structures.add('/OrphanStream')
     residual=any(v.casefold() in text.casefold() for v in selected for text in strings)
     raster_ok=True
     if require_raster:
         for page in reader.pages:
+            refs=page.get('/Contents')
+            refs=refs if isinstance(refs,ArrayObject) else [refs]
+            for ref in refs:
+                if isinstance(ref,IndirectObject):content_streams.add((ref.idnum,ref.generation))
             content=page.get_contents()
             operations=content.operations if content is not None else []
             # Fresh raster exports paint one image only. Text, clipping, overlays and forms fail.
@@ -54,9 +63,11 @@ def inspect_structure(path, selected, require_raster=False):
                 if image.get('/Subtype')!='/Image' or any(k in image for k in ['/SMask','/Mask','/Alternates','/OPI']): raster_ok=False
             if resources.get('/Font'): raster_ok=False
         if image_objects!=used_images:raster_ok=False
+        if stream_objects-(used_images|content_streams|container_streams):raster_ok=False
     data=Path(path).read_bytes()
     revisions=data.count(b'%%EOF')
     return {'residual':residual,'structures':sorted(structures),'raster_contract':raster_ok,
+            'stream_objects':len(stream_objects),'unaccounted_streams':len(stream_objects-(used_images|content_streams|container_streams)) if require_raster else None,
             'image_objects':len(image_objects),'painted_images':len(used_images),'revision_markers':revisions,'object_count':len(seen),'page_count':len(reader.pages),
             'sha256':hashlib.sha256(data).hexdigest()}
 

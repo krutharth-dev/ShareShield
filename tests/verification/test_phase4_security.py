@@ -117,3 +117,17 @@ def test_empty_annotation_array_is_not_an_annotation(tmp_path):
     w.pages[0][NameObject('/Annots')]=ArrayObject([w._add_object(annotation)]);w.write(tmp_path/'populated.pdf')
     audit=inspect_structure(tmp_path/'populated.pdf',[SECRET],True)
     assert '/Annots' in audit['structures'] and audit['residual']
+
+
+def test_orphan_stream_cannot_hide_selected_bytes(tmp_path):
+    from pypdf.generic import DecodedStreamObject
+    p=source(tmp_path/'source.pdf')
+    o=redact_file(p,tmp_path/'clean.pdf',[Region(page=0,x0=20,y0=40,x1=230,y1=70)])
+    w=PdfWriter(clone_from=o);hidden=DecodedStreamObject();hidden.set_data(SECRET.encode());w._add_object(hidden);w.write(tmp_path/'orphan.pdf')
+    audit=inspect_structure(tmp_path/'orphan.pdf',[SECRET],True)
+    assert '/OrphanStream' in audit['structures'] and audit['unaccounted_streams']==1 and not audit['raster_contract']
+    report=verify_pdf(VerificationInput(tmp_path/'orphan.pdf',selected_findings=[SECRET],original_path=p,approved_regions=[{'page':0,'box':{'x':20,'y':40,'width':210,'height':30}}],required_checks=['pdf_text_extraction','metadata_attachments'],require_raster=True))
+    assert report['status']=='FLAG'
+    # A general PDF request cannot silently pass uninspectable orphan stream content either.
+    general=verify_pdf(VerificationInput(tmp_path/'orphan.pdf',selected_findings=[SECRET],required_checks=['pdf_text_extraction','metadata_attachments']))
+    assert general['status']=='UNVERIFIED'
