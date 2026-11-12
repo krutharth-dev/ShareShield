@@ -1,0 +1,51 @@
+{
+  "browser": "141.0.7390.37",
+  "physicalDevice": false,
+  "results": [
+    {
+      "name": "known-unredacted",
+      "status": "FLAG",
+      "exportAndVerificationMs": 2214
+    },
+    {
+      "name": "approved",
+      "status": "FLAG",
+      "exportAndVerificationMs": 2102
+    },
+    {
+      "name": "manual-removed",
+      "status": "FLAG",
+      "exportAndVerificationMs": 2299
+    },
+    {
+      "name": "one-deselected",
+      "status": "FLAG",
+      "exportAndVerificationMs": 2969
+    },
+    {
+      "name": "large",
+      "status": "UNVERIFIED",
+      "exportAndVerificationMs": 4235
+    }
+  ],
+  "externalRequests": [
+    {
+      "host": "cdn.jsdelivr.net",
+      "method": "GET",
+      "hasBody": false
+    }
+  ],
+  "buildCommit": "31a83105b1c2525c77c89f28c72b0d7ac73a9963",
+  "analysisAndAutomaticExportMs": 4005,
+  "aadhaarOccurrences": 10,
+  "rotatedOccurrence": "manual mask required; automatic localization unavailable",
+  "storage": {
+    "local": [],
+    "session": [],
+    "memory": {
+      "used": 19300000,
+      "total": 33100000
+    }
+  },
+  "largeAnalysisMs": 2356
+}

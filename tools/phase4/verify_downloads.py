@@ -40,6 +40,13 @@ for name in ['known-unredacted','approved','manual-removed','one-deselected']:
     manual=[{'page':2,'box':{'x':10,'y':80,'width':290,'height':125}}]
     manual_result=inspect_pixels(path,source,manual)
     assert manual_result['status']==('passed' if name=='approved' else 'failed')
+    # Deselect/delete restores exactly the same rendered pixels as an unmasked export.
+    if name in ['manual-removed','one-deselected']:
+        with fitz.open(out/'known-unredacted.pdf') as original_export,fitz.open(path) as current:
+            if name=='manual-removed':n=2;rect=fitz.Rect(10,80,300,205)
+            else:
+                n=regions[0]['page'];b=regions[0]['box'];rect=fitz.Rect(b['x'],b['y'],b['x']+b['width'],b['y']+b['height'])
+            assert original_export[n].get_pixmap(matrix=fitz.Matrix(2,2),clip=rect,alpha=False).samples==current[n].get_pixmap(matrix=fitz.Matrix(2,2),clip=rect,alpha=False).samples,'Deselecting must restore original pixels exactly'
     # Every occurrence except the deliberately deselected first one must stay masked.
     if name=='one-deselected':assert glyphs(path,regions[1:])['status']=='passed'
     with fitz.open(source) as a,fitz.open(path) as b:

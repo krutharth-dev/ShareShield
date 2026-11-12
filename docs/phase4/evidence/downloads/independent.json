@@ -1,0 +1,560 @@
+[
+  {
+    "name": "known-unredacted",
+    "structure": {
+      "residual": false,
+      "structures": [],
+      "raster_contract": true,
+      "image_objects": 3,
+      "painted_images": 3,
+      "revision_markers": 1,
+      "object_count": 12,
+      "page_count": 3,
+      "sha256": "e9f7f7038820b7d375cecd42a0748485a25141642dd28824be1c21ce9a5c343f"
+    },
+    "aadhaar_pixels": {
+      "status": "failed",
+      "regions_checked": 0
+    },
+    "approved_pixels": {
+      "status": "incomplete",
+      "reason": "Original and approved region manifest required."
+    },
+    "manual_pixels": {
+      "status": "failed",
+      "reason": "Approved region is not opaque black.",
+      "regions_checked": 0
+    },
+    "report": {
+      "schema_version": "1.0",
+      "status": "FLAG",
+      "output": {
+        "filename": "shareshield-output.pdf",
+        "format": "pdf",
+        "size_bytes": 109153
+      },
+      "checks": [
+        {
+          "name": "pdf_structure",
+          "required": true,
+          "status": "passed",
+          "residual": false,
+          "structures": [],
+          "raster_contract": true,
+          "image_objects": 3,
+          "painted_images": 3,
+          "revision_markers": 1,
+          "object_count": 12,
+          "page_count": 3,
+          "sha256": "e9f7f7038820b7d375cecd42a0748485a25141642dd28824be1c21ce9a5c343f"
+        },
+        {
+          "name": "approved_pixels",
+          "required": true,
+          "status": "incomplete",
+          "reason": "Original and approved region manifest required."
+        },
+        {
+          "name": "human_review",
+          "required": true,
+          "status": "incomplete"
+        },
+        {
+          "name": "pdf_text_extraction",
+          "status": "passed",
+          "required": true,
+          "pages_checked": 3,
+          "parser": "PyMuPDF"
+        },
+        {
+          "name": "rendered_ocr",
+          "status": "passed",
+          "required": true,
+          "pages_checked": 3,
+          "engine": "Tesseract",
+          "languages": "eng"
+        },
+        {
+          "name": "metadata_attachments",
+          "status": "passed",
+          "required": true,
+          "metadata_fields_checked": 11,
+          "attachment_count": 0,
+          "parser": "PyMuPDF + pypdf"
+        },
+        {
+          "name": "mandatory_ground_truth_glyphs",
+          "status": "failed",
+          "required": true
+        }
+      ],
+      "warnings": [],
+      "remaining_findings": [
+        {
+          "category": "selected_sensitive_value",
+          "source": "rendered_ocr",
+          "match_type": "selected_value_visible_in_render"
+        },
+        {
+          "category": "aadhaar_candidate",
+          "source": "fresh_text_scan"
+        }
+      ],
+      "redaction_metadata": {
+        "details_withheld": false
+      },
+      "location_information": {
+        "details_withheld": false
+      },
+      "verified_at": "2026-11-12T01:53:33.904426+00:00",
+      "duration_ms": 1375.24,
+      "scope_note": "SCOPED_CLEAR covers only completed checks; it is not a universal security guarantee."
+    },
+    "inspection_seconds": 1.47,
+    "size_bytes": 109153
+  },
+  {
+    "name": "approved",
+    "structure": {
+      "residual": false,
+      "structures": [],
+      "raster_contract": true,
+      "image_objects": 3,
+      "painted_images": 3,
+      "revision_markers": 1,
+      "object_count": 12,
+      "page_count": 3,
+      "sha256": "dd8824454d7b0332c46206782560bfb547ed4d807a5a7fa19c164c97255d4677"
+    },
+    "aadhaar_pixels": {
+      "status": "passed",
+      "regions_checked": 11
+    },
+    "approved_pixels": {
+      "status": "passed",
+      "regions_checked": 32,
+      "regions_changed": 32,
+      "page_count": 3,
+      "parser": "PyMuPDF + Pillow",
+      "coordinates": "displayed PDF points"
+    },
+    "manual_pixels": {
+      "status": "passed",
+      "regions_checked": 1,
+      "regions_changed": 1,
+      "page_count": 3,
+      "parser": "PyMuPDF + Pillow",
+      "coordinates": "displayed PDF points"
+    },
+    "report": {
+      "schema_version": "1.0",
+      "status": "UNVERIFIED",
+      "output": {
+        "filename": "shareshield-output.pdf",
+        "format": "pdf",
+        "size_bytes": 69923
+      },
+      "checks": [
+        {
+          "name": "pdf_structure",
+          "required": true,
+          "status": "passed",
+          "residual": false,
+          "structures": [],
+          "raster_contract": true,
+          "image_objects": 3,
+          "painted_images": 3,
+          "revision_markers": 1,
+          "object_count": 12,
+          "page_count": 3,
+          "sha256": "dd8824454d7b0332c46206782560bfb547ed4d807a5a7fa19c164c97255d4677"
+        },
+        {
+          "name": "approved_pixels",
+          "required": true,
+          "status": "passed",
+          "regions_checked": 32,
+          "regions_changed": 32,
+          "page_count": 3,
+          "parser": "PyMuPDF + Pillow",
+          "coordinates": "displayed PDF points"
+        },
+        {
+          "name": "human_review",
+          "required": true,
+          "status": "incomplete"
+        },
+        {
+          "name": "pdf_text_extraction",
+          "status": "passed",
+          "required": true,
+          "pages_checked": 3,
+          "parser": "PyMuPDF"
+        },
+        {
+          "name": "rendered_ocr",
+          "status": "incomplete",
+          "required": true,
+          "pages_checked": 3,
+          "engine": "Tesseract",
+          "languages": "eng"
+        },
+        {
+          "name": "metadata_attachments",
+          "status": "passed",
+          "required": true,
+          "metadata_fields_checked": 11,
+          "attachment_count": 0,
+          "parser": "PyMuPDF + pypdf"
+        }
+      ],
+      "warnings": [
+        "Do not treat this output as verified safe; required checks are incomplete."
+      ],
+      "remaining_findings": [],
+      "redaction_metadata": {
+        "details_withheld": false
+      },
+      "location_information": {
+        "details_withheld": false
+      },
+      "verified_at": "2026-11-12T01:53:36.023102+00:00",
+      "duration_ms": 1495.53,
+      "scope_note": "SCOPED_CLEAR covers only completed checks; it is not a universal security guarantee."
+    },
+    "inspection_seconds": 2.119,
+    "size_bytes": 69923
+  },
+  {
+    "name": "manual-removed",
+    "structure": {
+      "residual": false,
+      "structures": [],
+      "raster_contract": true,
+      "image_objects": 3,
+      "painted_images": 3,
+      "revision_markers": 1,
+      "object_count": 12,
+      "page_count": 3,
+      "sha256": "362e1a967e9a92fbba0d7b6a019d3723ca69d5661887ef44aed65480dcc9a364"
+    },
+    "aadhaar_pixels": {
+      "status": "passed",
+      "regions_checked": 11
+    },
+    "approved_pixels": {
+      "status": "passed",
+      "regions_checked": 31,
+      "regions_changed": 31,
+      "page_count": 3,
+      "parser": "PyMuPDF + Pillow",
+      "coordinates": "displayed PDF points"
+    },
+    "manual_pixels": {
+      "status": "failed",
+      "reason": "Approved region is not opaque black.",
+      "regions_checked": 0
+    },
+    "report": {
+      "schema_version": "1.0",
+      "status": "UNVERIFIED",
+      "output": {
+        "filename": "shareshield-output.pdf",
+        "format": "pdf",
+        "size_bytes": 72263
+      },
+      "checks": [
+        {
+          "name": "pdf_structure",
+          "required": true,
+          "status": "passed",
+          "residual": false,
+          "structures": [],
+          "raster_contract": true,
+          "image_objects": 3,
+          "painted_images": 3,
+          "revision_markers": 1,
+          "object_count": 12,
+          "page_count": 3,
+          "sha256": "362e1a967e9a92fbba0d7b6a019d3723ca69d5661887ef44aed65480dcc9a364"
+        },
+        {
+          "name": "approved_pixels",
+          "required": true,
+          "status": "passed",
+          "regions_checked": 31,
+          "regions_changed": 31,
+          "page_count": 3,
+          "parser": "PyMuPDF + Pillow",
+          "coordinates": "displayed PDF points"
+        },
+        {
+          "name": "human_review",
+          "required": true,
+          "status": "incomplete"
+        },
+        {
+          "name": "pdf_text_extraction",
+          "status": "passed",
+          "required": true,
+          "pages_checked": 3,
+          "parser": "PyMuPDF"
+        },
+        {
+          "name": "rendered_ocr",
+          "status": "incomplete",
+          "required": true,
+          "pages_checked": 3,
+          "engine": "Tesseract",
+          "languages": "eng"
+        },
+        {
+          "name": "metadata_attachments",
+          "status": "passed",
+          "required": true,
+          "metadata_fields_checked": 11,
+          "attachment_count": 0,
+          "parser": "PyMuPDF + pypdf"
+        }
+      ],
+      "warnings": [
+        "Do not treat this output as verified safe; required checks are incomplete."
+      ],
+      "remaining_findings": [],
+      "redaction_metadata": {
+        "details_withheld": false
+      },
+      "location_information": {
+        "details_withheld": false
+      },
+      "verified_at": "2026-11-12T01:53:38.289543+00:00",
+      "duration_ms": 1703.67,
+      "scope_note": "SCOPED_CLEAR covers only completed checks; it is not a universal security guarantee."
+    },
+    "inspection_seconds": 2.267,
+    "size_bytes": 72263
+  },
+  {
+    "name": "one-deselected",
+    "structure": {
+      "residual": false,
+      "structures": [],
+      "raster_contract": true,
+      "image_objects": 3,
+      "painted_images": 3,
+      "revision_markers": 1,
+      "object_count": 12,
+      "page_count": 3,
+      "sha256": "63e5cd7f112651310db1b9a8ed4a6b00b9150285ab8f9068c7a6f2e550398c7f"
+    },
+    "aadhaar_pixels": {
+      "status": "failed",
+      "regions_checked": 0
+    },
+    "approved_pixels": {
+      "status": "passed",
+      "regions_checked": 28,
+      "regions_changed": 28,
+      "page_count": 3,
+      "parser": "PyMuPDF + Pillow",
+      "coordinates": "displayed PDF points"
+    },
+    "manual_pixels": {
+      "status": "failed",
+      "reason": "Approved region is not opaque black.",
+      "regions_checked": 0
+    },
+    "report": {
+      "schema_version": "1.0",
+      "status": "FLAG",
+      "output": {
+        "filename": "shareshield-output.pdf",
+        "format": "pdf",
+        "size_bytes": 75663
+      },
+      "checks": [
+        {
+          "name": "pdf_structure",
+          "required": true,
+          "status": "passed",
+          "residual": false,
+          "structures": [],
+          "raster_contract": true,
+          "image_objects": 3,
+          "painted_images": 3,
+          "revision_markers": 1,
+          "object_count": 12,
+          "page_count": 3,
+          "sha256": "63e5cd7f112651310db1b9a8ed4a6b00b9150285ab8f9068c7a6f2e550398c7f"
+        },
+        {
+          "name": "approved_pixels",
+          "required": true,
+          "status": "passed",
+          "regions_checked": 28,
+          "regions_changed": 28,
+          "page_count": 3,
+          "parser": "PyMuPDF + Pillow",
+          "coordinates": "displayed PDF points"
+        },
+        {
+          "name": "human_review",
+          "required": true,
+          "status": "incomplete"
+        },
+        {
+          "name": "pdf_text_extraction",
+          "status": "passed",
+          "required": true,
+          "pages_checked": 3,
+          "parser": "PyMuPDF"
+        },
+        {
+          "name": "rendered_ocr",
+          "status": "incomplete",
+          "required": true,
+          "pages_checked": 3,
+          "engine": "Tesseract",
+          "languages": "eng"
+        },
+        {
+          "name": "metadata_attachments",
+          "status": "passed",
+          "required": true,
+          "metadata_fields_checked": 11,
+          "attachment_count": 0,
+          "parser": "PyMuPDF + pypdf"
+        },
+        {
+          "name": "mandatory_ground_truth_glyphs",
+          "status": "failed",
+          "required": true
+        }
+      ],
+      "warnings": [],
+      "remaining_findings": [
+        {
+          "category": "selected_sensitive_value",
+          "source": "rendered_ocr",
+          "match_type": "selected_value_visible_in_render"
+        },
+        {
+          "category": "aadhaar_candidate",
+          "source": "fresh_text_scan"
+        }
+      ],
+      "redaction_metadata": {
+        "details_withheld": false
+      },
+      "location_information": {
+        "details_withheld": false
+      },
+      "verified_at": "2026-11-12T01:53:40.107986+00:00",
+      "duration_ms": 1276.03,
+      "scope_note": "SCOPED_CLEAR covers only completed checks; it is not a universal security guarantee."
+    },
+    "inspection_seconds": 1.818,
+    "size_bytes": 75663
+  },
+  {
+    "name": "large",
+    "aadhaar_pixels": {
+      "status": "not_applicable"
+    },
+    "approved_pixels": {
+      "status": "passed",
+      "regions_checked": 1,
+      "regions_changed": 1,
+      "page_count": 1,
+      "parser": "PyMuPDF + Pillow",
+      "coordinates": "displayed PDF points"
+    },
+    "report": {
+      "mask_manifest": {
+        "pages": [
+          {
+            "width": 2400,
+            "height": 1600
+          }
+        ],
+        "regions": [
+          {
+            "page": 0,
+            "box": {
+              "x": 58.02707930367505,
+              "y": 58.03409503083061,
+              "width": 290.1353965183752,
+              "height": 116.06819006166123
+            }
+          }
+        ]
+      },
+      "status": "UNVERIFIED",
+      "checks": [
+        {
+          "name": "Mandatory High-priority coverage",
+          "status": "passed",
+          "detail": "All localized detected High-priority findings are covered within the declared scope."
+        },
+        {
+          "name": "Fresh file reconstruction",
+          "status": "passed",
+          "detail": "A new file was encoded from painted pixels without copying source PDF objects. Removal is assessed below on reopened output pixels."
+        },
+        {
+          "name": "Fresh contextual review \u00b7 PDF text 1",
+          "status": "passed",
+          "detail": "0 uncertain, AI-only or conflicting finding(s) require manual inspection. Same-model recheck is not independent semantic verification."
+        },
+        {
+          "name": "Fresh contextual review \u00b7 metadata 0",
+          "status": "passed",
+          "detail": "0 uncertain, AI-only or conflicting finding(s) require manual inspection. Same-model recheck is not independent semantic verification."
+        },
+        {
+          "name": "Saved PDF text, metadata and attachments",
+          "status": "incomplete",
+          "detail": "Reopened exported PDF with PDF.js; extracted text and inspected metadata/attachments."
+        },
+        {
+          "name": "Reopened mask pixels \u00b7 page 1",
+          "status": "passed",
+          "detail": "1 approved region(s) checked for opaque black pixels in decoded output. This verifies the supplied coordinates, not detection completeness."
+        },
+        {
+          "name": "Fresh contextual review \u00b7 OCR 1",
+          "status": "passed",
+          "detail": "0 uncertain, AI-only or conflicting finding(s) require manual inspection. Same-model recheck is not independent semantic verification."
+        },
+        {
+          "name": "Fresh face detection \u00b7 exported page 1",
+          "status": "incomplete",
+          "detail": "Face model was unavailable. Manual inspection of the output is mandatory."
+        },
+        {
+          "name": "Fresh QR scan \u00b7 exported page 1",
+          "status": "incomplete",
+          "detail": "QR detector unavailable. Inspect the exported image and mask any codes manually."
+        },
+        {
+          "name": "Fresh OCR of exported pixels",
+          "status": "incomplete",
+          "detail": "Tesseract eng; selected-value comparison and fresh detection on 1 page(s). 0 unresolved OCR match(es)."
+        }
+      ],
+      "warnings": [
+        "SCOPED_CLEAR is limited to the listed checks. It is not a guarantee of anonymity.",
+        "VID/BID values are intentionally excluded from automatic redaction and configured verification. The export may still expose those identifiers; review before sharing.",
+        "Automatic face detection was unavailable on at least one page. Verify portraits manually before sharing.",
+        "Image-based export: original searchable text, forms, annotations, links, attachments and signatures are not preserved."
+      ],
+      "remaining_count": 0,
+      "residual_findings": [],
+      "scope": "Exported text, rendered printed OCR, metadata and attachment presence. Handwriting, QR decoding and semantic identity inference are outside scope.",
+      "verified_at": "2026-11-12T01:47:25.811Z",
+      "sha256": "4ed059632cf147f76bd17adab74a82bb2d31105a5a1687715046a2dba44be7a6"
+    },
+    "size_bytes": 45176,
+    "sha256": "4ed059632cf147f76bd17adab74a82bb2d31105a5a1687715046a2dba44be7a6"
+  }
+]
