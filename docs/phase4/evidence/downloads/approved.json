@@ -1,0 +1,444 @@
+{
+  "mask_manifest": {
+    "pages": [
+      {
+        "width": 600,
+        "height": 740
+      },
+      {
+        "width": 260,
+        "height": 380
+      },
+      {
+        "width": 320,
+        "height": 240
+      }
+    ],
+    "regions": [
+      {
+        "page": 0,
+        "box": {
+          "x": 105,
+          "y": 59,
+          "width": 34.5,
+          "height": 11
+        }
+      },
+      {
+        "page": 0,
+        "box": {
+          "x": 145,
+          "y": 59,
+          "width": 34.5,
+          "height": 11
+        }
+      },
+      {
+        "page": 0,
+        "box": {
+          "x": 185,
+          "y": 59,
+          "width": 34.5,
+          "height": 11
+        }
+      },
+      {
+        "page": 0,
+        "box": {
+          "x": 105,
+          "y": 101,
+          "width": 34.5,
+          "height": 11
+        }
+      },
+      {
+        "page": 0,
+        "box": {
+          "x": 145,
+          "y": 101,
+          "width": 34.5,
+          "height": 11
+        }
+      },
+      {
+        "page": 0,
+        "box": {
+          "x": 185,
+          "y": 101,
+          "width": 34.5,
+          "height": 11
+        }
+      },
+      {
+        "page": 0,
+        "box": {
+          "x": 105,
+          "y": 143,
+          "width": 34.5,
+          "height": 11
+        }
+      },
+      {
+        "page": 0,
+        "box": {
+          "x": 145,
+          "y": 143,
+          "width": 34.5,
+          "height": 11
+        }
+      },
+      {
+        "page": 0,
+        "box": {
+          "x": 185,
+          "y": 143,
+          "width": 34.5,
+          "height": 11
+        }
+      },
+      {
+        "page": 0,
+        "box": {
+          "x": 105,
+          "y": 185,
+          "width": 34.5,
+          "height": 11
+        }
+      },
+      {
+        "page": 0,
+        "box": {
+          "x": 145,
+          "y": 185,
+          "width": 34.5,
+          "height": 11
+        }
+      },
+      {
+        "page": 0,
+        "box": {
+          "x": 185,
+          "y": 185,
+          "width": 34.5,
+          "height": 11
+        }
+      },
+      {
+        "page": 0,
+        "box": {
+          "x": 105,
+          "y": 227,
+          "width": 34.5,
+          "height": 11
+        }
+      },
+      {
+        "page": 0,
+        "box": {
+          "x": 145,
+          "y": 227,
+          "width": 34.5,
+          "height": 11
+        }
+      },
+      {
+        "page": 0,
+        "box": {
+          "x": 185,
+          "y": 227,
+          "width": 34.5,
+          "height": 11
+        }
+      },
+      {
+        "page": 0,
+        "box": {
+          "x": 105,
+          "y": 269,
+          "width": 34.5,
+          "height": 11
+        }
+      },
+      {
+        "page": 0,
+        "box": {
+          "x": 145,
+          "y": 269,
+          "width": 34.5,
+          "height": 11
+        }
+      },
+      {
+        "page": 0,
+        "box": {
+          "x": 185,
+          "y": 269,
+          "width": 34.5,
+          "height": 11
+        }
+      },
+      {
+        "page": 0,
+        "box": {
+          "x": 105,
+          "y": 311,
+          "width": 34.5,
+          "height": 11
+        }
+      },
+      {
+        "page": 0,
+        "box": {
+          "x": 145,
+          "y": 311,
+          "width": 34.5,
+          "height": 11
+        }
+      },
+      {
+        "page": 0,
+        "box": {
+          "x": 185,
+          "y": 311,
+          "width": 34.5,
+          "height": 11
+        }
+      },
+      {
+        "page": 0,
+        "box": {
+          "x": 105,
+          "y": 353,
+          "width": 34.5,
+          "height": 11
+        }
+      },
+      {
+        "page": 0,
+        "box": {
+          "x": 145,
+          "y": 353,
+          "width": 34.5,
+          "height": 11
+        }
+      },
+      {
+        "page": 0,
+        "box": {
+          "x": 185,
+          "y": 353,
+          "width": 34.5,
+          "height": 11
+        }
+      },
+      {
+        "page": 0,
+        "box": {
+          "x": 105,
+          "y": 395,
+          "width": 34.5,
+          "height": 11
+        }
+      },
+      {
+        "page": 0,
+        "box": {
+          "x": 145,
+          "y": 395,
+          "width": 34.5,
+          "height": 11
+        }
+      },
+      {
+        "page": 0,
+        "box": {
+          "x": 185,
+          "y": 395,
+          "width": 34.5,
+          "height": 11
+        }
+      },
+      {
+        "page": 0,
+        "box": {
+          "x": 105,
+          "y": 437,
+          "width": 34.5,
+          "height": 11
+        }
+      },
+      {
+        "page": 0,
+        "box": {
+          "x": 145,
+          "y": 437,
+          "width": 34.5,
+          "height": 11
+        }
+      },
+      {
+        "page": 0,
+        "box": {
+          "x": 185,
+          "y": 437,
+          "width": 34.5,
+          "height": 11
+        }
+      },
+      {
+        "page": 1,
+        "box": {
+          "x": 208,
+          "y": 87,
+          "width": 27,
+          "height": 121
+        }
+      },
+      {
+        "page": 2,
+        "box": {
+          "x": 10,
+          "y": 80,
+          "width": 290,
+          "height": 125
+        }
+      }
+    ]
+  },
+  "status": "FLAG",
+  "checks": [
+    {
+      "name": "Source OCR completeness",
+      "status": "incomplete",
+      "detail": "At least one source page had low OCR confidence or no recognized text."
+    },
+    {
+      "name": "Mandatory High-priority coverage",
+      "status": "passed",
+      "detail": "All localized detected High-priority findings are covered within the declared scope."
+    },
+    {
+      "name": "Uncertain-source review",
+      "status": "incomplete",
+      "detail": "16 uncertain source finding(s) remain uncovered; clearance is withheld."
+    },
+    {
+      "name": "Fresh file reconstruction",
+      "status": "passed",
+      "detail": "A new file was encoded from painted pixels without copying source PDF objects. Removal is assessed below on reopened output pixels."
+    },
+    {
+      "name": "Fresh contextual review · PDF text 1",
+      "status": "passed",
+      "detail": "0 uncertain, AI-only or conflicting finding(s) require manual inspection. Same-model recheck is not independent semantic verification."
+    },
+    {
+      "name": "Fresh contextual review · PDF text 2",
+      "status": "passed",
+      "detail": "0 uncertain, AI-only or conflicting finding(s) require manual inspection. Same-model recheck is not independent semantic verification."
+    },
+    {
+      "name": "Fresh contextual review · PDF text 3",
+      "status": "passed",
+      "detail": "0 uncertain, AI-only or conflicting finding(s) require manual inspection. Same-model recheck is not independent semantic verification."
+    },
+    {
+      "name": "Fresh contextual review · metadata 0",
+      "status": "passed",
+      "detail": "0 uncertain, AI-only or conflicting finding(s) require manual inspection. Same-model recheck is not independent semantic verification."
+    },
+    {
+      "name": "Saved PDF text, metadata and attachments",
+      "status": "incomplete",
+      "detail": "Reopened exported PDF with PDF.js; extracted text and inspected metadata/attachments."
+    },
+    {
+      "name": "Reopened mask pixels · page 1",
+      "status": "passed",
+      "detail": "30 approved region(s) checked for opaque black pixels in decoded output. This verifies the supplied coordinates, not detection completeness."
+    },
+    {
+      "name": "Fresh contextual review · OCR 1",
+      "status": "incomplete",
+      "detail": "1 uncertain, AI-only or conflicting finding(s) require manual inspection. Same-model recheck is not independent semantic verification."
+    },
+    {
+      "name": "Fresh face detection · exported page 1",
+      "status": "incomplete",
+      "detail": "Face model was unavailable. Manual inspection of the output is mandatory."
+    },
+    {
+      "name": "Fresh QR scan · exported page 1",
+      "status": "incomplete",
+      "detail": "QR detector unavailable. Inspect the exported image and mask any codes manually."
+    },
+    {
+      "name": "Reopened mask pixels · page 2",
+      "status": "passed",
+      "detail": "1 approved region(s) checked for opaque black pixels in decoded output. This verifies the supplied coordinates, not detection completeness."
+    },
+    {
+      "name": "Fresh contextual review · OCR 2",
+      "status": "passed",
+      "detail": "0 uncertain, AI-only or conflicting finding(s) require manual inspection. Same-model recheck is not independent semantic verification."
+    },
+    {
+      "name": "Fresh face detection · exported page 2",
+      "status": "incomplete",
+      "detail": "Face model was unavailable. Manual inspection of the output is mandatory."
+    },
+    {
+      "name": "Fresh QR scan · exported page 2",
+      "status": "incomplete",
+      "detail": "QR detector unavailable. Inspect the exported image and mask any codes manually."
+    },
+    {
+      "name": "Reopened mask pixels · page 3",
+      "status": "passed",
+      "detail": "1 approved region(s) checked for opaque black pixels in decoded output. This verifies the supplied coordinates, not detection completeness."
+    },
+    {
+      "name": "Fresh contextual review · OCR 3",
+      "status": "passed",
+      "detail": "0 uncertain, AI-only or conflicting finding(s) require manual inspection. Same-model recheck is not independent semantic verification."
+    },
+    {
+      "name": "Fresh face detection · exported page 3",
+      "status": "incomplete",
+      "detail": "Face model was unavailable. Manual inspection of the output is mandatory."
+    },
+    {
+      "name": "Fresh QR scan · exported page 3",
+      "status": "incomplete",
+      "detail": "QR detector unavailable. Inspect the exported image and mask any codes manually."
+    },
+    {
+      "name": "Fresh OCR of exported pixels",
+      "status": "failed",
+      "detail": "Tesseract eng; selected-value comparison and fresh detection on 3 page(s). 1 unresolved OCR match(es)."
+    }
+  ],
+  "warnings": [
+    "SCOPED_CLEAR is limited to the listed checks. It is not a guarantee of anonymity.",
+    "VID/BID values are intentionally excluded from automatic redaction and configured verification. The export may still expose those identifiers; review before sharing.",
+    "Low-confidence or empty OCR result on at least one page. Manual pixel review is required.",
+    "Automatic face detection was unavailable on at least one page. Verify portraits manually before sharing.",
+    "Image-based export: original searchable text, forms, annotations, links, attachments and signatures are not preserved."
+  ],
+  "remaining_count": 1,
+  "residual_findings": [
+    {
+      "category": "MEDICAL_RECORD_NUMBER",
+      "page": 1,
+      "source": "OCR"
+    },
+    {
+      "category": "ADDRESS_REVIEW",
+      "page": 1,
+      "source": "OCR"
+    }
+  ],
+  "scope": "Exported text, rendered printed OCR, metadata and attachment presence. Handwriting, QR decoding and semantic identity inference are outside scope.",
+  "verified_at": "2026-11-12T01:47:14.524Z",
+  "sha256": "dd8824454d7b0332c46206782560bfb547ed4d807a5a7fa19c164c97255d4677"
+}

@@ -130,7 +130,7 @@ async def redact(file_id:str,selection:Selection,authorization:Annotated[str|Non
         try:
             actual=await asyncio.to_thread(redact_document,r['source'],output,regions)
             if actual.suffix=='.pdf':
-                report=await asyncio.to_thread(verify_pdf,VerificationInput(actual,selected_findings=values,ocr_language=r['language'],timeout_seconds=90))
+                report=await asyncio.to_thread(verify_pdf,VerificationInput(actual,selected_findings=values,original_path=r['source'],approved_regions=[{'page':b['page'],'box':{'x':b['x0'],'y':b['y0'],'width':b['x1']-b['x0'],'height':b['y1']-b['y0']}} for b in regions],require_raster=True,unresolved_review=True,ocr_language=r['language'],timeout_seconds=90))
             else:
                 fresh,_=await asyncio.to_thread(analyze_document,actual,r['language'])
                 report={'status':'FLAG' if fresh else 'UNVERIFIED','checks':[{'name':'saved_image_ocr','status':'passed'}],'warnings':['Standalone image verification has not completed independent validation.'],'remaining_findings':fresh}

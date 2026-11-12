@@ -9,5 +9,5 @@ export function coverageCheck(findings:Finding[],selected:string[],manual:{page:
   const masks=[...findings.filter(g=>g.page===f.page&&selected.includes(g.id)).flatMap(g=>g.boxes),...manual.filter(m=>m.page===f.page).map(m=>m.box)];
   return f.boxes.every(b=>masks.some(m=>m.x<=b.x&&m.y<=b.y&&m.x+m.width>=b.x+b.width&&m.y+m.height>=b.y+b.height));
  };
- return {missingHigh:required.filter(f=>!requiresManualReview(f)&&!covered(f)),unresolvedReview:findings.filter(f=>requiresManualReview(f)&&!covered(f))};
+ return {missingHigh:required.filter(f=>!requiresManualReview(f)&&(textOnly||f.boxes.length>0)&&!covered(f)),unresolvedReview:findings.filter(f=>(requiresManualReview(f)||(!textOnly&&!f.boxes.length&&required.includes(f)))&&!covered(f))};
 }

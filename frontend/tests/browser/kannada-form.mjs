@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import {fileURLToPath} from 'node:url';
 import {chromium} from 'playwright';
 
-const browser = await chromium.launch({headless:true});
+const browser = await chromium.launch({executablePath:process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE,headless:true});
 try {
   const page = await browser.newPage();
   // The fixture deliberately uses an invalid Aadhaar checksum. Approve review.

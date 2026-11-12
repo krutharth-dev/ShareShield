@@ -1,3 +1,4 @@
+import {approvedRegions,outputDimensions,inspectMaskPixels,checkPixelBudget} from './export-security';
 import {selectedValueRemains} from './residual-values';
 import {abortable} from './cancellation';
 import {shouldUpscaleOcr,upscaleCanvas} from './ocr-rescue';
@@ -16,17 +17,17 @@ import {consolidateLocated} from './finding-dedup';
 import {findFaces,findQrCodes} from './faces';
 import {readDocx,createTextOnlyDocx} from './docx';
 import {findInkLineBoxes,findUnrecognizedInkLinesAcrossPasses} from './handwriting';
-import {qrExportStatus,validateManualRegions} from './verification-policy';
+import {qrExportStatus} from './verification-policy';
 import {enhanceCanvas} from './preprocessing';
 import {redactSelectedSpans,type TextSpan} from './text-redaction';
 import {pdfTextBoundingBox} from './pdf-text-geometry';
 GlobalWorkerOptions.workerSrc=pdfWorker;
 export type Box={x:number;y:number;width:number;height:number};
 export type Finding={classification_conflict?:Candidate['classification_conflict'];recognition_source?:Candidate['recognition_source'];ai_model_version?:string;id:string;category:string;risk:Risk;detection_confidence:number;ocr_confidence?:number;preview:string;reason:string;validation?:Candidate['validation'];source_context?:string;confidence_meaning?:string;page:number;boxes:Box[]};
-export type PageView={url:string;width:number;height:number};
+export type PageView={url:string;width:number;height:number;pointWidth?:number;pointHeight?:number};
 export type Check={name:string;status:'passed'|'failed'|'incomplete';detail:string};
 export type ResidualDetail={category:string;page:number;source:'PDF text'|'metadata'|'OCR'|'text export'|'DOCX export'|'face scan'|'QR scan'|'source coverage'};
-export type Report={status:'FLAG'|'UNVERIFIED'|'SCOPED_CLEAR';checks:Check[];warnings:string[];scope:string;remaining_count:number;residual_findings:ResidualDetail[];verified_at:string;sha256:string};
+export type Report={mask_manifest?:{pages:{width:number;height:number}[];regions:Manual[]};status:'FLAG'|'UNVERIFIED'|'SCOPED_CLEAR';checks:Check[];warnings:string[];scope:string;remaining_count:number;residual_findings:ResidualDetail[];verified_at:string;sha256:string};
 export type Analysis={file_id:string;filename:string;kind:string;findings:Finding[];pages:PageView[];warnings:string[];language:string;expires:number};
 export type Output={url:string;filename:string;report:Report};
 type Token={text:string;start:number;end:number;box:Box;confidence?:number};
@@ -49,7 +50,7 @@ async function render(pdf:PDFDocumentProxy,n:number){
  const viewport=page.getViewport({scale});
  const c=canvas(viewport.width,viewport.height);
  await page.render({canvas:c,canvasContext:c.getContext('2d')!,viewport}).promise;
- return {page,viewport,c};
+ return {page,viewport,c,pointWidth:base.width,pointHeight:base.height};
 }
 async function openPdf(bytes:Uint8Array){return getDocument({data:bytes.slice(),stopAtErrors:true,useSystemFonts:true}).promise;}
 async function ocrWorker(lang:string,progress:(s:string)=>void){return createWorker(lang.includes('+')?lang.split('+'):lang,1,{workerPath:'/ocr/worker.min.js',corePath:'/ocr',langPath:'/ocr',workerBlobURL:false,cacheMethod:'none',logger:m=>{if(m.status)progress(`OCR · ${m.status} ${Math.round((m.progress??0)*100)}%`);}});}
@@ -87,7 +88,7 @@ export async function analyze(file:File,lang='eng',suppliedProgress:(s:string)=>
   else if(!modelNote){a.warnings.push('Experimental trained contextual recognition is active locally in a background worker. Synthetic-data model; review AI-only findings and all unrecognised content.');modelNote=true;}
   return r.candidates;
  };
- let stage='initialization';
+ let stage='initialization';let totalPixels=0;
  try{
  if(kind==='txt'||kind==='csv'||kind==='docx'){
  const text=kind==='docx'?await readDocx(bytes):new TextDecoder('utf-8',{fatal:true}).decode(bytes);
@@ -108,9 +109,10 @@ export async function analyze(file:File,lang='eng',suppliedProgress:(s:string)=>
  for(let n=1;n<=count;n++){
  signal?.throwIfAborted();
  stage=`page ${n} of ${count} — PDF rendering and text extraction`;
- progress(`Reading page ${n} of ${count}`);let c:HTMLCanvasElement;let text='',tokens:Token[]=[];
- if(pdf){const r=await render(pdf,n);c=r.c;const tc=await r.page.getTextContent();for(const item of tc.items){if(!('str' in item))continue;const t=item as TextItem;const tr=t.transform;const h=Math.max(Math.hypot(tr[2],tr[3]),Math.abs(t.height));const start=text.length;text+=t.str+(t.hasEOL?'\n':' ');const box=pdfTextBoundingBox(tr,t.width,h,r.viewport.transform,c.width,c.height);if(box)tokens.push({text:t.str,start,end:start+t.str.length,box});}
+ progress(`Reading page ${n} of ${count}`);let c:HTMLCanvasElement;let text='',tokens:Token[]=[];let pointWidth:number|undefined,pointHeight:number|undefined;
+ if(pdf){const r=await render(pdf,n);c=r.c;pointWidth=r.pointWidth;pointHeight=r.pointHeight;const tc=await r.page.getTextContent();for(const item of tc.items){if(!('str' in item))continue;const t=item as TextItem;const tr=t.transform;const h=Math.max(Math.hypot(tr[2],tr[3]),Math.abs(t.height));const start=text.length;text+=t.str+(t.hasEOL?'\n':' ');const box=pdfTextBoundingBox(tr,t.width,h,r.viewport.transform,c.width,c.height);if(box)tokens.push({text:t.str,start,end:start+t.str.length,box});}
  }else{const image=await createImageBitmap(new Blob([bytes]));c=canvas(image.width,image.height);c.getContext('2d')!.drawImage(image,0,0);image.close();}
+ totalPixels+=c.width*c.height;checkPixelBudget(totalPixels);
  // Always OCR rendered pixels as well: mixed PDFs may have text and sensitive images.
  stage=`page ${n} of ${count} — OCR`;
  let firstOcr:Awaited<ReturnType<typeof ocr>>|undefined;
@@ -246,16 +248,15 @@ export async function analyze(file:File,lang='eng',suppliedProgress:(s:string)=>
  s.tokens.push(tokens);if(bestOcrConfidence<.6&&ocrPasses.some(pass=>pass.text.trim()))a.warnings.push(`Page ${n}: low OCR confidence across available passes; manual review required.`);
  if(!text.trim()&&!ocrPasses.some(pass=>pass.text.trim()))a.warnings.push(`Page ${n}: no readable text detected; inspect the preview manually.`);
  stage=`page ${n} of ${count} — generating preview`;
- a.pages.push({url:URL.createObjectURL(await blob(c)),width:c.width,height:c.height});c.width=c.height=0;await nextFrame();
+ a.pages.push({url:URL.createObjectURL(await blob(c)),width:c.width,height:c.height,pointWidth,pointHeight});c.width=c.height=0;await nextFrame();
  }
  }
  signal?.throwIfAborted();
- records.set(a.file_id,s);setTimeout(()=>forget(a.file_id),TTL);return a;
+ records.set(a.file_id,s);setTimeout(()=>forget(a.file_id),TTL);return structuredClone(a);
  }catch(e){
   a.pages.forEach(p=>URL.revokeObjectURL(p.url));bytes.fill(0);s.values.clear();s.textSpans.clear();
   if(signal?.aborted)throw signal.reason;
-  const message=e instanceof Error?e.message:typeof e==='string'?e:'browser processing error without details';
-  throw new Error('Analysis stopped during '+stage+': '+(message||'unknown error')+'. No redaction or clearance was completed.');
+  throw new Error('Analysis stopped during '+stage+'. The document may be unsupported or exceed processing limits. No redaction or clearance was completed.');
  }finally{
   recognizer.close();
   try{await worker?.terminate();}catch{/* Worker already stopped. */}
@@ -268,7 +269,8 @@ export async function redact(id:string,selected:string[],manual:Manual[],progres
  const s=records.get(id);if(!s||Date.now()>s.analysis.expires)throw Error('Document session expired. Add the file again.');
  if(new Set(selected).size!==selected.length||selected.some(x=>!s.analysis.findings.some(f=>f.id===x)))throw Error('Invalid finding selection.');
  if(manual.length>100)throw Error('Limit manual redactions to 100 regions.');
- if(s.text===undefined)validateManualRegions(manual,s.analysis.pages);
+ selected=[...selected];manual=structuredClone(manual);
+ const regions=s.text===undefined?approvedRegions(s.analysis.findings,selected,manual,s.analysis.pages):[];
  const exportRecognizer=createContextRecognizer();
  try{
  const values=selected.map(x=>s.values.get(x)).filter((v):v is string=>v!==undefined);let output:Uint8Array;let mime:string;let extension:string;const checks:Check[]=[];let remaining=0,incomplete=false;
@@ -338,23 +340,34 @@ export async function redact(id:string,selected:string[],manual:Manual[],progres
  }else{
  const result=await PDFDocument.create();let png:Uint8Array|undefined;
  for(let p=0;p<s.analysis.pages.length;p++){
+ signal?.throwIfAborted();
  progress(`Removing approved regions · page ${p+1}`);const page=s.analysis.pages[p];const bitmap=await createImageBitmap(await (await fetch(page.url)).blob());const c=canvas(page.width,page.height);const ctx=c.getContext('2d')!;ctx.drawImage(bitmap,0,0);bitmap.close();
- const boxes=[...s.analysis.findings.filter(f=>selected.includes(f.id)&&f.page===p).flatMap(f=>f.boxes),...manual.filter(m=>m.page===p).map(m=>m.box)];
+ const boxes=regions.filter(r=>r.page===p).map(r=>r.box);
  for(const b of boxes){if(!Object.values(b).every(Number.isFinite)||b.width<=0||b.height<=0||b.x<0||b.y<0||b.x+b.width>c.width+1||b.y+b.height>c.height+1)throw Error('Invalid redaction coordinates.');ctx.fillStyle='#000';ctx.fillRect(Math.floor(b.x)-2,Math.floor(b.y)-2,Math.ceil(b.width)+4,Math.ceil(b.height)+4);}
- png=new Uint8Array(await (await blob(c)).arrayBuffer());const img=await result.embedPng(png);const outPage=result.addPage([c.width/2,c.height/2]);outPage.drawImage(img,{x:0,y:0,width:c.width/2,height:c.height/2});c.width=c.height=0;await nextFrame();
+ png=new Uint8Array(await (await blob(c)).arrayBuffer());const img=await result.embedPng(png);const [width,height]=outputDimensions(page);const outPage=result.addPage([width,height]);outPage.drawImage(img,{x:0,y:0,width,height});c.width=c.height=0;await nextFrame();
  }
  if(s.analysis.kind==='pdf'){output=await result.save({useObjectStreams:false});mime='application/pdf';extension='pdf';}else{output=png!;mime='image/png';extension='png';}
- checks.push({name:'Permanent pixel removal',status:'passed',detail:'Approved pixels replaced. A new file was encoded without copying original PDF objects, attachments, text layers or image metadata.'});
+ checks.push({name:'Fresh file reconstruction',status:'passed',detail:'A new file was encoded from painted pixels without copying source PDF objects. Removal is assessed below on reopened output pixels.'});
  warnings.push('Image-based export: original searchable text, forms, annotations, links, attachments and signatures are not preserved.');
  let worker:Worker|undefined,pdf:PDFDocumentProxy|undefined;
  try{
- progress('Reopening exported bytes');if(extension==='pdf'){pdf=await openPdf(output);for(let n=1;n<=pdf.numPages;n++){const page=await pdf.getPage(n);const tc=await page.getTextContent();const text=tc.items.map(i=>'str'in i?i.str:'').join(' ');await testResidual(text,n,'PDF text');}
- const meta=await pdf.getMetadata();const mt=JSON.stringify(meta.info)+' '+(meta.metadata?.getRaw()??'');await testResidual(mt,0,'metadata');if(await pdf.getAttachments())incomplete=true;
+ progress('Reopening exported bytes');if(extension==='pdf'){pdf=await openPdf(output);if(pdf.numPages!==s.analysis.pages.length){recordResidual('PAGE_COUNT_MISMATCH',0,'PDF text');}
+ for(let n=1;n<=pdf.numPages;n++){const page=await pdf.getPage(n);const expected=outputDimensions(s.analysis.pages[n-1]);const viewport=page.getViewport({scale:1});
+ if(Math.abs(viewport.width-expected[0])>.01||Math.abs(viewport.height-expected[1])>.01)recordResidual('PAGE_DIMENSION_MISMATCH',n,'PDF text');
+ if((await page.getAnnotations()).length)recordResidual('UNEXPECTED_PDF_ANNOTATION',n,'PDF text');
+ const tc=await page.getTextContent();if(tc.items.length)recordResidual('UNEXPECTED_TEXT_LAYER',n,'PDF text');const text=tc.items.map(i=>'str'in i?i.str:'').join(' ');await testResidual(text,n,'PDF text');}
+ const meta=await pdf.getMetadata();if(await pdf.getJSActions())recordResidual('UNEXPECTED_PDF_ACTION',0,'metadata');
+ const mt=JSON.stringify(meta.info)+' '+(meta.metadata?.getRaw()??'');await testResidual(mt,0,'metadata');if(await pdf.getAttachments())incomplete=true;
  checks.push({name:'Saved PDF text, metadata and attachments',status:remaining?'failed':incomplete?'incomplete':'passed',detail:'Reopened exported PDF with PDF.js; extracted text and inspected metadata/attachments.'});}
  worker=await abortable(ocrWorker(s.analysis.language,progress).then(w=>{if(signal?.aborted){void w.terminate();signal.throwIfAborted();}return w;}),signal);
  const count=pdf?.numPages??1;let ocrResiduals=0;
  for(let n=1;n<=count;n++){
  let c:HTMLCanvasElement;if(pdf)c=(await render(pdf,n)).c;else{const image=await createImageBitmap(new Blob([output]));c=canvas(image.width,image.height);c.getContext('2d')!.drawImage(image,0,0);image.close();}
+ signal?.throwIfAborted();
+ const sourcePage=s.analysis.pages[n-1],boxes=regions.filter(r=>r.page===n-1).map(r=>r.box);
+ const pixelsOk=inspectMaskPixels(c.getContext('2d')!.getImageData(0,0,c.width,c.height).data,c.width,c.height,sourcePage,boxes);
+ if(!pixelsOk)recordResidual('APPROVED_MASK_PIXELS_REMAIN',n,'OCR');
+ checks.push({name:'Reopened mask pixels · page '+n,status:!pixelsOk?'failed':boxes.length?'passed':'incomplete',detail:boxes.length+' approved region(s) checked for opaque black pixels in decoded output. This verifies the supplied coordinates, not detection completeness.'});
  if(!worker)throw Error('Verification OCR worker unavailable');
  const o=await abortable(ocr(c,worker),signal);ocrResiduals+=await testResidual(o.text,n,'OCR',true);
  // Independently scan the exported pixels for any remaining faces.
@@ -382,12 +395,14 @@ export async function redact(id:string,selected:string[],manual:Manual[],progres
  if(!o.text.trim()||o.confidence<.6)incomplete=true;c.width=c.height=0;
  }
  checks.push({name:'Fresh OCR of exported pixels',status:ocrResiduals?'failed':incomplete?'incomplete':'passed',detail:`Tesseract ${s.analysis.language}; selected-value comparison and fresh detection on ${count} page(s). ${ocrResiduals} unresolved OCR match(es).`});
- }catch{incomplete=true;checks.push({name:'Reopen and OCR verification',status:'failed',detail:'A required verification dependency or processing step failed.'});}finally{await worker?.terminate();await pdf?.loadingTask.destroy();}
+ }catch{incomplete=true;checks.push({name:'Reopen and OCR verification',status:'failed',detail:'A required verification dependency or processing step failed.'});}finally{try{await worker?.terminate();}catch{/* Already stopped. */}try{await pdf?.loadingTask.destroy();}catch{/* Already closed. */}}
  }
  signal?.throwIfAborted();
  const hash=await crypto.subtle.digest('SHA-256',output as BufferSource);const sha256=[...new Uint8Array(hash)].map(v=>v.toString(16).padStart(2,'0')).join('');
+ if(records.get(id)!==s||Date.now()>s.analysis.expires)throw Error('Document session expired during export.');
+ s.outputs.forEach(u=>URL.revokeObjectURL(u));s.outputs=[];
  const url=URL.createObjectURL(new Blob([output as BlobPart],{type:mime}));s.outputs.push(url);
- return {url,filename:s.analysis.filename.replace(/\.[^.]+$/,'')+'-redacted.'+extension,report:{status:verificationStatus(remaining,incomplete),checks,warnings,remaining_count:remaining,residual_findings,scope:s.analysis.kind==='docx'?'Rebuilt text-only DOCX content and selected-value comparison. Original layout/media were discarded; manual final review mandatory.':s.text!==undefined?'UTF-8 text: mandatory High-priority categories for '+purpose+' sharing and all selected values. Optional Medium/Low content may remain.':'Exported text, rendered printed OCR, metadata and attachment presence. Handwriting, QR decoding and semantic identity inference are outside scope.',verified_at:new Date().toISOString(),sha256}};
+ return {url,filename:'shareshield-redacted.'+extension,report:{mask_manifest:s.text===undefined?{pages:s.analysis.pages.map(p=>{const [width,height]=outputDimensions(p);return {width,height};}),regions:regions.map(r=>{const p=s.analysis.pages[r.page],[w,h]=outputDimensions(p);return {page:r.page,box:{x:r.box.x*w/p.width,y:r.box.y*h/p.height,width:r.box.width*w/p.width,height:r.box.height*h/p.height}};})}:undefined,status:verificationStatus(remaining,incomplete),checks,warnings,remaining_count:remaining,residual_findings,scope:s.analysis.kind==='docx'?'Rebuilt text-only DOCX content and selected-value comparison. Original layout/media were discarded; manual final review mandatory.':s.text!==undefined?'UTF-8 text: mandatory High-priority categories for '+purpose+' sharing and all selected values. Optional Medium/Low content may remain.':'Exported text, rendered printed OCR, metadata and attachment presence. Handwriting, QR decoding and semantic identity inference are outside scope.',verified_at:new Date().toISOString(),sha256}};
  }finally{exportRecognizer.close();}
 }
 export async function syntheticFile(){const doc=await PDFDocument.create();const font=await doc.embedFont(StandardFonts.Helvetica);const page=doc.addPage([595,420]);const lines=['SHARESHIELD / SYNTHETIC REVIEW SAMPLE','This file contains fictional demonstration data.','Email: demo.person@example.test','PAN: ABCDE1234F','Password: DemoSecret_4829','Public note: Please share the project summary.'];lines.forEach((t,i)=>page.drawText(t,{x:48,y:365-i*43,size:i===0?17:15,font,color:rgb(.1,.15,.2)}));return new File([await doc.save() as BlobPart],'ShareShield-synthetic.pdf',{type:'application/pdf'});}

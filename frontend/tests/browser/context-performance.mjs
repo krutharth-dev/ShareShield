@@ -2,7 +2,7 @@ import {chromium} from 'playwright';
 import assert from 'node:assert/strict';
 import {writeFile} from 'node:fs/promises';
 import {execFileSync} from 'node:child_process';
-const browser=await chromium.launch({headless:true,args:['--no-sandbox'],proxy:process.env.SHARESHIELD_BROWSER_PROXY?{server:process.env.SHARESHIELD_BROWSER_PROXY}:undefined});
+const browser=await chromium.launch({executablePath:process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE,headless:true,args:['--no-sandbox'],proxy:process.env.SHARESHIELD_BROWSER_PROXY?{server:process.env.SHARESHIELD_BROWSER_PROXY}:undefined});
 const report={browser:browser.version(),samples:[],memory_scope:'Peak sampled aggregate RSS of this Node process and Chromium descendants, including browser overhead; NOT model-only memory. 100 ms samples may miss short peaks.'};
 let peak=0,memoryAvailable=true;
 const sampler=setInterval(()=>{

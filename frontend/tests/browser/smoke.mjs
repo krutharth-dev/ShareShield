@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import {readFile,writeFile,mkdir} from 'node:fs/promises';
 const evidenceDir=process.env.SHARESHIELD_EVIDENCE_DIR;
 if(evidenceDir)await mkdir(evidenceDir,{recursive:true});
-const browser=await chromium.launch({headless:true,args:['--no-sandbox'],proxy:process.env.SHARESHIELD_BROWSER_PROXY?{server:process.env.SHARESHIELD_BROWSER_PROXY}:undefined});
+const browser=await chromium.launch({executablePath:process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE,headless:true,args:['--no-sandbox'],proxy:process.env.SHARESHIELD_BROWSER_PROXY?{server:process.env.SHARESHIELD_BROWSER_PROXY}:undefined});
 const page=await browser.newPage({acceptDownloads:true});
 page.on('dialog',d=>d.accept());
 page.on('pageerror',error=>console.error('Browser page error:',error.message));

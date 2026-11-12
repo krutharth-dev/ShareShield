@@ -1,0 +1,85 @@
+{
+  "mask_manifest": {
+    "pages": [
+      {
+        "width": 2400,
+        "height": 1600
+      }
+    ],
+    "regions": [
+      {
+        "page": 0,
+        "box": {
+          "x": 58.02707930367505,
+          "y": 58.03409503083061,
+          "width": 290.1353965183752,
+          "height": 116.06819006166123
+        }
+      }
+    ]
+  },
+  "status": "UNVERIFIED",
+  "checks": [
+    {
+      "name": "Mandatory High-priority coverage",
+      "status": "passed",
+      "detail": "All localized detected High-priority findings are covered within the declared scope."
+    },
+    {
+      "name": "Fresh file reconstruction",
+      "status": "passed",
+      "detail": "A new file was encoded from painted pixels without copying source PDF objects. Removal is assessed below on reopened output pixels."
+    },
+    {
+      "name": "Fresh contextual review · PDF text 1",
+      "status": "passed",
+      "detail": "0 uncertain, AI-only or conflicting finding(s) require manual inspection. Same-model recheck is not independent semantic verification."
+    },
+    {
+      "name": "Fresh contextual review · metadata 0",
+      "status": "passed",
+      "detail": "0 uncertain, AI-only or conflicting finding(s) require manual inspection. Same-model recheck is not independent semantic verification."
+    },
+    {
+      "name": "Saved PDF text, metadata and attachments",
+      "status": "incomplete",
+      "detail": "Reopened exported PDF with PDF.js; extracted text and inspected metadata/attachments."
+    },
+    {
+      "name": "Reopened mask pixels · page 1",
+      "status": "passed",
+      "detail": "1 approved region(s) checked for opaque black pixels in decoded output. This verifies the supplied coordinates, not detection completeness."
+    },
+    {
+      "name": "Fresh contextual review · OCR 1",
+      "status": "passed",
+      "detail": "0 uncertain, AI-only or conflicting finding(s) require manual inspection. Same-model recheck is not independent semantic verification."
+    },
+    {
+      "name": "Fresh face detection · exported page 1",
+      "status": "incomplete",
+      "detail": "Face model was unavailable. Manual inspection of the output is mandatory."
+    },
+    {
+      "name": "Fresh QR scan · exported page 1",
+      "status": "incomplete",
+      "detail": "QR detector unavailable. Inspect the exported image and mask any codes manually."
+    },
+    {
+      "name": "Fresh OCR of exported pixels",
+      "status": "incomplete",
+      "detail": "Tesseract eng; selected-value comparison and fresh detection on 1 page(s). 0 unresolved OCR match(es)."
+    }
+  ],
+  "warnings": [
+    "SCOPED_CLEAR is limited to the listed checks. It is not a guarantee of anonymity.",
+    "VID/BID values are intentionally excluded from automatic redaction and configured verification. The export may still expose those identifiers; review before sharing.",
+    "Automatic face detection was unavailable on at least one page. Verify portraits manually before sharing.",
+    "Image-based export: original searchable text, forms, annotations, links, attachments and signatures are not preserved."
+  ],
+  "remaining_count": 0,
+  "residual_findings": [],
+  "scope": "Exported text, rendered printed OCR, metadata and attachment presence. Handwriting, QR decoding and semantic identity inference are outside scope.",
+  "verified_at": "2026-11-12T01:47:25.811Z",
+  "sha256": "4ed059632cf147f76bd17adab74a82bb2d31105a5a1687715046a2dba44be7a6"
+}
