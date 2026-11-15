@@ -36,3 +36,24 @@ test('different checksum-valid Aadhaar values and repeated copies retain every s
  const text=['Aadhaar: 2345 6789 0124','Aadhaar: '+second,'Aadhaar: 2345 6789 0124'].join('\n');
  const found=detect(text).filter(f=>f.category==='AADHAAR_CANDIDATE');assert.equal(found.length,3);assert.equal(new Set(found.map(f=>f.start)).size,3);
 });
+
+
+// New fictional reproducer; not a change to the frozen OCR evaluation corpus.
+import {autoSelectHighPriority} from '../src/auto-redaction.ts';
+test('line-wrapped Aadhaar validation agrees with detection without relaxing checksum or VID boundaries',()=>{
+ for(const value of ['2345\n6789\n0124','2345\r\n6789\r\n0124','೨೩೪೫\n೬೭೮೯\n೦೧೨೪']){
+  assert.equal(validAadhaar(value),true);
+  const text='Aadhaar: '+value;const hits=detect(text).filter(f=>f.category==='AADHAAR_CANDIDATE');
+  assert.equal(hits.length,1);assert.equal(hits[0].validation.status,'passed');
+  assert.equal(text.slice(hits[0].start,hits[0].end),value);
+  const located={...hits[0],id:'wrapped',boxes:[0,1,2].map(i=>({x:20,y:20+30*i,width:50,height:20})),ocr_confidence:.9};
+  assert.deepEqual(autoSelectHighPriority([located],'public','pdf'),['wrapped']);
+  assert.deepEqual(autoSelectHighPriority([{...located,boxes:[]}],'public','pdf'),[]);
+  assert.deepEqual(autoSelectHighPriority([{...located,ocr_confidence:.4}],'public','pdf'),[]);
+ }
+ const invalid=detect('Aadhaar: 2345\n6789\n0125').find(f=>f.category==='AADHAAR_REVIEW');
+ assert.equal(invalid?.validation?.status,'failed');
+ assert.deepEqual(autoSelectHighPriority([{...invalid,id:'bad',boxes:[{x:20,y:20,width:50,height:20}]}],'public','pdf'),[]);
+ assert.equal(validAadhaar('2345\n6789\n0124\n9999'),false);
+ assert.ok(!detect('VID: 2345\n6789\n0124\n9999').some(f=>/^AADHAAR_(CANDIDATE|REVIEW|OCR_REVIEW)$/.test(f.category)));
+});
