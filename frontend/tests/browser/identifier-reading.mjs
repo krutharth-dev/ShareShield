@@ -37,9 +37,9 @@ try{
   evidence.results.push({name,status,exportAndVerificationMs:Date.now()-start});return status;
  }
  await page.getByRole('button',{name:'Clear selection',exact:true}).click();
- assert.equal(await save('unapproved'),'FLAG');
+ assert.equal(await save('unapproved'),'UNVERIFIED','unconfirmed row associations must remain unresolved');
  for(let i=0;i<10;i++)await rows.nth(i).check();
- assert.notEqual(await save('approved'),'SCOPED CLEAR','unavailable visual checks remain unresolved');
+ assert.equal(await save('approved'),'UNVERIFIED','unavailable visual checks remain unresolved');
  await rows.first().uncheck();assert.equal(await page.locator('.report').count(),0);
  assert.equal(await save('one-deselected'),'FLAG');
  await page.getByRole('button',{name:'Clear workspace',exact:true}).click();

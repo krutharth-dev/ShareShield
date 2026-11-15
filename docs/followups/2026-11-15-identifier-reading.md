@@ -23,7 +23,7 @@ The new test matrix includes 16 separate-label/language cases, three ten-occurre
 
 ## Browser and independent output checks
 
-`frontend/tests/browser/identifier-reading.mjs` generates a fresh one-page PDF containing ten adjacent fictional Aadhaar rows. It uploads the PDF to the built application, checks ten separately localized review findings, downloads unapproved/approved/one-deselected exports and the verification reports, and clears the workspace. Known remaining exposures must report `FLAG`; missing visual evidence cannot become `SCOPED_CLEAR`.
+`frontend/tests/browser/identifier-reading.mjs` generates a fresh one-page PDF containing ten adjacent fictional Aadhaar rows. It uploads the PDF to the built application, checks ten separately localized review findings, downloads unapproved/approved/one-deselected exports and the verification reports, and clears the workspace. Unconfirmed row associations remain `UNVERIFIED`. After approval, missing visual checks still require `UNVERIFIED`; deselecting one occurrence while the same value remains approved elsewhere must produce `FLAG` for the residual selected value. The existing Phase 4 test separately requires `FLAG` for known, unambiguous High-priority exposures.
 
 `tools/verify_identifier_downloads.py` independently reopens those actual downloads using PyMuPDF and pypdf. It checks:
 
