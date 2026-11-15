@@ -1,0 +1,59 @@
+name: Bug report
+description: Report a reproducible defect using synthetic test data only.
+title: "[Bug]: "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for helping improve ShareShield. **Never upload real Aadhaar/PAN/VID numbers, actual identity documents, raw OCR content, credentials, or personal data.**
+        If the bug exposes sensitive data or describes an exploitable security flaw, **do not file it publicly**. Follow [SECURITY.md](https://github.com/krutharth-dev/ShareShield/blob/main/SECURITY.md) instead.
+  - type: textarea
+    id: summary
+    attributes:
+      label: What went wrong?
+      description: Describe the defect and its visible impact.
+      placeholder: A synthetic 12-digit identifier is not masked after export.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Steps to reproduce
+      description: Use fictional inputs and specify the document type and affected page where relevant.
+      placeholder: |
+        1. Open the application.
+        2. Upload a synthetic sample.
+        3. Select the finding.
+        4. Export and inspect the actual downloaded file.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior and verification status
+      description: If relevant, include FLAG, UNVERIFIED, or SCOPED_CLEAR and whether this was the preview or exported bytes.
+    validations:
+      required: true
+  - type: input
+    id: environment
+    attributes:
+      label: Environment
+      placeholder: "Browser/OS, commit or deployment, PDF/image/TXT/CSV/DOCX"
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Sanitized logs or screenshots (optional)
+      description: No sensitive documents, tokens, unique IDs, or personal information.
+  - type: checkboxes
+    id: privacy
+    attributes:
+      label: Privacy confirmation
+      options:
+        - label: I used only synthetic/consented test material and did not include private or security-sensitive details.
+          required: true
