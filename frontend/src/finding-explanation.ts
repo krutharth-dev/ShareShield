@@ -11,7 +11,7 @@ export function explainCandidate(candidate:Candidate,text:string):Candidate {
  const value=normalizeDetectionSource(candidate.value).text;
  const check=(passed:boolean,method:string,detail:string):Validation=>({status:passed?'passed':'failed',method,detail:detail+' Passing format checks does not establish issuance, ownership or authenticity.'});
  switch(definition?.validation){
-  case 'aadhaar': validation=check(validAadhaar(value.replace(/[ \t._:/-]/g,'')),'Aadhaar structure + Verhoeff','Exactly 12 digits, allowed leading digit and Verhoeff checksum.');break;
+  case 'aadhaar': validation=check(validAadhaar(value),'Aadhaar structure + Verhoeff','Exactly 12 digits, allowed leading digit and Verhoeff checksum.');break;
   case 'vid': validation=check(/^[0-9]{16}$/.test(value.replace(/[ \t-]/g,'')),'VID length','Labelled 16-digit virtual identifier; no Aadhaar checksum is inferred.');break;
   case 'pan': validation=check(validPan(value),'PAN character positions','Five letters, four digits, final letter; fourth character must be a supported holder type.');break;
   case 'ifsc': validation=check(validIfsc(value),'IFSC structure','Four letters, zero in position five, six alphanumeric characters. Branch existence is not checked.');break;
