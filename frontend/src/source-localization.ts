@@ -2,11 +2,16 @@
 export type SourceBox={x:number;y:number;width:number;height:number};
 export type SourceToken={text:string;start:number;end:number;box:SourceBox;confidence?:number};
 export function locateSourceSpan(span:{start:number;end:number;value:string},tokens:readonly SourceToken[]){
+ const unavailable=()=>({boxes:[] as SourceBox[],confidence:undefined});
+ if(!Number.isSafeInteger(span.start)||!Number.isSafeInteger(span.end)||span.start<0||span.end<=span.start||span.end-span.start!==span.value.length)return unavailable();
  const matches=tokens.filter(t=>t.end>span.start&&t.start<span.end);
  if(!matches.length)return {boxes:[] as SourceBox[],confidence:undefined};
  const covered=new Uint8Array(span.end-span.start);
  for(const t of matches){
+  if(!Number.isSafeInteger(t.start)||!Number.isSafeInteger(t.end)||t.start<0||t.end-t.start!==t.text.length)return unavailable();
+  if(t.confidence!==undefined&&(!Number.isFinite(t.confidence)||t.confidence<0||t.confidence>1))return unavailable();
   const a=Math.max(t.start,span.start),b=Math.min(t.end,span.end);
+  if(t.text.slice(a-t.start,b-t.start)!==span.value.slice(a-span.start,b-span.start))return unavailable();
   // PDF text items may contain a whole sentence; masking that entire item
   // would hide neighbours and can make repeated numbers share one box.
   if(t.text.slice(0,a-t.start).trim()||t.text.slice(b-t.start).trim())return {boxes:[] as SourceBox[],confidence:undefined};

@@ -1,7 +1,7 @@
 import {normalizeDetectionSource} from './detection-normalization.ts';
 import type {Candidate} from './detection.ts';
 import {categoryDefinition} from './category-registry.ts';
-import {validAadhaar,validPan,validIfsc,validatePhone,validateIban,type Validation} from './identifier-validation.ts';
+import {validAadhaar,validPan,validIfsc,validatePhone,validateIban,validateBirthDate,type Validation} from './identifier-validation.ts';
 import {validLuhn} from './extended-detection.ts';
 
 export const CONFIDENCE_MEANING='Heuristic strength of the recognition rule, not a calibrated probability, identity authentication, OCR accuracy, or privacy clearance.';
@@ -18,6 +18,7 @@ export function explainCandidate(candidate:Candidate,text:string):Candidate {
   case 'bank': validation=check(/^[0-9]{9,18}$/.test(value.replace(/[ \t-]/g,'')),'Labelled bank-account structure','Supported numeric account format is 9–18 digits. Institution-specific rules are not checked.');break;
   case 'card': validation=check(validLuhn(value)&&!/^([0-9])\1+$/.test(value.replace(/[ -]/g,'')),'Payment-card length + Luhn','13–19 digits and Luhn checksum; repeated-digit placeholders are rejected.');break;
   case 'iban': validation=validateIban(value);break;
+  case 'birth_date': validation=validateBirthDate(value);break;
   case 'phone': validation=validatePhone(value,candidate.category==='INDIAN_MOBILE'?'IN':candidate.country_hint);break;
  }
  const line=text.slice(0,candidate.start).split(/\r\n|\r|\n|\u2028|\u2029/).length;

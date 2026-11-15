@@ -1,3 +1,4 @@
+import {aadhaarLabel,fieldPrefix,touchesNumericContinuation,repeatedAadhaarRows} from './identifier-context.ts';
 import {normalizeDetectionSource} from './detection-normalization.ts';
 import {detectContextFields,resolveCandidateOverlaps} from './context-fields.ts';
 import {validAadhaar} from './identifier-validation.ts';
@@ -181,10 +182,7 @@ function detectCanonical(text:string):Candidate[]{
  // Include labelled 16-digit VID/BID as distinct findings; never infer partial 12-digit Aadhaar from them.
  // Standard Aadhaar is exactly 12 digits. Do not carve 12 digits out of a
  // longer space-separated or ungrouped number; preserve source offsets.
- const numericDigit='[0-9०-९೦-೯]';
- const touchesOtherDigits=(start:number,end:number)=>
-   new RegExp(numericDigit+'[ \t\r\n._:/\\-]{0,6}$','u').test(text.slice(Math.max(0,start-9),start))||
-   new RegExp('^[ \t\r\n._:/\\-]{0,6}'+numericDigit,'u').test(text.slice(end,end+9));
+ const touchesOtherDigits=(start:number,end:number)=>touchesNumericContinuation(text,start,end);
  const virtualIdField=/(?:\b(?:VID|BID)\b|virtual\s*(?:identification\s*)?id|ವರ್ಚುವಲ್\s*(?:ಐಡಿ|ಗುರುತಿನ\s*ಸಂಖ್ಯೆ))\s*[:#=\-]?\s*((?:[0-9०-९೦-೯][ \t-]?){15}[0-9०-९೦-೯])(?![0-9०-९೦-೯])/giu;
  const virtualIdMatches=[...text.matchAll(virtualIdField)].filter(m=>!touchesOtherDigits(m.index!+m[0].lastIndexOf(m[1]),m.index!+m[0].length));
  const excludedVirtualRanges=virtualIdMatches.map(m=>({start:m.index!,end:m.index!+m[0].length}));
@@ -194,8 +192,8 @@ function detectCanonical(text:string):Candidate[]{
  const inVirtualField=(start:number,end:number)=>
    excludedVirtualRanges.some(range=>start<range.end&&end>range.start);
  const labelledAadhaarDigits=new Set<string>();
- const conflictingField=(start:number)=>/(?:MRN|patient\s*(?:id|number)|medical\s*record\s*(?:number|id)|(?:bank\s*)?account\s*(?:number|no\.?)|card\s*(?:number|no\.?)|student\s*id|USN|order|invoice|ಖಾತೆ|ರೋಗಿಯ?\s*ಸಂಖ್ಯೆ)\s*[:#=\-]?\s*$/iu.test(text.slice(text.lastIndexOf('\n',start-1)+1,start));
- for(const m of text.matchAll(/(?<!\d)(?:\d[ -]?){11}\d(?!\d)/g)){const valid=validAadhaar(m[0]);if(conflictingField(m.index!)||touchesOtherDigits(m.index!,m.index!+m[0].length)||inVirtualField(m.index!,m.index!+m[0].length))continue;const lineStart=text.lastIndexOf('\n',m.index!)+1;const context=text.slice(Math.max(lineStart,m.index!-90),m.index!);const locallyLabelled=/(?:aadha(?:ar|r)?|aadhar|uidai|आधार|ಆಧಾರ್|ಆಧಾರ)/iu.test(context);if(locallyLabelled)labelledAadhaarDigits.add(m[0].replace(/\D/g,''));if(valid||locallyLabelled||labelledAadhaarDigits.has(m[0].replace(/\D/g,'')))found.push({category:valid?'AADHAAR_CANDIDATE':'AADHAAR_REVIEW',value:m[0],start:m.index!,end:m.index!+m[0].length,risk:'HIGH',detection_confidence:valid?.94:.45,reason:valid?'Verhoeff checksum passed; identity not verified':'Aadhaar label but checksum failed; review possible OCR error'});}
+ const conflictingField=(start:number)=>/(?:MRN|patient\s*(?:id|number)|medical\s*record\s*(?:number|id)|(?:bank\s*)?account\s*(?:number|no\.?)|card\s*(?:number|no\.?)|student\s*id|USN|order|invoice|ಖಾತೆ|ರೋಗಿಯ?\s*ಸಂಖ್ಯೆ)\s*[:#=\-]?\s*$/iu.test(fieldPrefix(text,start));
+ for(const m of text.matchAll(/(?<!\d)(?:\d[ -]?){11}\d(?!\d)/g)){const valid=validAadhaar(m[0]);if(conflictingField(m.index!)||touchesOtherDigits(m.index!,m.index!+m[0].length)||inVirtualField(m.index!,m.index!+m[0].length))continue;const lineStart=text.lastIndexOf('\n',m.index!)+1;const context=text.slice(Math.max(lineStart,m.index!-90),m.index!);const locallyLabelled=/(?:aadha(?:ar|r)?|aadhar|uidai|आधार|ಆಧಾರ್|ಆಧಾರ)/iu.test(context)||aadhaarLabel.test(fieldPrefix(text,m.index!));if(locallyLabelled)labelledAadhaarDigits.add(m[0].replace(/\D/g,''));if(valid||locallyLabelled||labelledAadhaarDigits.has(m[0].replace(/\D/g,'')))found.push({category:valid?'AADHAAR_CANDIDATE':'AADHAAR_REVIEW',value:m[0],start:m.index!,end:m.index!+m[0].length,risk:'HIGH',detection_confidence:valid?.94:.45,reason:valid?'Verhoeff checksum passed; identity not verified':'Aadhaar label but checksum failed; review possible OCR error'});}
 
  // Review 4-4-4 groups even with OCR separators, Kannada/Devanagari digits,
  // or an unreliable Aadhaar checksum. This intentionally does not authenticate IDs.
@@ -212,7 +210,7 @@ function detectCanonical(text:string):Candidate[]{
    const hereStart=text.lastIndexOf('\n',m.index!)+1;
    const hereEnd=text.indexOf('\n',m.index!);
    const near=text.slice(Math.max(hereStart,m.index!-110),Math.min(hereEnd<0?text.length:hereEnd,m.index!+m[0].length+20));
-   if(!valid&&!aadhaarContext.test(near)&&!labelledAadhaarDigits.has(digit))continue;
+   if(!valid&&!aadhaarContext.test(near)&&!aadhaarLabel.test(fieldPrefix(text,m.index!))&&!labelledAadhaarDigits.has(digit))continue;
    if(found.some(f=>f.start<=m.index!&&f.end>=m.index!+m[0].length&&f.category.startsWith('AADHAAR')))continue;
    found.push({category:valid?'AADHAAR_CANDIDATE':'AADHAAR_REVIEW',value:m[0],start:m.index!,end:m.index!+m[0].length,risk:'HIGH',detection_confidence:valid?.94:.5,reason:'12-digit Aadhaar-shaped sequence. Verify duplicated or OCR-damaged numbers manually.'});
  }
@@ -221,14 +219,14 @@ function detectCanonical(text:string):Candidate[]{
  if(aadhaarContext.test(text)){
    const uncertain=/(?<![0-9A-Za-z])(?:[0-9OIlS०-९೦-೯]{4}[\s._:/\-]{1,6}){2}[0-9OIlS०-९೦-೯]{4}(?![0-9A-Za-z])/giu;
    for(const m of text.matchAll(uncertain)){
-     if(!aadhaarContext.test(text.slice(text.lastIndexOf('\n',m.index!-1)+1,m.index!))||!/[OIlS]/i.test(m[0])||inVirtualField(m.index!,m.index!+m[0].length))continue;
+     if(!(aadhaarContext.test(text.slice(text.lastIndexOf('\n',m.index!-1)+1,m.index!))||aadhaarLabel.test(fieldPrefix(text,m.index!)))||!/[OIlS]/i.test(m[0])||touchesOtherDigits(m.index!,m.index!+m[0].length)||inVirtualField(m.index!,m.index!+m[0].length))continue;
      if(found.some(f=>f.start<=m.index!&&f.end>=m.index!+m[0].length&&f.category.startsWith('AADHAAR')))continue;
      found.push({category:'AADHAAR_OCR_REVIEW',value:m[0],start:m.index!,end:m.index!+m[0].length,risk:'HIGH',detection_confidence:.4,reason:'Possible Aadhaar digits distorted by OCR. Verify exact pixels manually.'});
    }
  }
  // Keep each incomplete labelled occurrence, even when another Aadhaar on the
  // page was complete. Never infer a 12-digit value from a longer numeric run.
- for(const m of text.matchAll(/(?:aadha(?:ar|r)?|aadhar|ಆಧಾರ್|ಆಧಾರ|आधार)[ \t]*(?:number|no\.?)?[ \t]*[:#=-]?[ \t]*([0-9OIlS][0-9OIlS \t-]{5,24})[ \t]*(?=\n|$)/giu)){
+ for(const m of text.matchAll(/(?:aadha(?:ar|r)?|aadhar|ಆಧಾರ್|ಆಧಾರ|आधार)[ \t]*(?:number|no\.?|ಸಂಖ್ಯೆ|ನಂಬರ್|संख्या)?[ \t]*[:#=-]?[ \t]*(?:\n[ \t]*)?([0-9OIlS][0-9OIlS \t-]{5,24})[ \t]*(?=\n|$)/giu)){
   const value=m[1].trimEnd(),start=m.index!+m[0].indexOf(m[1]),end=start+value.length;
   const length=value.replace(/[ \t-]/g,'').length;
   if(length<6||length>=12||touchesOtherDigits(start,end)||inVirtualField(start,end))continue;
@@ -238,13 +236,13 @@ function detectCanonical(text:string):Candidate[]{
  }
  // A label-only row followed by one complete short numeric row is ambiguous
  // in tables/columns. Offer review, never a confident patient/identity claim.
- const separated=/(?:^|\n)[ \t]*(?:ರೋಗಿಯ?[ \t]+(?:ಗುರುತಿನ[ \t]+)?(?:ಸಂಖ್ಯೆ|ಐಡಿ)|ವೈದ್ಯಕೀಯ[ \t]+ದಾಖಲೆ[ \t]+ಸಂಖ್ಯೆ|ಪ್ರವೇಶ[ \t]+ಸಂಖ್ಯೆ|ವಿದ್ಯಾರ್ಥಿಯ?[ \t]+ಗುರುತಿನ[ \t]+ಸಂಖ್ಯೆ|(?:patient[ \t]+)?MRN|patient[ \t]+(?:id|number)|medical[ \t]+record[ \t]+(?:number|id)|admission[ \t]+(?:number|id)|student[ \t]+id|USN)[ \t]*[:#=]?[ \t]*\n[ \t]*([0-9]{3,11})[ \t]*(?=\n|$)/giu;
+ const separated=/(?:^|\n)[ \t]*(?:ರೋಗಿಯ?[ \t]+(?:ಗುರುತಿನ[ \t]+)?(?:ಸಂಖ್ಯೆ|ಐಡಿ)|ವೈದ್ಯಕೀಯ[ \t]+ದಾಖಲೆ[ \t]+ಸಂಖ್ಯೆ|ಪ್ರವೇಶ[ \t]+ಸಂಖ್ಯೆ|ವಿದ್ಯಾರ್ಥಿಯ?[ \t]+ಗುರುತಿನ[ \t]+ಸಂಖ್ಯೆ|(?:patient[ \t]+)?MRN|patient[ \t]+(?:id|number)|medical[ \t]+record[ \t]+(?:number|id)|admission[ \t]+(?:number|id)|student[ \t]+id|USN)[ \t]*[:#=]?[ \t]*\n[ \t]*([0-9]{3,12}|[0-9]{4}[ \t-]+[0-9]{4}[ \t-]+[0-9]{4})[ \t]*(?=\n|$)/giu;
  for(const m of text.matchAll(separated)){
   const value=m[1],start=m.index!+m[0].lastIndexOf(value);
   found.push({category:'FORM_IDENTIFIER_REVIEW',value,start,end:start+value.length,risk:'HIGH',detection_confidence:.55,
    reason:'Identifier label and numeric value occupy separate rows. Verify column association manually.'});
  }
- const combined=[...found,...detectExtended(text,found),...detectContextFields(text)];
+ const combined=[...found,...repeatedAadhaarRows(text),...detectExtended(text,found),...detectContextFields(text)];
  // A local-number substring inside a +country-code number is not a second phone.
  const phones=combined.filter(f=>f.category==='INTERNATIONAL_PHONE_REVIEW');
  return combined.filter(f=>!(f.category==='INDIAN_MOBILE'&&phones.some(p=>p.start<=f.start&&p.end>=f.end)))
