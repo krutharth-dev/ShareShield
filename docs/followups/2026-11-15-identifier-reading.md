@@ -13,7 +13,9 @@ All inputs below are fictional regression values. No sealed evaluation corpus, m
 | `Aadhaar: 2345 6789 O124 9999` or a valid 12-digit prefix separated from four more digits by a wide gap | A 12-character prefix was proposed as Aadhaar | Numeric-continuation checks include OCR-like adjacent tokens and have no fixed whitespace limit. The longer value does not enter the Aadhaar list. VID/BID remain excluded from selection and required verification. |
 | Exact span supplied with a same-length but different OCR token, inconsistent token bounds or invalid confidence | Localization returned trusted boxes | Require exact source-token text, integral consistent offsets and finite confidence in range before returning any boxes. Invalid provenance leaves the finding unlocalized. This is a unit-level input-contract failure, not a demonstrated malicious-PDF exploit. |
 
-The five regression groups failed against the base implementation and passed after correction. Local full suite: **194/194 tests**, including the existing 188 tests; TypeScript production build passed. These are targeted regression results, not a population accuracy estimate.
+| Same ten PDF fields read as native text and OCR | Browser CI reproduced 20 localized proposals for ten physical rows | For identical Aadhaar values only, match one native field rectangle to a contained single OCR line with matching width/center. Retain the full native field mask and conservative confidence. Distinct rows, pages, partial words, conflicting values and multiline regions stay separate. |
+
+The five initial regression groups failed against the base implementation and passed after correction. Local full suite: **196/196 tests**, including the existing 188 tests and two additional cross-source deduplication tests; TypeScript production build passed. These are targeted regression results, not a population accuracy estimate.
 
 ## Additional validation
 
