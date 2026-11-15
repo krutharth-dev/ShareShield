@@ -26,6 +26,7 @@ jobs:
           npm run preview -- --host 127.0.0.1 --port 4174 > /tmp/shareshield-preview.log 2>&1 &
           for i in {1..30}; do if curl -fsS http://127.0.0.1:4174/app >/dev/null; then break; fi; sleep 1; done
           node tests/browser/smoke.mjs
+          node tests/browser/cloud-indigo.mjs
           node tests/browser/kannada-form.mjs
           node tests/browser/phase3-cancel.mjs
           node tests/browser/phase3-export.mjs
@@ -48,6 +49,7 @@ jobs:
           path: |
             /tmp/phase3-exports
             /tmp/phase4-exports
+            /tmp/theme-evidence
           retention-days: 7
       - name: Extend viewer isolated build and local-only browser acceptance
         run: |
