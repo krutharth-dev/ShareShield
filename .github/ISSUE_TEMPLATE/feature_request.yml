@@ -1,0 +1,39 @@
+name: Feature request
+description: Suggest a product, accessibility, testing, or developer-experience improvement.
+title: "[Feature]: "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Please use fictional examples. Do not share actual identity documents or vulnerable implementation details in a public issue.
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem to solve
+      description: What user need or existing limitation does this address?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed solution
+      description: Describe the behavior, not just a technology choice.
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+  - type: textarea
+    id: privacy
+    attributes:
+      label: Privacy, security, and accessibility considerations
+      description: Could this change detection coverage, exports, misleading success states, personal data handling, or assistive-technology support?
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Suggested acceptance criteria
+      placeholder: |
+        - Works with synthetic test fixtures
+        - Handles error and UNVERIFIED states correctly
+        - Remains usable by keyboard
