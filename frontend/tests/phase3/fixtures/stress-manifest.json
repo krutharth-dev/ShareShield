@@ -1,0 +1,1005 @@
+{
+  "schema": 1,
+  "annotation": "Generator gold only; independent fluent Kannada review pending",
+  "font_sha256": "cca4f3b3a8cb12fb261f1b43baf5d2f7f59d90fe123d41f0065ed3a183997ec9",
+  "documents": [
+    {
+      "id": "development-identity",
+      "split": "development",
+      "kind": "identity",
+      "language": "eng",
+      "width": 740,
+      "height": 340,
+      "text": "FICTIONAL DOCUMENT\nAadhaar: 2345 6789 0124\nPatient MRN: 4432648",
+      "entities": [
+        {
+          "category": "AADHAAR_CANDIDATE",
+          "value": "2345 6789 0124",
+          "box": [
+            97.84375,
+            66,
+            112.0,
+            10
+          ]
+        },
+        {
+          "category": "MEDICAL_RECORD_NUMBER",
+          "value": "4432648",
+          "box": [
+            126.921875,
+            104,
+            60.0,
+            10
+          ]
+        }
+      ],
+      "file": "development-identity.png",
+      "sha256": "29f0b563617ada0e216091082b2cd7dedf0c1e91b841173451f5edd5ba2ac93d"
+    },
+    {
+      "id": "development-marks",
+      "split": "development",
+      "kind": "marks",
+      "language": "kan",
+      "width": 1100,
+      "height": 620,
+      "text": "ಕಲ್ಪಿತ ಅಂಕಪಟ್ಟಿ\nವಿದ್ಯಾರ್ಥಿಯ ಹೆಸರು: ಕಲ್ಪಿತ ರವಿ\nರೋಗಿಯ ಸಂಖ್ಯೆ\n5511571\nMarks: 87",
+      "entities": [
+        {
+          "category": "PERSON_NAME_REVIEW",
+          "value": "ಕಲ್ಪಿತ ರವಿ",
+          "box": [
+            263.21875,
+            101,
+            108.0,
+            32
+          ]
+        },
+        {
+          "category": "FORM_IDENTIFIER_REVIEW",
+          "value": "5511571",
+          "box": [
+            30.0,
+            253,
+            112.0,
+            20
+          ]
+        }
+      ],
+      "file": "development-marks.png",
+      "sha256": "412bb678f44838c73a775ca844c880eb65f5dd0b5e713487819adb1209b44f34"
+    },
+    {
+      "id": "development-admission",
+      "split": "development",
+      "kind": "admission",
+      "language": "eng+kan",
+      "width": 1100,
+      "height": 620,
+      "text": "FICTIONAL ADMISSION\nStudent ID:\n4590577\nName: Fictional Mira Rao\nMarks: 92",
+      "entities": [
+        {
+          "category": "FORM_IDENTIFIER_REVIEW",
+          "value": "4590577",
+          "box": [
+            30.0,
+            178,
+            112.0,
+            20
+          ]
+        },
+        {
+          "category": "PERSON_NAME_REVIEW",
+          "value": "Fictional Mira Rao",
+          "box": [
+            124.53125,
+            252,
+            235.0,
+            21
+          ]
+        }
+      ],
+      "file": "development-admission.png",
+      "sha256": "6ab62affb8be9e1f1d64932a4a2033b816a8adce3d3950e650f7868001445d18"
+    },
+    {
+      "id": "development-hospital",
+      "split": "development",
+      "kind": "hospital",
+      "language": "eng",
+      "width": 1100,
+      "height": 620,
+      "text": "FICTIONAL HOSPITAL\nPatient MRN:\n7240298\nAadhaar: 2345 6789 0124",
+      "entities": [
+        {
+          "category": "FORM_IDENTIFIER_REVIEW",
+          "value": "7240298",
+          "box": [
+            30.0,
+            178,
+            112.0,
+            20
+          ]
+        },
+        {
+          "category": "AADHAAR_CANDIDATE",
+          "value": "2345 6789 0124",
+          "box": [
+            156.640625,
+            253,
+            208.0,
+            20
+          ]
+        }
+      ],
+      "file": "development-hospital.png",
+      "sha256": "cf4d34d757660c65d44bf62ce1f3a8d318c2626dfec57345514a01a4e8d1b9b1"
+    },
+    {
+      "id": "development-medical",
+      "split": "development",
+      "kind": "medical",
+      "language": "kan",
+      "width": 1100,
+      "height": 620,
+      "text": "ಕಲ್ಪಿತ ಆಸ್ಪತ್ರೆ\nರೋಗಿಯ ಸಂಖ್ಯೆ: 6892444\nರೋಗಿಯ ಸಂಖ್ಯೆ\n6892445\nಆಧಾರ: 2345 6789",
+      "entities": [
+        {
+          "category": "PATIENT_ID",
+          "value": "6892444",
+          "box": [
+            226.4375,
+            103,
+            112.0,
+            20
+          ]
+        },
+        {
+          "category": "FORM_IDENTIFIER_REVIEW",
+          "value": "6892445",
+          "box": [
+            30.0,
+            253,
+            112.0,
+            20
+          ]
+        },
+        {
+          "category": "AADHAAR_OCR_REVIEW",
+          "value": "2345 6789",
+          "box": [
+            121.34375,
+            328,
+            136.0,
+            20
+          ]
+        }
+      ],
+      "file": "development-medical.png",
+      "sha256": "42aeea8d04f10835282455c0275b6db08348b098bb194b76c76e061a8236b51c"
+    },
+    {
+      "id": "development-financial",
+      "split": "development",
+      "kind": "financial",
+      "language": "eng+kan",
+      "width": 1100,
+      "height": 620,
+      "text": "FICTIONAL FINANCIAL FORM\nAccount number: 432109876543\nಖಾತೆ ಸಂಖ್ಯೆ: 543210987654\nVID: 2345 6789 0124 9999",
+      "entities": [
+        {
+          "category": "BANK_ACCOUNT_CANDIDATE",
+          "value": "432109876543",
+          "box": [
+            265.390625,
+            103,
+            192.0,
+            20
+          ]
+        },
+        {
+          "category": "BANK_ACCOUNT_CANDIDATE",
+          "value": "543210987654",
+          "box": [
+            174.390625,
+            178,
+            192.0,
+            20
+          ]
+        }
+      ],
+      "file": "development-financial.png",
+      "sha256": "7de46d0362751c77ab52c736a173b2bb04d0b4d8fb75ce976163fd3343cc612d"
+    },
+    {
+      "id": "development-application",
+      "split": "development",
+      "kind": "application",
+      "language": "eng",
+      "width": 1100,
+      "height": 620,
+      "text": "FICTIONAL APPLICATION\nName: Fictional Mira Rao\nAddress: 14 Fictional Road\nHassan 573201\nAddress: 29 Imaginary Lane\nMysore 570001",
+      "entities": [
+        {
+          "category": "PERSON_NAME_REVIEW",
+          "value": "Fictional Mira Rao",
+          "box": [
+            124.53125,
+            102,
+            235.0,
+            21
+          ]
+        },
+        {
+          "category": "ADDRESS_REVIEW",
+          "value": "14 Fictional Road",
+          "box": [
+            151.5,
+            177,
+            225.0,
+            21
+          ]
+        },
+        {
+          "category": "ADDRESS_BLOCK_REVIEW",
+          "value": "Hassan 573201",
+          "box": [
+            30.0,
+            253,
+            200.0,
+            20
+          ]
+        },
+        {
+          "category": "ADDRESS_REVIEW",
+          "value": "29 Imaginary Lane",
+          "box": [
+            151.5,
+            327,
+            246.0,
+            28
+          ]
+        },
+        {
+          "category": "ADDRESS_BLOCK_REVIEW",
+          "value": "Mysore 570001",
+          "box": [
+            30.0,
+            403,
+            201.0,
+            27
+          ]
+        }
+      ],
+      "file": "development-application.png",
+      "sha256": "2d4068b17980e58754b34d03b01b2ec4f5d9d782fca8ceb347eda243f4d19f18"
+    },
+    {
+      "id": "development-legal",
+      "split": "development",
+      "kind": "legal",
+      "language": "kan",
+      "width": 1100,
+      "height": 620,
+      "text": "ಕಲ್ಪಿತ ದಾಖಲೆ\nಹೆಸರು: ಕಲ್ಪಿತ ರವಿ\nವಿಳಾಸ: 14 ಕಲ್ಪಿತ ರಸ್ತೆ\nರೋಗಿಯ ಸಂಖ್ಯೆ: 7022495",
+      "entities": [
+        {
+          "category": "PERSON_NAME_REVIEW",
+          "value": "ಕಲ್ಪಿತ ರವಿ",
+          "box": [
+            116.265625,
+            101,
+            108.0,
+            32
+          ]
+        },
+        {
+          "category": "KANNADA_ADDRESS_REVIEW",
+          "value": "14 ಕಲ್ಪಿತ ರಸ್ತೆ",
+          "box": [
+            119.96875,
+            175,
+            148.0,
+            33
+          ]
+        },
+        {
+          "category": "PATIENT_ID",
+          "value": "7022495",
+          "box": [
+            226.4375,
+            253,
+            112.0,
+            20
+          ]
+        }
+      ],
+      "file": "development-legal.png",
+      "sha256": "08db84e98b65b32df8b8a60e06064361d87c68b58d647c47e2b559de1d7f8381"
+    },
+    {
+      "id": "development-poor-scan",
+      "split": "development",
+      "kind": "poor-scan",
+      "language": "eng+kan",
+      "width": 1100,
+      "height": 620,
+      "text": "FICTIONAL MIXED FORM\nರೋಗಿಯ ಸಂಖ್ಯೆ: 4807188\nAadhaar: 2345 6789 0124\nName: Fictional Mira Rao",
+      "entities": [
+        {
+          "category": "PATIENT_ID",
+          "value": "4807188",
+          "box": [
+            226.4375,
+            103,
+            112.0,
+            20
+          ]
+        },
+        {
+          "category": "AADHAAR_CANDIDATE",
+          "value": "2345 6789 0124",
+          "box": [
+            156.640625,
+            178,
+            208.0,
+            20
+          ]
+        },
+        {
+          "category": "PERSON_NAME_REVIEW",
+          "value": "Fictional Mira Rao",
+          "box": [
+            124.53125,
+            252,
+            235.0,
+            21
+          ]
+        }
+      ],
+      "file": "development-poor-scan.png",
+      "sha256": "1d45ade43621a9193e2911797319757b22b78c01c3f02297e1842aca80e11533"
+    },
+    {
+      "id": "development-repeated",
+      "split": "development",
+      "kind": "repeated",
+      "language": "eng",
+      "width": 1100,
+      "height": 620,
+      "text": "FICTIONAL REPEATED IDENTIFIERS\nAadhaar: 2345 6789 0124\nAadhaar: 2345 6789 0124\nAadhaar: 2345 6789 01\nVID: 2345 6789 0124 9999",
+      "entities": [
+        {
+          "category": "AADHAAR_CANDIDATE",
+          "value": "2345 6789 0124",
+          "box": [
+            156.640625,
+            103,
+            208.0,
+            20
+          ]
+        },
+        {
+          "category": "AADHAAR_CANDIDATE",
+          "value": "2345 6789 0124",
+          "box": [
+            156.640625,
+            178,
+            208.0,
+            20
+          ]
+        },
+        {
+          "category": "AADHAAR_OCR_REVIEW",
+          "value": "2345 6789 01",
+          "box": [
+            156.640625,
+            253,
+            176.0,
+            20
+          ]
+        }
+      ],
+      "file": "development-repeated.png",
+      "sha256": "9fd4247795de72e82a2a03458b83f3bde43f9c30d5ed38318a22be335d3ada81"
+    },
+    {
+      "id": "sealed-identity",
+      "split": "sealed",
+      "kind": "identity",
+      "language": "eng",
+      "width": 740,
+      "height": 340,
+      "text": "FICTIONAL DOCUMENT\nAadhaar: 2345 6789 0124\nPatient MRN: 8211535",
+      "entities": [
+        {
+          "category": "AADHAAR_CANDIDATE",
+          "value": "2345 6789 0124",
+          "box": [
+            97.84375,
+            66,
+            112.0,
+            10
+          ]
+        },
+        {
+          "category": "MEDICAL_RECORD_NUMBER",
+          "value": "8211535",
+          "box": [
+            126.921875,
+            104,
+            60.0,
+            10
+          ]
+        }
+      ],
+      "file": "sealed-identity.png",
+      "sha256": "25f8f2da41b13e9b1dc1a6bff986f5ef70f60d100f64ba5e3f4651f6ec65705d"
+    },
+    {
+      "id": "sealed-marks",
+      "split": "sealed",
+      "kind": "marks",
+      "language": "kan",
+      "width": 1100,
+      "height": 620,
+      "text": "ಕಲ್ಪಿತ ಅಂಕಪಟ್ಟಿ\nವಿದ್ಯಾರ್ಥಿಯ ಹೆಸರು: ಕಲ್ಪಿತ ರವಿ\nರೋಗಿಯ ಸಂಖ್ಯೆ\n8762677\nMarks: 87",
+      "entities": [
+        {
+          "category": "PERSON_NAME_REVIEW",
+          "value": "ಕಲ್ಪಿತ ರವಿ",
+          "box": [
+            263.21875,
+            101,
+            108.0,
+            32
+          ]
+        },
+        {
+          "category": "FORM_IDENTIFIER_REVIEW",
+          "value": "8762677",
+          "box": [
+            30.0,
+            253,
+            112.0,
+            20
+          ]
+        }
+      ],
+      "file": "sealed-marks.png",
+      "sha256": "afb64cbe792f7da6fbf8a9163a1d8fa267c715181573356b439fdfba2f5a9e1b"
+    },
+    {
+      "id": "sealed-admission",
+      "split": "sealed",
+      "kind": "admission",
+      "language": "eng+kan",
+      "width": 1100,
+      "height": 620,
+      "text": "FICTIONAL ADMISSION\nStudent ID:\n4160148\nName: Fictional Tara Das\nMarks: 92",
+      "entities": [
+        {
+          "category": "FORM_IDENTIFIER_REVIEW",
+          "value": "4160148",
+          "box": [
+            30.0,
+            178,
+            112.0,
+            20
+          ]
+        },
+        {
+          "category": "PERSON_NAME_REVIEW",
+          "value": "Fictional Tara Das",
+          "box": [
+            124.53125,
+            252,
+            231.0,
+            21
+          ]
+        }
+      ],
+      "file": "sealed-admission.png",
+      "sha256": "935376408fb651dadd9f66bdc9fa25f480d4095aa0781485d6a3a0de6ca9f1ed"
+    },
+    {
+      "id": "sealed-hospital",
+      "split": "sealed",
+      "kind": "hospital",
+      "language": "eng",
+      "width": 1100,
+      "height": 620,
+      "text": "FICTIONAL HOSPITAL\nPatient MRN:\n8931194\nAadhaar: 2345 6789 0124",
+      "entities": [
+        {
+          "category": "FORM_IDENTIFIER_REVIEW",
+          "value": "8931194",
+          "box": [
+            30.0,
+            178,
+            112.0,
+            20
+          ]
+        },
+        {
+          "category": "AADHAAR_CANDIDATE",
+          "value": "2345 6789 0124",
+          "box": [
+            156.640625,
+            253,
+            208.0,
+            20
+          ]
+        }
+      ],
+      "file": "sealed-hospital.png",
+      "sha256": "54961994db5d00ce68538e24f2f183ab1af0ec458af4aa5df75243ff6287c94d"
+    },
+    {
+      "id": "sealed-medical",
+      "split": "sealed",
+      "kind": "medical",
+      "language": "kan",
+      "width": 1100,
+      "height": 620,
+      "text": "ಕಲ್ಪಿತ ಆಸ್ಪತ್ರೆ\nರೋಗಿಯ ಸಂಖ್ಯೆ: 5702232\nರೋಗಿಯ ಸಂಖ್ಯೆ\n5702233\nಆಧಾರ: 2345 6789",
+      "entities": [
+        {
+          "category": "PATIENT_ID",
+          "value": "5702232",
+          "box": [
+            226.4375,
+            103,
+            112.0,
+            20
+          ]
+        },
+        {
+          "category": "FORM_IDENTIFIER_REVIEW",
+          "value": "5702233",
+          "box": [
+            30.0,
+            253,
+            112.0,
+            20
+          ]
+        },
+        {
+          "category": "AADHAAR_OCR_REVIEW",
+          "value": "2345 6789",
+          "box": [
+            121.34375,
+            328,
+            136.0,
+            20
+          ]
+        }
+      ],
+      "file": "sealed-medical.png",
+      "sha256": "6ea34d49acd26b20aed98902674db46809a2c520c2716eb3f01ffb688a07f6e0"
+    },
+    {
+      "id": "sealed-financial",
+      "split": "sealed",
+      "kind": "financial",
+      "language": "eng+kan",
+      "width": 1100,
+      "height": 620,
+      "text": "FICTIONAL FINANCIAL FORM\nAccount number: 432109876543\nಖಾತೆ ಸಂಖ್ಯೆ: 543210987654\nVID: 2345 6789 0124 9999",
+      "entities": [
+        {
+          "category": "BANK_ACCOUNT_CANDIDATE",
+          "value": "432109876543",
+          "box": [
+            265.390625,
+            103,
+            192.0,
+            20
+          ]
+        },
+        {
+          "category": "BANK_ACCOUNT_CANDIDATE",
+          "value": "543210987654",
+          "box": [
+            174.390625,
+            178,
+            192.0,
+            20
+          ]
+        }
+      ],
+      "file": "sealed-financial.png",
+      "sha256": "7de46d0362751c77ab52c736a173b2bb04d0b4d8fb75ce976163fd3343cc612d"
+    },
+    {
+      "id": "sealed-application",
+      "split": "sealed",
+      "kind": "application",
+      "language": "eng",
+      "width": 1100,
+      "height": 620,
+      "text": "FICTIONAL APPLICATION\nName: Fictional Tara Das\nAddress: 14 Fictional Road\nHassan 573201\nAddress: 29 Imaginary Lane\nMysore 570001",
+      "entities": [
+        {
+          "category": "PERSON_NAME_REVIEW",
+          "value": "Fictional Tara Das",
+          "box": [
+            124.53125,
+            102,
+            231.0,
+            21
+          ]
+        },
+        {
+          "category": "ADDRESS_REVIEW",
+          "value": "14 Fictional Road",
+          "box": [
+            151.5,
+            177,
+            225.0,
+            21
+          ]
+        },
+        {
+          "category": "ADDRESS_BLOCK_REVIEW",
+          "value": "Hassan 573201",
+          "box": [
+            30.0,
+            253,
+            200.0,
+            20
+          ]
+        },
+        {
+          "category": "ADDRESS_REVIEW",
+          "value": "29 Imaginary Lane",
+          "box": [
+            151.5,
+            327,
+            246.0,
+            28
+          ]
+        },
+        {
+          "category": "ADDRESS_BLOCK_REVIEW",
+          "value": "Mysore 570001",
+          "box": [
+            30.0,
+            403,
+            201.0,
+            27
+          ]
+        }
+      ],
+      "file": "sealed-application.png",
+      "sha256": "c93d30942db2bd019e75e662aa3842ec72bb5c4c5e5d1f6c49a820885904a6c3"
+    },
+    {
+      "id": "sealed-legal",
+      "split": "sealed",
+      "kind": "legal",
+      "language": "kan",
+      "width": 1100,
+      "height": 620,
+      "text": "ಕಲ್ಪಿತ ದಾಖಲೆ\nಹೆಸರು: ಕಲ್ಪಿತ ರವಿ\nವಿಳಾಸ: 14 ಕಲ್ಪಿತ ರಸ್ತೆ\nರೋಗಿಯ ಸಂಖ್ಯೆ: 4578200",
+      "entities": [
+        {
+          "category": "PERSON_NAME_REVIEW",
+          "value": "ಕಲ್ಪಿತ ರವಿ",
+          "box": [
+            116.265625,
+            101,
+            108.0,
+            32
+          ]
+        },
+        {
+          "category": "KANNADA_ADDRESS_REVIEW",
+          "value": "14 ಕಲ್ಪಿತ ರಸ್ತೆ",
+          "box": [
+            119.96875,
+            175,
+            148.0,
+            33
+          ]
+        },
+        {
+          "category": "PATIENT_ID",
+          "value": "4578200",
+          "box": [
+            226.4375,
+            253,
+            112.0,
+            20
+          ]
+        }
+      ],
+      "file": "sealed-legal.png",
+      "sha256": "95a55774f8e3bb7c908b4edb8832663215476aaad09ceb30af551ff4f281e8c3"
+    },
+    {
+      "id": "sealed-poor-scan",
+      "split": "sealed",
+      "kind": "poor-scan",
+      "language": "eng+kan",
+      "width": 1100,
+      "height": 620,
+      "text": "FICTIONAL MIXED FORM\nರೋಗಿಯ ಸಂಖ್ಯೆ: 6519371\nAadhaar: 2345 6789 0124\nName: Fictional Tara Das",
+      "entities": [
+        {
+          "category": "PATIENT_ID",
+          "value": "6519371",
+          "box": [
+            226.4375,
+            103,
+            112.0,
+            20
+          ]
+        },
+        {
+          "category": "AADHAAR_CANDIDATE",
+          "value": "2345 6789 0124",
+          "box": [
+            156.640625,
+            178,
+            208.0,
+            20
+          ]
+        },
+        {
+          "category": "PERSON_NAME_REVIEW",
+          "value": "Fictional Tara Das",
+          "box": [
+            124.53125,
+            252,
+            231.0,
+            21
+          ]
+        }
+      ],
+      "file": "sealed-poor-scan.png",
+      "sha256": "c430b697669cfaea62a6ea05b9dff5bd1011574d8786a6f3e51d2f636003ac2b"
+    },
+    {
+      "id": "sealed-repeated",
+      "split": "sealed",
+      "kind": "repeated",
+      "language": "eng",
+      "width": 1100,
+      "height": 620,
+      "text": "FICTIONAL REPEATED IDENTIFIERS\nAadhaar: 2345 6789 0124\nAadhaar: 2345 6789 0124\nAadhaar: 2345 6789 01\nVID: 2345 6789 0124 9999",
+      "entities": [
+        {
+          "category": "AADHAAR_CANDIDATE",
+          "value": "2345 6789 0124",
+          "box": [
+            156.640625,
+            103,
+            208.0,
+            20
+          ]
+        },
+        {
+          "category": "AADHAAR_CANDIDATE",
+          "value": "2345 6789 0124",
+          "box": [
+            156.640625,
+            178,
+            208.0,
+            20
+          ]
+        },
+        {
+          "category": "AADHAAR_OCR_REVIEW",
+          "value": "2345 6789 01",
+          "box": [
+            156.640625,
+            253,
+            176.0,
+            20
+          ]
+        }
+      ],
+      "file": "sealed-repeated.png",
+      "sha256": "9fd4247795de72e82a2a03458b83f3bde43f9c30d5ed38318a22be335d3ada81"
+    },
+    {
+      "id": "development-small-0.5",
+      "split": "development",
+      "kind": "small-text",
+      "language": "eng",
+      "width": 370,
+      "height": 170,
+      "text": "FICTIONAL DOCUMENT\nAadhaar: 2345 6789 0124\nPatient MRN: 4432648",
+      "entities": [
+        {
+          "category": "AADHAAR_CANDIDATE",
+          "value": "2345 6789 0124",
+          "box": [
+            48.921875,
+            33.0,
+            56.0,
+            5.0
+          ]
+        },
+        {
+          "category": "MEDICAL_RECORD_NUMBER",
+          "value": "4432648",
+          "box": [
+            63.4609375,
+            52.0,
+            30.0,
+            5.0
+          ]
+        }
+      ],
+      "file": "development-small-0.5.png",
+      "sha256": "de9846b955d8a13391565f4eacbc8567ff43ad3cfe3b827ebabc829b22c544fe"
+    },
+    {
+      "id": "development-small-0.65",
+      "split": "development",
+      "kind": "small-text",
+      "language": "eng",
+      "width": 481,
+      "height": 221,
+      "text": "FICTIONAL DOCUMENT\nAadhaar: 2345 6789 0124\nPatient MRN: 4432648",
+      "entities": [
+        {
+          "category": "AADHAAR_CANDIDATE",
+          "value": "2345 6789 0124",
+          "box": [
+            63.5984375,
+            42.9,
+            72.8,
+            6.5
+          ]
+        },
+        {
+          "category": "MEDICAL_RECORD_NUMBER",
+          "value": "4432648",
+          "box": [
+            82.49921875,
+            67.60000000000001,
+            39.0,
+            6.5
+          ]
+        }
+      ],
+      "file": "development-small-0.65.png",
+      "sha256": "22e88ee90ec3f17c630ba83c2a0d60bec1120b70d9bd7142b5354dcf92be20ca"
+    },
+    {
+      "id": "development-small-0.8",
+      "split": "development",
+      "kind": "small-text",
+      "language": "eng",
+      "width": 592,
+      "height": 272,
+      "text": "FICTIONAL DOCUMENT\nAadhaar: 2345 6789 0124\nPatient MRN: 4432648",
+      "entities": [
+        {
+          "category": "AADHAAR_CANDIDATE",
+          "value": "2345 6789 0124",
+          "box": [
+            78.275,
+            52.800000000000004,
+            89.60000000000001,
+            8.0
+          ]
+        },
+        {
+          "category": "MEDICAL_RECORD_NUMBER",
+          "value": "4432648",
+          "box": [
+            101.53750000000001,
+            83.2,
+            48.0,
+            8.0
+          ]
+        }
+      ],
+      "file": "development-small-0.8.png",
+      "sha256": "51fb5506e9b26b4431472b3e44bfa6e2e469d16b9d67beae07c4ac649ebe7426"
+    },
+    {
+      "id": "sealed-small-0.5",
+      "split": "sealed",
+      "kind": "small-text",
+      "language": "eng",
+      "width": 370,
+      "height": 170,
+      "text": "FICTIONAL DOCUMENT\nAadhaar: 2345 6789 0124\nPatient MRN: 8211535",
+      "entities": [
+        {
+          "category": "AADHAAR_CANDIDATE",
+          "value": "2345 6789 0124",
+          "box": [
+            48.921875,
+            33.0,
+            56.0,
+            5.0
+          ]
+        },
+        {
+          "category": "MEDICAL_RECORD_NUMBER",
+          "value": "8211535",
+          "box": [
+            63.4609375,
+            52.0,
+            30.0,
+            5.0
+          ]
+        }
+      ],
+      "file": "sealed-small-0.5.png",
+      "sha256": "a0797de06b047c1790295178eb8131dc798da4a89c0083bc0d2df3a88c505c93"
+    },
+    {
+      "id": "sealed-small-0.65",
+      "split": "sealed",
+      "kind": "small-text",
+      "language": "eng",
+      "width": 481,
+      "height": 221,
+      "text": "FICTIONAL DOCUMENT\nAadhaar: 2345 6789 0124\nPatient MRN: 8211535",
+      "entities": [
+        {
+          "category": "AADHAAR_CANDIDATE",
+          "value": "2345 6789 0124",
+          "box": [
+            63.5984375,
+            42.9,
+            72.8,
+            6.5
+          ]
+        },
+        {
+          "category": "MEDICAL_RECORD_NUMBER",
+          "value": "8211535",
+          "box": [
+            82.49921875,
+            67.60000000000001,
+            39.0,
+            6.5
+          ]
+        }
+      ],
+      "file": "sealed-small-0.65.png",
+      "sha256": "b1147ab76ee9a2734daaf9cccb31538f8e09b69a9f1b29d10350d09e0fbd08e9"
+    },
+    {
+      "id": "sealed-small-0.8",
+      "split": "sealed",
+      "kind": "small-text",
+      "language": "eng",
+      "width": 592,
+      "height": 272,
+      "text": "FICTIONAL DOCUMENT\nAadhaar: 2345 6789 0124\nPatient MRN: 8211535",
+      "entities": [
+        {
+          "category": "AADHAAR_CANDIDATE",
+          "value": "2345 6789 0124",
+          "box": [
+            78.275,
+            52.800000000000004,
+            89.60000000000001,
+            8.0
+          ]
+        },
+        {
+          "category": "MEDICAL_RECORD_NUMBER",
+          "value": "8211535",
+          "box": [
+            101.53750000000001,
+            83.2,
+            48.0,
+            8.0
+          ]
+        }
+      ],
+      "file": "sealed-small-0.8.png",
+      "sha256": "b733e20c9af7c8f25b14d1b1db45af86d2867f08d6a3265d5277d144bfe2bc60"
+    }
+  ]
+}

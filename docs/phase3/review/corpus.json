@@ -1,0 +1,132 @@
+[
+  {
+    "id": "development-identity",
+    "text": "FICTIONAL DOCUMENT\nAadhaar: 2345 6789 0124\nPatient MRN: 4432648",
+    "language": "eng"
+  },
+  {
+    "id": "development-marks",
+    "text": "ಕಲ್ಪಿತ ಅಂಕಪಟ್ಟಿ\nವಿದ್ಯಾರ್ಥಿಯ ಹೆಸರು: ಕಲ್ಪಿತ ರವಿ\nರೋಗಿಯ ಸಂಖ್ಯೆ\n5511571\nMarks: 87",
+    "language": "kan"
+  },
+  {
+    "id": "development-admission",
+    "text": "FICTIONAL ADMISSION\nStudent ID:\n4590577\nName: Fictional Mira Rao\nMarks: 92",
+    "language": "eng+kan"
+  },
+  {
+    "id": "development-hospital",
+    "text": "FICTIONAL HOSPITAL\nPatient MRN:\n7240298\nAadhaar: 2345 6789 0124",
+    "language": "eng"
+  },
+  {
+    "id": "development-medical",
+    "text": "ಕಲ್ಪಿತ ಆಸ್ಪತ್ರೆ\nರೋಗಿಯ ಸಂಖ್ಯೆ: 6892444\nರೋಗಿಯ ಸಂಖ್ಯೆ\n6892445\nಆಧಾರ: 2345 6789",
+    "language": "kan"
+  },
+  {
+    "id": "development-financial",
+    "text": "FICTIONAL FINANCIAL FORM\nAccount number: 432109876543\nಖಾತೆ ಸಂಖ್ಯೆ: 543210987654\nVID: 2345 6789 0124 9999",
+    "language": "eng+kan"
+  },
+  {
+    "id": "development-application",
+    "text": "FICTIONAL APPLICATION\nName: Fictional Mira Rao\nAddress: 14 Fictional Road\nHassan 573201\nAddress: 29 Imaginary Lane\nMysore 570001",
+    "language": "eng"
+  },
+  {
+    "id": "development-legal",
+    "text": "ಕಲ್ಪಿತ ದಾಖಲೆ\nಹೆಸರು: ಕಲ್ಪಿತ ರವಿ\nವಿಳಾಸ: 14 ಕಲ್ಪಿತ ರಸ್ತೆ\nರೋಗಿಯ ಸಂಖ್ಯೆ: 7022495",
+    "language": "kan"
+  },
+  {
+    "id": "development-poor-scan",
+    "text": "FICTIONAL MIXED FORM\nರೋಗಿಯ ಸಂಖ್ಯೆ: 4807188\nAadhaar: 2345 6789 0124\nName: Fictional Mira Rao",
+    "language": "eng+kan"
+  },
+  {
+    "id": "development-repeated",
+    "text": "FICTIONAL REPEATED IDENTIFIERS\nAadhaar: 2345 6789 0124\nAadhaar: 2345 6789 0124\nAadhaar: 2345 6789 01\nVID: 2345 6789 0124 9999",
+    "language": "eng"
+  },
+  {
+    "id": "sealed-identity",
+    "text": "FICTIONAL DOCUMENT\nAadhaar: 2345 6789 0124\nPatient MRN: 8211535",
+    "language": "eng"
+  },
+  {
+    "id": "sealed-marks",
+    "text": "ಕಲ್ಪಿತ ಅಂಕಪಟ್ಟಿ\nವಿದ್ಯಾರ್ಥಿಯ ಹೆಸರು: ಕಲ್ಪಿತ ರವಿ\nರೋಗಿಯ ಸಂಖ್ಯೆ\n8762677\nMarks: 87",
+    "language": "kan"
+  },
+  {
+    "id": "sealed-admission",
+    "text": "FICTIONAL ADMISSION\nStudent ID:\n4160148\nName: Fictional Tara Das\nMarks: 92",
+    "language": "eng+kan"
+  },
+  {
+    "id": "sealed-hospital",
+    "text": "FICTIONAL HOSPITAL\nPatient MRN:\n8931194\nAadhaar: 2345 6789 0124",
+    "language": "eng"
+  },
+  {
+    "id": "sealed-medical",
+    "text": "ಕಲ್ಪಿತ ಆಸ್ಪತ್ರೆ\nರೋಗಿಯ ಸಂಖ್ಯೆ: 5702232\nರೋಗಿಯ ಸಂಖ್ಯೆ\n5702233\nಆಧಾರ: 2345 6789",
+    "language": "kan"
+  },
+  {
+    "id": "sealed-financial",
+    "text": "FICTIONAL FINANCIAL FORM\nAccount number: 432109876543\nಖಾತೆ ಸಂಖ್ಯೆ: 543210987654\nVID: 2345 6789 0124 9999",
+    "language": "eng+kan"
+  },
+  {
+    "id": "sealed-application",
+    "text": "FICTIONAL APPLICATION\nName: Fictional Tara Das\nAddress: 14 Fictional Road\nHassan 573201\nAddress: 29 Imaginary Lane\nMysore 570001",
+    "language": "eng"
+  },
+  {
+    "id": "sealed-legal",
+    "text": "ಕಲ್ಪಿತ ದಾಖಲೆ\nಹೆಸರು: ಕಲ್ಪಿತ ರವಿ\nವಿಳಾಸ: 14 ಕಲ್ಪಿತ ರಸ್ತೆ\nರೋಗಿಯ ಸಂಖ್ಯೆ: 4578200",
+    "language": "kan"
+  },
+  {
+    "id": "sealed-poor-scan",
+    "text": "FICTIONAL MIXED FORM\nರೋಗಿಯ ಸಂಖ್ಯೆ: 6519371\nAadhaar: 2345 6789 0124\nName: Fictional Tara Das",
+    "language": "eng+kan"
+  },
+  {
+    "id": "sealed-repeated",
+    "text": "FICTIONAL REPEATED IDENTIFIERS\nAadhaar: 2345 6789 0124\nAadhaar: 2345 6789 0124\nAadhaar: 2345 6789 01\nVID: 2345 6789 0124 9999",
+    "language": "eng"
+  },
+  {
+    "id": "development-small-0.5",
+    "text": "FICTIONAL DOCUMENT\nAadhaar: 2345 6789 0124\nPatient MRN: 4432648",
+    "language": "eng"
+  },
+  {
+    "id": "development-small-0.65",
+    "text": "FICTIONAL DOCUMENT\nAadhaar: 2345 6789 0124\nPatient MRN: 4432648",
+    "language": "eng"
+  },
+  {
+    "id": "development-small-0.8",
+    "text": "FICTIONAL DOCUMENT\nAadhaar: 2345 6789 0124\nPatient MRN: 4432648",
+    "language": "eng"
+  },
+  {
+    "id": "sealed-small-0.5",
+    "text": "FICTIONAL DOCUMENT\nAadhaar: 2345 6789 0124\nPatient MRN: 8211535",
+    "language": "eng"
+  },
+  {
+    "id": "sealed-small-0.65",
+    "text": "FICTIONAL DOCUMENT\nAadhaar: 2345 6789 0124\nPatient MRN: 8211535",
+    "language": "eng"
+  },
+  {
+    "id": "sealed-small-0.8",
+    "text": "FICTIONAL DOCUMENT\nAadhaar: 2345 6789 0124\nPatient MRN: 8211535",
+    "language": "eng"
+  }
+]

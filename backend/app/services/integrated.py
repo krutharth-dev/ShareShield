@@ -40,12 +40,14 @@ def analyze_document(path: Path, language='eng'):
                 text, tokens = '', []
                 for x0,y0,x1,y1,word,*_ in page.get_text('words', sort=True):
                     start = len(text); text += word + ' '
+                    rect=fitz.Rect(x0,y0,x1,y1)*page.rotation_matrix
+                    x0,y0,x1,y1=rect
                     tokens.append({'start':start,'end':start+len(word), 'box':{'page':n,'x0':x0,'y0':y0,'x1':x1,'y1':y1}})
                 native = _findings(text,tokens,n,'text_layer'); findings.extend(native)
                 pix = page.get_pixmap(matrix=fitz.Matrix(2,2),alpha=False)
                 image = Image.frombytes('RGB',(pix.width,pix.height),pix.samples)
                 optical, notes = _ocr_findings(image,language,n,2)
-                findings.extend(f for f in optical if f['value'] not in {v['value'] for v in native})
+                findings.extend(optical)  # Keep separate OCR occurrences; value-only dedup loses embedded-image copies.
                 warnings.extend(notes)
             if doc.embfile_count():
                 warnings.append('Attachments are removed from the exported PDF; their contents are not analyzed.')
@@ -72,15 +74,4 @@ def redact_document(source, output, regions):
     from ..contracts.schemas import Region
     # Reuse the team's true content/pixel redaction implementation.
     actual = redact_file(source,output,[Region(**r) for r in regions])
-    if source.suffix == '.pdf':
-        # Rebuild from redacted pixels to exclude hidden objects, attachments, forms,
-        # metadata and historical revisions. The original is never modified.
-        flattened = fitz.open()
-        with fitz.open(actual) as doc:
-            for page in doc:
-                pix=page.get_pixmap(matrix=fitz.Matrix(2,2),alpha=False)
-                p=flattened.new_page(width=page.rect.width,height=page.rect.height)
-                p.insert_image(p.rect,stream=pix.tobytes('png'))
-        data=flattened.tobytes(garbage=4,deflate=True); flattened.close()
-        actual.write_bytes(data)
     return actual

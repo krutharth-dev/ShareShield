@@ -30,7 +30,10 @@ def test_real_detection_redaction_download(client):
     assert client.post(url+'/redact',json={'finding_ids':[x['id'] for x in f['findings']]}).status_code==404
     r=client.post(url+'/redact',headers=headers,json={'finding_ids':[x['id'] for x in f['findings']]})
     assert r.status_code==200,r.text
-    assert r.json()['verification']['status']=='SCOPED_CLEAR',r.json()
+    assert r.json()['verification']['status']=='UNVERIFIED',r.json()
+    checks={c['name']:c['status'] for c in r.json()['verification']['checks']}
+    assert checks['approved_pixels']=='passed' and checks['pdf_structure']=='passed'
+    assert checks['human_review']=='incomplete'
     out=client.get(url+'/download',headers=headers)
     assert out.status_code==200
     with fitz.open(stream=out.content,filetype='pdf') as doc:
@@ -67,6 +70,6 @@ def test_path_and_legacy_routes_disabled(client):
 
 def test_metadata_removed(client):
     f=upload(client,payload('Public project summary',{'author':'demo.person@example.test'}));headers={'Authorization':'Bearer '+f['access_token']};url='/api/v1/files/'+f['file_id']
-    r=client.post(url+'/redact',headers=headers,json={'finding_ids':[]});assert r.json()['verification']['status']=='SCOPED_CLEAR'
+    r=client.post(url+'/redact',headers=headers,json={'finding_ids':[]});assert r.json()['verification']['status']=='UNVERIFIED'
     out=client.get(url+'/download',headers=headers)
     with fitz.open(stream=out.content,filetype='pdf') as d:assert 'demo.person@example.test' not in str(d.metadata)

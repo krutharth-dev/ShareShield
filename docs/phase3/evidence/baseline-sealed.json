@@ -1,0 +1,1973 @@
+{
+  "schema": 1,
+  "split": "sealed",
+  "browser": "141.0.7390.37",
+  "source": "a4c56a0",
+  "scope": "Synthetic generator gold. No independent annotations. External face assets blocked identically in all arms; face verification remains incomplete.",
+  "documents": [
+    {
+      "id": "sealed-identity",
+      "raw_text": "FICTIONAL DOCUMENT\nAadhaar: 2345 6789 0124\nPatient MRN: 8211535",
+      "raw_ms": 443,
+      "rescue_applied": true,
+      "raw_confidence": 90,
+      "scaled_text": "FICTIONAL DOCUMENT\nAadhaar: 23456789 0124\nPatient MRN: 8211535\n",
+      "scaled_ms": 182.20000000001164,
+      "scaled_confidence": 94,
+      "deterministic": [
+        {
+          "category": "AADHAAR_CANDIDATE",
+          "value": "2345 6789 0124",
+          "start": 28,
+          "end": 42,
+          "risk": "HIGH",
+          "detection_confidence": 0.94,
+          "reason": "Verhoeff checksum passed; identity not verified",
+          "validation": {
+            "status": "passed",
+            "method": "Aadhaar structure + Verhoeff",
+            "detail": "Exactly 12 digits, allowed leading digit and Verhoeff checksum. Passing format checks does not establish issuance, ownership or authenticity."
+          },
+          "source_context": "Source line 2; government field. See the highlighted original for its label and neighbouring context.",
+          "confidence_meaning": "Heuristic strength of the recognition rule, not a calibrated probability, identity authentication, OCR accuracy, or privacy clearance."
+        },
+        {
+          "category": "MEDICAL_RECORD_NUMBER",
+          "value": "8211535",
+          "start": 56,
+          "end": 63,
+          "risk": "HIGH",
+          "detection_confidence": 0.94,
+          "reason": "Explicit medical-record identifier label",
+          "validation": {
+            "status": "context_only",
+            "method": "label or shape recognition",
+            "detail": "No issuer, ownership or semantic authenticity check is available for this field."
+          },
+          "source_context": "Source line 3; medical_identifier field. See the highlighted original for its label and neighbouring context.",
+          "confidence_meaning": "Heuristic strength of the recognition rule, not a calibrated probability, identity authentication, OCR accuracy, or privacy clearance."
+        }
+      ],
+      "findings": [
+        {
+          "id": "f3ef4885-4842-4ced-86ad-33dbf675f0ee",
+          "recognition_source": "deterministic",
+          "category": "AADHAAR_CANDIDATE",
+          "risk": "HIGH",
+          "detection_confidence": 0.94,
+          "ocr_confidence": 0.78,
+          "preview": "••••124",
+          "reason": "Verhoeff checksum passed; identity not verified",
+          "validation": {
+            "status": "passed",
+            "method": "Aadhaar structure + Verhoeff",
+            "detail": "Exactly 12 digits, allowed leading digit and Verhoeff checksum. Passing format checks does not establish issuance, ownership or authenticity."
+          },
+          "source_context": "Source line 2; government field. See the highlighted original for its label and neighbouring context.",
+          "confidence_meaning": "Heuristic strength of the recognition rule, not a calibrated probability, identity authentication, OCR accuracy, or privacy clearance.",
+          "page": 0,
+          "boxes": [
+            {
+              "x": 99,
+              "y": 66,
+              "width": 33,
+              "height": 10
+            },
+            {
+              "x": 137,
+              "y": 66,
+              "width": 33,
+              "height": 10
+            },
+            {
+              "x": 176,
+              "y": 66,
+              "width": 34,
+              "height": 10
+            }
+          ]
+        },
+        {
+          "id": "290d5bc6-910a-4db3-ab4d-0afb073eb2dc",
+          "recognition_source": "deterministic",
+          "category": "MEDICAL_RECORD_NUMBER",
+          "risk": "HIGH",
+          "detection_confidence": 0.94,
+          "ocr_confidence": 0.96,
+          "preview": "••••535",
+          "reason": "Explicit medical-record identifier label",
+          "validation": {
+            "status": "context_only",
+            "method": "label or shape recognition",
+            "detail": "No issuer, ownership or semantic authenticity check is available for this field."
+          },
+          "source_context": "Source line 3; medical_identifier field. See the highlighted original for its label and neighbouring context.",
+          "confidence_meaning": "Heuristic strength of the recognition rule, not a calibrated probability, identity authentication, OCR accuracy, or privacy clearance.",
+          "page": 0,
+          "boxes": [
+            {
+              "x": 128,
+              "y": 104,
+              "width": 58,
+              "height": 10
+            }
+          ]
+        }
+      ],
+      "analysis_ms": 575.3999999999651,
+      "heartbeat_ticks": 35,
+      "max_heartbeat_gap_ms": 27.199999999953434,
+      "warnings": [
+        "Detection can miss sensitive content. Review every page. Names, addresses, QR codes and handwriting require manual review.",
+        "VID/BID values are excluded from the configured redaction and verification scope. Review original documents before public sharing.",
+        "Page 1: 2 OCR passes processed without changing original source pixels.",
+        "Experimental trained contextual recognition is active locally in a background worker. Synthetic-data model; review AI-only findings and all unrecognised content.",
+        "Page 1: face detector could not load. No automatic face clearance; mark every portrait manually. Model files require internet on first use.",
+        "Page 1: automatic QR decoding is unsupported in this browser; cover every QR code manually."
+      ]
+    },
+    {
+      "id": "sealed-marks",
+      "raw_text": "ಕಲ್ಪಿತ ಅಂಕಪಟ್ಟಿ\nವಿದ್ಯಾರ್ಥಿಯ ಹೆಸರು: ಕಲ್ಪಿತ ರವಿ\nರೋಗಿಯ ಸಂಖ್ಯೆ\n8762677\n!/8(॥5: 87",
+      "raw_ms": 403.20000000001164,
+      "rescue_applied": false,
+      "raw_confidence": 89,
+      "scaled_text": "ಕಲ್ಪಿತ ಅಂಕಪಟ್ಟಿ\n\nವಿದ್ಯಾರ್ಥಿಯ ಹೆಸರು: ಕಲ್ಪಿತ ರವಿ\nರೋಗಿಯ ಸಂಖ್ಯೆ\n\n8762677\n\n1/85: 87\n",
+      "scaled_ms": 287.1000000000349,
+      "scaled_confidence": 88,
+      "deterministic": [
+        {
+          "category": "KANNADA_PERSONAL_DETAIL_REVIEW",
+          "value": "ಕಲ್ಪಿತ ರವಿ",
+          "start": 35,
+          "end": 45,
+          "risk": "HIGH",
+          "detection_confidence": 0.68,
+          "reason": "Kannada-labelled personal data; review the complete line",
+          "validation": {
+            "status": "context_only",
+            "method": "label or shape recognition",
+            "detail": "No issuer, ownership or semantic authenticity check is available for this field."
+          },
+          "source_context": "Source line 2; identity field. See the highlighted original for its label and neighbouring context.",
+          "confidence_meaning": "Heuristic strength of the recognition rule, not a calibrated probability, identity authentication, OCR accuracy, or privacy clearance."
+        }
+      ],
+      "findings": [
+        {
+          "id": "435fe87e-33ef-4671-8174-decb1154dd2d",
+          "category": "UNREADABLE_TEXT_LINE_REVIEW",
+          "risk": "HIGH",
+          "detection_confidence": 0.35,
+          "preview": "Review full text line",
+          "reason": "Visible ink not reliably covered by OCR. This is not handwriting recognition; inspect the whole line manually.",
+          "page": 0,
+          "boxes": [
+            {
+              "x": 13,
+              "y": 323,
+              "width": 163,
+              "height": 31
+            }
+          ]
+        },
+        {
+          "id": "43cc07f3-cbbc-4ba0-acf2-37c77ee56e0b",
+          "recognition_source": "deterministic",
+          "category": "KANNADA_PERSONAL_DETAIL_REVIEW",
+          "risk": "HIGH",
+          "detection_confidence": 0.68,
+          "ocr_confidence": 0.92,
+          "preview": "••••ವಿ ",
+          "reason": "Kannada-labelled personal data; review the complete line",
+          "validation": {
+            "status": "context_only",
+            "method": "label or shape recognition",
+            "detail": "No issuer, ownership or semantic authenticity check is available for this field."
+          },
+          "source_context": "Source line 2; identity field. See the highlighted original for its label and neighbouring context.",
+          "confidence_meaning": "Heuristic strength of the recognition rule, not a calibrated probability, identity authentication, OCR accuracy, or privacy clearance.",
+          "page": 0,
+          "boxes": [
+            {
+              "x": 264,
+              "y": 102,
+              "width": 57,
+              "height": 30
+            },
+            {
+              "x": 331,
+              "y": 101,
+              "width": 40,
+              "height": 22
+            }
+          ]
+        }
+      ],
+      "analysis_ms": 711.2000000000116,
+      "heartbeat_ticks": 42,
+      "max_heartbeat_gap_ms": 34.100000000034925,
+      "warnings": [
+        "Detection can miss sensitive content. Review every page. Names, addresses, QR codes and handwriting require manual review.",
+        "VID/BID values are excluded from the configured redaction and verification scope. Review original documents before public sharing.",
+        "Page 1: 2 OCR passes processed without changing original source pixels.",
+        "Page 1: Kannada text or OCR detected. Name/address/party detection is experimental; review every line and region manually.",
+        "Experimental trained contextual recognition is active locally in a background worker. Synthetic-data model; review AI-only findings and all unrecognised content.",
+        "Page 1: 1 ink-line region(s) may contain missed handwriting or printed text. Inspect each complete line.",
+        "Page 1: face detector could not load. No automatic face clearance; mark every portrait manually. Model files require internet on first use.",
+        "Page 1: automatic QR decoding is unsupported in this browser; cover every QR code manually."
+      ]
+    },
+    {
+      "id": "sealed-admission",
+      "raw_text": "FICTIONAL ADMISSION\nStudent ID:\n4160148\nName: Fictional Tara Das\nMarks: 92",
+      "raw_ms": 534,
+      "rescue_applied": false,
+      "raw_confidence": 95,
+      "scaled_text": "FICTIONAL ADMISSION\nStudent ID:\n\n4160148\n\nName: Fictional Tara Das\nMarks: 92\n",
+      "scaled_ms": 344.29999999998836,
+      "scaled_confidence": 95,
+      "deterministic": [
+        {
+          "category": "PERSON_NAME_REVIEW",
+          "value": "Fictional Tara Das",
+          "start": 46,
+          "end": 64,
+          "risk": "HIGH",
+          "detection_confidence": 0.65,
+          "reason": "Explicit personal-name label or S/O-D/O relationship; manual identity review",
+          "validation": {
+            "status": "context_only",
+            "method": "label or shape recognition",
+            "detail": "No issuer, ownership or semantic authenticity check is available for this field."
+          },
+          "source_context": "Source line 4; identity field. See the highlighted original for its label and neighbouring context.",
+          "confidence_meaning": "Heuristic strength of the recognition rule, not a calibrated probability, identity authentication, OCR accuracy, or privacy clearance."
+        },
+        {
+          "category": "ACADEMIC_RESULT",
+          "value": "92",
+          "start": 72,
+          "end": 74,
+          "risk": "LOW",
+          "detection_confidence": 0.95,
+          "reason": "Labelled academic result",
+          "validation": {
+            "status": "context_only",
+            "method": "label or shape recognition",
+            "detail": "No issuer, ownership or semantic authenticity check is available for this field."
+          },
+          "source_context": "Source line 5; academic field. See the highlighted original for its label and neighbouring context.",
+          "confidence_meaning": "Heuristic strength of the recognition rule, not a calibrated probability, identity authentication, OCR accuracy, or privacy clearance."
+        }
+      ],
+      "findings": [
+        {
+          "id": "779188f6-ba4a-456d-a207-b419d6c7d4fc",
+          "recognition_source": "deterministic",
+          "category": "PERSON_NAME_REVIEW",
+          "risk": "HIGH",
+          "detection_confidence": 0.65,
+          "ocr_confidence": 0.96,
+          "preview": "••••as ",
+          "reason": "Explicit personal-name label or S/O-D/O relationship; manual identity review",
+          "validation": {
+            "status": "context_only",
+            "method": "label or shape recognition",
+            "detail": "No issuer, ownership or semantic authenticity check is available for this field."
+          },
+          "source_context": "Source line 4; identity field. See the highlighted original for its label and neighbouring context.",
+          "confidence_meaning": "Heuristic strength of the recognition rule, not a calibrated probability, identity authentication, OCR accuracy, or privacy clearance.",
+          "page": 0,
+          "boxes": [
+            {
+              "x": 128,
+              "y": 252,
+              "width": 104,
+              "height": 21
+            },
+            {
+              "x": 243,
+              "y": 253,
+              "width": 52,
+              "height": 20
+            },
+            {
+              "x": 309,
+              "y": 253,
+              "width": 45,
+              "height": 20
+            }
+          ]
+        },
+        {
+          "id": "b2d44e7f-2481-4e7d-9d46-ce7b63fadf8d",
+          "recognition_source": "deterministic",
+          "category": "ACADEMIC_RESULT",
+          "risk": "LOW",
+          "detection_confidence": 0.95,
+          "ocr_confidence": 0.96,
+          "preview": "••••",
+          "reason": "Labelled academic result",
+          "validation": {
+            "status": "context_only",
+            "method": "label or shape recognition",
+            "detail": "No issuer, ownership or semantic authenticity check is available for this field."
+          },
+          "source_context": "Source line 5; academic field. See the highlighted original for its label and neighbouring context.",
+          "confidence_meaning": "Heuristic strength of the recognition rule, not a calibrated probability, identity authentication, OCR accuracy, or privacy clearance.",
+          "page": 0,
+          "boxes": [
+            {
+              "x": 128,
+              "y": 328,
+              "width": 29,
+              "height": 20
+            }
+          ]
+        }
+      ],
+      "analysis_ms": 751.3000000000466,
+      "heartbeat_ticks": 46,
+      "max_heartbeat_gap_ms": 21.70000000001164,
+      "warnings": [
+        "Detection can miss sensitive content. Review every page. Names, addresses, QR codes and handwriting require manual review.",
+        "VID/BID values are excluded from the configured redaction and verification scope. Review original documents before public sharing.",
+        "Page 1: 2 OCR passes processed without changing original source pixels.",
+        "Experimental trained contextual recognition is active locally in a background worker. Synthetic-data model; review AI-only findings and all unrecognised content.",
+        "Page 1: face detector could not load. No automatic face clearance; mark every portrait manually. Model files require internet on first use.",
+        "Page 1: automatic QR decoding is unsupported in this browser; cover every QR code manually."
+      ]
+    },
+    {
+      "id": "sealed-hospital",
+      "raw_text": "FICTIONAL HOSPITAL\nPatient MRN:\n8931194\nAadhaar: 2345 6789 0124",
+      "raw_ms": 447.69999999995343,
+      "rescue_applied": false,
+      "raw_confidence": 94,
+      "scaled_text": "FICTIONAL HOSPITAL\nPatient MRN:\n\n8931194\n\nAadhaar: 2345 6789 0124\n",
+      "scaled_ms": 311.20000000001164,
+      "scaled_confidence": 94,
+      "deterministic": [
+        {
+          "category": "AADHAAR_CANDIDATE",
+          "value": "2345 6789 0124",
+          "start": 49,
+          "end": 63,
+          "risk": "HIGH",
+          "detection_confidence": 0.94,
+          "reason": "Verhoeff checksum passed; identity not verified",
+          "validation": {
+            "status": "passed",
+            "method": "Aadhaar structure + Verhoeff",
+            "detail": "Exactly 12 digits, allowed leading digit and Verhoeff checksum. Passing format checks does not establish issuance, ownership or authenticity."
+          },
+          "source_context": "Source line 4; government field. See the highlighted original for its label and neighbouring context.",
+          "confidence_meaning": "Heuristic strength of the recognition rule, not a calibrated probability, identity authentication, OCR accuracy, or privacy clearance."
+        }
+      ],
+      "findings": [
+        {
+          "id": "a4fc12d7-619e-4952-a377-ec9f32856858",
+          "recognition_source": "deterministic",
+          "category": "AADHAAR_CANDIDATE",
+          "risk": "HIGH",
+          "detection_confidence": 0.94,
+          "ocr_confidence": 0.95,
+          "preview": "••••124",
+          "reason": "Verhoeff checksum passed; identity not verified",
+          "validation": {
+            "status": "passed",
+            "method": "Aadhaar structure + Verhoeff",
+            "detail": "Exactly 12 digits, allowed leading digit and Verhoeff checksum. Passing format checks does not establish issuance, ownership or authenticity."
+          },
+          "source_context": "Source line 4; government field. See the highlighted original for its label and neighbouring context.",
+          "confidence_meaning": "Heuristic strength of the recognition rule, not a calibrated probability, identity authentication, OCR accuracy, or privacy clearance.",
+          "page": 0,
+          "boxes": [
+            {
+              "x": 158,
+              "y": 253,
+              "width": 62,
+              "height": 20
+            },
+            {
+              "x": 231,
+              "y": 253,
+              "width": 60,
+              "height": 20
+            },
+            {
+              "x": 302,
+              "y": 253,
+              "width": 63,
+              "height": 20
+            }
+          ]
+        }
+      ],
+      "analysis_ms": 687.2999999999884,
+      "heartbeat_ticks": 41,
+      "max_heartbeat_gap_ms": 34.29999999998836,
+      "warnings": [
+        "Detection can miss sensitive content. Review every page. Names, addresses, QR codes and handwriting require manual review.",
+        "VID/BID values are excluded from the configured redaction and verification scope. Review original documents before public sharing.",
+        "Page 1: 2 OCR passes processed without changing original source pixels.",
+        "Experimental trained contextual recognition is active locally in a background worker. Synthetic-data model; review AI-only findings and all unrecognised content.",
+        "Page 1: face detector could not load. No automatic face clearance; mark every portrait manually. Model files require internet on first use.",
+        "Page 1: automatic QR decoding is unsupported in this browser; cover every QR code manually."
+      ]
+    },
+    {
+      "id": "sealed-medical",
+      "raw_text": "ಕಲ್ಪಿತ ಆಸ್ಪತ್ರೆ\nರೋಗಿಯ ಸಂಖ್ಯೆ: 5702232\nರೋಗಿಯ ಸಂಖ್ಯೆ\n5702233\nಆಧಾರ: 2345 6789",
+      "raw_ms": 397.79999999998836,
+      "rescue_applied": false,
+      "raw_confidence": 95,
+      "scaled_text": "ಕಲ್ಪಿತ ಆಸ್ಪತ್ರೆ\n\nರೋಗಿಯ ಸಂಖ್ಯೆ: 5702232\nರೋಗಿಯ ಸಂಖ್ಯೆ\n\n5702233\n\nಆಧಾರ: 2345 6789\n",
+      "scaled_ms": 276,
+      "scaled_confidence": 95,
+      "deterministic": [
+        {
+          "category": "PATIENT_ID",
+          "start": 30,
+          "end": 37,
+          "value": "5702232",
+          "risk": "HIGH",
+          "detection_confidence": 0.92,
+          "reason": "Explicit labelled field; original source span retained.",
+          "field_kind": "identifier",
+          "validation": {
+            "status": "context_only",
+            "method": "label or shape recognition",
+            "detail": "No issuer, ownership or semantic authenticity check is available for this field."
+          },
+          "source_context": "Source line 2; medical_identifier field. See the highlighted original for its label and neighbouring context.",
+          "confidence_meaning": "Heuristic strength of the recognition rule, not a calibrated probability, identity authentication, OCR accuracy, or privacy clearance."
+        }
+      ],
+      "findings": [
+        {
+          "id": "a7318b55-b1bd-4607-9bb4-311e4bb82f36",
+          "category": "AADHAAR_NUMBER_REGION_REVIEW",
+          "risk": "HIGH",
+          "detection_confidence": 0.3,
+          "preview": "Aadhaar field not reliably read",
+          "reason": "Aadhaar label seen without a confirmed 12-digit value. Inspect the original scan and mark the exact number manually.",
+          "page": 0,
+          "boxes": []
+        },
+        {
+          "id": "53e86cfd-8e39-4dbc-910a-c9421ddc033f",
+          "recognition_source": "deterministic",
+          "category": "PATIENT_ID",
+          "risk": "HIGH",
+          "detection_confidence": 0.92,
+          "ocr_confidence": 0.96,
+          "preview": "••••232",
+          "reason": "Explicit labelled field; original source span retained.",
+          "validation": {
+            "status": "context_only",
+            "method": "label or shape recognition",
+            "detail": "No issuer, ownership or semantic authenticity check is available for this field."
+          },
+          "source_context": "Source line 2; medical_identifier field. See the highlighted original for its label and neighbouring context.",
+          "confidence_meaning": "Heuristic strength of the recognition rule, not a calibrated probability, identity authentication, OCR accuracy, or privacy clearance.",
+          "page": 0,
+          "boxes": [
+            {
+              "x": 228,
+              "y": 103,
+              "width": 109,
+              "height": 20
+            }
+          ]
+        }
+      ],
+      "analysis_ms": 636.7999999999884,
+      "heartbeat_ticks": 39,
+      "max_heartbeat_gap_ms": 23.29999999998836,
+      "warnings": [
+        "Detection can miss sensitive content. Review every page. Names, addresses, QR codes and handwriting require manual review.",
+        "VID/BID values are excluded from the configured redaction and verification scope. Review original documents before public sharing.",
+        "Page 1: 2 OCR passes processed without changing original source pixels.",
+        "Page 1: Kannada text or OCR detected. Name/address/party detection is experimental; review every line and region manually.",
+        "Experimental trained contextual recognition is active locally in a background worker. Synthetic-data model; review AI-only findings and all unrecognised content.",
+        "Page 1: Aadhaar label requires human verification; no automatic region was selected.",
+        "Page 1: face detector could not load. No automatic face clearance; mark every portrait manually. Model files require internet on first use.",
+        "Page 1: automatic QR decoding is unsupported in this browser; cover every QR code manually."
+      ]
+    },
+    {
+      "id": "sealed-financial",
+      "raw_text": "FICTIONAL FINANCIAL FORM\nAccount number: 432109876543\nಖಾತೆ ಸಂಖ್ಯೆ: 543210987654\nVID: 2345 6789 0124 9999",
+      "raw_ms": 632,
+      "rescue_applied": false,
+      "raw_confidence": 95,
+      "scaled_text": "FICTIONAL FINANCIAL FORM\nAccount number: 432109876543\nಖಾತೆ ಸಂಖ್ಯೆ: 543210987654\n\nVID: 2345 6789 0124 9999\n",
+      "scaled_ms": 408.9000000000233,
+      "scaled_confidence": 95,
+      "deterministic": [
+        {
+          "category": "BANK_ACCOUNT_CANDIDATE",
+          "value": "432109876543",
+          "start": 41,
+          "end": 53,
+          "risk": "HIGH",
+          "detection_confidence": 0.88,
+          "reason": "Explicit bank-account label in English, Hindi or Kannada; not arbitrary numbers",
+          "validation": {
+            "status": "passed",
+            "method": "Labelled bank-account structure",
+            "detail": "Supported numeric account format is 9–18 digits. Institution-specific rules are not checked. Passing format checks does not establish issuance, ownership or authenticity."
+          },
+          "source_context": "Source line 2; banking field. See the highlighted original for its label and neighbouring context.",
+          "confidence_meaning": "Heuristic strength of the recognition rule, not a calibrated probability, identity authentication, OCR accuracy, or privacy clearance."
+        },
+        {
+          "category": "BANK_ACCOUNT_CANDIDATE",
+          "value": "543210987654",
+          "start": 67,
+          "end": 79,
+          "risk": "HIGH",
+          "detection_confidence": 0.88,
+          "reason": "Explicit bank-account label in English, Hindi or Kannada; not arbitrary numbers",
+          "validation": {
+            "status": "passed",
+            "method": "Labelled bank-account structure",
+            "detail": "Supported numeric account format is 9–18 digits. Institution-specific rules are not checked. Passing format checks does not establish issuance, ownership or authenticity."
+          },
+          "source_context": "Source line 3; banking field. See the highlighted original for its label and neighbouring context.",
+          "confidence_meaning": "Heuristic strength of the recognition rule, not a calibrated probability, identity authentication, OCR accuracy, or privacy clearance."
+        },
+        {
+          "category": "KANNADA_PERSONAL_DETAIL_REVIEW",
+          "value": "543210987654",
+          "start": 67,
+          "end": 79,
+          "risk": "HIGH",
+          "detection_confidence": 0.68,
+          "reason": "Kannada-labelled personal data; review the complete line",
+          "validation": {
+            "status": "context_only",
+            "method": "label or shape recognition",
+            "detail": "No issuer, ownership or semantic authenticity check is available for this field."
+          },
+          "source_context": "Source line 3; identity field. See the highlighted original for its label and neighbouring context.",
+          "confidence_meaning": "Heuristic strength of the recognition rule, not a calibrated probability, identity authentication, OCR accuracy, or privacy clearance."
+        },
+        {
+          "category": "AADHAAR_VIRTUAL_ID",
+          "value": "2345 6789 0124 9999",
+          "start": 85,
+          "end": 104,
+          "risk": "HIGH",
+          "detection_confidence": 0.96,
+          "reason": "Labelled 16-digit virtual ID; syntax alone does not validate identity",
+          "validation": {
+            "status": "passed",
+            "method": "VID length",
+            "detail": "Labelled 16-digit virtual identifier; no Aadhaar checksum is inferred. Passing format checks does not establish issuance, ownership or authenticity."
+          },
+          "source_context": "Source line 4; government field. See the highlighted original for its label and neighbouring context.",
+          "confidence_meaning": "Heuristic strength of the recognition rule, not a calibrated probability, identity authentication, OCR accuracy, or privacy clearance."
+        }
+      ],
+      "findings": [
+        {
+          "id": "50f6f835-db36-4474-bda4-47653c7fa98d",
+          "recognition_source": "deterministic",
+          "category": "BANK_ACCOUNT_CANDIDATE",
+          "risk": "HIGH",
+          "detection_confidence": 0.88,
+          "ocr_confidence": 0.96,
+          "preview": "••••543",
+          "reason": "Explicit bank-account label in English, Hindi or Kannada; not arbitrary numbers",
+          "validation": {
+            "status": "passed",
+            "method": "Labelled bank-account structure",
+            "detail": "Supported numeric account format is 9–18 digits. Institution-specific rules are not checked. Passing format checks does not establish issuance, ownership or authenticity."
+          },
+          "source_context": "Source line 2; banking field. See the highlighted original for its label and neighbouring context.",
+          "confidence_meaning": "Heuristic strength of the recognition rule, not a calibrated probability, identity authentication, OCR accuracy, or privacy clearance.",
+          "page": 0,
+          "boxes": [
+            {
+              "x": 266,
+              "y": 103,
+              "width": 190,
+              "height": 20
+            }
+          ]
+        },
+        {
+          "id": "9ce198b0-68b2-485f-91c0-559a9fcde70c",
+          "recognition_source": "deterministic",
+          "category": "BANK_ACCOUNT_CANDIDATE",
+          "risk": "HIGH",
+          "detection_confidence": 0.88,
+          "ocr_confidence": 0.96,
+          "preview": "••••654",
+          "reason": "Explicit bank-account label in English, Hindi or Kannada; not arbitrary numbers",
+          "validation": {
+            "status": "passed",
+            "method": "Labelled bank-account structure",
+            "detail": "Supported numeric account format is 9–18 digits. Institution-specific rules are not checked. Passing format checks does not establish issuance, ownership or authenticity."
+          },
+          "source_context": "Source line 3; banking field. See the highlighted original for its label and neighbouring context.",
+          "confidence_meaning": "Heuristic strength of the recognition rule, not a calibrated probability, identity authentication, OCR accuracy, or privacy clearance.",
+          "page": 0,
+          "boxes": [
+            {
+              "x": 176,
+              "y": 178,
+              "width": 191,
+              "height": 20
+            }
+          ]
+        },
+        {
+          "id": "d954e15e-d659-48f1-b068-ec584edce7d6",
+          "recognition_source": "deterministic",
+          "category": "KANNADA_PERSONAL_DETAIL_REVIEW",
+          "risk": "HIGH",
+          "detection_confidence": 0.68,
+          "ocr_confidence": 0.96,
+          "preview": "••••54 ",
+          "reason": "Kannada-labelled personal data; review the complete line",
+          "validation": {
+            "status": "context_only",
+            "method": "label or shape recognition",
+            "detail": "No issuer, ownership or semantic authenticity check is available for this field."
+          },
+          "source_context": "Source line 3; identity field. See the highlighted original for its label and neighbouring context.",
+          "confidence_meaning": "Heuristic strength of the recognition rule, not a calibrated probability, identity authentication, OCR accuracy, or privacy clearance.",
+          "page": 0,
+          "boxes": [
+            {
+              "x": 176,
+              "y": 178,
+              "width": 191,
+              "height": 20
+            }
+          ]
+        }
+      ],
+      "analysis_ms": 966.7000000000116,
+      "heartbeat_ticks": 58,
+      "max_heartbeat_gap_ms": 36.70000000001164,
+      "warnings": [
+        "Detection can miss sensitive content. Review every page. Names, addresses, QR codes and handwriting require manual review.",
+        "VID/BID values are excluded from the configured redaction and verification scope. Review original documents before public sharing.",
+        "Page 1: 2 OCR passes processed without changing original source pixels.",
+        "Page 1: Kannada text or OCR detected. Name/address/party detection is experimental; review every line and region manually.",
+        "Experimental trained contextual recognition is active locally in a background worker. Synthetic-data model; review AI-only findings and all unrecognised content.",
+        "Page 1: face detector could not load. No automatic face clearance; mark every portrait manually. Model files require internet on first use.",
+        "Page 1: automatic QR decoding is unsupported in this browser; cover every QR code manually."
+      ]
+    },
+    {
+      "id": "sealed-application",
+      "raw_text": "FICTIONAL APPLICATION\nName: Fictional Tara Das\nAddress: 14 Fictional Road\nHassan 573201\nAddress: 29 Imaginary Lane\nMysore 570001",
+      "raw_ms": 554,
+      "rescue_applied": false,
+      "raw_confidence": 95,
+      "scaled_text": "FICTIONAL APPLICATION\nName: Fictional Tara Das\nAddress: 14 Fictional Road\nHassan 573201\n\nAddress: 29 Imaginary Lane\nMysore 570001\n",
+      "scaled_ms": 422.1000000000349,
+      "scaled_confidence": 95,
+      "deterministic": [
+        {
+          "category": "PERSON_NAME_REVIEW",
+          "value": "Fictional Tara Das",
+          "start": 28,
+          "end": 46,
+          "risk": "HIGH",
+          "detection_confidence": 0.65,
+          "reason": "Explicit personal-name label or S/O-D/O relationship; manual identity review",
+          "validation": {
+            "status": "context_only",
+            "method": "label or shape recognition",
+            "detail": "No issuer, ownership or semantic authenticity check is available for this field."
+          },
+          "source_context": "Source line 2; identity field. See the highlighted original for its label and neighbouring context.",
+          "confidence_meaning": "Heuristic strength of the recognition rule, not a calibrated probability, identity authentication, OCR accuracy, or privacy clearance."
+        },
+        {
+          "category": "ADDRESS_REVIEW",
+          "value": "Address: 14 Fictional Road",
+          "start": 47,
+          "end": 73,
+          "risk": "HIGH",
+          "detection_confidence": 0.67,
+          "reason": "Address-like line; inspect neighboring lines",
+          "validation": {
+            "status": "context_only",
+            "method": "label or shape recognition",
+            "detail": "No issuer, ownership or semantic authenticity check is available for this field."
+          },
+          "source_context": "Source line 3; address field. See the highlighted original for its label and neighbouring context.",
+          "confidence_meaning": "Heuristic strength of the recognition rule, not a calibrated probability, identity authentication, OCR accuracy, or privacy clearance."
+        },
+        {
+          "category": "ADDRESS_BLOCK_REVIEW",
+          "start": 56,
+          "end": 73,
+          "value": "14 Fictional Road",
+          "risk": "HIGH",
+          "detection_confidence": 0.55,
+          "reason": "Labelled multiline or long field; review each continuation line.",
+          "validation": {
+            "status": "context_only",
+            "method": "label or shape recognition",
+            "detail": "No issuer, ownership or semantic authenticity check is available for this field."
+          },
+          "source_context": "Source line 3; address field. See the highlighted original for its label and neighbouring context.",
+          "confidence_meaning": "Heuristic strength of the recognition rule, not a calibrated probability, identity authentication, OCR accuracy, or privacy clearance."
+        },
+        {
+          "category": "ADDRESS_BLOCK_REVIEW",
+          "start": 74,
+          "end": 87,
+          "value": "Hassan 573201",
+          "risk": "HIGH",
+          "detection_confidence": 0.55,
+          "reason": "Continuation of a labelled medical/address field; inspect context.",
+          "validation": {
+            "status": "context_only",
+            "method": "label or shape recognition",
+            "detail": "No issuer, ownership or semantic authenticity check is available for this field."
+          },
+          "source_context": "Source line 4; address field. See the highlighted original for its label and neighbouring context.",
+          "confidence_meaning": "Heuristic strength of the recognition rule, not a calibrated probability, identity authentication, OCR accuracy, or privacy clearance."
+        },
+        {
+          "category": "ADDRESS_REVIEW",
+          "value": "Address: 29 Imaginary Lane",
+          "start": 88,
+          "end": 114,
+          "risk": "HIGH",
+          "detection_confidence": 0.67,
+          "reason": "Address-like line; inspect neighboring lines",
+          "validation": {
+            "status": "context_only",
+            "method": "label or shape recognition",
+            "detail": "No issuer, ownership or semantic authenticity check is available for this field."
+          },
+          "source_context": "Source line 5; address field. See the highlighted original for its label and neighbouring context.",
+          "confidence_meaning": "Heuristic strength of the recognition rule, not a calibrated probability, identity authentication, OCR accuracy, or privacy clearance."
+        },
+        {
+          "category": "ADDRESS_BLOCK_REVIEW",
+          "start": 97,
+          "end": 114,
+          "value": "29 Imaginary Lane",
+          "risk": "HIGH",
+          "detection_confidence": 0.55,
+          "reason": "Labelled multiline or long field; review each continuation line.",
+          "validation": {
+            "status": "context_only",
+            "method": "label or shape recognition",
+            "detail": "No issuer, ownership or semantic authenticity check is available for this field."
+          },
+          "source_context": "Source line 5; address field. See the highlighted original for its label and neighbouring context.",
+          "confidence_meaning": "Heuristic strength of the recognition rule, not a calibrated probability, identity authentication, OCR accuracy, or privacy clearance."
+        },
+        {
+          "category": "ADDRESS_BLOCK_REVIEW",
+          "start": 115,
+          "end": 128,
+          "value": "Mysore 570001",
+          "risk": "HIGH",
+          "detection_confidence": 0.55,
+          "reason": "Continuation of a labelled medical/address field; inspect context.",
+          "validation": {
+            "status": "context_only",
+            "method": "label or shape recognition",
+            "detail": "No issuer, ownership or semantic authenticity check is available for this field."
+          },
+          "source_context": "Source line 6; address field. See the highlighted original for its label and neighbouring context.",
+          "confidence_meaning": "Heuristic strength of the recognition rule, not a calibrated probability, identity authentication, OCR accuracy, or privacy clearance."
+        }
+      ],
+      "findings": [
+        {
+          "id": "a9a8d7e6-fb2f-49a4-ac29-9683c81767c7",
+          "recognition_source": "deterministic",
+          "category": "PERSON_NAME_REVIEW",
+          "risk": "HIGH",
+          "detection_confidence": 0.65,
+          "ocr_confidence": 0.96,
+          "preview": "••••as ",
+          "reason": "Explicit personal-name label or S/O-D/O relationship; manual identity review",
+          "validation": {
+            "status": "context_only",
+            "method": "label or shape recognition",
+            "detail": "No issuer, ownership or semantic authenticity check is available for this field."
+          },
+          "source_context": "Source line 2; identity field. See the highlighted original for its label and neighbouring context.",
+          "confidence_meaning": "Heuristic strength of the recognition rule, not a calibrated probability, identity authentication, OCR accuracy, or privacy clearance.",
+          "page": 0,
+          "boxes": [
+            {
+              "x": 128,
+              "y": 102,
+              "width": 104,
+              "height": 21
+            },
+            {
+              "x": 243,
+              "y": 103,
+              "width": 52,
+              "height": 20
+            },
+            {
+              "x": 309,
+              "y": 103,
+              "width": 45,
+              "height": 20
+            }
+          ]
+        },
+        {
+          "id": "972386ba-2cc5-408d-a42e-4d6a9ee5f775",
+          "recognition_source": "deterministic",
+          "category": "ADDRESS_REVIEW",
+          "risk": "HIGH",
+          "detection_confidence": 0.67,
+          "ocr_confidence": 0.95,
+          "preview": "••••ad ",
+          "reason": "Address-like line; inspect neighboring lines",
+          "validation": {
+            "status": "context_only",
+            "method": "label or shape recognition",
+            "detail": "No issuer, ownership or semantic authenticity check is available for this field."
+          },
+          "source_context": "Source line 3; address field. See the highlighted original for its label and neighbouring context.",
+          "confidence_meaning": "Heuristic strength of the recognition rule, not a calibrated probability, identity authentication, OCR accuracy, or privacy clearance.",
+          "page": 0,
+          "boxes": [
+            {
+              "x": 30,
+              "y": 177,
+              "width": 111,
+              "height": 21
+            },
+            {
+              "x": 155,
+              "y": 178,
+              "width": 29,
+              "height": 20
+            },
+            {
+              "x": 195,
+              "y": 177,
+              "width": 104,
+              "height": 21
+            },
+            {
+              "x": 312,
+              "y": 177,
+              "width": 63,
+              "height": 21
+            }
+          ]
+        },
+        {
+          "id": "22d44f25-3b08-4fcc-b1f0-1a0240dd6015",
+          "recognition_source": "deterministic",
+          "category": "ADDRESS_BLOCK_REVIEW",
+          "risk": "HIGH",
+          "detection_confidence": 0.55,
+          "ocr_confidence": 0.95,
+          "preview": "••••oad",
+          "reason": "Labelled multiline or long field; review each continuation line.",
+          "validation": {
+            "status": "context_only",
+            "method": "label or shape recognition",
+            "detail": "No issuer, ownership or semantic authenticity check is available for this field."
+          },
+          "source_context": "Source line 3; address field. See the highlighted original for its label and neighbouring context.",
+          "confidence_meaning": "Heuristic strength of the recognition rule, not a calibrated probability, identity authentication, OCR accuracy, or privacy clearance.",
+          "page": 0,
+          "boxes": [
+            {
+              "x": 155,
+              "y": 178,
+              "width": 29,
+              "height": 20
+            },
+            {
+              "x": 195,
+              "y": 177,
+              "width": 104,
+              "height": 21
+            },
+            {
+              "x": 312,
+              "y": 177,
+              "width": 63,
+              "height": 21
+            }
+          ]
+        },
+        {
+          "id": "ef2aac4d-6cee-42e4-9c4a-c31def60e79a",
+          "recognition_source": "deterministic",
+          "category": "ADDRESS_BLOCK_REVIEW",
+          "risk": "HIGH",
+          "detection_confidence": 0.55,
+          "ocr_confidence": 0.95,
+          "preview": "••••201",
+          "reason": "Continuation of a labelled medical/address field; inspect context.",
+          "validation": {
+            "status": "context_only",
+            "method": "label or shape recognition",
+            "detail": "No issuer, ownership or semantic authenticity check is available for this field."
+          },
+          "source_context": "Source line 4; address field. See the highlighted original for its label and neighbouring context.",
+          "confidence_meaning": "Heuristic strength of the recognition rule, not a calibrated probability, identity authentication, OCR accuracy, or privacy clearance.",
+          "page": 0,
+          "boxes": [
+            {
+              "x": 33,
+              "y": 253,
+              "width": 91,
+              "height": 20
+            },
+            {
+              "x": 136,
+              "y": 253,
+              "width": 89,
+              "height": 20
+            }
+          ]
+        },
+        {
+          "id": "48ec79ac-a982-4b16-9d7a-03632207479d",
+          "recognition_source": "deterministic",
+          "category": "ADDRESS_REVIEW",
+          "risk": "HIGH",
+          "detection_confidence": 0.67,
+          "ocr_confidence": 0.96,
+          "preview": "••••ne ",
+          "reason": "Address-like line; inspect neighboring lines",
+          "validation": {
+            "status": "context_only",
+            "method": "label or shape recognition",
+            "detail": "No issuer, ownership or semantic authenticity check is available for this field."
+          },
+          "source_context": "Source line 5; address field. See the highlighted original for its label and neighbouring context.",
+          "confidence_meaning": "Heuristic strength of the recognition rule, not a calibrated probability, identity authentication, OCR accuracy, or privacy clearance.",
+          "page": 0,
+          "boxes": [
+            {
+              "x": 30,
+              "y": 327,
+              "width": 111,
+              "height": 21
+            },
+            {
+              "x": 153,
+              "y": 328,
+              "width": 29,
+              "height": 20
+            },
+            {
+              "x": 193,
+              "y": 327,
+              "width": 133,
+              "height": 28
+            },
+            {
+              "x": 337,
+              "y": 328,
+              "width": 60,
+              "height": 20
+            }
+          ]
+        },
+        {
+          "id": "0835cad5-74f5-4fd3-95d3-244b371d1ec8",
+          "recognition_source": "deterministic",
+          "category": "ADDRESS_BLOCK_REVIEW",
+          "risk": "HIGH",
+          "detection_confidence": 0.55,
+          "ocr_confidence": 0.96,
+          "preview": "••••ane",
+          "reason": "Labelled multiline or long field; review each continuation line.",
+          "validation": {
+            "status": "context_only",
+            "method": "label or shape recognition",
+            "detail": "No issuer, ownership or semantic authenticity check is available for this field."
+          },
+          "source_context": "Source line 5; address field. See the highlighted original for its label and neighbouring context.",
+          "confidence_meaning": "Heuristic strength of the recognition rule, not a calibrated probability, identity authentication, OCR accuracy, or privacy clearance.",
+          "page": 0,
+          "boxes": [
+            {
+              "x": 153,
+              "y": 328,
+              "width": 29,
+              "height": 20
+            },
+            {
+              "x": 193,
+              "y": 327,
+              "width": 133,
+              "height": 28
+            },
+            {
+              "x": 337,
+              "y": 328,
+              "width": 60,
+              "height": 20
+            }
+          ]
+        },
+        {
+          "id": "d4e0acbf-c661-471c-825f-412a8f8c4e8b",
+          "recognition_source": "deterministic",
+          "category": "ADDRESS_BLOCK_REVIEW",
+          "risk": "HIGH",
+          "detection_confidence": 0.55,
+          "ocr_confidence": 0.95,
+          "preview": "••••001",
+          "reason": "Continuation of a labelled medical/address field; inspect context.",
+          "validation": {
+            "status": "context_only",
+            "method": "label or shape recognition",
+            "detail": "No issuer, ownership or semantic authenticity check is available for this field."
+          },
+          "source_context": "Source line 6; address field. See the highlighted original for its label and neighbouring context.",
+          "confidence_meaning": "Heuristic strength of the recognition rule, not a calibrated probability, identity authentication, OCR accuracy, or privacy clearance.",
+          "page": 0,
+          "boxes": [
+            {
+              "x": 33,
+              "y": 403,
+              "width": 93,
+              "height": 27
+            },
+            {
+              "x": 137,
+              "y": 403,
+              "width": 89,
+              "height": 20
+            }
+          ]
+        }
+      ],
+      "analysis_ms": 589.8999999999651,
+      "heartbeat_ticks": 36,
+      "max_heartbeat_gap_ms": 19.20000000001164,
+      "warnings": [
+        "Detection can miss sensitive content. Review every page. Names, addresses, QR codes and handwriting require manual review.",
+        "VID/BID values are excluded from the configured redaction and verification scope. Review original documents before public sharing.",
+        "Experimental trained contextual recognition is active locally in a background worker. Synthetic-data model; review AI-only findings and all unrecognised content.",
+        "Page 1: face detector could not load. No automatic face clearance; mark every portrait manually. Model files require internet on first use.",
+        "Page 1: automatic QR decoding is unsupported in this browser; cover every QR code manually."
+      ]
+    },
+    {
+      "id": "sealed-legal",
+      "raw_text": "ಕಲ್ಪಿತ ದಾಖಲೆ\nಹೆಸರು: ಕಲ್ಪಿತ ರವಿ\nವಿಳಾಸ: 14 ಕಲ್ಪಿತ ರಸ್ತೆ\nರೋಗಿಯ ಸಂಖ್ಯೆ: 4578200",
+      "raw_ms": 363.29999999998836,
+      "rescue_applied": false,
+      "raw_confidence": 95,
+      "scaled_text": "ಕಲ್ಪಿತ ದಾಖಲೆ\n\nಹೆಸರು: ಕಲ್ಪಿತ ರವಿ\n\nವಿಳಾಸ: 14 ಕಲ್ಪಿತ ರಸ್ತೆ\nರೋಗಿಯ ಸಂಖ್ಯೆ: 4578200\n",
+      "scaled_ms": 269.0999999999767,
+      "scaled_confidence": 95,
+      "deterministic": [
+        {
+          "category": "KANNADA_PERSONAL_DETAIL_REVIEW",
+          "value": "ಕಲ್ಪಿತ ರವಿ",
+          "start": 20,
+          "end": 30,
+          "risk": "HIGH",
+          "detection_confidence": 0.68,
+          "reason": "Kannada-labelled personal data; review the complete line",
+          "validation": {
+            "status": "context_only",
+            "method": "label or shape recognition",
+            "detail": "No issuer, ownership or semantic authenticity check is available for this field."
+          },
+          "source_context": "Source line 2; identity field. See the highlighted original for its label and neighbouring context.",
+          "confidence_meaning": "Heuristic strength of the recognition rule, not a calibrated probability, identity authentication, OCR accuracy, or privacy clearance."
+        },
+        {
+          "category": "KANNADA_ADDRESS_REVIEW",
+          "value": "ವಿಳಾಸ: 14 ಕಲ್ಪಿತ ರಸ್ತೆ",
+          "start": 31,
+          "end": 53,
+          "risk": "HIGH",
+          "detection_confidence": 0.63,
+          "reason": "Kannada locality or residential-address line",
+          "validation": {
+            "status": "context_only",
+            "method": "label or shape recognition",
+            "detail": "No issuer, ownership or semantic authenticity check is available for this field."
+          },
+          "source_context": "Source line 3; address field. See the highlighted original for its label and neighbouring context.",
+          "confidence_meaning": "Heuristic strength of the recognition rule, not a calibrated probability, identity authentication, OCR accuracy, or privacy clearance."
+        },
+        {
+          "category": "KANNADA_PERSONAL_DETAIL_REVIEW",
+          "value": "14 ಕಲ್ಪಿತ ರಸ್ತೆ",
+          "start": 38,
+          "end": 53,
+          "risk": "HIGH",
+          "detection_confidence": 0.68,
+          "reason": "Kannada-labelled personal data; review the complete line",
+          "validation": {
+            "status": "context_only",
+            "method": "label or shape recognition",
+            "detail": "No issuer, ownership or semantic authenticity check is available for this field."
+          },
+          "source_context": "Source line 3; identity field. See the highlighted original for its label and neighbouring context.",
+          "confidence_meaning": "Heuristic strength of the recognition rule, not a calibrated probability, identity authentication, OCR accuracy, or privacy clearance."
+        },
+        {
+          "category": "ADDRESS_BLOCK_REVIEW",
+          "start": 38,
+          "end": 53,
+          "value": "14 ಕಲ್ಪಿತ ರಸ್ತೆ",
+          "risk": "HIGH",
+          "detection_confidence": 0.55,
+          "reason": "Labelled multiline or long field; review each continuation line.",
+          "validation": {
+            "status": "context_only",
+            "method": "label or shape recognition",
+            "detail": "No issuer, ownership or semantic authenticity check is available for this field."
+          },
+          "source_context": "Source line 3; address field. See the highlighted original for its label and neighbouring context.",
+          "confidence_meaning": "Heuristic strength of the recognition rule, not a calibrated probability, identity authentication, OCR accuracy, or privacy clearance."
+        },
+        {
+          "category": "ADDRESS_BLOCK_REVIEW",
+          "start": 54,
+          "end": 75,
+          "value": "ರೋಗಿಯ ಸಂಖ್ಯೆ: 4578200",
+          "risk": "HIGH",
+          "detection_confidence": 0.55,
+          "reason": "Continuation of a labelled medical/address field; inspect context.",
+          "validation": {
+            "status": "context_only",
+            "method": "label or shape recognition",
+            "detail": "No issuer, ownership or semantic authenticity check is available for this field."
+          },
+          "source_context": "Source line 4; address field. See the highlighted original for its label and neighbouring context.",
+          "confidence_meaning": "Heuristic strength of the recognition rule, not a calibrated probability, identity authentication, OCR accuracy, or privacy clearance."
+        },
+        {
+          "category": "PATIENT_ID",
+          "start": 68,
+          "end": 75,
+          "value": "4578200",
+          "risk": "HIGH",
+          "detection_confidence": 0.92,
+          "reason": "Explicit labelled field; original source span retained.",
+          "field_kind": "identifier",
+          "validation": {
+            "status": "context_only",
+            "method": "label or shape recognition",
+            "detail": "No issuer, ownership or semantic authenticity check is available for this field."
+          },
+          "source_context": "Source line 4; medical_identifier field. See the highlighted original for its label and neighbouring context.",
+          "confidence_meaning": "Heuristic strength of the recognition rule, not a calibrated probability, identity authentication, OCR accuracy, or privacy clearance."
+        }
+      ],
+      "findings": [
+        {
+          "id": "402687f1-959f-40b3-ae00-b3d50af2e2b5",
+          "recognition_source": "deterministic",
+          "category": "KANNADA_PERSONAL_DETAIL_REVIEW",
+          "risk": "HIGH",
+          "detection_confidence": 0.68,
+          "ocr_confidence": 0.96,
+          "preview": "••••ವಿ ",
+          "reason": "Kannada-labelled personal data; review the complete line",
+          "validation": {
+            "status": "context_only",
+            "method": "label or shape recognition",
+            "detail": "No issuer, ownership or semantic authenticity check is available for this field."
+          },
+          "source_context": "Source line 2; identity field. See the highlighted original for its label and neighbouring context.",
+          "confidence_meaning": "Heuristic strength of the recognition rule, not a calibrated probability, identity authentication, OCR accuracy, or privacy clearance.",
+          "page": 0,
+          "boxes": [
+            {
+              "x": 117,
+              "y": 102,
+              "width": 58,
+              "height": 30
+            },
+            {
+              "x": 184,
+              "y": 101,
+              "width": 40,
+              "height": 22
+            }
+          ]
+        },
+        {
+          "id": "5518b12f-8443-44dc-8ae8-4e3207eb54d4",
+          "recognition_source": "deterministic",
+          "category": "KANNADA_ADDRESS_REVIEW",
+          "risk": "HIGH",
+          "detection_confidence": 0.63,
+          "ocr_confidence": 0.96,
+          "preview": "••••್ತೆ",
+          "reason": "Kannada locality or residential-address line",
+          "validation": {
+            "status": "context_only",
+            "method": "label or shape recognition",
+            "detail": "No issuer, ownership or semantic authenticity check is available for this field."
+          },
+          "source_context": "Source line 3; address field. See the highlighted original for its label and neighbouring context.",
+          "confidence_meaning": "Heuristic strength of the recognition rule, not a calibrated probability, identity authentication, OCR accuracy, or privacy clearance.",
+          "page": 0,
+          "boxes": [
+            {
+              "x": 31,
+              "y": 176,
+              "width": 78,
+              "height": 22
+            },
+            {
+              "x": 123,
+              "y": 178,
+              "width": 29,
+              "height": 20
+            },
+            {
+              "x": 161,
+              "y": 177,
+              "width": 58,
+              "height": 30
+            },
+            {
+              "x": 228,
+              "y": 175,
+              "width": 40,
+              "height": 32
+            }
+          ]
+        },
+        {
+          "id": "3eac291d-1544-42b2-a812-e2a29caac8d5",
+          "recognition_source": "deterministic",
+          "category": "ADDRESS_BLOCK_REVIEW",
+          "risk": "HIGH",
+          "detection_confidence": 0.55,
+          "ocr_confidence": 0.96,
+          "preview": "••••್ತೆ",
+          "reason": "Labelled multiline or long field; review each continuation line.",
+          "validation": {
+            "status": "context_only",
+            "method": "label or shape recognition",
+            "detail": "No issuer, ownership or semantic authenticity check is available for this field."
+          },
+          "source_context": "Source line 3; address field. See the highlighted original for its label and neighbouring context.",
+          "confidence_meaning": "Heuristic strength of the recognition rule, not a calibrated probability, identity authentication, OCR accuracy, or privacy clearance.",
+          "page": 0,
+          "boxes": [
+            {
+              "x": 123,
+              "y": 178,
+              "width": 29,
+              "height": 20
+            },
+            {
+              "x": 161,
+              "y": 177,
+              "width": 58,
+              "height": 30
+            },
+            {
+              "x": 228,
+              "y": 175,
+              "width": 40,
+              "height": 32
+            }
+          ]
+        },
+        {
+          "id": "be7698a2-8e98-4bb5-98d9-6537d9a5a1d4",
+          "recognition_source": "deterministic",
+          "category": "KANNADA_PERSONAL_DETAIL_REVIEW",
+          "risk": "HIGH",
+          "detection_confidence": 0.68,
+          "ocr_confidence": 0.96,
+          "preview": "••••ತೆ ",
+          "reason": "Kannada-labelled personal data; review the complete line",
+          "validation": {
+            "status": "context_only",
+            "method": "label or shape recognition",
+            "detail": "No issuer, ownership or semantic authenticity check is available for this field."
+          },
+          "source_context": "Source line 3; identity field. See the highlighted original for its label and neighbouring context.",
+          "confidence_meaning": "Heuristic strength of the recognition rule, not a calibrated probability, identity authentication, OCR accuracy, or privacy clearance.",
+          "page": 0,
+          "boxes": [
+            {
+              "x": 123,
+              "y": 178,
+              "width": 29,
+              "height": 20
+            },
+            {
+              "x": 161,
+              "y": 177,
+              "width": 58,
+              "height": 30
+            },
+            {
+              "x": 228,
+              "y": 175,
+              "width": 40,
+              "height": 32
+            }
+          ]
+        },
+        {
+          "id": "58aa6ce1-2115-40d2-8de3-94597f89a8f8",
+          "recognition_source": "deterministic",
+          "category": "ADDRESS_BLOCK_REVIEW",
+          "risk": "HIGH",
+          "detection_confidence": 0.55,
+          "ocr_confidence": 0.95,
+          "preview": "••••200",
+          "reason": "Continuation of a labelled medical/address field; inspect context.",
+          "validation": {
+            "status": "context_only",
+            "method": "label or shape recognition",
+            "detail": "No issuer, ownership or semantic authenticity check is available for this field."
+          },
+          "source_context": "Source line 4; address field. See the highlighted original for its label and neighbouring context.",
+          "confidence_meaning": "Heuristic strength of the recognition rule, not a calibrated probability, identity authentication, OCR accuracy, or privacy clearance.",
+          "page": 0,
+          "boxes": [
+            {
+              "x": 31,
+              "y": 250,
+              "width": 104,
+              "height": 24
+            },
+            {
+              "x": 145,
+              "y": 250,
+              "width": 71,
+              "height": 34
+            },
+            {
+              "x": 227,
+              "y": 253,
+              "width": 111,
+              "height": 20
+            }
+          ]
+        },
+        {
+          "id": "f8828761-381a-41e8-a38a-2d0be3707277",
+          "recognition_source": "deterministic",
+          "category": "PATIENT_ID",
+          "risk": "HIGH",
+          "detection_confidence": 0.92,
+          "ocr_confidence": 0.95,
+          "preview": "••••200",
+          "reason": "Explicit labelled field; original source span retained.",
+          "validation": {
+            "status": "context_only",
+            "method": "label or shape recognition",
+            "detail": "No issuer, ownership or semantic authenticity check is available for this field."
+          },
+          "source_context": "Source line 4; medical_identifier field. See the highlighted original for its label and neighbouring context.",
+          "confidence_meaning": "Heuristic strength of the recognition rule, not a calibrated probability, identity authentication, OCR accuracy, or privacy clearance.",
+          "page": 0,
+          "boxes": [
+            {
+              "x": 227,
+              "y": 253,
+              "width": 111,
+              "height": 20
+            }
+          ]
+        }
+      ],
+      "analysis_ms": 603.5,
+      "heartbeat_ticks": 36,
+      "max_heartbeat_gap_ms": 28.399999999965075,
+      "warnings": [
+        "Detection can miss sensitive content. Review every page. Names, addresses, QR codes and handwriting require manual review.",
+        "VID/BID values are excluded from the configured redaction and verification scope. Review original documents before public sharing.",
+        "Page 1: 2 OCR passes processed without changing original source pixels.",
+        "Page 1: Kannada text or OCR detected. Name/address/party detection is experimental; review every line and region manually.",
+        "Experimental trained contextual recognition is active locally in a background worker. Synthetic-data model; review AI-only findings and all unrecognised content.",
+        "Page 1: face detector could not load. No automatic face clearance; mark every portrait manually. Model files require internet on first use.",
+        "Page 1: automatic QR decoding is unsupported in this browser; cover every QR code manually."
+      ]
+    },
+    {
+      "id": "sealed-poor-scan",
+      "raw_text": "FICTIONAL MIXED FORM\nರೋಗಿಯ ಸಂಖ್ಯೆ: 6519371\nAadhaar: 2345 6789 0124\nName: Fictional Tara Das",
+      "raw_ms": 603.7000000000116,
+      "rescue_applied": false,
+      "raw_confidence": 95,
+      "scaled_text": "FICTIONAL MIXED FORM\nರೋಗಿಯ ಸಂಖ್ಯೆ: 6519371\nAadhaar: 2345 6789 0124\nName: Fictional Tara Das\n",
+      "scaled_ms": 478.4000000000233,
+      "scaled_confidence": 95,
+      "deterministic": [
+        {
+          "category": "PATIENT_ID",
+          "start": 35,
+          "end": 42,
+          "value": "6519371",
+          "risk": "HIGH",
+          "detection_confidence": 0.92,
+          "reason": "Explicit labelled field; original source span retained.",
+          "field_kind": "identifier",
+          "validation": {
+            "status": "context_only",
+            "method": "label or shape recognition",
+            "detail": "No issuer, ownership or semantic authenticity check is available for this field."
+          },
+          "source_context": "Source line 2; medical_identifier field. See the highlighted original for its label and neighbouring context.",
+          "confidence_meaning": "Heuristic strength of the recognition rule, not a calibrated probability, identity authentication, OCR accuracy, or privacy clearance."
+        },
+        {
+          "category": "AADHAAR_CANDIDATE",
+          "value": "2345 6789 0124",
+          "start": 52,
+          "end": 66,
+          "risk": "HIGH",
+          "detection_confidence": 0.94,
+          "reason": "Verhoeff checksum passed; identity not verified",
+          "validation": {
+            "status": "passed",
+            "method": "Aadhaar structure + Verhoeff",
+            "detail": "Exactly 12 digits, allowed leading digit and Verhoeff checksum. Passing format checks does not establish issuance, ownership or authenticity."
+          },
+          "source_context": "Source line 3; government field. See the highlighted original for its label and neighbouring context.",
+          "confidence_meaning": "Heuristic strength of the recognition rule, not a calibrated probability, identity authentication, OCR accuracy, or privacy clearance."
+        },
+        {
+          "category": "PERSON_NAME_REVIEW",
+          "value": "Fictional Tara Das",
+          "start": 73,
+          "end": 91,
+          "risk": "HIGH",
+          "detection_confidence": 0.65,
+          "reason": "Explicit personal-name label or S/O-D/O relationship; manual identity review",
+          "validation": {
+            "status": "context_only",
+            "method": "label or shape recognition",
+            "detail": "No issuer, ownership or semantic authenticity check is available for this field."
+          },
+          "source_context": "Source line 4; identity field. See the highlighted original for its label and neighbouring context.",
+          "confidence_meaning": "Heuristic strength of the recognition rule, not a calibrated probability, identity authentication, OCR accuracy, or privacy clearance."
+        }
+      ],
+      "findings": [
+        {
+          "id": "7000e8fb-c49c-46da-9777-d7515467663b",
+          "recognition_source": "deterministic",
+          "category": "PATIENT_ID",
+          "risk": "HIGH",
+          "detection_confidence": 0.92,
+          "ocr_confidence": 0.95,
+          "preview": "••••371",
+          "reason": "Explicit labelled field; original source span retained.",
+          "validation": {
+            "status": "context_only",
+            "method": "label or shape recognition",
+            "detail": "No issuer, ownership or semantic authenticity check is available for this field."
+          },
+          "source_context": "Source line 2; medical_identifier field. See the highlighted original for its label and neighbouring context.",
+          "confidence_meaning": "Heuristic strength of the recognition rule, not a calibrated probability, identity authentication, OCR accuracy, or privacy clearance.",
+          "page": 0,
+          "boxes": [
+            {
+              "x": 228,
+              "y": 103,
+              "width": 106,
+              "height": 20
+            }
+          ]
+        },
+        {
+          "id": "da31af99-dd15-4470-8957-41f25f654485",
+          "recognition_source": "deterministic",
+          "category": "AADHAAR_CANDIDATE",
+          "risk": "HIGH",
+          "detection_confidence": 0.94,
+          "ocr_confidence": 0.96,
+          "preview": "••••124",
+          "reason": "Verhoeff checksum passed; identity not verified",
+          "validation": {
+            "status": "passed",
+            "method": "Aadhaar structure + Verhoeff",
+            "detail": "Exactly 12 digits, allowed leading digit and Verhoeff checksum. Passing format checks does not establish issuance, ownership or authenticity."
+          },
+          "source_context": "Source line 3; government field. See the highlighted original for its label and neighbouring context.",
+          "confidence_meaning": "Heuristic strength of the recognition rule, not a calibrated probability, identity authentication, OCR accuracy, or privacy clearance.",
+          "page": 0,
+          "boxes": [
+            {
+              "x": 158,
+              "y": 178,
+              "width": 62,
+              "height": 20
+            },
+            {
+              "x": 231,
+              "y": 178,
+              "width": 60,
+              "height": 20
+            },
+            {
+              "x": 302,
+              "y": 178,
+              "width": 63,
+              "height": 20
+            }
+          ]
+        },
+        {
+          "id": "6ea503af-d31e-4de9-8ad3-d300a35ec167",
+          "recognition_source": "deterministic",
+          "category": "PERSON_NAME_REVIEW",
+          "risk": "HIGH",
+          "detection_confidence": 0.65,
+          "ocr_confidence": 0.96,
+          "preview": "••••as ",
+          "reason": "Explicit personal-name label or S/O-D/O relationship; manual identity review",
+          "validation": {
+            "status": "context_only",
+            "method": "label or shape recognition",
+            "detail": "No issuer, ownership or semantic authenticity check is available for this field."
+          },
+          "source_context": "Source line 4; identity field. See the highlighted original for its label and neighbouring context.",
+          "confidence_meaning": "Heuristic strength of the recognition rule, not a calibrated probability, identity authentication, OCR accuracy, or privacy clearance.",
+          "page": 0,
+          "boxes": [
+            {
+              "x": 128,
+              "y": 252,
+              "width": 104,
+              "height": 21
+            },
+            {
+              "x": 243,
+              "y": 253,
+              "width": 52,
+              "height": 20
+            },
+            {
+              "x": 309,
+              "y": 253,
+              "width": 45,
+              "height": 20
+            }
+          ]
+        }
+      ],
+      "analysis_ms": 931.8999999999651,
+      "heartbeat_ticks": 57,
+      "max_heartbeat_gap_ms": 26.5,
+      "warnings": [
+        "Detection can miss sensitive content. Review every page. Names, addresses, QR codes and handwriting require manual review.",
+        "VID/BID values are excluded from the configured redaction and verification scope. Review original documents before public sharing.",
+        "Page 1: 2 OCR passes processed without changing original source pixels.",
+        "Page 1: Kannada text or OCR detected. Name/address/party detection is experimental; review every line and region manually.",
+        "Experimental trained contextual recognition is active locally in a background worker. Synthetic-data model; review AI-only findings and all unrecognised content.",
+        "Page 1: face detector could not load. No automatic face clearance; mark every portrait manually. Model files require internet on first use.",
+        "Page 1: automatic QR decoding is unsupported in this browser; cover every QR code manually."
+      ]
+    },
+    {
+      "id": "sealed-repeated",
+      "raw_text": "FICTIONAL REPEATED IDENTIFIERS\nAadhaar: 2345 6789 0124\nAadhaar: 2345 6789 0124\nAadhaar: 2345 6789 01\nVID: 2345 6789 0124 9999",
+      "raw_ms": 534.5,
+      "rescue_applied": false,
+      "raw_confidence": 94,
+      "scaled_text": "FICTIONAL REPEATED IDENTIFIERS\nAadhaar: 2345 6789 0124\nAadhaar: 2345 6789 0124\nAadhaar: 2345 6789 01\n\nVID: 2345 6789 0124 9999\n",
+      "scaled_ms": 420.1000000000349,
+      "scaled_confidence": 94,
+      "deterministic": [
+        {
+          "category": "AADHAAR_CANDIDATE",
+          "value": "2345 6789 0124",
+          "start": 40,
+          "end": 54,
+          "risk": "HIGH",
+          "detection_confidence": 0.94,
+          "reason": "Verhoeff checksum passed; identity not verified",
+          "validation": {
+            "status": "passed",
+            "method": "Aadhaar structure + Verhoeff",
+            "detail": "Exactly 12 digits, allowed leading digit and Verhoeff checksum. Passing format checks does not establish issuance, ownership or authenticity."
+          },
+          "source_context": "Source line 2; government field. See the highlighted original for its label and neighbouring context.",
+          "confidence_meaning": "Heuristic strength of the recognition rule, not a calibrated probability, identity authentication, OCR accuracy, or privacy clearance."
+        },
+        {
+          "category": "AADHAAR_CANDIDATE",
+          "value": "2345 6789 0124",
+          "start": 64,
+          "end": 78,
+          "risk": "HIGH",
+          "detection_confidence": 0.94,
+          "reason": "Verhoeff checksum passed; identity not verified",
+          "validation": {
+            "status": "passed",
+            "method": "Aadhaar structure + Verhoeff",
+            "detail": "Exactly 12 digits, allowed leading digit and Verhoeff checksum. Passing format checks does not establish issuance, ownership or authenticity."
+          },
+          "source_context": "Source line 3; government field. See the highlighted original for its label and neighbouring context.",
+          "confidence_meaning": "Heuristic strength of the recognition rule, not a calibrated probability, identity authentication, OCR accuracy, or privacy clearance."
+        },
+        {
+          "category": "AADHAAR_VIRTUAL_ID",
+          "value": "2345 6789 0124 9999",
+          "start": 106,
+          "end": 125,
+          "risk": "HIGH",
+          "detection_confidence": 0.96,
+          "reason": "Labelled 16-digit virtual ID; syntax alone does not validate identity",
+          "validation": {
+            "status": "passed",
+            "method": "VID length",
+            "detail": "Labelled 16-digit virtual identifier; no Aadhaar checksum is inferred. Passing format checks does not establish issuance, ownership or authenticity."
+          },
+          "source_context": "Source line 5; government field. See the highlighted original for its label and neighbouring context.",
+          "confidence_meaning": "Heuristic strength of the recognition rule, not a calibrated probability, identity authentication, OCR accuracy, or privacy clearance."
+        }
+      ],
+      "findings": [
+        {
+          "id": "4ef0c9c6-5a98-4785-8d9f-adc1e2af0934",
+          "recognition_source": "deterministic",
+          "category": "AADHAAR_CANDIDATE",
+          "risk": "HIGH",
+          "detection_confidence": 0.94,
+          "ocr_confidence": 0.96,
+          "preview": "••••124",
+          "reason": "Verhoeff checksum passed; identity not verified",
+          "validation": {
+            "status": "passed",
+            "method": "Aadhaar structure + Verhoeff",
+            "detail": "Exactly 12 digits, allowed leading digit and Verhoeff checksum. Passing format checks does not establish issuance, ownership or authenticity."
+          },
+          "source_context": "Source line 2; government field. See the highlighted original for its label and neighbouring context.",
+          "confidence_meaning": "Heuristic strength of the recognition rule, not a calibrated probability, identity authentication, OCR accuracy, or privacy clearance.",
+          "page": 0,
+          "boxes": [
+            {
+              "x": 158,
+              "y": 103,
+              "width": 62,
+              "height": 20
+            },
+            {
+              "x": 231,
+              "y": 103,
+              "width": 60,
+              "height": 20
+            },
+            {
+              "x": 302,
+              "y": 103,
+              "width": 63,
+              "height": 20
+            }
+          ]
+        },
+        {
+          "id": "2803e8f5-688e-46c4-bfb5-431b14d32932",
+          "recognition_source": "deterministic",
+          "category": "AADHAAR_CANDIDATE",
+          "risk": "HIGH",
+          "detection_confidence": 0.94,
+          "ocr_confidence": 0.95,
+          "preview": "••••124",
+          "reason": "Verhoeff checksum passed; identity not verified",
+          "validation": {
+            "status": "passed",
+            "method": "Aadhaar structure + Verhoeff",
+            "detail": "Exactly 12 digits, allowed leading digit and Verhoeff checksum. Passing format checks does not establish issuance, ownership or authenticity."
+          },
+          "source_context": "Source line 3; government field. See the highlighted original for its label and neighbouring context.",
+          "confidence_meaning": "Heuristic strength of the recognition rule, not a calibrated probability, identity authentication, OCR accuracy, or privacy clearance.",
+          "page": 0,
+          "boxes": [
+            {
+              "x": 158,
+              "y": 178,
+              "width": 62,
+              "height": 20
+            },
+            {
+              "x": 231,
+              "y": 178,
+              "width": 60,
+              "height": 20
+            },
+            {
+              "x": 302,
+              "y": 178,
+              "width": 63,
+              "height": 20
+            }
+          ]
+        }
+      ],
+      "analysis_ms": 796,
+      "heartbeat_ticks": 49,
+      "max_heartbeat_gap_ms": 24.599999999976717,
+      "warnings": [
+        "Detection can miss sensitive content. Review every page. Names, addresses, QR codes and handwriting require manual review.",
+        "VID/BID values are excluded from the configured redaction and verification scope. Review original documents before public sharing.",
+        "Page 1: 2 OCR passes processed without changing original source pixels.",
+        "Experimental trained contextual recognition is active locally in a background worker. Synthetic-data model; review AI-only findings and all unrecognised content.",
+        "Page 1: face detector could not load. No automatic face clearance; mark every portrait manually. Model files require internet on first use.",
+        "Page 1: automatic QR decoding is unsupported in this browser; cover every QR code manually."
+      ]
+    },
+    {
+      "id": "sealed-small-0.5",
+      "raw_text": "",
+      "raw_ms": 251.5,
+      "rescue_applied": true,
+      "raw_confidence": 0,
+      "scaled_text": "FICTIONAL DOCUMENT\nAadhaar: 23456789 0124\nPatient MAN: 8211535\n",
+      "scaled_ms": 179.60000000003492,
+      "scaled_confidence": 79,
+      "deterministic": [],
+      "findings": [
+        {
+          "id": "04cb8145-1db3-4300-abe1-22c61d6cbbb8",
+          "category": "UNREADABLE_TEXT_LINE_REVIEW",
+          "risk": "HIGH",
+          "detection_confidence": 0.35,
+          "preview": "Review full text line",
+          "reason": "Visible ink not reliably covered by OCR. This is not handwriting recognition; inspect the whole line manually.",
+          "page": 0,
+          "boxes": [
+            {
+              "x": 9,
+              "y": 10,
+              "width": 95,
+              "height": 13
+            }
+          ]
+        },
+        {
+          "id": "b875324e-a203-4b6c-8a3d-a3bc9ac2081c",
+          "category": "UNREADABLE_TEXT_LINE_REVIEW",
+          "risk": "HIGH",
+          "detection_confidence": 0.35,
+          "preview": "Review full text line",
+          "reason": "Visible ink not reliably covered by OCR. This is not handwriting recognition; inspect the whole line manually.",
+          "page": 0,
+          "boxes": [
+            {
+              "x": 8,
+              "y": 29,
+              "width": 104,
+              "height": 13
+            }
+          ]
+        },
+        {
+          "id": "e47ffc47-c321-4a9b-9ee3-b144ec5edba0",
+          "category": "UNREADABLE_TEXT_LINE_REVIEW",
+          "risk": "HIGH",
+          "detection_confidence": 0.35,
+          "preview": "Review full text line",
+          "reason": "Visible ink not reliably covered by OCR. This is not handwriting recognition; inspect the whole line manually.",
+          "page": 0,
+          "boxes": [
+            {
+              "x": 9,
+              "y": 48,
+              "width": 91,
+              "height": 13
+            }
+          ]
+        }
+      ],
+      "analysis_ms": 312.9000000000233,
+      "heartbeat_ticks": 19,
+      "max_heartbeat_gap_ms": 16.20000000001164,
+      "warnings": [
+        "Detection can miss sensitive content. Review every page. Names, addresses, QR codes and handwriting require manual review.",
+        "VID/BID values are excluded from the configured redaction and verification scope. Review original documents before public sharing.",
+        "Page 1: 3 OCR passes processed without changing original source pixels.",
+        "Page 1: OCR recognition may be incomplete. Export cannot be automatically cleared without review.",
+        "Experimental trained contextual recognition is active locally in a background worker. Synthetic-data model; review AI-only findings and all unrecognised content.",
+        "Page 1: 3 ink-line region(s) may contain missed handwriting or printed text. Inspect each complete line.",
+        "Page 1: face detector could not load. No automatic face clearance; mark every portrait manually. Model files require internet on first use.",
+        "Page 1: automatic QR decoding is unsupported in this browser; cover every QR code manually.",
+        "Page 1: no readable text detected; inspect the preview manually."
+      ]
+    },
+    {
+      "id": "sealed-small-0.65",
+      "raw_text": "FICTIONAL DOCUMENT\nAadhaar: 2345 6789 0124\nPatient MAN: 8211535",
+      "raw_ms": 355.0999999999767,
+      "rescue_applied": true,
+      "raw_confidence": 85,
+      "scaled_text": "FICTIONAL DOCUMENT\nAadhaar: 23456789 0124\nPatient MRN: 8211535\n",
+      "scaled_ms": 142.89999999996508,
+      "scaled_confidence": 93,
+      "deterministic": [
+        {
+          "category": "AADHAAR_CANDIDATE",
+          "value": "2345 6789 0124",
+          "start": 28,
+          "end": 42,
+          "risk": "HIGH",
+          "detection_confidence": 0.94,
+          "reason": "Verhoeff checksum passed; identity not verified",
+          "validation": {
+            "status": "passed",
+            "method": "Aadhaar structure + Verhoeff",
+            "detail": "Exactly 12 digits, allowed leading digit and Verhoeff checksum. Passing format checks does not establish issuance, ownership or authenticity."
+          },
+          "source_context": "Source line 2; government field. See the highlighted original for its label and neighbouring context.",
+          "confidence_meaning": "Heuristic strength of the recognition rule, not a calibrated probability, identity authentication, OCR accuracy, or privacy clearance."
+        }
+      ],
+      "findings": [
+        {
+          "id": "e6a5571a-0ec5-40b1-8f3f-57f17cf08bd4",
+          "recognition_source": "deterministic",
+          "category": "AADHAAR_CANDIDATE",
+          "risk": "HIGH",
+          "detection_confidence": 0.94,
+          "ocr_confidence": 0.83,
+          "preview": "••••124",
+          "reason": "Verhoeff checksum passed; identity not verified",
+          "validation": {
+            "status": "passed",
+            "method": "Aadhaar structure + Verhoeff",
+            "detail": "Exactly 12 digits, allowed leading digit and Verhoeff checksum. Passing format checks does not establish issuance, ownership or authenticity."
+          },
+          "source_context": "Source line 2; government field. See the highlighted original for its label and neighbouring context.",
+          "confidence_meaning": "Heuristic strength of the recognition rule, not a calibrated probability, identity authentication, OCR accuracy, or privacy clearance.",
+          "page": 0,
+          "boxes": [
+            {
+              "x": 64,
+              "y": 43,
+              "width": 22,
+              "height": 7
+            },
+            {
+              "x": 89,
+              "y": 43,
+              "width": 22,
+              "height": 7
+            },
+            {
+              "x": 114,
+              "y": 43,
+              "width": 22,
+              "height": 7
+            }
+          ]
+        }
+      ],
+      "analysis_ms": 390.5999999999767,
+      "heartbeat_ticks": 24,
+      "max_heartbeat_gap_ms": 16.199999999953434,
+      "warnings": [
+        "Detection can miss sensitive content. Review every page. Names, addresses, QR codes and handwriting require manual review.",
+        "VID/BID values are excluded from the configured redaction and verification scope. Review original documents before public sharing.",
+        "Page 1: 2 OCR passes processed without changing original source pixels.",
+        "Experimental trained contextual recognition is active locally in a background worker. Synthetic-data model; review AI-only findings and all unrecognised content.",
+        "Page 1: face detector could not load. No automatic face clearance; mark every portrait manually. Model files require internet on first use.",
+        "Page 1: automatic QR decoding is unsupported in this browser; cover every QR code manually."
+      ]
+    },
+    {
+      "id": "sealed-small-0.8",
+      "raw_text": "FICTIONAL DOCUMENT\nAadhaar: 2345 6789 0124.\nPatient MRN; 8211535",
+      "raw_ms": 286.8999999999651,
+      "rescue_applied": true,
+      "raw_confidence": 76,
+      "scaled_text": "FICTIONAL DOCUMENT\nAadhaar: 23456789 0124\nPatient MRN: 8211535\n",
+      "scaled_ms": 132.70000000001164,
+      "scaled_confidence": 94,
+      "deterministic": [
+        {
+          "category": "AADHAAR_CANDIDATE",
+          "value": "2345 6789 0124",
+          "start": 28,
+          "end": 42,
+          "risk": "HIGH",
+          "detection_confidence": 0.94,
+          "reason": "Verhoeff checksum passed; identity not verified",
+          "validation": {
+            "status": "passed",
+            "method": "Aadhaar structure + Verhoeff",
+            "detail": "Exactly 12 digits, allowed leading digit and Verhoeff checksum. Passing format checks does not establish issuance, ownership or authenticity."
+          },
+          "source_context": "Source line 2; government field. See the highlighted original for its label and neighbouring context.",
+          "confidence_meaning": "Heuristic strength of the recognition rule, not a calibrated probability, identity authentication, OCR accuracy, or privacy clearance."
+        }
+      ],
+      "findings": [
+        {
+          "id": "42494bbc-1f26-4df8-8090-decfaeb5ee0c",
+          "recognition_source": "deterministic",
+          "category": "AADHAAR_CANDIDATE",
+          "risk": "HIGH",
+          "detection_confidence": 0.94,
+          "ocr_confidence": 0.65,
+          "preview": "••••124",
+          "reason": "Verhoeff checksum passed; identity not verified",
+          "validation": {
+            "status": "passed",
+            "method": "Aadhaar structure + Verhoeff",
+            "detail": "Exactly 12 digits, allowed leading digit and Verhoeff checksum. Passing format checks does not establish issuance, ownership or authenticity."
+          },
+          "source_context": "Source line 2; government field. See the highlighted original for its label and neighbouring context.",
+          "confidence_meaning": "Heuristic strength of the recognition rule, not a calibrated probability, identity authentication, OCR accuracy, or privacy clearance.",
+          "page": 0,
+          "boxes": [
+            {
+              "x": 79,
+              "y": 53,
+              "width": 27,
+              "height": 8
+            },
+            {
+              "x": 109,
+              "y": 53,
+              "width": 27,
+              "height": 8
+            },
+            {
+              "x": 140,
+              "y": 53,
+              "width": 28,
+              "height": 8
+            }
+          ]
+        }
+      ],
+      "analysis_ms": 445.9000000000233,
+      "heartbeat_ticks": 27,
+      "max_heartbeat_gap_ms": 18.900000000023283,
+      "warnings": [
+        "Detection can miss sensitive content. Review every page. Names, addresses, QR codes and handwriting require manual review.",
+        "VID/BID values are excluded from the configured redaction and verification scope. Review original documents before public sharing.",
+        "Page 1: 2 OCR passes processed without changing original source pixels.",
+        "Experimental trained contextual recognition is active locally in a background worker. Synthetic-data model; review AI-only findings and all unrecognised content.",
+        "Page 1: face detector could not load. No automatic face clearance; mark every portrait manually. Model files require internet on first use.",
+        "Page 1: automatic QR decoding is unsupported in this browser; cover every QR code manually."
+      ]
+    }
+  ]
+}

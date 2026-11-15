@@ -1,5 +1,6 @@
-/** Keep VID/BID distinct from 12-digit Aadhaar during internal recognition.
- * Virtual identifiers are not selectable redactions in this mini-project.
+/** VID/BID are intentionally outside the mini project's redaction list.
+ * Retain internal parsing of those values only to prevent false 12-digit
+ * Aadhaar substrings from longer identifier strings.
  */
 export const isVirtualId=(finding:{category:string}):boolean=>
  ['VIRTUAL_ID','AADHAAR_VIRTUAL_ID'].includes(finding.category.trim().toUpperCase());

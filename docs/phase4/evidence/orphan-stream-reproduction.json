@@ -1,0 +1,8 @@
+{
+  "pre_fix_commit": "281243d7882c42510eb7101538f9be3275557c04",
+  "fixture": "fictional selected secret in pypdf DecodedStreamObject, added with _add_object but unreferenced",
+  "pre_fix_status": "SCOPED_CLEAR",
+  "post_fix_raster_status": "FLAG",
+  "post_fix_general_status": "UNVERIFIED",
+  "regression": "tests/verification/test_phase4_security.py::test_orphan_stream_cannot_hide_selected_bytes"
+}

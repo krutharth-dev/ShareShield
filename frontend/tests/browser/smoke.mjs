@@ -1,7 +1,9 @@
 import {chromium} from 'playwright';
 import assert from 'node:assert/strict';
-import {readFile,writeFile} from 'node:fs/promises';
-const browser=await chromium.launch({headless:true,args:['--no-sandbox']});
+import {readFile,writeFile,mkdir} from 'node:fs/promises';
+const evidenceDir=process.env.SHARESHIELD_EVIDENCE_DIR;
+if(evidenceDir)await mkdir(evidenceDir,{recursive:true});
+const browser=await chromium.launch({executablePath:process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE,headless:true,args:['--no-sandbox'],proxy:process.env.SHARESHIELD_BROWSER_PROXY?{server:process.env.SHARESHIELD_BROWSER_PROXY}:undefined});
 const page=await browser.newPage({acceptDownloads:true});
 page.on('dialog',d=>d.accept());
 page.on('pageerror',error=>console.error('Browser page error:',error.message));
@@ -12,6 +14,7 @@ try{
  assert.equal(await page.getByRole('heading',{name:/A real workflow/}).count(),1,'Presentation page must describe the live demonstration');
  await page.getByRole('link',{name:'Launch guided demo'}).click();
  assert.ok((await page.locator('.upload-zone').textContent())?.includes('no fixed PDF page limit'),'Upload UI must not claim a fixed PDF page cap');
+ assert.equal(await page.getByRole('combobox',{name:'Printed OCR language',exact:true}).count(),1,'OCR language selector must have an exact accessible name');
  assert.equal(await page.getByLabel('Printed OCR language').inputValue(),'eng+kan',
   'The workspace must default to English + Kannada for mixed-language documents');
  for(const code of ['eng','kan']){
@@ -54,6 +57,9 @@ try{
  assert.equal(await page.getByRole('region',{name:'Pre-export coverage preview'}).count(),1,'Coverage checkpoint must exist after analysis');
  assert.ok((await page.getByRole('region',{name:'Pre-export coverage preview'}).textContent())?.includes('High findings covered'));
 
+ assert.ok((await page.locator('.finding-card').first().textContent()).includes('not a calibrated probability'),'Finding cards explain heuristic confidence');
+ assert.ok((await page.locator('.finding-card').first().textContent()).includes('Source line'),'Finding cards preserve source context');
+ assert.ok((await page.locator('.finding-card').first().textContent()).includes('label or shape recognition'),'Finding cards expose validation scope');
  assert.ok(await page.locator('.finding-card input:checked').count()>=1,'Confident high-priority credentials should be auto-selected');
  assert.equal(await page.locator('.finding-box').count(),0,'Plain-text inputs have no visual page overlay');
  await page.locator('.findings-panel .priority-trigger').click();
@@ -83,6 +89,7 @@ try{
  assert.ok(exported.includes('[REDACTED]'),'Redaction placeholders required');
  for(const secret of ['fictional@example.test','DummySecret4829','TEST2026A'])
    assert.ok(!exported.includes(secret),'Downloaded export must not contain '+secret);
+ if(evidenceDir)await writeFile(evidenceDir+'/redacted.txt',exported);
  console.log('PASS browser redaction and reopened downloaded-file inspection');
  await page.getByRole('button',{name:'Clear selection'}).click();
  await page.getByRole('button',{name:'Redact & verify export'}).click();
@@ -168,6 +175,7 @@ try{
  assert.equal(await page.getByRole('button',{name:'Next exported page'}).count(),1,'In-app PDF page navigation is required');
  const statusPdf=(await page.locator('.report-heading h2').textContent())?.trim();
  assert.equal(statusPdf,'FLAG','Known unselected High exposures must flag even if OCR fails');
+ if(evidenceDir){const href=await page.locator('.report-heading a[download]').getAttribute('href');const bytes=await page.evaluate(async url=>Array.from(new Uint8Array(await (await fetch(url)).arrayBuffer())),href);await writeFile(evidenceDir+'/flagged-reference.pdf',Buffer.from(bytes));}
  await page.getByRole('button',{name:'Select all',exact:true}).click();
  await page.getByRole('button',{name:/Redact & verify export/}).click();
  await page.locator('.report').waitFor({timeout:90000});
@@ -189,6 +197,7 @@ try{
  },exportHref);
  const pdfBytes=Buffer.from(base64,'base64');
  await writeFile('/tmp/shareshield-browser-redacted.pdf',pdfBytes);
+ if(evidenceDir){await writeFile(evidenceDir+'/redacted-two-page.pdf',pdfBytes);await writeFile(evidenceDir+'/live-report.txt',await page.locator('.report').innerText());await page.locator('.report').screenshot({path:evidenceDir+'/live-export-preview.png'});}
  assert.equal(pdfBytes.subarray(0,5).toString('utf8'),'%PDF-');
  const {getDocument}=await import('pdfjs-dist/legacy/build/pdf.mjs');
  const pdfTask=getDocument({data:new Uint8Array(pdfBytes),useSystemFonts:true});
@@ -246,6 +255,7 @@ try{
  const exportedEight=await eightTask.promise;
  assert.equal(exportedEight.numPages,10,'Actual downloaded PDF must retain all ten pages');
  const exportedBytes=Buffer.from(bytesEight,'base64');
+ if(evidenceDir)await writeFile(evidenceDir+'/redacted-ten-page.pdf',exportedBytes);
  const reconstructed=await PDFDocument.load(exportedBytes);
  assert.ok(!reconstructed.catalog.lookup(PDFName.of('Names')),
   'Rasterized export must not import the source PDF embedded-file Names catalog');
@@ -257,7 +267,7 @@ try{
  assert.notEqual((await page.locator('.report-heading h2').textContent())?.trim(),'SCOPED CLEAR',
   'No approved masks must never lead to a cleared result');
  console.log('PASS no fixed page cap: ten-page PDF analysis and reopened exported PDF');
- // Mini-project acceptance: 12-digit Aadhaar stays selectable; virtual IDs are out of redaction scope.
+ // Mini-project acceptance: 12-digit Aadhaar selectable; labelled VID/BID excluded from the redaction list.
  await page.getByRole('button',{name:/Clear workspace/}).click();
  assert.equal(await page.getByLabel('Identifier validation').count(),0,'Experimental 16-digit profile must be removed');
  const aadhaarValue='1234 5678 9012',vidValue='8765 4321 8765 4321',bidValue='9107 2702 3707 5395';
@@ -267,7 +277,7 @@ try{
  const aadhaarCard=page.locator('.finding-card').filter({hasText:'AADHAAR REVIEW'});
  await aadhaarCard.waitFor({state:'visible',timeout:30000});
  assert.equal(await aadhaarCard.count(),1,'One true 12-digit Aadhaar-labelled field must produce one review finding');
- assert.equal(await page.locator('.finding-card').filter({hasText:'VIRTUAL ID'}).count(),0,'VID/BID do not appear as selectable redaction findings');
+ assert.equal(await page.locator('.finding-card').filter({hasText:'VIRTUAL ID'}).count(),0,'VID/BID must not appear in the redaction list');
  // BID is represented as a separate labelled virtual-ID finding.
  await page.getByRole('button',{name:'Select all',exact:true}).click();
  const selectedCategories=await page.locator('.finding-card input:checked').count();
@@ -282,5 +292,25 @@ try{
  assert.ok(exportedV2Text.includes(vidValue),'VID must remain untouched');
  assert.ok(exportedV2Text.includes(bidValue),'BID must remain untouched');
  assert.ok(exportedV2Text.includes('Grade: A+'),'Ordinary academic content must remain');
- console.log('PASS mini project: Aadhaar and VID detection with manual restore before re-export');
+ console.log('PASS mini project: 12-digit Aadhaar redaction with VID/BID deliberately out of scope');
+ // Adversarial plaintext: normalization must never shift export positions.
+ await page.getByRole('button',{name:/Clear workspace/}).click();
+ const hiddenSecret='synthetic\u200b secret';
+ const adversarialSource='{"password":"'+hiddenSecret+'"}\r\nＰＡＮ：ＡＢＣＰＥ１２３４Ｆ\r\nPrescription:\r\n  fictional first medicine\r\n  fictional tail medicine\r\nGrade: A+\r\nEND_PUBLIC';
+ await page.locator('input[type="file"]').setInputFiles({name:'adversarial-offsets.txt',mimeType:'text/plain',buffer:Buffer.from(adversarialSource)});
+ await page.getByRole('button',{name:/Analyze pending files/}).click();
+ await page.locator('.finding-card').filter({hasText:'MEDICAL TEXT BLOCK REVIEW'}).first().waitFor({timeout:20000});
+ await page.getByRole('button',{name:'Open Priorities',exact:true}).click();
+ await page.locator('.priority-dialog-manual').getByRole('button',{name:'View findings'}).click();
+ assert.ok(await page.locator('.finding-card').filter({hasText:'MEDICAL TEXT BLOCK REVIEW'}).count()>=2,'Continuation lines must appear in the separate manual queue');
+ await page.getByRole('button',{name:'Show all findings'}).click();
+ await page.getByRole('button',{name:'Select all',exact:true}).click();
+ await page.getByRole('button',{name:'Redact & verify export'}).click();
+ await page.locator('.report-heading a[download]').waitFor({timeout:25000});
+ const adversarialLink=await page.locator('.report-heading a[download]').getAttribute('href');
+ const adversarialExport=await page.evaluate(async url=>await (await fetch(url)).text(),adversarialLink);
+ for(const secret of [hiddenSecret,'ＡＢＣＰＥ１２３４Ｆ','fictional tail medicine'])assert.ok(!adversarialExport.includes(secret),'Complete source value must be absent from actual export');
+ assert.ok(adversarialExport.includes('END_PUBLIC'),'Unrelated suffix must survive normalized redaction');
+ if(evidenceDir)await writeFile(evidenceDir+'/unicode-export.txt',adversarialExport);
+ console.log('PASS normalized source offsets, multiline review queue and exported plaintext');
 }finally{await page.close();await browser.close();}

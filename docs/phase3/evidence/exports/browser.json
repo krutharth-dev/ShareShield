@@ -1,0 +1,17 @@
+{
+  "browser": "141.0.7390.37",
+  "results": [
+    {
+      "viewport": "desktop",
+      "status": "UNVERIFIED",
+      "findings": 7,
+      "aadhaar": 4
+    },
+    {
+      "viewport": "mobile-emulation",
+      "status": "UNVERIFIED",
+      "findings": 7,
+      "aadhaar": 4
+    }
+  ]
+}

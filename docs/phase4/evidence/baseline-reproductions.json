@@ -1,0 +1,99 @@
+{
+  "baseline_commit": "ac01d99924acf766c953b500697bebc4861b0513",
+  "form_field_status": "FLAG",
+  "filename_echo": "SECRET-IN-FILENAME.pdf",
+  "out_of_bounds_accepted": true,
+  "report": {
+    "schema_version": "1.0",
+    "status": "FLAG",
+    "output": {
+      "filename": "SECRET-IN-FILENAME.pdf",
+      "format": "pdf",
+      "size_bytes": 1285
+    },
+    "checks": [
+      {
+        "name": "pdf_text_extraction",
+        "status": "passed",
+        "required": true,
+        "pages_checked": 1,
+        "parser": "PyMuPDF"
+      },
+      {
+        "name": "rendered_ocr",
+        "status": "skipped",
+        "required": false
+      },
+      {
+        "name": "metadata_attachments",
+        "status": "passed",
+        "required": true,
+        "metadata_fields_checked": 11,
+        "attachment_count": 0,
+        "parser": "PyMuPDF + pypdf"
+      }
+    ],
+    "warnings": [],
+    "remaining_findings": [
+      {
+        "category": "selected_sensitive_value",
+        "source": "pdf_text_extraction",
+        "match_type": "selected_value_residual"
+      }
+    ],
+    "redaction_metadata": {
+      "details_withheld": false
+    },
+    "location_information": {
+      "details_withheld": false
+    },
+    "verified_at": "2026-11-11T11:02:14.048110+00:00",
+    "duration_ms": 177.63,
+    "scope_note": "SCOPED_CLEAR covers only completed checks; it is not a universal security guarantee."
+  },
+  "hidden_form_and_js_status": "SCOPED_CLEAR",
+  "hidden_report": {
+    "schema_version": "1.0",
+    "status": "SCOPED_CLEAR",
+    "output": {
+      "filename": "SECRET-IN-FILENAME.pdf",
+      "format": "pdf",
+      "size_bytes": 780
+    },
+    "checks": [
+      {
+        "name": "pdf_text_extraction",
+        "status": "passed",
+        "required": true,
+        "pages_checked": 1,
+        "parser": "PyMuPDF"
+      },
+      {
+        "name": "rendered_ocr",
+        "status": "skipped",
+        "required": false
+      },
+      {
+        "name": "metadata_attachments",
+        "status": "passed",
+        "required": true,
+        "metadata_fields_checked": 11,
+        "attachment_count": 0,
+        "parser": "PyMuPDF + pypdf"
+      }
+    ],
+    "warnings": [
+      "Only the listed checks passed; no universal safety guarantee."
+    ],
+    "remaining_findings": [],
+    "redaction_metadata": {
+      "details_withheld": false
+    },
+    "location_information": {
+      "details_withheld": false
+    },
+    "verified_at": "2026-11-11T11:02:26.463057+00:00",
+    "duration_ms": 19.04,
+    "scope_note": "SCOPED_CLEAR covers only completed checks; it is not a universal security guarantee."
+  }
+}

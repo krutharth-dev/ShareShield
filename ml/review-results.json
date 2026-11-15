@@ -1,0 +1,2110 @@
+{
+  "model_sha256": "4eea0b5ec09e69bd184df51db4686d1498ff162dc39de2334285f2881bae83db",
+  "annotation_status": "assistant-authored, human and native-speaker review PENDING",
+  "sets": {
+    "development": {
+      "sha256": "af457c7344827bf9fad9a48b116518c0abd8b222c3b178bb75c945c3676fa293",
+      "documents": 36,
+      "systems": {
+        "baseline": {
+          "overall": {
+            "tp": 4,
+            "fp": 0,
+            "fn": 26,
+            "precision": 1,
+            "recall": 0.13333333333333333,
+            "f1": 0.23529411764705882
+          },
+          "languages": {
+            "en": {
+              "tp": 3,
+              "fp": 0,
+              "fn": 14,
+              "precision": 1,
+              "recall": 0.17647058823529413,
+              "f1": 0.3
+            },
+            "kn": {
+              "tp": 1,
+              "fp": 0,
+              "fn": 7,
+              "precision": 1,
+              "recall": 0.125,
+              "f1": 0.2222222222222222
+            },
+            "mixed": {
+              "tp": 0,
+              "fp": 0,
+              "fn": 5,
+              "precision": 0,
+              "recall": 0,
+              "f1": 0
+            }
+          },
+          "categories": {
+            "MEDICAL_RECORD_NUMBER": {
+              "tp": 0,
+              "fp": 0,
+              "fn": 3,
+              "precision": 0,
+              "recall": 0,
+              "f1": 0
+            },
+            "ACADEMIC_ADMISSION_ID": {
+              "tp": 0,
+              "fp": 0,
+              "fn": 3,
+              "precision": 0,
+              "recall": 0,
+              "f1": 0
+            },
+            "STUDENT_OR_EMPLOYEE_ID": {
+              "tp": 0,
+              "fp": 0,
+              "fn": 3,
+              "precision": 0,
+              "recall": 0,
+              "f1": 0
+            },
+            "PATIENT_ID": {
+              "tp": 0,
+              "fp": 0,
+              "fn": 2,
+              "precision": 0,
+              "recall": 0,
+              "f1": 0
+            },
+            "BLOOD_GROUP": {
+              "tp": 1,
+              "fp": 0,
+              "fn": 1,
+              "precision": 1,
+              "recall": 0.5,
+              "f1": 0.6666666666666666
+            },
+            "ACADEMIC_GRADE": {
+              "tp": 0,
+              "fp": 0,
+              "fn": 1,
+              "precision": 0,
+              "recall": 0,
+              "f1": 0
+            },
+            "BANK_ACCOUNT_CANDIDATE": {
+              "tp": 1,
+              "fp": 0,
+              "fn": 1,
+              "precision": 1,
+              "recall": 0.5,
+              "f1": 0.6666666666666666
+            },
+            "INDIAN_MOBILE": {
+              "tp": 1,
+              "fp": 0,
+              "fn": 0,
+              "precision": 1,
+              "recall": 1,
+              "f1": 1
+            },
+            "PERSON_NAME_REVIEW": {
+              "tp": 0,
+              "fp": 0,
+              "fn": 3,
+              "precision": 0,
+              "recall": 0,
+              "f1": 0
+            },
+            "ADDRESS_REVIEW": {
+              "tp": 0,
+              "fp": 0,
+              "fn": 3,
+              "precision": 0,
+              "recall": 0,
+              "f1": 0
+            },
+            "EMAIL": {
+              "tp": 1,
+              "fp": 0,
+              "fn": 0,
+              "precision": 1,
+              "recall": 1,
+              "f1": 1
+            },
+            "DATE_OF_BIRTH": {
+              "tp": 0,
+              "fp": 0,
+              "fn": 1,
+              "precision": 0,
+              "recall": 0,
+              "f1": 0
+            },
+            "CREDENTIAL_OR_SECRET": {
+              "tp": 0,
+              "fp": 0,
+              "fn": 1,
+              "precision": 0,
+              "recall": 0,
+              "f1": 0
+            },
+            "LEGAL_CASE_REFERENCE": {
+              "tp": 0,
+              "fp": 0,
+              "fn": 1,
+              "precision": 0,
+              "recall": 0,
+              "f1": 0
+            },
+            "MEDICAL_CONDITION": {
+              "tp": 0,
+              "fp": 0,
+              "fn": 1,
+              "precision": 0,
+              "recall": 0,
+              "f1": 0
+            },
+            "MEDICATION": {
+              "tp": 0,
+              "fp": 0,
+              "fn": 1,
+              "precision": 0,
+              "recall": 0,
+              "f1": 0
+            },
+            "LAB_RESULT": {
+              "tp": 0,
+              "fp": 0,
+              "fn": 1,
+              "precision": 0,
+              "recall": 0,
+              "f1": 0
+            }
+          },
+          "errors": [
+            {
+              "id": "development-1",
+              "text": "At the hospital, medical record 4829107 belongs to this chart.",
+              "gold": [
+                {
+                  "start": 32,
+                  "end": 39,
+                  "category": "MEDICAL_RECORD_NUMBER"
+                }
+              ],
+              "pred": []
+            },
+            {
+              "id": "development-2",
+              "text": "The college assigned admission 5938218 to the new student.",
+              "gold": [
+                {
+                  "start": 31,
+                  "end": 38,
+                  "category": "ACADEMIC_ADMISSION_ID"
+                }
+              ],
+              "pred": []
+            },
+            {
+              "id": "development-3",
+              "text": "Our employee payroll code is 6049329.",
+              "gold": [
+                {
+                  "start": 29,
+                  "end": 36,
+                  "category": "STUDENT_OR_EMPLOYEE_ID"
+                }
+              ],
+              "pred": []
+            },
+            {
+              "id": "development-4",
+              "text": "Please contact the patient using 7150430 for treatment registration.",
+              "gold": [
+                {
+                  "start": 33,
+                  "end": 40,
+                  "category": "PATIENT_ID"
+                }
+              ],
+              "pred": []
+            },
+            {
+              "id": "development-6",
+              "text": "The academic grade awarded was B+.",
+              "gold": [
+                {
+                  "start": 31,
+                  "end": 33,
+                  "category": "ACADEMIC_GRADE"
+                }
+              ],
+              "pred": []
+            },
+            {
+              "id": "development-7",
+              "text": "The bank savings account for payment is 12345678901.",
+              "gold": [
+                {
+                  "start": 40,
+                  "end": 51,
+                  "category": "BANK_ACCOUNT_CANDIDATE"
+                }
+              ],
+              "pred": []
+            },
+            {
+              "id": "development-9",
+              "text": "The guardian full name is \"Fictional Mira\".",
+              "gold": [
+                {
+                  "start": 27,
+                  "end": 41,
+                  "category": "PERSON_NAME_REVIEW"
+                }
+              ],
+              "pred": []
+            },
+            {
+              "id": "development-10",
+              "text": "Her residential home address is \"42 Fictional Lane\".",
+              "gold": [
+                {
+                  "start": 33,
+                  "end": 50,
+                  "category": "ADDRESS_REVIEW"
+                }
+              ],
+              "pred": []
+            },
+            {
+              "id": "development-12",
+              "text": "Her date of birth is 12/03/2001.",
+              "gold": [
+                {
+                  "start": 21,
+                  "end": 31,
+                  "category": "DATE_OF_BIRTH"
+                }
+              ],
+              "pred": []
+            },
+            {
+              "id": "development-13",
+              "text": "The authentication secret is \"TEST_ONLY_Key42\".",
+              "gold": [
+                {
+                  "start": 30,
+                  "end": 45,
+                  "category": "CREDENTIAL_OR_SECRET"
+                }
+              ],
+              "pred": []
+            },
+            {
+              "id": "development-14",
+              "text": "The court filed case CASE/2026/42 in the confidential register.",
+              "gold": [
+                {
+                  "start": 21,
+                  "end": 33,
+                  "category": "LEGAL_CASE_REFERENCE"
+                }
+              ],
+              "pred": []
+            },
+            {
+              "id": "development-15",
+              "text": "The diagnosis recorded is \"fictional condition\".",
+              "gold": [
+                {
+                  "start": 27,
+                  "end": 46,
+                  "category": "MEDICAL_CONDITION"
+                }
+              ],
+              "pred": []
+            },
+            {
+              "id": "development-16",
+              "text": "The prescription lists \"fictional medicine\".",
+              "gold": [
+                {
+                  "start": 24,
+                  "end": 42,
+                  "category": "MEDICATION"
+                }
+              ],
+              "pred": []
+            },
+            {
+              "id": "development-17",
+              "text": "The laboratory result is \"fictional assay 42\".",
+              "gold": [
+                {
+                  "start": 26,
+                  "end": 44,
+                  "category": "LAB_RESULT"
+                }
+              ],
+              "pred": []
+            },
+            {
+              "id": "development-21",
+              "text": "ಆಸ್ಪತ್ರೆಯ ವೈದ್ಯಕೀಯ ದಾಖಲೆ 4829107 ಅನ್ನು ನೋಡಿ.",
+              "gold": [
+                {
+                  "start": 25,
+                  "end": 32,
+                  "category": "MEDICAL_RECORD_NUMBER"
+                }
+              ],
+              "pred": []
+            },
+            {
+              "id": "development-22",
+              "text": "ಕಾಲೇಜಿನ ಪ್ರವೇಶ ಸಂಖ್ಯೆ 5938218 ದಾಖಲಿಸಲಾಗಿದೆ.",
+              "gold": [
+                {
+                  "start": 22,
+                  "end": 29,
+                  "category": "ACADEMIC_ADMISSION_ID"
+                }
+              ],
+              "pred": []
+            },
+            {
+              "id": "development-23",
+              "text": "ಉದ್ಯೋಗಿಯ ಸಿಬ್ಬಂದಿ ಗುರುತು 6049329 ಆಗಿದೆ.",
+              "gold": [
+                {
+                  "start": 25,
+                  "end": 32,
+                  "category": "STUDENT_OR_EMPLOYEE_ID"
+                }
+              ],
+              "pred": []
+            },
+            {
+              "id": "development-24",
+              "text": "ಚಿಕಿತ್ಸೆಗೆ ರೋಗಿಯ ಸಂಖ್ಯೆ 7150430 ಬಳಸಿ.",
+              "gold": [
+                {
+                  "start": 24,
+                  "end": 31,
+                  "category": "PATIENT_ID"
+                }
+              ],
+              "pred": []
+            },
+            {
+              "id": "development-25",
+              "text": "ರಕ್ತದ ಗುಂಪು \"AB+\" ಎಂದು ದಾಖಲಿಸಲಾಗಿದೆ.",
+              "gold": [
+                {
+                  "start": 13,
+                  "end": 16,
+                  "category": "BLOOD_GROUP"
+                }
+              ],
+              "pred": []
+            },
+            {
+              "id": "development-26",
+              "text": "ಮನೆಯ ವಿಳಾಸ \"42 ಕಾಲ್ಪನಿಕ ರಸ್ತೆ\" ಆಗಿದೆ.",
+              "gold": [
+                {
+                  "start": 12,
+                  "end": 29,
+                  "category": "ADDRESS_REVIEW"
+                }
+              ],
+              "pred": []
+            },
+            {
+              "id": "development-27",
+              "text": "ಪೋಷಕರ ಹೆಸರು \"ಕಾಲ್ಪನಿಕ ಮೀನಾ\" ಎಂದು ನಮೂದಿಸಿ.",
+              "gold": [
+                {
+                  "start": 13,
+                  "end": 26,
+                  "category": "PERSON_NAME_REVIEW"
+                }
+              ],
+              "pred": []
+            },
+            {
+              "id": "development-31",
+              "text": "ಆಸ್ಪತ್ರೆ medical record 4829107 was retrieved.",
+              "gold": [
+                {
+                  "start": 24,
+                  "end": 31,
+                  "category": "MEDICAL_RECORD_NUMBER"
+                }
+              ],
+              "pred": []
+            },
+            {
+              "id": "development-32",
+              "text": "ಕಾಲೇಜು admission 5938218 has been approved.",
+              "gold": [
+                {
+                  "start": 17,
+                  "end": 24,
+                  "category": "ACADEMIC_ADMISSION_ID"
+                }
+              ],
+              "pred": []
+            },
+            {
+              "id": "development-33",
+              "text": "ಉದ್ಯೋಗಿ payroll code 6049329 is private.",
+              "gold": [
+                {
+                  "start": 21,
+                  "end": 28,
+                  "category": "STUDENT_OR_EMPLOYEE_ID"
+                }
+              ],
+              "pred": []
+            },
+            {
+              "id": "development-34",
+              "text": "ಪೋಷಕರ name \"Fictional Meena\" was supplied.",
+              "gold": [
+                {
+                  "start": 12,
+                  "end": 27,
+                  "category": "PERSON_NAME_REVIEW"
+                }
+              ],
+              "pred": []
+            },
+            {
+              "id": "development-35",
+              "text": "ಮನೆಯ address \"43 Fictional Road\" is confidential.",
+              "gold": [
+                {
+                  "start": 14,
+                  "end": 31,
+                  "category": "ADDRESS_REVIEW"
+                }
+              ],
+              "pred": []
+            }
+          ]
+        },
+        "model": {
+          "overall": {
+            "tp": 27,
+            "fp": 0,
+            "fn": 3,
+            "precision": 1,
+            "recall": 0.9,
+            "f1": 0.9473684210526315
+          },
+          "languages": {
+            "en": {
+              "tp": 14,
+              "fp": 0,
+              "fn": 3,
+              "precision": 1,
+              "recall": 0.8235294117647058,
+              "f1": 0.9032258064516129
+            },
+            "kn": {
+              "tp": 8,
+              "fp": 0,
+              "fn": 0,
+              "precision": 1,
+              "recall": 1,
+              "f1": 1
+            },
+            "mixed": {
+              "tp": 5,
+              "fp": 0,
+              "fn": 0,
+              "precision": 1,
+              "recall": 1,
+              "f1": 1
+            }
+          },
+          "categories": {
+            "MEDICAL_RECORD_NUMBER": {
+              "tp": 3,
+              "fp": 0,
+              "fn": 0,
+              "precision": 1,
+              "recall": 1,
+              "f1": 1
+            },
+            "ACADEMIC_ADMISSION_ID": {
+              "tp": 3,
+              "fp": 0,
+              "fn": 0,
+              "precision": 1,
+              "recall": 1,
+              "f1": 1
+            },
+            "STUDENT_OR_EMPLOYEE_ID": {
+              "tp": 3,
+              "fp": 0,
+              "fn": 0,
+              "precision": 1,
+              "recall": 1,
+              "f1": 1
+            },
+            "PATIENT_ID": {
+              "tp": 2,
+              "fp": 0,
+              "fn": 0,
+              "precision": 1,
+              "recall": 1,
+              "f1": 1
+            },
+            "BLOOD_GROUP": {
+              "tp": 1,
+              "fp": 0,
+              "fn": 1,
+              "precision": 1,
+              "recall": 0.5,
+              "f1": 0.6666666666666666
+            },
+            "ACADEMIC_GRADE": {
+              "tp": 0,
+              "fp": 0,
+              "fn": 1,
+              "precision": 0,
+              "recall": 0,
+              "f1": 0
+            },
+            "BANK_ACCOUNT_CANDIDATE": {
+              "tp": 2,
+              "fp": 0,
+              "fn": 0,
+              "precision": 1,
+              "recall": 1,
+              "f1": 1
+            },
+            "INDIAN_MOBILE": {
+              "tp": 1,
+              "fp": 0,
+              "fn": 0,
+              "precision": 1,
+              "recall": 1,
+              "f1": 1
+            },
+            "PERSON_NAME_REVIEW": {
+              "tp": 3,
+              "fp": 0,
+              "fn": 0,
+              "precision": 1,
+              "recall": 1,
+              "f1": 1
+            },
+            "ADDRESS_REVIEW": {
+              "tp": 3,
+              "fp": 0,
+              "fn": 0,
+              "precision": 1,
+              "recall": 1,
+              "f1": 1
+            },
+            "EMAIL": {
+              "tp": 0,
+              "fp": 0,
+              "fn": 1,
+              "precision": 0,
+              "recall": 0,
+              "f1": 0
+            },
+            "DATE_OF_BIRTH": {
+              "tp": 1,
+              "fp": 0,
+              "fn": 0,
+              "precision": 1,
+              "recall": 1,
+              "f1": 1
+            },
+            "CREDENTIAL_OR_SECRET": {
+              "tp": 1,
+              "fp": 0,
+              "fn": 0,
+              "precision": 1,
+              "recall": 1,
+              "f1": 1
+            },
+            "LEGAL_CASE_REFERENCE": {
+              "tp": 1,
+              "fp": 0,
+              "fn": 0,
+              "precision": 1,
+              "recall": 1,
+              "f1": 1
+            },
+            "MEDICAL_CONDITION": {
+              "tp": 1,
+              "fp": 0,
+              "fn": 0,
+              "precision": 1,
+              "recall": 1,
+              "f1": 1
+            },
+            "MEDICATION": {
+              "tp": 1,
+              "fp": 0,
+              "fn": 0,
+              "precision": 1,
+              "recall": 1,
+              "f1": 1
+            },
+            "LAB_RESULT": {
+              "tp": 1,
+              "fp": 0,
+              "fn": 0,
+              "precision": 1,
+              "recall": 1,
+              "f1": 1
+            }
+          },
+          "errors": [
+            {
+              "id": "development-5",
+              "text": "The patient has blood type AB+.",
+              "gold": [
+                {
+                  "start": 27,
+                  "end": 30,
+                  "category": "BLOOD_GROUP"
+                }
+              ],
+              "pred": []
+            },
+            {
+              "id": "development-6",
+              "text": "The academic grade awarded was B+.",
+              "gold": [
+                {
+                  "start": 31,
+                  "end": 33,
+                  "category": "ACADEMIC_GRADE"
+                }
+              ],
+              "pred": []
+            },
+            {
+              "id": "development-11",
+              "text": "Send the email to fictional@example.test.",
+              "gold": [
+                {
+                  "start": 18,
+                  "end": 40,
+                  "category": "EMAIL"
+                }
+              ],
+              "pred": []
+            }
+          ]
+        },
+        "hybrid": {
+          "overall": {
+            "tp": 29,
+            "fp": 0,
+            "fn": 1,
+            "precision": 1,
+            "recall": 0.9666666666666667,
+            "f1": 0.9830508474576272
+          },
+          "languages": {
+            "en": {
+              "tp": 16,
+              "fp": 0,
+              "fn": 1,
+              "precision": 1,
+              "recall": 0.9411764705882353,
+              "f1": 0.9696969696969697
+            },
+            "kn": {
+              "tp": 8,
+              "fp": 0,
+              "fn": 0,
+              "precision": 1,
+              "recall": 1,
+              "f1": 1
+            },
+            "mixed": {
+              "tp": 5,
+              "fp": 0,
+              "fn": 0,
+              "precision": 1,
+              "recall": 1,
+              "f1": 1
+            }
+          },
+          "categories": {
+            "MEDICAL_RECORD_NUMBER": {
+              "tp": 3,
+              "fp": 0,
+              "fn": 0,
+              "precision": 1,
+              "recall": 1,
+              "f1": 1
+            },
+            "ACADEMIC_ADMISSION_ID": {
+              "tp": 3,
+              "fp": 0,
+              "fn": 0,
+              "precision": 1,
+              "recall": 1,
+              "f1": 1
+            },
+            "STUDENT_OR_EMPLOYEE_ID": {
+              "tp": 3,
+              "fp": 0,
+              "fn": 0,
+              "precision": 1,
+              "recall": 1,
+              "f1": 1
+            },
+            "PATIENT_ID": {
+              "tp": 2,
+              "fp": 0,
+              "fn": 0,
+              "precision": 1,
+              "recall": 1,
+              "f1": 1
+            },
+            "BLOOD_GROUP": {
+              "tp": 2,
+              "fp": 0,
+              "fn": 0,
+              "precision": 1,
+              "recall": 1,
+              "f1": 1
+            },
+            "ACADEMIC_GRADE": {
+              "tp": 0,
+              "fp": 0,
+              "fn": 1,
+              "precision": 0,
+              "recall": 0,
+              "f1": 0
+            },
+            "BANK_ACCOUNT_CANDIDATE": {
+              "tp": 2,
+              "fp": 0,
+              "fn": 0,
+              "precision": 1,
+              "recall": 1,
+              "f1": 1
+            },
+            "INDIAN_MOBILE": {
+              "tp": 1,
+              "fp": 0,
+              "fn": 0,
+              "precision": 1,
+              "recall": 1,
+              "f1": 1
+            },
+            "PERSON_NAME_REVIEW": {
+              "tp": 3,
+              "fp": 0,
+              "fn": 0,
+              "precision": 1,
+              "recall": 1,
+              "f1": 1
+            },
+            "ADDRESS_REVIEW": {
+              "tp": 3,
+              "fp": 0,
+              "fn": 0,
+              "precision": 1,
+              "recall": 1,
+              "f1": 1
+            },
+            "EMAIL": {
+              "tp": 1,
+              "fp": 0,
+              "fn": 0,
+              "precision": 1,
+              "recall": 1,
+              "f1": 1
+            },
+            "DATE_OF_BIRTH": {
+              "tp": 1,
+              "fp": 0,
+              "fn": 0,
+              "precision": 1,
+              "recall": 1,
+              "f1": 1
+            },
+            "CREDENTIAL_OR_SECRET": {
+              "tp": 1,
+              "fp": 0,
+              "fn": 0,
+              "precision": 1,
+              "recall": 1,
+              "f1": 1
+            },
+            "LEGAL_CASE_REFERENCE": {
+              "tp": 1,
+              "fp": 0,
+              "fn": 0,
+              "precision": 1,
+              "recall": 1,
+              "f1": 1
+            },
+            "MEDICAL_CONDITION": {
+              "tp": 1,
+              "fp": 0,
+              "fn": 0,
+              "precision": 1,
+              "recall": 1,
+              "f1": 1
+            },
+            "MEDICATION": {
+              "tp": 1,
+              "fp": 0,
+              "fn": 0,
+              "precision": 1,
+              "recall": 1,
+              "f1": 1
+            },
+            "LAB_RESULT": {
+              "tp": 1,
+              "fp": 0,
+              "fn": 0,
+              "precision": 1,
+              "recall": 1,
+              "f1": 1
+            }
+          },
+          "errors": [
+            {
+              "id": "development-6",
+              "text": "The academic grade awarded was B+.",
+              "gold": [
+                {
+                  "start": 31,
+                  "end": 33,
+                  "category": "ACADEMIC_GRADE"
+                }
+              ],
+              "pred": []
+            }
+          ]
+        }
+      }
+    },
+    "holdout": {
+      "sha256": "2443acfed8ddb2f8f4a880eb10009f0a48e8bb12028b1fe309aca6f59a752406",
+      "documents": 42,
+      "systems": {
+        "baseline": {
+          "overall": {
+            "tp": 9,
+            "fp": 2,
+            "fn": 28,
+            "precision": 0.8181818181818182,
+            "recall": 0.24324324324324326,
+            "f1": 0.375
+          },
+          "languages": {
+            "en": {
+              "tp": 7,
+              "fp": 2,
+              "fn": 15,
+              "precision": 0.7777777777777778,
+              "recall": 0.3181818181818182,
+              "f1": 0.45161290322580644
+            },
+            "kn": {
+              "tp": 2,
+              "fp": 0,
+              "fn": 7,
+              "precision": 1,
+              "recall": 0.2222222222222222,
+              "f1": 0.36363636363636365
+            },
+            "mixed": {
+              "tp": 0,
+              "fp": 0,
+              "fn": 6,
+              "precision": 0,
+              "recall": 0,
+              "f1": 0
+            }
+          },
+          "categories": {
+            "MEDICAL_RECORD_NUMBER": {
+              "tp": 0,
+              "fp": 0,
+              "fn": 6,
+              "precision": 0,
+              "recall": 0,
+              "f1": 0
+            },
+            "ACADEMIC_ADMISSION_ID": {
+              "tp": 0,
+              "fp": 0,
+              "fn": 3,
+              "precision": 0,
+              "recall": 0,
+              "f1": 0
+            },
+            "STUDENT_OR_EMPLOYEE_ID": {
+              "tp": 0,
+              "fp": 0,
+              "fn": 3,
+              "precision": 0,
+              "recall": 0,
+              "f1": 0
+            },
+            "PATIENT_ID": {
+              "tp": 0,
+              "fp": 0,
+              "fn": 2,
+              "precision": 0,
+              "recall": 0,
+              "f1": 0
+            },
+            "BLOOD_GROUP": {
+              "tp": 1,
+              "fp": 0,
+              "fn": 1,
+              "precision": 1,
+              "recall": 0.5,
+              "f1": 0.6666666666666666
+            },
+            "ACADEMIC_GRADE": {
+              "tp": 0,
+              "fp": 0,
+              "fn": 1,
+              "precision": 0,
+              "recall": 0,
+              "f1": 0
+            },
+            "BANK_ACCOUNT_CANDIDATE": {
+              "tp": 2,
+              "fp": 0,
+              "fn": 0,
+              "precision": 1,
+              "recall": 1,
+              "f1": 1
+            },
+            "INDIAN_MOBILE": {
+              "tp": 1,
+              "fp": 0,
+              "fn": 0,
+              "precision": 1,
+              "recall": 1,
+              "f1": 1
+            },
+            "PERSON_NAME_REVIEW": {
+              "tp": 0,
+              "fp": 0,
+              "fn": 3,
+              "precision": 0,
+              "recall": 0,
+              "f1": 0
+            },
+            "ADDRESS_REVIEW": {
+              "tp": 0,
+              "fp": 2,
+              "fn": 5,
+              "precision": 0,
+              "recall": 0,
+              "f1": 0
+            },
+            "EMAIL": {
+              "tp": 1,
+              "fp": 0,
+              "fn": 0,
+              "precision": 1,
+              "recall": 1,
+              "f1": 1
+            },
+            "DATE_OF_BIRTH": {
+              "tp": 1,
+              "fp": 0,
+              "fn": 0,
+              "precision": 1,
+              "recall": 1,
+              "f1": 1
+            },
+            "CREDENTIAL_OR_SECRET": {
+              "tp": 0,
+              "fp": 0,
+              "fn": 1,
+              "precision": 0,
+              "recall": 0,
+              "f1": 0
+            },
+            "LEGAL_CASE_REFERENCE": {
+              "tp": 0,
+              "fp": 0,
+              "fn": 1,
+              "precision": 0,
+              "recall": 0,
+              "f1": 0
+            },
+            "MEDICAL_CONDITION": {
+              "tp": 0,
+              "fp": 0,
+              "fn": 1,
+              "precision": 0,
+              "recall": 0,
+              "f1": 0
+            },
+            "MEDICATION": {
+              "tp": 0,
+              "fp": 0,
+              "fn": 1,
+              "precision": 0,
+              "recall": 0,
+              "f1": 0
+            },
+            "LAB_RESULT": {
+              "tp": 1,
+              "fp": 0,
+              "fn": 0,
+              "precision": 1,
+              "recall": 1,
+              "f1": 1
+            },
+            "AADHAAR_REVIEW": {
+              "tp": 2,
+              "fp": 0,
+              "fn": 0,
+              "precision": 1,
+              "recall": 1,
+              "f1": 1
+            }
+          },
+          "errors": [
+            {
+              "id": "holdout-1",
+              "text": "This clinical chart can be retrieved with medical record 8631042.",
+              "gold": [
+                {
+                  "start": 57,
+                  "end": 64,
+                  "category": "MEDICAL_RECORD_NUMBER"
+                }
+              ],
+              "pred": []
+            },
+            {
+              "id": "holdout-2",
+              "text": "University admission 9742153 is recorded for the applicant.",
+              "gold": [
+                {
+                  "start": 21,
+                  "end": 28,
+                  "category": "ACADEMIC_ADMISSION_ID"
+                }
+              ],
+              "pred": []
+            },
+            {
+              "id": "holdout-3",
+              "text": "Payroll lists employee 3853264 as active.",
+              "gold": [
+                {
+                  "start": 23,
+                  "end": 30,
+                  "category": "STUDENT_OR_EMPLOYEE_ID"
+                }
+              ],
+              "pred": []
+            },
+            {
+              "id": "holdout-4",
+              "text": "A patient was registered for care under 4964375.",
+              "gold": [
+                {
+                  "start": 40,
+                  "end": 47,
+                  "category": "PATIENT_ID"
+                }
+              ],
+              "pred": []
+            },
+            {
+              "id": "holdout-5",
+              "text": "Transfusion notes give blood group \"O-\".",
+              "gold": [
+                {
+                  "start": 36,
+                  "end": 38,
+                  "category": "BLOOD_GROUP"
+                }
+              ],
+              "pred": []
+            },
+            {
+              "id": "holdout-6",
+              "text": "The examination grade was \"A+\".",
+              "gold": [
+                {
+                  "start": 27,
+                  "end": 29,
+                  "category": "ACADEMIC_GRADE"
+                }
+              ],
+              "pred": []
+            },
+            {
+              "id": "holdout-9",
+              "text": "The applicant is named \"Fictional Ravi\".",
+              "gold": [
+                {
+                  "start": 24,
+                  "end": 38,
+                  "category": "PERSON_NAME_REVIEW"
+                }
+              ],
+              "pred": []
+            },
+            {
+              "id": "holdout-10",
+              "text": "Letters should go to the residential address \"55 Invented Street\".",
+              "gold": [
+                {
+                  "start": 46,
+                  "end": 64,
+                  "category": "ADDRESS_REVIEW"
+                }
+              ],
+              "pred": []
+            },
+            {
+              "id": "holdout-13",
+              "text": "Keep the API key \"TEST_ONLY_Another77\" confidential.",
+              "gold": [
+                {
+                  "start": 18,
+                  "end": 37,
+                  "category": "CREDENTIAL_OR_SECRET"
+                }
+              ],
+              "pred": []
+            },
+            {
+              "id": "holdout-14",
+              "text": "Court case CASE/2025/77 remains private.",
+              "gold": [
+                {
+                  "start": 11,
+                  "end": 23,
+                  "category": "LEGAL_CASE_REFERENCE"
+                }
+              ],
+              "pred": []
+            },
+            {
+              "id": "holdout-15",
+              "text": "The diagnosis was \"invented syndrome\".",
+              "gold": [
+                {
+                  "start": 19,
+                  "end": 36,
+                  "category": "MEDICAL_CONDITION"
+                }
+              ],
+              "pred": []
+            },
+            {
+              "id": "holdout-16",
+              "text": "A prescription for \"invented tablet\" was written.",
+              "gold": [
+                {
+                  "start": 20,
+                  "end": 35,
+                  "category": "MEDICATION"
+                }
+              ],
+              "pred": []
+            },
+            {
+              "id": "holdout-21",
+              "text": "ಈ ವೈದ್ಯಕೀಯ ದಾಖಲೆ 8631042 ಆಸ್ಪತ್ರೆಯಲ್ಲಿ ಇದೆ.",
+              "gold": [
+                {
+                  "start": 17,
+                  "end": 24,
+                  "category": "MEDICAL_RECORD_NUMBER"
+                }
+              ],
+              "pred": []
+            },
+            {
+              "id": "holdout-22",
+              "text": "ವಿದ್ಯಾರ್ಥಿಯ ಕಾಲೇಜು ಪ್ರವೇಶ 9742153 ಪೂರ್ಣವಾಗಿದೆ.",
+              "gold": [
+                {
+                  "start": 26,
+                  "end": 33,
+                  "category": "ACADEMIC_ADMISSION_ID"
+                }
+              ],
+              "pred": []
+            },
+            {
+              "id": "holdout-23",
+              "text": "ಸಿಬ್ಬಂದಿಯ ಉದ್ಯೋಗಿ ಗುರುತು 3853264 ದಾಖಲಿಸಲಾಗಿದೆ.",
+              "gold": [
+                {
+                  "start": 25,
+                  "end": 32,
+                  "category": "STUDENT_OR_EMPLOYEE_ID"
+                }
+              ],
+              "pred": []
+            },
+            {
+              "id": "holdout-24",
+              "text": "ರೋಗಿಯ ಚಿಕಿತ್ಸೆ ಸಂಖ್ಯೆ 4964375 ಗೌಪ್ಯವಾಗಿದೆ.",
+              "gold": [
+                {
+                  "start": 22,
+                  "end": 29,
+                  "category": "PATIENT_ID"
+                }
+              ],
+              "pred": []
+            },
+            {
+              "id": "holdout-26",
+              "text": "ವಸತಿ ವಿಳಾಸ \"55 ಕಾಲ್ಪನಿಕ ಬೀದಿ\" ದಾಖಲಿಸಲಾಗಿದೆ.",
+              "gold": [
+                {
+                  "start": 12,
+                  "end": 28,
+                  "category": "ADDRESS_REVIEW"
+                }
+              ],
+              "pred": []
+            },
+            {
+              "id": "holdout-27",
+              "text": "ವ್ಯಕ್ತಿಯ ಹೆಸರು \"ಕಾಲ್ಪನಿಕ ರವಿ\" ಆಗಿದೆ.",
+              "gold": [
+                {
+                  "start": 16,
+                  "end": 28,
+                  "category": "PERSON_NAME_REVIEW"
+                }
+              ],
+              "pred": []
+            },
+            {
+              "id": "holdout-31",
+              "text": "Medical chart ದಾಖಲೆ 8631042 was found in hospital.",
+              "gold": [
+                {
+                  "start": 20,
+                  "end": 27,
+                  "category": "MEDICAL_RECORD_NUMBER"
+                }
+              ],
+              "pred": []
+            },
+            {
+              "id": "holdout-32",
+              "text": "University ಪ್ರವೇಶ 9742153 identifies this student.",
+              "gold": [
+                {
+                  "start": 18,
+                  "end": 25,
+                  "category": "ACADEMIC_ADMISSION_ID"
+                }
+              ],
+              "pred": []
+            },
+            {
+              "id": "holdout-33",
+              "text": "Employee ಸಿಬ್ಬಂದಿ ಸಂಖ್ಯೆ 3853264 belongs to payroll.",
+              "gold": [
+                {
+                  "start": 25,
+                  "end": 32,
+                  "category": "STUDENT_OR_EMPLOYEE_ID"
+                }
+              ],
+              "pred": []
+            },
+            {
+              "id": "holdout-34",
+              "text": "Guardian ಹೆಸರು \"Fictional Ravi\" is on the form.",
+              "gold": [
+                {
+                  "start": 16,
+                  "end": 30,
+                  "category": "PERSON_NAME_REVIEW"
+                }
+              ],
+              "pred": []
+            },
+            {
+              "id": "holdout-35",
+              "text": "Residential ವಿಳಾಸ \"55 Invented Street\" is recorded.",
+              "gold": [
+                {
+                  "start": 19,
+                  "end": 37,
+                  "category": "ADDRESS_REVIEW"
+                }
+              ],
+              "pred": []
+            },
+            {
+              "id": "holdout-39",
+              "text": "Address: 55 Invented Street\nAddress: 56 Invented Street",
+              "gold": [
+                {
+                  "start": 9,
+                  "end": 27,
+                  "category": "ADDRESS_REVIEW"
+                },
+                {
+                  "start": 37,
+                  "end": 55,
+                  "category": "ADDRESS_REVIEW"
+                }
+              ],
+              "pred": [
+                {
+                  "start": 0,
+                  "end": 27,
+                  "category": "ADDRESS_REVIEW"
+                },
+                {
+                  "start": 28,
+                  "end": 55,
+                  "category": "ADDRESS_REVIEW"
+                }
+              ]
+            },
+            {
+              "id": "holdout-40",
+              "text": "😀 ಆಸ್ಪತ್ರೆ medical record: 8631042",
+              "gold": [
+                {
+                  "start": 28,
+                  "end": 35,
+                  "category": "MEDICAL_RECORD_NUMBER"
+                }
+              ],
+              "pred": []
+            },
+            {
+              "id": "holdout-41",
+              "text": "Hospital medica1 rec0rd 8631042 is difficult to read.",
+              "gold": [
+                {
+                  "start": 24,
+                  "end": 31,
+                  "category": "MEDICAL_RECORD_NUMBER"
+                }
+              ],
+              "pred": []
+            },
+            {
+              "id": "holdout-42",
+              "text": "ವೈದ್ಯಕೀಯ ದಾಖಲೆ: ೮೬೩೧೦೪೨",
+              "gold": [
+                {
+                  "start": 16,
+                  "end": 23,
+                  "category": "MEDICAL_RECORD_NUMBER"
+                }
+              ],
+              "pred": []
+            }
+          ]
+        },
+        "model": {
+          "overall": {
+            "tp": 22,
+            "fp": 1,
+            "fn": 15,
+            "precision": 0.9565217391304348,
+            "recall": 0.5945945945945946,
+            "f1": 0.7333333333333333
+          },
+          "languages": {
+            "en": {
+              "tp": 9,
+              "fp": 1,
+              "fn": 13,
+              "precision": 0.9,
+              "recall": 0.4090909090909091,
+              "f1": 0.5625
+            },
+            "kn": {
+              "tp": 8,
+              "fp": 0,
+              "fn": 1,
+              "precision": 1,
+              "recall": 0.8888888888888888,
+              "f1": 0.9411764705882353
+            },
+            "mixed": {
+              "tp": 5,
+              "fp": 0,
+              "fn": 1,
+              "precision": 1,
+              "recall": 0.8333333333333334,
+              "f1": 0.9090909090909091
+            }
+          },
+          "categories": {
+            "MEDICAL_RECORD_NUMBER": {
+              "tp": 6,
+              "fp": 1,
+              "fn": 0,
+              "precision": 0.8571428571428571,
+              "recall": 1,
+              "f1": 0.9230769230769231
+            },
+            "ACADEMIC_ADMISSION_ID": {
+              "tp": 2,
+              "fp": 0,
+              "fn": 1,
+              "precision": 1,
+              "recall": 0.6666666666666666,
+              "f1": 0.8
+            },
+            "STUDENT_OR_EMPLOYEE_ID": {
+              "tp": 3,
+              "fp": 0,
+              "fn": 0,
+              "precision": 1,
+              "recall": 1,
+              "f1": 1
+            },
+            "PATIENT_ID": {
+              "tp": 1,
+              "fp": 0,
+              "fn": 1,
+              "precision": 1,
+              "recall": 0.5,
+              "f1": 0.6666666666666666
+            },
+            "BLOOD_GROUP": {
+              "tp": 2,
+              "fp": 0,
+              "fn": 0,
+              "precision": 1,
+              "recall": 1,
+              "f1": 1
+            },
+            "ACADEMIC_GRADE": {
+              "tp": 1,
+              "fp": 0,
+              "fn": 0,
+              "precision": 1,
+              "recall": 1,
+              "f1": 1
+            },
+            "BANK_ACCOUNT_CANDIDATE": {
+              "tp": 1,
+              "fp": 0,
+              "fn": 1,
+              "precision": 1,
+              "recall": 0.5,
+              "f1": 0.6666666666666666
+            },
+            "INDIAN_MOBILE": {
+              "tp": 0,
+              "fp": 0,
+              "fn": 1,
+              "precision": 0,
+              "recall": 0,
+              "f1": 0
+            },
+            "PERSON_NAME_REVIEW": {
+              "tp": 1,
+              "fp": 0,
+              "fn": 2,
+              "precision": 1,
+              "recall": 0.3333333333333333,
+              "f1": 0.5
+            },
+            "ADDRESS_REVIEW": {
+              "tp": 3,
+              "fp": 0,
+              "fn": 2,
+              "precision": 1,
+              "recall": 0.6,
+              "f1": 0.75
+            },
+            "EMAIL": {
+              "tp": 0,
+              "fp": 0,
+              "fn": 1,
+              "precision": 0,
+              "recall": 0,
+              "f1": 0
+            },
+            "DATE_OF_BIRTH": {
+              "tp": 0,
+              "fp": 0,
+              "fn": 1,
+              "precision": 0,
+              "recall": 0,
+              "f1": 0
+            },
+            "CREDENTIAL_OR_SECRET": {
+              "tp": 0,
+              "fp": 0,
+              "fn": 1,
+              "precision": 0,
+              "recall": 0,
+              "f1": 0
+            },
+            "LEGAL_CASE_REFERENCE": {
+              "tp": 0,
+              "fp": 0,
+              "fn": 1,
+              "precision": 0,
+              "recall": 0,
+              "f1": 0
+            },
+            "MEDICAL_CONDITION": {
+              "tp": 1,
+              "fp": 0,
+              "fn": 0,
+              "precision": 1,
+              "recall": 1,
+              "f1": 1
+            },
+            "MEDICATION": {
+              "tp": 1,
+              "fp": 0,
+              "fn": 0,
+              "precision": 1,
+              "recall": 1,
+              "f1": 1
+            },
+            "LAB_RESULT": {
+              "tp": 0,
+              "fp": 0,
+              "fn": 1,
+              "precision": 0,
+              "recall": 0,
+              "f1": 0
+            },
+            "AADHAAR_REVIEW": {
+              "tp": 0,
+              "fp": 0,
+              "fn": 2,
+              "precision": 0,
+              "recall": 0,
+              "f1": 0
+            }
+          },
+          "errors": [
+            {
+              "id": "holdout-4",
+              "text": "A patient was registered for care under 4964375.",
+              "gold": [
+                {
+                  "start": 40,
+                  "end": 47,
+                  "category": "PATIENT_ID"
+                }
+              ],
+              "pred": []
+            },
+            {
+              "id": "holdout-7",
+              "text": "Deposit funds into bank account 23456789012.",
+              "gold": [
+                {
+                  "start": 32,
+                  "end": 43,
+                  "category": "BANK_ACCOUNT_CANDIDATE"
+                }
+              ],
+              "pred": []
+            },
+            {
+              "id": "holdout-8",
+              "text": "A telephone callback is possible on 8765432109.",
+              "gold": [
+                {
+                  "start": 36,
+                  "end": 46,
+                  "category": "INDIAN_MOBILE"
+                }
+              ],
+              "pred": []
+            },
+            {
+              "id": "holdout-9",
+              "text": "The applicant is named \"Fictional Ravi\".",
+              "gold": [
+                {
+                  "start": 24,
+                  "end": 38,
+                  "category": "PERSON_NAME_REVIEW"
+                }
+              ],
+              "pred": []
+            },
+            {
+              "id": "holdout-11",
+              "text": "Write to another@example.test for the fictional contact.",
+              "gold": [
+                {
+                  "start": 9,
+                  "end": 29,
+                  "category": "EMAIL"
+                }
+              ],
+              "pred": []
+            },
+            {
+              "id": "holdout-12",
+              "text": "DOB: 21/09/2002",
+              "gold": [
+                {
+                  "start": 5,
+                  "end": 15,
+                  "category": "DATE_OF_BIRTH"
+                }
+              ],
+              "pred": []
+            },
+            {
+              "id": "holdout-13",
+              "text": "Keep the API key \"TEST_ONLY_Another77\" confidential.",
+              "gold": [
+                {
+                  "start": 18,
+                  "end": 37,
+                  "category": "CREDENTIAL_OR_SECRET"
+                }
+              ],
+              "pred": []
+            },
+            {
+              "id": "holdout-14",
+              "text": "Court case CASE/2025/77 remains private.",
+              "gold": [
+                {
+                  "start": 11,
+                  "end": 23,
+                  "category": "LEGAL_CASE_REFERENCE"
+                }
+              ],
+              "pred": []
+            },
+            {
+              "id": "holdout-17",
+              "text": "Lab result: invented assay 77",
+              "gold": [
+                {
+                  "start": 12,
+                  "end": 29,
+                  "category": "LAB_RESULT"
+                }
+              ],
+              "pred": []
+            },
+            {
+              "id": "holdout-27",
+              "text": "ವ್ಯಕ್ತಿಯ ಹೆಸರು \"ಕಾಲ್ಪನಿಕ ರವಿ\" ಆಗಿದೆ.",
+              "gold": [
+                {
+                  "start": 16,
+                  "end": 28,
+                  "category": "PERSON_NAME_REVIEW"
+                }
+              ],
+              "pred": []
+            },
+            {
+              "id": "holdout-32",
+              "text": "University ಪ್ರವೇಶ 9742153 identifies this student.",
+              "gold": [
+                {
+                  "start": 18,
+                  "end": 25,
+                  "category": "ACADEMIC_ADMISSION_ID"
+                }
+              ],
+              "pred": []
+            },
+            {
+              "id": "holdout-37",
+              "text": "Aadhaar: 2345 6789 0123\nAadhaar: 2345 6789 0123",
+              "gold": [
+                {
+                  "start": 9,
+                  "end": 23,
+                  "category": "AADHAAR_REVIEW"
+                },
+                {
+                  "start": 33,
+                  "end": 47,
+                  "category": "AADHAAR_REVIEW"
+                }
+              ],
+              "pred": []
+            },
+            {
+              "id": "holdout-39",
+              "text": "Address: 55 Invented Street\nAddress: 56 Invented Street",
+              "gold": [
+                {
+                  "start": 9,
+                  "end": 27,
+                  "category": "ADDRESS_REVIEW"
+                },
+                {
+                  "start": 37,
+                  "end": 55,
+                  "category": "ADDRESS_REVIEW"
+                }
+              ],
+              "pred": []
+            },
+            {
+              "id": "holdout-41",
+              "text": "Hospital medica1 rec0rd 8631042 is difficult to read.",
+              "gold": [
+                {
+                  "start": 24,
+                  "end": 31,
+                  "category": "MEDICAL_RECORD_NUMBER"
+                }
+              ],
+              "pred": [
+                {
+                  "start": 17,
+                  "end": 23,
+                  "category": "MEDICAL_RECORD_NUMBER"
+                },
+                {
+                  "start": 24,
+                  "end": 31,
+                  "category": "MEDICAL_RECORD_NUMBER"
+                }
+              ]
+            }
+          ]
+        },
+        "hybrid": {
+          "overall": {
+            "tp": 29,
+            "fp": 3,
+            "fn": 8,
+            "precision": 0.90625,
+            "recall": 0.7837837837837838,
+            "f1": 0.8405797101449275
+          },
+          "languages": {
+            "en": {
+              "tp": 16,
+              "fp": 3,
+              "fn": 6,
+              "precision": 0.8421052631578947,
+              "recall": 0.7272727272727273,
+              "f1": 0.7804878048780488
+            },
+            "kn": {
+              "tp": 8,
+              "fp": 0,
+              "fn": 1,
+              "precision": 1,
+              "recall": 0.8888888888888888,
+              "f1": 0.9411764705882353
+            },
+            "mixed": {
+              "tp": 5,
+              "fp": 0,
+              "fn": 1,
+              "precision": 1,
+              "recall": 0.8333333333333334,
+              "f1": 0.9090909090909091
+            }
+          },
+          "categories": {
+            "MEDICAL_RECORD_NUMBER": {
+              "tp": 6,
+              "fp": 1,
+              "fn": 0,
+              "precision": 0.8571428571428571,
+              "recall": 1,
+              "f1": 0.9230769230769231
+            },
+            "ACADEMIC_ADMISSION_ID": {
+              "tp": 2,
+              "fp": 0,
+              "fn": 1,
+              "precision": 1,
+              "recall": 0.6666666666666666,
+              "f1": 0.8
+            },
+            "STUDENT_OR_EMPLOYEE_ID": {
+              "tp": 3,
+              "fp": 0,
+              "fn": 0,
+              "precision": 1,
+              "recall": 1,
+              "f1": 1
+            },
+            "PATIENT_ID": {
+              "tp": 1,
+              "fp": 0,
+              "fn": 1,
+              "precision": 1,
+              "recall": 0.5,
+              "f1": 0.6666666666666666
+            },
+            "BLOOD_GROUP": {
+              "tp": 2,
+              "fp": 0,
+              "fn": 0,
+              "precision": 1,
+              "recall": 1,
+              "f1": 1
+            },
+            "ACADEMIC_GRADE": {
+              "tp": 1,
+              "fp": 0,
+              "fn": 0,
+              "precision": 1,
+              "recall": 1,
+              "f1": 1
+            },
+            "BANK_ACCOUNT_CANDIDATE": {
+              "tp": 2,
+              "fp": 0,
+              "fn": 0,
+              "precision": 1,
+              "recall": 1,
+              "f1": 1
+            },
+            "INDIAN_MOBILE": {
+              "tp": 1,
+              "fp": 0,
+              "fn": 0,
+              "precision": 1,
+              "recall": 1,
+              "f1": 1
+            },
+            "PERSON_NAME_REVIEW": {
+              "tp": 1,
+              "fp": 0,
+              "fn": 2,
+              "precision": 1,
+              "recall": 0.3333333333333333,
+              "f1": 0.5
+            },
+            "ADDRESS_REVIEW": {
+              "tp": 3,
+              "fp": 2,
+              "fn": 2,
+              "precision": 0.6,
+              "recall": 0.6,
+              "f1": 0.6
+            },
+            "EMAIL": {
+              "tp": 1,
+              "fp": 0,
+              "fn": 0,
+              "precision": 1,
+              "recall": 1,
+              "f1": 1
+            },
+            "DATE_OF_BIRTH": {
+              "tp": 1,
+              "fp": 0,
+              "fn": 0,
+              "precision": 1,
+              "recall": 1,
+              "f1": 1
+            },
+            "CREDENTIAL_OR_SECRET": {
+              "tp": 0,
+              "fp": 0,
+              "fn": 1,
+              "precision": 0,
+              "recall": 0,
+              "f1": 0
+            },
+            "LEGAL_CASE_REFERENCE": {
+              "tp": 0,
+              "fp": 0,
+              "fn": 1,
+              "precision": 0,
+              "recall": 0,
+              "f1": 0
+            },
+            "MEDICAL_CONDITION": {
+              "tp": 1,
+              "fp": 0,
+              "fn": 0,
+              "precision": 1,
+              "recall": 1,
+              "f1": 1
+            },
+            "MEDICATION": {
+              "tp": 1,
+              "fp": 0,
+              "fn": 0,
+              "precision": 1,
+              "recall": 1,
+              "f1": 1
+            },
+            "LAB_RESULT": {
+              "tp": 1,
+              "fp": 0,
+              "fn": 0,
+              "precision": 1,
+              "recall": 1,
+              "f1": 1
+            },
+            "AADHAAR_REVIEW": {
+              "tp": 2,
+              "fp": 0,
+              "fn": 0,
+              "precision": 1,
+              "recall": 1,
+              "f1": 1
+            }
+          },
+          "errors": [
+            {
+              "id": "holdout-4",
+              "text": "A patient was registered for care under 4964375.",
+              "gold": [
+                {
+                  "start": 40,
+                  "end": 47,
+                  "category": "PATIENT_ID"
+                }
+              ],
+              "pred": []
+            },
+            {
+              "id": "holdout-9",
+              "text": "The applicant is named \"Fictional Ravi\".",
+              "gold": [
+                {
+                  "start": 24,
+                  "end": 38,
+                  "category": "PERSON_NAME_REVIEW"
+                }
+              ],
+              "pred": []
+            },
+            {
+              "id": "holdout-13",
+              "text": "Keep the API key \"TEST_ONLY_Another77\" confidential.",
+              "gold": [
+                {
+                  "start": 18,
+                  "end": 37,
+                  "category": "CREDENTIAL_OR_SECRET"
+                }
+              ],
+              "pred": []
+            },
+            {
+              "id": "holdout-14",
+              "text": "Court case CASE/2025/77 remains private.",
+              "gold": [
+                {
+                  "start": 11,
+                  "end": 23,
+                  "category": "LEGAL_CASE_REFERENCE"
+                }
+              ],
+              "pred": []
+            },
+            {
+              "id": "holdout-27",
+              "text": "ವ್ಯಕ್ತಿಯ ಹೆಸರು \"ಕಾಲ್ಪನಿಕ ರವಿ\" ಆಗಿದೆ.",
+              "gold": [
+                {
+                  "start": 16,
+                  "end": 28,
+                  "category": "PERSON_NAME_REVIEW"
+                }
+              ],
+              "pred": []
+            },
+            {
+              "id": "holdout-32",
+              "text": "University ಪ್ರವೇಶ 9742153 identifies this student.",
+              "gold": [
+                {
+                  "start": 18,
+                  "end": 25,
+                  "category": "ACADEMIC_ADMISSION_ID"
+                }
+              ],
+              "pred": []
+            },
+            {
+              "id": "holdout-39",
+              "text": "Address: 55 Invented Street\nAddress: 56 Invented Street",
+              "gold": [
+                {
+                  "start": 9,
+                  "end": 27,
+                  "category": "ADDRESS_REVIEW"
+                },
+                {
+                  "start": 37,
+                  "end": 55,
+                  "category": "ADDRESS_REVIEW"
+                }
+              ],
+              "pred": [
+                {
+                  "start": 0,
+                  "end": 27,
+                  "category": "ADDRESS_REVIEW"
+                },
+                {
+                  "start": 28,
+                  "end": 55,
+                  "category": "ADDRESS_REVIEW"
+                }
+              ]
+            },
+            {
+              "id": "holdout-41",
+              "text": "Hospital medica1 rec0rd 8631042 is difficult to read.",
+              "gold": [
+                {
+                  "start": 24,
+                  "end": 31,
+                  "category": "MEDICAL_RECORD_NUMBER"
+                }
+              ],
+              "pred": [
+                {
+                  "start": 17,
+                  "end": 23,
+                  "category": "MEDICAL_RECORD_NUMBER"
+                },
+                {
+                  "start": 24,
+                  "end": 31,
+                  "category": "MEDICAL_RECORD_NUMBER"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    }
+  }
+}

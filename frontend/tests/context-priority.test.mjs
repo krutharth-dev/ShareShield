@@ -28,7 +28,8 @@ test('missing High blocks clearance even if independent OCR subsequently misses 
  assert.equal(coverageCheck([f],['a'],[],'public').missingHigh.length,0);
  assert.equal(coverageCheck([f],[],[{page:0,box:{x:0,y:0,width:200,height:100}}],'public').missingHigh.length,1);
  assert.equal(coverageCheck([f],[],[{page:1,box:{x:0,y:0,width:200,height:100}}],'public').missingHigh.length,0);
- assert.equal(coverageCheck([{...f,boxes:[]}],['a'],[],'public').missingHigh.length,1);
+ assert.equal(coverageCheck([{...f,boxes:[]}],['a'],[],'public').missingHigh.length,0);
+ assert.equal(coverageCheck([{...f,boxes:[]}],['a'],[],'public').unresolvedReview.length,1);
  assert.equal(coverageCheck([{...f,boxes:[]}],['a'],[],'public',true).missingHigh.length,0);
 });
 test('optional fields do not require coverage, uncertain findings cannot disappear from review',()=>{

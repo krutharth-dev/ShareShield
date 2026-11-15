@@ -1,0 +1,95 @@
+{
+  "fictional": true,
+  "regions": [
+    {
+      "page": 0,
+      "box": {
+        "x": 100,
+        "y": 52,
+        "width": 180,
+        "height": 23
+      }
+    },
+    {
+      "page": 0,
+      "box": {
+        "x": 100,
+        "y": 94,
+        "width": 180,
+        "height": 23
+      }
+    },
+    {
+      "page": 0,
+      "box": {
+        "x": 100,
+        "y": 136,
+        "width": 180,
+        "height": 23
+      }
+    },
+    {
+      "page": 0,
+      "box": {
+        "x": 100,
+        "y": 178,
+        "width": 180,
+        "height": 23
+      }
+    },
+    {
+      "page": 0,
+      "box": {
+        "x": 100,
+        "y": 220,
+        "width": 180,
+        "height": 23
+      }
+    },
+    {
+      "page": 0,
+      "box": {
+        "x": 100,
+        "y": 262,
+        "width": 180,
+        "height": 23
+      }
+    },
+    {
+      "page": 0,
+      "box": {
+        "x": 100,
+        "y": 304,
+        "width": 180,
+        "height": 23
+      }
+    },
+    {
+      "page": 0,
+      "box": {
+        "x": 100,
+        "y": 346,
+        "width": 180,
+        "height": 23
+      }
+    },
+    {
+      "page": 0,
+      "box": {
+        "x": 100,
+        "y": 388,
+        "width": 180,
+        "height": 23
+      }
+    },
+    {
+      "page": 0,
+      "box": {
+        "x": 100,
+        "y": 430,
+        "width": 180,
+        "height": 23
+      }
+    }
+  ]
+}

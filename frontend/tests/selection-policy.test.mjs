@@ -1,18 +1,18 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {isVirtualId,selectableFinding,selectableFindingIds} from '../src/selection-policy.ts';
-import {priorityForCategory,classifyPriority,requiresManualReview} from '../src/priority.ts';
+import {classifyPriority,needsMandatoryReview,requiresManualReview} from '../src/priority.ts';
 
-test('virtual IDs are not selectable or required, while real 12-digit Aadhaar remains',()=>{
- const v={id:'vid',category:'AADHAAR_VIRTUAL_ID'};
- const a={id:'aadhaar',category:'AADHAAR_CANDIDATE'};
- assert.equal(isVirtualId(v),true);
- assert.equal(selectableFinding(v),false);
- assert.equal(selectableFinding({id:'alias',category:'VIRTUAL_ID'}),false);
- assert.deepEqual(selectableFindingIds([v,a]),['aadhaar']);
- assert.equal(priorityForCategory('AADHAAR_VIRTUAL_ID'),null);
+test('VID/BID are not available for selection or required redaction',()=>{
+ const vid={id:'vid',category:'AADHAAR_VIRTUAL_ID'};
+ const alias={id:'alias',category:'VIRTUAL_ID'};
+ const aadhaar={id:'a',category:'AADHAAR_CANDIDATE'};
+ assert.equal(isVirtualId(vid),true);
+ assert.equal(selectableFinding(vid),false);
+ assert.equal(selectableFinding(alias),false);
+ assert.deepEqual(selectableFindingIds([vid,alias,aadhaar]),['a']);
+ assert.equal(needsMandatoryReview('AADHAAR_VIRTUAL_ID'),false);
+ assert.equal(requiresManualReview({...vid,detection_confidence:.2}),false);
  assert.equal(classifyPriority('AADHAAR_VIRTUAL_ID').mandatory,false);
- assert.equal(requiresManualReview({...v,detection_confidence:.1}),false);
- assert.equal(priorityForCategory('AADHAAR_CANDIDATE'),1);
  assert.equal(classifyPriority('AADHAAR_CANDIDATE').mandatory,true);
 });

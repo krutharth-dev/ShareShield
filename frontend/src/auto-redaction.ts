@@ -8,6 +8,6 @@ export function autoSelectHighPriority<T extends AutomaticFinding>(findings:read
   selectableFinding(f)&&classifyPriority(f.category,purpose,documentType).mandatory&&
   !requiresManualReview(f)&&f.detection_confidence>=.75&&
   (f.ocr_confidence===undefined||f.ocr_confidence>=.70)&&
-  (textOnly||f.boxes.some(b=>[b.x,b.y,b.width,b.height].every(Number.isFinite)&&b.width>0&&b.height>0))
+  (textOnly||f.boxes.length>0&&f.boxes.every(b=>[b.x,b.y,b.width,b.height].every(Number.isFinite)&&b.x>=0&&b.y>=0&&b.width>0&&b.height>0))
  ).map(f=>f.id))];
 }

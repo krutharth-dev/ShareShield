@@ -8,6 +8,8 @@ jobs:
         working-directory: frontend
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
       - uses: actions/setup-node@v4
         with:
           node-version: '24'
@@ -18,7 +20,125 @@ jobs:
       - run: npm install --no-save --ignore-scripts playwright@1.56.1
       - run: npx playwright install --with-deps chromium
       - name: Browser smoke + downloaded byte inspection
+        env:
+          EXPECTED_COMMIT: ${{ github.event.pull_request.head.sha || github.sha }}
         run: |
           npm run preview -- --host 127.0.0.1 --port 4174 > /tmp/shareshield-preview.log 2>&1 &
           for i in {1..30}; do if curl -fsS http://127.0.0.1:4174/app >/dev/null; then break; fi; sleep 1; done
           node tests/browser/smoke.mjs
+          node tests/browser/cloud-indigo.mjs
+          node tests/browser/kannada-form.mjs
+          node tests/browser/phase3-cancel.mjs
+          node tests/browser/phase3-export.mjs
+          node tests/browser/phase4-security.mjs
+          node tests/browser/identifier-reading.mjs
+          node tests/browser/context-model.mjs
+          SHARESHIELD_PERFORMANCE_REPORT=/tmp/context-performance.json node tests/browser/context-performance.mjs
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Independently inspect phase 3 downloaded PDF pixels
+        run: |
+          python -m pip install -r ../requirements.lock.txt
+          sudo apt-get update && sudo apt-get install -y tesseract-ocr tesseract-ocr-eng
+          python ../tools/phase3/verify_exports.py /tmp/phase3-exports
+          python ../tools/phase4/verify_downloads.py /tmp/phase4-exports
+          python ../tools/verify_identifier_downloads.py /tmp/identifier-evidence
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: phase3-export-evidence-${{ github.sha }}
+          path: |
+            /tmp/phase3-exports
+            /tmp/phase4-exports
+            /tmp/theme-evidence
+            /tmp/identifier-evidence
+          retention-days: 7
+      - name: Extend viewer isolated build and local-only browser acceptance
+        run: |
+          npm run extend:build
+          npx vite preview --config vite.extend.config.ts --host 127.0.0.1 --port 4176 > /tmp/extend-preview.log 2>&1 &
+          for i in {1..30}; do if curl -fsS http://127.0.0.1:4176/extend-preview.html >/dev/null; then break; fi; sleep 1; done
+          node tests/browser/extend-viewer.mjs
+  live_preview:
+    if: github.event_name == 'push' && github.ref_name == 'fix/pages-release-acceptance-20261103'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read
+    env:
+      TEST_URL: https://5d01da12.shareshield-mini.pages.dev/app
+      SHARESHIELD_EVIDENCE_DIR: /tmp/shareshield-live-evidence
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: sudo apt-get update && sudo apt-get install -y tesseract-ocr tesseract-ocr-eng
+      - run: python -m pip install -r ../requirements.lock.txt
+      - run: npm ci --no-audit --no-fund
+      - run: npm run build
+      - name: Confirm live preview serves the tested runtime bytes
+        run: python ../tools/verify_live_preview.py assets
+      - run: npm install --no-save --ignore-scripts playwright@1.56.1
+      - run: npx playwright install --with-deps chromium
+      - name: Live Cloudflare upload, review, export and download acceptance
+        run: node tests/browser/smoke.mjs
+      - name: Independently inspect saved live exports with Python
+        working-directory: .
+        run: python tools/verify_live_preview.py exports
+      - name: Retain synthetic live acceptance evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: shareshield-live-preview-evidence-${{ github.sha }}
+          path: /tmp/shareshield-live-evidence
+          if-no-files-found: warn
+          retention-days: 7
+  contextual_live_preview:
+    if: github.event_name == 'push' && github.ref_name == 'feat/local-multilingual-ai-20261104'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read
+    env:
+      TEST_URL: https://feat-local-multilingual-ai-2.shareshield-mini.pages.dev/app
+      SHARESHIELD_EVIDENCE_DIR: /tmp/context-live-evidence
+      SHARESHIELD_AI_REPORT: /tmp/context-live-evidence/ai-browser.json
+      SHARESHIELD_PERFORMANCE_REPORT: /tmp/context-live-evidence/performance.json
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: npm ci --no-audit --no-fund && npm run build
+        working-directory: frontend
+      - name: Wait for exact preview commit and verify asset hashes
+        run: python tools/verify_context_preview.py
+      - run: npm install --no-save --ignore-scripts playwright@1.56.1 && npx playwright install --with-deps chromium
+        working-directory: frontend
+      - name: Full live upload, review and export acceptance
+        run: node tests/browser/smoke.mjs && node tests/browser/context-model.mjs && node tests/browser/context-performance.mjs
+        working-directory: frontend
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: contextual-live-preview-${{ github.sha }}
+          path: /tmp/context-live-evidence

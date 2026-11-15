@@ -1,0 +1,132 @@
+[
+  {
+    "id": "development-identity",
+    "file": "../../../frontend/tests/phase3/fixtures/development-identity.png",
+    "sha256": "29f0b563617ada0e216091082b2cd7dedf0c1e91b841173451f5edd5ba2ac93d"
+  },
+  {
+    "id": "development-marks",
+    "file": "../../../frontend/tests/phase3/fixtures/development-marks.png",
+    "sha256": "412bb678f44838c73a775ca844c880eb65f5dd0b5e713487819adb1209b44f34"
+  },
+  {
+    "id": "development-admission",
+    "file": "../../../frontend/tests/phase3/fixtures/development-admission.png",
+    "sha256": "6ab62affb8be9e1f1d64932a4a2033b816a8adce3d3950e650f7868001445d18"
+  },
+  {
+    "id": "development-hospital",
+    "file": "../../../frontend/tests/phase3/fixtures/development-hospital.png",
+    "sha256": "cf4d34d757660c65d44bf62ce1f3a8d318c2626dfec57345514a01a4e8d1b9b1"
+  },
+  {
+    "id": "development-medical",
+    "file": "../../../frontend/tests/phase3/fixtures/development-medical.png",
+    "sha256": "42aeea8d04f10835282455c0275b6db08348b098bb194b76c76e061a8236b51c"
+  },
+  {
+    "id": "development-financial",
+    "file": "../../../frontend/tests/phase3/fixtures/development-financial.png",
+    "sha256": "7de46d0362751c77ab52c736a173b2bb04d0b4d8fb75ce976163fd3343cc612d"
+  },
+  {
+    "id": "development-application",
+    "file": "../../../frontend/tests/phase3/fixtures/development-application.png",
+    "sha256": "2d4068b17980e58754b34d03b01b2ec4f5d9d782fca8ceb347eda243f4d19f18"
+  },
+  {
+    "id": "development-legal",
+    "file": "../../../frontend/tests/phase3/fixtures/development-legal.png",
+    "sha256": "08db84e98b65b32df8b8a60e06064361d87c68b58d647c47e2b559de1d7f8381"
+  },
+  {
+    "id": "development-poor-scan",
+    "file": "../../../frontend/tests/phase3/fixtures/development-poor-scan.png",
+    "sha256": "1d45ade43621a9193e2911797319757b22b78c01c3f02297e1842aca80e11533"
+  },
+  {
+    "id": "development-repeated",
+    "file": "../../../frontend/tests/phase3/fixtures/development-repeated.png",
+    "sha256": "9fd4247795de72e82a2a03458b83f3bde43f9c30d5ed38318a22be335d3ada81"
+  },
+  {
+    "id": "sealed-identity",
+    "file": "../../../frontend/tests/phase3/fixtures/sealed-identity.png",
+    "sha256": "25f8f2da41b13e9b1dc1a6bff986f5ef70f60d100f64ba5e3f4651f6ec65705d"
+  },
+  {
+    "id": "sealed-marks",
+    "file": "../../../frontend/tests/phase3/fixtures/sealed-marks.png",
+    "sha256": "afb64cbe792f7da6fbf8a9163a1d8fa267c715181573356b439fdfba2f5a9e1b"
+  },
+  {
+    "id": "sealed-admission",
+    "file": "../../../frontend/tests/phase3/fixtures/sealed-admission.png",
+    "sha256": "935376408fb651dadd9f66bdc9fa25f480d4095aa0781485d6a3a0de6ca9f1ed"
+  },
+  {
+    "id": "sealed-hospital",
+    "file": "../../../frontend/tests/phase3/fixtures/sealed-hospital.png",
+    "sha256": "54961994db5d00ce68538e24f2f183ab1af0ec458af4aa5df75243ff6287c94d"
+  },
+  {
+    "id": "sealed-medical",
+    "file": "../../../frontend/tests/phase3/fixtures/sealed-medical.png",
+    "sha256": "6ea34d49acd26b20aed98902674db46809a2c520c2716eb3f01ffb688a07f6e0"
+  },
+  {
+    "id": "sealed-financial",
+    "file": "../../../frontend/tests/phase3/fixtures/sealed-financial.png",
+    "sha256": "7de46d0362751c77ab52c736a173b2bb04d0b4d8fb75ce976163fd3343cc612d"
+  },
+  {
+    "id": "sealed-application",
+    "file": "../../../frontend/tests/phase3/fixtures/sealed-application.png",
+    "sha256": "c93d30942db2bd019e75e662aa3842ec72bb5c4c5e5d1f6c49a820885904a6c3"
+  },
+  {
+    "id": "sealed-legal",
+    "file": "../../../frontend/tests/phase3/fixtures/sealed-legal.png",
+    "sha256": "95a55774f8e3bb7c908b4edb8832663215476aaad09ceb30af551ff4f281e8c3"
+  },
+  {
+    "id": "sealed-poor-scan",
+    "file": "../../../frontend/tests/phase3/fixtures/sealed-poor-scan.png",
+    "sha256": "c430b697669cfaea62a6ea05b9dff5bd1011574d8786a6f3e51d2f636003ac2b"
+  },
+  {
+    "id": "sealed-repeated",
+    "file": "../../../frontend/tests/phase3/fixtures/sealed-repeated.png",
+    "sha256": "9fd4247795de72e82a2a03458b83f3bde43f9c30d5ed38318a22be335d3ada81"
+  },
+  {
+    "id": "development-small-0.5",
+    "file": "../../../frontend/tests/phase3/fixtures/development-small-0.5.png",
+    "sha256": "de9846b955d8a13391565f4eacbc8567ff43ad3cfe3b827ebabc829b22c544fe"
+  },
+  {
+    "id": "development-small-0.65",
+    "file": "../../../frontend/tests/phase3/fixtures/development-small-0.65.png",
+    "sha256": "22e88ee90ec3f17c630ba83c2a0d60bec1120b70d9bd7142b5354dcf92be20ca"
+  },
+  {
+    "id": "development-small-0.8",
+    "file": "../../../frontend/tests/phase3/fixtures/development-small-0.8.png",
+    "sha256": "51fb5506e9b26b4431472b3e44bfa6e2e469d16b9d67beae07c4ac649ebe7426"
+  },
+  {
+    "id": "sealed-small-0.5",
+    "file": "../../../frontend/tests/phase3/fixtures/sealed-small-0.5.png",
+    "sha256": "a0797de06b047c1790295178eb8131dc798da4a89c0083bc0d2df3a88c505c93"
+  },
+  {
+    "id": "sealed-small-0.65",
+    "file": "../../../frontend/tests/phase3/fixtures/sealed-small-0.65.png",
+    "sha256": "b1147ab76ee9a2734daaf9cccb31538f8e09b69a9f1b29d10350d09e0fbd08e9"
+  },
+  {
+    "id": "sealed-small-0.8",
+    "file": "../../../frontend/tests/phase3/fixtures/sealed-small-0.8.png",
+    "sha256": "b733e20c9af7c8f25b14d1b1db45af86d2867f08d6a3265d5277d144bfe2bc60"
+  }
+]

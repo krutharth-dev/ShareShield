@@ -1,0 +1,134 @@
+[
+  {
+    "file": "desktop.pdf",
+    "sha256": "dba115295e098c8f2ea97ed5bfc2c708cc81c90ac9d003d1d9b478c70fd6b056",
+    "pages": [
+      {
+        "page": 1,
+        "values": [
+          {
+            "category": "AADHAAR_CANDIDATE",
+            "black_fraction": 0.9910714285714286,
+            "glyph_components": 13,
+            "min_component_mask_fraction": 1.0
+          },
+          {
+            "category": "MEDICAL_RECORD_NUMBER",
+            "black_fraction": 1.0,
+            "glyph_components": 7,
+            "min_component_mask_fraction": 1.0
+          }
+        ],
+        "extracted_text_empty": true
+      },
+      {
+        "page": 2,
+        "values": [
+          {
+            "category": "FORM_IDENTIFIER_REVIEW",
+            "black_fraction": 1.0,
+            "glyph_components": 7,
+            "min_component_mask_fraction": 1.0
+          },
+          {
+            "category": "AADHAAR_CANDIDATE",
+            "black_fraction": 0.9326923076923077,
+            "glyph_components": 12,
+            "min_component_mask_fraction": 1.0
+          }
+        ],
+        "extracted_text_empty": true
+      },
+      {
+        "page": 3,
+        "values": [
+          {
+            "category": "AADHAAR_CANDIDATE",
+            "black_fraction": 0.9326923076923077,
+            "glyph_components": 12,
+            "min_component_mask_fraction": 1.0
+          },
+          {
+            "category": "AADHAAR_CANDIDATE",
+            "black_fraction": 0.9326923076923077,
+            "glyph_components": 12,
+            "min_component_mask_fraction": 1.0
+          },
+          {
+            "category": "AADHAAR_OCR_REVIEW",
+            "black_fraction": 0.9034090909090909,
+            "glyph_components": 10,
+            "min_component_mask_fraction": 1.0
+          }
+        ],
+        "extracted_text_empty": true
+      }
+    ]
+  },
+  {
+    "file": "mobile-emulation.pdf",
+    "sha256": "cf49dd4447e832d01c76df486e1fed41e9ee92e96bc35cb983a6ea44a2894496",
+    "pages": [
+      {
+        "page": 1,
+        "values": [
+          {
+            "category": "AADHAAR_CANDIDATE",
+            "black_fraction": 0.9910714285714286,
+            "glyph_components": 13,
+            "min_component_mask_fraction": 1.0
+          },
+          {
+            "category": "MEDICAL_RECORD_NUMBER",
+            "black_fraction": 1.0,
+            "glyph_components": 7,
+            "min_component_mask_fraction": 1.0
+          }
+        ],
+        "extracted_text_empty": true
+      },
+      {
+        "page": 2,
+        "values": [
+          {
+            "category": "FORM_IDENTIFIER_REVIEW",
+            "black_fraction": 1.0,
+            "glyph_components": 7,
+            "min_component_mask_fraction": 1.0
+          },
+          {
+            "category": "AADHAAR_CANDIDATE",
+            "black_fraction": 0.9326923076923077,
+            "glyph_components": 12,
+            "min_component_mask_fraction": 1.0
+          }
+        ],
+        "extracted_text_empty": true
+      },
+      {
+        "page": 3,
+        "values": [
+          {
+            "category": "AADHAAR_CANDIDATE",
+            "black_fraction": 0.9326923076923077,
+            "glyph_components": 12,
+            "min_component_mask_fraction": 1.0
+          },
+          {
+            "category": "AADHAAR_CANDIDATE",
+            "black_fraction": 0.9326923076923077,
+            "glyph_components": 12,
+            "min_component_mask_fraction": 1.0
+          },
+          {
+            "category": "AADHAAR_OCR_REVIEW",
+            "black_fraction": 0.9034090909090909,
+            "glyph_components": 10,
+            "min_component_mask_fraction": 1.0
+          }
+        ],
+        "extracted_text_empty": true
+      }
+    ]
+  }
+]

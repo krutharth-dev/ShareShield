@@ -1,0 +1,304 @@
+{
+  "scope": "24 assistant-authored fictional English rendered images; local CLI OCR only, not representative real scans or browser end-to-end recognition.",
+  "tesseract": "tesseract 5.3.4",
+  "font_sha256": "ae7b7855e115a5966d8b1b3f80f254ccc117ec86f9965e202ee2940453837280",
+  "kannada_status": "NOT RUN: no Kannada-capable font installed; do not score missing-glyph images.",
+  "samples": [
+    {
+      "document": "hospital",
+      "condition": "clean",
+      "source_text": "FICTIONAL HOSPITAL\nPatient MRN: 4829107\nBlood group: AB+\nPrescription: TEST MEDICINE",
+      "ocr_text": "FICTIONAL HOSPITAL\nPatient MRN: 4829107\nBlood group: AB+\nPrescription: TEST MEDICINE",
+      "image_sha256": "dd49109d816caee75a54f7d28fece0942ec572e525f67fe84c3cf475cacbb473",
+      "character_errors": 0,
+      "reference_characters": 84,
+      "required_value_occurrences": 3,
+      "recovered_exact_value_occurrences": 3
+    },
+    {
+      "document": "hospital",
+      "condition": "rotated_2deg",
+      "source_text": "FICTIONAL HOSPITAL\nPatient MRN: 4829107\nBlood group: AB+\nPrescription: TEST MEDICINE",
+      "ocr_text": "FICTIONAL HOSPITAL\n\nPatient MRN: 4829107\n\nBlood group: AB+\nPrescription: TEST MEDICINE",
+      "image_sha256": "823e411131a4cb9bd25cc57da5585c8aa54841a035665cb64f9da08ff113304d",
+      "character_errors": 0,
+      "reference_characters": 84,
+      "required_value_occurrences": 3,
+      "recovered_exact_value_occurrences": 3
+    },
+    {
+      "document": "hospital",
+      "condition": "blur_1_2",
+      "source_text": "FICTIONAL HOSPITAL\nPatient MRN: 4829107\nBlood group: AB+\nPrescription: TEST MEDICINE",
+      "ocr_text": "FICTIONAL HOSPITAL\nPatient MRN: 4829107\nBlood group: AB+\nPrescription: TEST MEDICINE",
+      "image_sha256": "90136df3ed80ec702549fd39807e9a289a6b060c6edf748be1c70c10d62a419b",
+      "character_errors": 0,
+      "reference_characters": 84,
+      "required_value_occurrences": 3,
+      "recovered_exact_value_occurrences": 3
+    },
+    {
+      "document": "hospital",
+      "condition": "small_text",
+      "source_text": "FICTIONAL HOSPITAL\nPatient MRN: 4829107\nBlood group: AB+\nPrescription: TEST MEDICINE",
+      "ocr_text": "FICTIONAL HOSPITAL\nPatient MRN: 4829107\nBlood group: AB+\nPrescription: TEST MEDICINE",
+      "image_sha256": "3d4916ffab840d90573cdfef5d67b4462dad01c26439d5b7bad70d54ba2211e4",
+      "character_errors": 0,
+      "reference_characters": 84,
+      "required_value_occurrences": 3,
+      "recovered_exact_value_occurrences": 3
+    },
+    {
+      "document": "hospital",
+      "condition": "blur_2_5",
+      "source_text": "FICTIONAL HOSPITAL\nPatient MRN: 4829107\nBlood group: AB+\nPrescription: TEST MEDICINE",
+      "ocr_text": "FICTIONAL HOSPITAL\nPatient MRN: 4829107\nBlood group: AB+\nPrescription: TEST MEDICINE",
+      "image_sha256": "74a39ec2edda139ea96edee4fdba2a07a6e43ec9806893d5937e54eb862ac907",
+      "character_errors": 0,
+      "reference_characters": 84,
+      "required_value_occurrences": 3,
+      "recovered_exact_value_occurrences": 3
+    },
+    {
+      "document": "hospital",
+      "condition": "tiny_text",
+      "source_text": "FICTIONAL HOSPITAL\nPatient MRN: 4829107\nBlood group: AB+\nPrescription: TEST MEDICINE",
+      "ocr_text": "Drsrn TEST MEDICNE",
+      "image_sha256": "a0aa8c4db6ab343b7b97194a80959597489182c2d63c32d0c6ce615f30d46f1e",
+      "character_errors": 67,
+      "reference_characters": 84,
+      "required_value_occurrences": 3,
+      "recovered_exact_value_occurrences": 0
+    },
+    {
+      "document": "college",
+      "condition": "clean",
+      "source_text": "FICTIONAL COLLEGE\nAdmission number: 4829107\nAcademic grade: A+\nStudent: Fictional Mira",
+      "ocr_text": "FICTIONAL COLLEGE\nAdmission number: 4829107\nAcademic grade: A+\nStudent: Fictional Mira",
+      "image_sha256": "d413fe5061a984055506f15fe293ab6327597e837ae7cdb70b869775f939cad4",
+      "character_errors": 0,
+      "reference_characters": 86,
+      "required_value_occurrences": 3,
+      "recovered_exact_value_occurrences": 3
+    },
+    {
+      "document": "college",
+      "condition": "rotated_2deg",
+      "source_text": "FICTIONAL COLLEGE\nAdmission number: 4829107\nAcademic grade: A+\nStudent: Fictional Mira",
+      "ocr_text": "FICTIONAL COLLEGE\nAdmission number: 4829107\nAcademic grade: A+\nStudent: Fictional Mira",
+      "image_sha256": "ab7b660c32d999f3c9a880f4f090cd779ac7fc3a89de9d928221b1516ae1c7c6",
+      "character_errors": 0,
+      "reference_characters": 86,
+      "required_value_occurrences": 3,
+      "recovered_exact_value_occurrences": 3
+    },
+    {
+      "document": "college",
+      "condition": "blur_1_2",
+      "source_text": "FICTIONAL COLLEGE\nAdmission number: 4829107\nAcademic grade: A+\nStudent: Fictional Mira",
+      "ocr_text": "FICTIONAL COLLEGE\nAdmission number: 4829107\nAcademic grade: A+\nStudent: Fictional Mira",
+      "image_sha256": "c72b32f85367f13b684bd02c07b9975bd9a90e67c18cee424e7890cc17747544",
+      "character_errors": 0,
+      "reference_characters": 86,
+      "required_value_occurrences": 3,
+      "recovered_exact_value_occurrences": 3
+    },
+    {
+      "document": "college",
+      "condition": "small_text",
+      "source_text": "FICTIONAL COLLEGE\nAdmission number: 4829107\nAcademic grade: A+\nStudent: Fictional Mira",
+      "ocr_text": "FICTIONAL COLLEGE\nAdmission number: 4829107\nAcademic grade: A+\nStudent: Fictional Mira",
+      "image_sha256": "e616856d057f27ae64b1e7454f6e044d117bd9ecd75aefaf24be62e2d72151d8",
+      "character_errors": 0,
+      "reference_characters": 86,
+      "required_value_occurrences": 3,
+      "recovered_exact_value_occurrences": 3
+    },
+    {
+      "document": "college",
+      "condition": "blur_2_5",
+      "source_text": "FICTIONAL COLLEGE\nAdmission number: 4829107\nAcademic grade: A+\nStudent: Fictional Mira",
+      "ocr_text": "FICTIONAL COLLEGE\nAdmission number: 4829107\nAcademic grade: A+\nStudent: Fictional Mira",
+      "image_sha256": "8ea4aabe00fdf541fdadfc3523907984eea4cff6592bc196177e0f5be95272fb",
+      "character_errors": 0,
+      "reference_characters": 86,
+      "required_value_occurrences": 3,
+      "recovered_exact_value_occurrences": 3
+    },
+    {
+      "document": "college",
+      "condition": "tiny_text",
+      "source_text": "FICTIONAL COLLEGE\nAdmission number: 4829107\nAcademic grade: A+\nStudent: Fictional Mira",
+      "ocr_text": "",
+      "image_sha256": "8c7eda1de243b9fc375f49c45a94c3876860dbb0c2f1bdf667b942045cbfe7a1",
+      "character_errors": 86,
+      "reference_characters": 86,
+      "required_value_occurrences": 3,
+      "recovered_exact_value_occurrences": 0
+    },
+    {
+      "document": "identity",
+      "condition": "clean",
+      "source_text": "FICTIONAL IDENTITY RECORD\nAadhaar: 234567890123\nCopy: 234567890123\nVID: 1234567890123456",
+      "ocr_text": "FICTIONAL IDENTITY RECORD\nAadhaar: 234567890123\nCopy: 234567890123\n\nVID: 1234567890123456",
+      "image_sha256": "3fe0ccde99356422f8c4382944626696d09f30bbaaf0b185b55c168258aeb6a7",
+      "character_errors": 0,
+      "reference_characters": 88,
+      "required_value_occurrences": 3,
+      "recovered_exact_value_occurrences": 3
+    },
+    {
+      "document": "identity",
+      "condition": "rotated_2deg",
+      "source_text": "FICTIONAL IDENTITY RECORD\nAadhaar: 234567890123\nCopy: 234567890123\nVID: 1234567890123456",
+      "ocr_text": "FICTIONAL IDENTITY RECORD\nAadhaar: 234567890123\nCopy: 234567890123\n\nVID: 1234567890123456",
+      "image_sha256": "78fdfe2fcddaf94ff278daac3910f0e4d3b064b2288311f28eb9352d98ff18fb",
+      "character_errors": 0,
+      "reference_characters": 88,
+      "required_value_occurrences": 3,
+      "recovered_exact_value_occurrences": 3
+    },
+    {
+      "document": "identity",
+      "condition": "blur_1_2",
+      "source_text": "FICTIONAL IDENTITY RECORD\nAadhaar: 234567890123\nCopy: 234567890123\nVID: 1234567890123456",
+      "ocr_text": "FICTIONAL IDENTITY RECORD\nAadhaar: 234567890123\nCopy: 234567890123\n\nVID: 1234567890123456",
+      "image_sha256": "03f8fcf128cec053ff07506fabf447b9b577a84af906edb629cdf8830805966f",
+      "character_errors": 0,
+      "reference_characters": 88,
+      "required_value_occurrences": 3,
+      "recovered_exact_value_occurrences": 3
+    },
+    {
+      "document": "identity",
+      "condition": "small_text",
+      "source_text": "FICTIONAL IDENTITY RECORD\nAadhaar: 234567890123\nCopy: 234567890123\nVID: 1234567890123456",
+      "ocr_text": "FICTIONAL IDENTITY RECORD\nAadhaar: 234567890123\nCopy: 234567890123\n\nVID: 1234567890123456",
+      "image_sha256": "0127835327c77f087af9ea20c014f034542e841e7593d674d6b8d603457e6157",
+      "character_errors": 0,
+      "reference_characters": 88,
+      "required_value_occurrences": 3,
+      "recovered_exact_value_occurrences": 3
+    },
+    {
+      "document": "identity",
+      "condition": "blur_2_5",
+      "source_text": "FICTIONAL IDENTITY RECORD\nAadhaar: 234567890123\nCopy: 234567890123\nVID: 1234567890123456",
+      "ocr_text": "FICTIONAL IDENTITY RECORD\nAadhaar: 234567890123\nCopy: 234567890123\n\nVID: 1234567890123456",
+      "image_sha256": "4445f419dae5b0f23daf63cde1d62986badc4cdacc343d5be2120d7ece1268f2",
+      "character_errors": 0,
+      "reference_characters": 88,
+      "required_value_occurrences": 3,
+      "recovered_exact_value_occurrences": 3
+    },
+    {
+      "document": "identity",
+      "condition": "tiny_text",
+      "source_text": "FICTIONAL IDENTITY RECORD\nAadhaar: 234567890123\nCopy: 234567890123\nVID: 1234567890123456",
+      "ocr_text": "WSdsormisse",
+      "image_sha256": "4ca4ba2fa6d110823de841ec90b92f2ca35755ac660c831507136d0345b46cb1",
+      "character_errors": 86,
+      "reference_characters": 88,
+      "required_value_occurrences": 3,
+      "recovered_exact_value_occurrences": 0
+    },
+    {
+      "document": "contact",
+      "condition": "clean",
+      "source_text": "FICTIONAL CONTACT RECORD\nHome: 42 Fictional Lane\nPostal: 71 Example Road\nEmail: fictional@example.test",
+      "ocr_text": "FICTIONAL CONTACT RECORD\nHome: 42 Fictional Lane\nPostal: 71 Example Road\nEmail: fictional@example.test",
+      "image_sha256": "a92ecd85407dc9af606a2e2d04c75dd5d4625b16a8c265cd9fa10ff6578b4fe9",
+      "character_errors": 0,
+      "reference_characters": 102,
+      "required_value_occurrences": 3,
+      "recovered_exact_value_occurrences": 3
+    },
+    {
+      "document": "contact",
+      "condition": "rotated_2deg",
+      "source_text": "FICTIONAL CONTACT RECORD\nHome: 42 Fictional Lane\nPostal: 71 Example Road\nEmail: fictional@example.test",
+      "ocr_text": "FICTIONAL CONTACT RECORD\nHome: 42 Fictional Lane\nPostal: 71 Example Road\nEmail: fictional@example.test",
+      "image_sha256": "c48c65aa94305c6da5525646f93885dbc739aff8194e41a0ebcd3c4d81e3e671",
+      "character_errors": 0,
+      "reference_characters": 102,
+      "required_value_occurrences": 3,
+      "recovered_exact_value_occurrences": 3
+    },
+    {
+      "document": "contact",
+      "condition": "blur_1_2",
+      "source_text": "FICTIONAL CONTACT RECORD\nHome: 42 Fictional Lane\nPostal: 71 Example Road\nEmail: fictional@example.test",
+      "ocr_text": "FICTIONAL CONTACT RECORD\nHome: 42 Fictional Lane\nPostal: 71 Example Road\nEmail: fictional@example.test",
+      "image_sha256": "05e658fc14cb6c48e668389378c0d83a651e28e131f1893123caea38d80833cb",
+      "character_errors": 0,
+      "reference_characters": 102,
+      "required_value_occurrences": 3,
+      "recovered_exact_value_occurrences": 3
+    },
+    {
+      "document": "contact",
+      "condition": "small_text",
+      "source_text": "FICTIONAL CONTACT RECORD\nHome: 42 Fictional Lane\nPostal: 71 Example Road\nEmail: fictional@example.test",
+      "ocr_text": "FICTIONAL CONTACT RECORD\nHome: 42 Fictional Lane\nPostal: 71 Example Road\nEmail: fictional@example.test",
+      "image_sha256": "28b0d7a67327f80aeeb4337623792d53be974ecc8755db9131982af6a57aeb53",
+      "character_errors": 0,
+      "reference_characters": 102,
+      "required_value_occurrences": 3,
+      "recovered_exact_value_occurrences": 3
+    },
+    {
+      "document": "contact",
+      "condition": "blur_2_5",
+      "source_text": "FICTIONAL CONTACT RECORD\nHome: 42 Fictional Lane\nPostal: 71 Example Road\nEmail: fictional@example.test",
+      "ocr_text": "FICTIONAL CONTACT RECORD\nHome: 42 Fictional Lane\nPostal: 71 Example Road\nEmail: fictionai@example test",
+      "image_sha256": "eb0e1eee6522847b61da90a78b2b0377b8b51c0fbd26ba2108a64d443cece6fc",
+      "character_errors": 2,
+      "reference_characters": 102,
+      "required_value_occurrences": 3,
+      "recovered_exact_value_occurrences": 2
+    },
+    {
+      "document": "contact",
+      "condition": "tiny_text",
+      "source_text": "FICTIONAL CONTACT RECORD\nHome: 42 Fictional Lane\nPostal: 71 Example Road\nEmail: fictional@example.test",
+      "ocr_text": "\u2018ru nctansgenepl test",
+      "image_sha256": "2ed4570104e9207eb391211ec83119378e40f2e023cf3c06f231f09613199d98",
+      "character_errors": 87,
+      "reference_characters": 102,
+      "required_value_occurrences": 3,
+      "recovered_exact_value_occurrences": 0
+    }
+  ],
+  "summary": {
+    "clean": {
+      "character_error_rate": 0.0,
+      "exact_value_occurrences": 12,
+      "required_value_occurrences": 12
+    },
+    "rotated_2deg": {
+      "character_error_rate": 0.0,
+      "exact_value_occurrences": 12,
+      "required_value_occurrences": 12
+    },
+    "blur_1_2": {
+      "character_error_rate": 0.0,
+      "exact_value_occurrences": 12,
+      "required_value_occurrences": 12
+    },
+    "small_text": {
+      "character_error_rate": 0.0,
+      "exact_value_occurrences": 12,
+      "required_value_occurrences": 12
+    },
+    "blur_2_5": {
+      "character_error_rate": 0.005555555555555556,
+      "exact_value_occurrences": 11,
+      "required_value_occurrences": 12
+    },
+    "tiny_text": {
+      "character_error_rate": 0.9055555555555556,
+      "exact_value_occurrences": 0,
+      "required_value_occurrences": 12
+    }
+  }
+}

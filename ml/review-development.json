@@ -1,0 +1,506 @@
+[
+  {
+    "id": "development-1",
+    "language": "en",
+    "text": "At the hospital, medical record 4829107 belongs to this chart.",
+    "gold": [
+      {
+        "start": 32,
+        "end": 39,
+        "category": "MEDICAL_RECORD_NUMBER"
+      }
+    ],
+    "annotation_source": "coding-assistant-authored fictional example",
+    "human_review": "pending",
+    "split": "development"
+  },
+  {
+    "id": "development-2",
+    "language": "en",
+    "text": "The college assigned admission 5938218 to the new student.",
+    "gold": [
+      {
+        "start": 31,
+        "end": 38,
+        "category": "ACADEMIC_ADMISSION_ID"
+      }
+    ],
+    "annotation_source": "coding-assistant-authored fictional example",
+    "human_review": "pending",
+    "split": "development"
+  },
+  {
+    "id": "development-3",
+    "language": "en",
+    "text": "Our employee payroll code is 6049329.",
+    "gold": [
+      {
+        "start": 29,
+        "end": 36,
+        "category": "STUDENT_OR_EMPLOYEE_ID"
+      }
+    ],
+    "annotation_source": "coding-assistant-authored fictional example",
+    "human_review": "pending",
+    "split": "development"
+  },
+  {
+    "id": "development-4",
+    "language": "en",
+    "text": "Please contact the patient using 7150430 for treatment registration.",
+    "gold": [
+      {
+        "start": 33,
+        "end": 40,
+        "category": "PATIENT_ID"
+      }
+    ],
+    "annotation_source": "coding-assistant-authored fictional example",
+    "human_review": "pending",
+    "split": "development"
+  },
+  {
+    "id": "development-5",
+    "language": "en",
+    "text": "The patient has blood type AB+.",
+    "gold": [
+      {
+        "start": 27,
+        "end": 30,
+        "category": "BLOOD_GROUP"
+      }
+    ],
+    "annotation_source": "coding-assistant-authored fictional example",
+    "human_review": "pending",
+    "split": "development"
+  },
+  {
+    "id": "development-6",
+    "language": "en",
+    "text": "The academic grade awarded was B+.",
+    "gold": [
+      {
+        "start": 31,
+        "end": 33,
+        "category": "ACADEMIC_GRADE"
+      }
+    ],
+    "annotation_source": "coding-assistant-authored fictional example",
+    "human_review": "pending",
+    "split": "development"
+  },
+  {
+    "id": "development-7",
+    "language": "en",
+    "text": "The bank savings account for payment is 12345678901.",
+    "gold": [
+      {
+        "start": 40,
+        "end": 51,
+        "category": "BANK_ACCOUNT_CANDIDATE"
+      }
+    ],
+    "annotation_source": "coding-assistant-authored fictional example",
+    "human_review": "pending",
+    "split": "development"
+  },
+  {
+    "id": "development-8",
+    "language": "en",
+    "text": "You can telephone her mobile at 9876543210.",
+    "gold": [
+      {
+        "start": 32,
+        "end": 42,
+        "category": "INDIAN_MOBILE"
+      }
+    ],
+    "annotation_source": "coding-assistant-authored fictional example",
+    "human_review": "pending",
+    "split": "development"
+  },
+  {
+    "id": "development-9",
+    "language": "en",
+    "text": "The guardian full name is \"Fictional Mira\".",
+    "gold": [
+      {
+        "start": 27,
+        "end": 41,
+        "category": "PERSON_NAME_REVIEW"
+      }
+    ],
+    "annotation_source": "coding-assistant-authored fictional example",
+    "human_review": "pending",
+    "split": "development"
+  },
+  {
+    "id": "development-10",
+    "language": "en",
+    "text": "Her residential home address is \"42 Fictional Lane\".",
+    "gold": [
+      {
+        "start": 33,
+        "end": 50,
+        "category": "ADDRESS_REVIEW"
+      }
+    ],
+    "annotation_source": "coding-assistant-authored fictional example",
+    "human_review": "pending",
+    "split": "development"
+  },
+  {
+    "id": "development-11",
+    "language": "en",
+    "text": "Send the email to fictional@example.test.",
+    "gold": [
+      {
+        "start": 18,
+        "end": 40,
+        "category": "EMAIL"
+      }
+    ],
+    "annotation_source": "coding-assistant-authored fictional example",
+    "human_review": "pending",
+    "split": "development"
+  },
+  {
+    "id": "development-12",
+    "language": "en",
+    "text": "Her date of birth is 12/03/2001.",
+    "gold": [
+      {
+        "start": 21,
+        "end": 31,
+        "category": "DATE_OF_BIRTH"
+      }
+    ],
+    "annotation_source": "coding-assistant-authored fictional example",
+    "human_review": "pending",
+    "split": "development"
+  },
+  {
+    "id": "development-13",
+    "language": "en",
+    "text": "The authentication secret is \"TEST_ONLY_Key42\".",
+    "gold": [
+      {
+        "start": 30,
+        "end": 45,
+        "category": "CREDENTIAL_OR_SECRET"
+      }
+    ],
+    "annotation_source": "coding-assistant-authored fictional example",
+    "human_review": "pending",
+    "split": "development"
+  },
+  {
+    "id": "development-14",
+    "language": "en",
+    "text": "The court filed case CASE/2026/42 in the confidential register.",
+    "gold": [
+      {
+        "start": 21,
+        "end": 33,
+        "category": "LEGAL_CASE_REFERENCE"
+      }
+    ],
+    "annotation_source": "coding-assistant-authored fictional example",
+    "human_review": "pending",
+    "split": "development"
+  },
+  {
+    "id": "development-15",
+    "language": "en",
+    "text": "The diagnosis recorded is \"fictional condition\".",
+    "gold": [
+      {
+        "start": 27,
+        "end": 46,
+        "category": "MEDICAL_CONDITION"
+      }
+    ],
+    "annotation_source": "coding-assistant-authored fictional example",
+    "human_review": "pending",
+    "split": "development"
+  },
+  {
+    "id": "development-16",
+    "language": "en",
+    "text": "The prescription lists \"fictional medicine\".",
+    "gold": [
+      {
+        "start": 24,
+        "end": 42,
+        "category": "MEDICATION"
+      }
+    ],
+    "annotation_source": "coding-assistant-authored fictional example",
+    "human_review": "pending",
+    "split": "development"
+  },
+  {
+    "id": "development-17",
+    "language": "en",
+    "text": "The laboratory result is \"fictional assay 42\".",
+    "gold": [
+      {
+        "start": 26,
+        "end": 44,
+        "category": "LAB_RESULT"
+      }
+    ],
+    "annotation_source": "coding-assistant-authored fictional example",
+    "human_review": "pending",
+    "split": "development"
+  },
+  {
+    "id": "development-18",
+    "language": "en",
+    "text": "Public inventory item 8261541 is available.",
+    "gold": [],
+    "annotation_source": "coding-assistant-authored fictional example",
+    "human_review": "pending",
+    "split": "development"
+  },
+  {
+    "id": "development-19",
+    "language": "en",
+    "text": "The company is \"Fictional Systems\".",
+    "gold": [],
+    "annotation_source": "coding-assistant-authored fictional example",
+    "human_review": "pending",
+    "split": "development"
+  },
+  {
+    "id": "development-20",
+    "language": "en",
+    "text": "Unknown reference 9372652 has no stated owner.",
+    "gold": [],
+    "annotation_source": "coding-assistant-authored fictional example",
+    "human_review": "pending",
+    "split": "development"
+  },
+  {
+    "id": "development-21",
+    "language": "kn",
+    "text": "ಆಸ್ಪತ್ರೆಯ ವೈದ್ಯಕೀಯ ದಾಖಲೆ 4829107 ಅನ್ನು ನೋಡಿ.",
+    "gold": [
+      {
+        "start": 25,
+        "end": 32,
+        "category": "MEDICAL_RECORD_NUMBER"
+      }
+    ],
+    "annotation_source": "coding-assistant-authored fictional example",
+    "human_review": "pending",
+    "split": "development"
+  },
+  {
+    "id": "development-22",
+    "language": "kn",
+    "text": "ಕಾಲೇಜಿನ ಪ್ರವೇಶ ಸಂಖ್ಯೆ 5938218 ದಾಖಲಿಸಲಾಗಿದೆ.",
+    "gold": [
+      {
+        "start": 22,
+        "end": 29,
+        "category": "ACADEMIC_ADMISSION_ID"
+      }
+    ],
+    "annotation_source": "coding-assistant-authored fictional example",
+    "human_review": "pending",
+    "split": "development"
+  },
+  {
+    "id": "development-23",
+    "language": "kn",
+    "text": "ಉದ್ಯೋಗಿಯ ಸಿಬ್ಬಂದಿ ಗುರುತು 6049329 ಆಗಿದೆ.",
+    "gold": [
+      {
+        "start": 25,
+        "end": 32,
+        "category": "STUDENT_OR_EMPLOYEE_ID"
+      }
+    ],
+    "annotation_source": "coding-assistant-authored fictional example",
+    "human_review": "pending",
+    "split": "development"
+  },
+  {
+    "id": "development-24",
+    "language": "kn",
+    "text": "ಚಿಕಿತ್ಸೆಗೆ ರೋಗಿಯ ಸಂಖ್ಯೆ 7150430 ಬಳಸಿ.",
+    "gold": [
+      {
+        "start": 24,
+        "end": 31,
+        "category": "PATIENT_ID"
+      }
+    ],
+    "annotation_source": "coding-assistant-authored fictional example",
+    "human_review": "pending",
+    "split": "development"
+  },
+  {
+    "id": "development-25",
+    "language": "kn",
+    "text": "ರಕ್ತದ ಗುಂಪು \"AB+\" ಎಂದು ದಾಖಲಿಸಲಾಗಿದೆ.",
+    "gold": [
+      {
+        "start": 13,
+        "end": 16,
+        "category": "BLOOD_GROUP"
+      }
+    ],
+    "annotation_source": "coding-assistant-authored fictional example",
+    "human_review": "pending",
+    "split": "development"
+  },
+  {
+    "id": "development-26",
+    "language": "kn",
+    "text": "ಮನೆಯ ವಿಳಾಸ \"42 ಕಾಲ್ಪನಿಕ ರಸ್ತೆ\" ಆಗಿದೆ.",
+    "gold": [
+      {
+        "start": 12,
+        "end": 29,
+        "category": "ADDRESS_REVIEW"
+      }
+    ],
+    "annotation_source": "coding-assistant-authored fictional example",
+    "human_review": "pending",
+    "split": "development"
+  },
+  {
+    "id": "development-27",
+    "language": "kn",
+    "text": "ಪೋಷಕರ ಹೆಸರು \"ಕಾಲ್ಪನಿಕ ಮೀನಾ\" ಎಂದು ನಮೂದಿಸಿ.",
+    "gold": [
+      {
+        "start": 13,
+        "end": 26,
+        "category": "PERSON_NAME_REVIEW"
+      }
+    ],
+    "annotation_source": "coding-assistant-authored fictional example",
+    "human_review": "pending",
+    "split": "development"
+  },
+  {
+    "id": "development-28",
+    "language": "kn",
+    "text": "ಬ್ಯಾಂಕ್ ಖಾತೆ 12345678901 ಪಾವತಿಗೆ ಸೇರಿದೆ.",
+    "gold": [
+      {
+        "start": 13,
+        "end": 24,
+        "category": "BANK_ACCOUNT_CANDIDATE"
+      }
+    ],
+    "annotation_source": "coding-assistant-authored fictional example",
+    "human_review": "pending",
+    "split": "development"
+  },
+  {
+    "id": "development-29",
+    "language": "kn",
+    "text": "ಸಾರ್ವಜನಿಕ ವಸ್ತುವಿನ ಉಲ್ಲೇಖ 8261541 ಆಗಿದೆ.",
+    "gold": [],
+    "annotation_source": "coding-assistant-authored fictional example",
+    "human_review": "pending",
+    "split": "development"
+  },
+  {
+    "id": "development-30",
+    "language": "kn",
+    "text": "ಕಂಪನಿಯ ಹೆಸರು \"ಕಾಲ್ಪನಿಕ ಸಂಸ್ಥೆ\" ಆಗಿದೆ.",
+    "gold": [],
+    "annotation_source": "coding-assistant-authored fictional example",
+    "human_review": "pending",
+    "split": "development"
+  },
+  {
+    "id": "development-31",
+    "language": "mixed",
+    "text": "ಆಸ್ಪತ್ರೆ medical record 4829107 was retrieved.",
+    "gold": [
+      {
+        "start": 24,
+        "end": 31,
+        "category": "MEDICAL_RECORD_NUMBER"
+      }
+    ],
+    "annotation_source": "coding-assistant-authored fictional example",
+    "human_review": "pending",
+    "split": "development"
+  },
+  {
+    "id": "development-32",
+    "language": "mixed",
+    "text": "ಕಾಲೇಜು admission 5938218 has been approved.",
+    "gold": [
+      {
+        "start": 17,
+        "end": 24,
+        "category": "ACADEMIC_ADMISSION_ID"
+      }
+    ],
+    "annotation_source": "coding-assistant-authored fictional example",
+    "human_review": "pending",
+    "split": "development"
+  },
+  {
+    "id": "development-33",
+    "language": "mixed",
+    "text": "ಉದ್ಯೋಗಿ payroll code 6049329 is private.",
+    "gold": [
+      {
+        "start": 21,
+        "end": 28,
+        "category": "STUDENT_OR_EMPLOYEE_ID"
+      }
+    ],
+    "annotation_source": "coding-assistant-authored fictional example",
+    "human_review": "pending",
+    "split": "development"
+  },
+  {
+    "id": "development-34",
+    "language": "mixed",
+    "text": "ಪೋಷಕರ name \"Fictional Meena\" was supplied.",
+    "gold": [
+      {
+        "start": 12,
+        "end": 27,
+        "category": "PERSON_NAME_REVIEW"
+      }
+    ],
+    "annotation_source": "coding-assistant-authored fictional example",
+    "human_review": "pending",
+    "split": "development"
+  },
+  {
+    "id": "development-35",
+    "language": "mixed",
+    "text": "ಮನೆಯ address \"43 Fictional Road\" is confidential.",
+    "gold": [
+      {
+        "start": 14,
+        "end": 31,
+        "category": "ADDRESS_REVIEW"
+      }
+    ],
+    "annotation_source": "coding-assistant-authored fictional example",
+    "human_review": "pending",
+    "split": "development"
+  },
+  {
+    "id": "development-36",
+    "language": "mixed",
+    "text": "Public reference ಸಂಖ್ಯೆ 9372652 is unrelated.",
+    "gold": [],
+    "annotation_source": "coding-assistant-authored fictional example",
+    "human_review": "pending",
+    "split": "development"
+  }
+]

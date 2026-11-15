@@ -151,10 +151,13 @@ def detect_sensitive_data(
                 )
             )
 
+    # Longer numeric tokens are not Aadhaar substrings. VID/BID remain excluded.
+    longer_numbers=[m.span() for m in re.finditer(r"(?<!\d)(?:\d[ -]?){12,}\d(?!\d)",text)]
     # Aadhaar candidate with Verhoeff checksum
     for m in AADHAAR.finditer(text):
         digits = re.sub(r"\D", "", m.group())
 
+        if any(a<=m.start() and m.end()<=b for a,b in longer_numbers):continue
         if len(digits) == 12 and digits[0] in "23456789" and _verhoeff(digits):
             found.append(
                 Finding(

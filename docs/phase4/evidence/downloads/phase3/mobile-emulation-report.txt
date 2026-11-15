@@ -1,0 +1,84 @@
+02 / EXPORTED-FILE EVIDENCE
+UNVERIFIED
+Download for review (NOT CLEARED)
+Actual exported PDF · 3 page(s)
+Previous
+Page 1 / 3
+Next
+
+These are pixels rendered from the actual downloaded file, not selection highlights. Inspect each page before sharing.
+
+Required checks were incomplete. Do not treat this output as cleared.
+
+Locate next unresolved source finding
+Flags can include independent exported-file OCR, faces, and QR checks. Cover remaining content and export again.
+Remaining candidates — original values hidden
+
+Locate these categories in the exported file and cover the complete affected area before sharing.
+
+MEDICAL RECORD NUMBER
+Page 1 · OCR
+Mandatory High-priority coverage
+All localized detected High-priority findings are covered within the declared scope.
+passed
+Fresh file reconstruction
+A new file was encoded from painted pixels without copying source PDF objects. Removal is assessed below on reopened output pixels.
+passed
+Fresh contextual review · PDF text 1
+0 uncertain, AI-only or conflicting finding(s) require manual inspection. Same-model recheck is not independent semantic verification.
+passed
+Fresh contextual review · PDF text 2
+0 uncertain, AI-only or conflicting finding(s) require manual inspection. Same-model recheck is not independent semantic verification.
+passed
+Fresh contextual review · PDF text 3
+0 uncertain, AI-only or conflicting finding(s) require manual inspection. Same-model recheck is not independent semantic verification.
+passed
+Fresh contextual review · metadata 0
+0 uncertain, AI-only or conflicting finding(s) require manual inspection. Same-model recheck is not independent semantic verification.
+passed
+Saved PDF text, metadata and attachments
+Reopened exported PDF with PDF.js; extracted text and inspected metadata/attachments.
+incomplete
+Reopened mask pixels · page 1
+3 approved region(s) checked for opaque black pixels in decoded output. This verifies the supplied coordinates, not detection completeness.
+passed
+Fresh contextual review · OCR 1
+1 uncertain, AI-only or conflicting finding(s) require manual inspection. Same-model recheck is not independent semantic verification.
+incomplete
+Fresh face detection · exported page 1
+Face model was unavailable. Manual inspection of the output is mandatory.
+incomplete
+Fresh QR scan · exported page 1
+QR detector unavailable. Inspect the exported image and mask any codes manually.
+incomplete
+Reopened mask pixels · page 2
+5 approved region(s) checked for opaque black pixels in decoded output. This verifies the supplied coordinates, not detection completeness.
+passed
+Fresh contextual review · OCR 2
+0 uncertain, AI-only or conflicting finding(s) require manual inspection. Same-model recheck is not independent semantic verification.
+passed
+Fresh face detection · exported page 2
+Face model was unavailable. Manual inspection of the output is mandatory.
+incomplete
+Fresh QR scan · exported page 2
+QR detector unavailable. Inspect the exported image and mask any codes manually.
+incomplete
+Reopened mask pixels · page 3
+9 approved region(s) checked for opaque black pixels in decoded output. This verifies the supplied coordinates, not detection completeness.
+passed
+Fresh contextual review · OCR 3
+0 uncertain, AI-only or conflicting finding(s) require manual inspection. Same-model recheck is not independent semantic verification.
+passed
+Fresh face detection · exported page 3
+Face model was unavailable. Manual inspection of the output is mandatory.
+incomplete
+Fresh QR scan · exported page 3
+QR detector unavailable. Inspect the exported image and mask any codes manually.
+incomplete
+Fresh OCR of exported pixels
+Tesseract eng+kan; selected-value comparison and fresh detection on 3 page(s). 0 unresolved OCR match(es).
+incomplete
+
+Scope: Exported text, rendered printed OCR, metadata and attachment presence. Handwriting, QR decoding and semantic identity inference are outside scope.
+
+Warnings, export hash & report

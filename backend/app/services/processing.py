@@ -119,26 +119,38 @@ def analyze_file(path: Path, file_id: str, ocr_dpi: int = 200) -> dict:
 def redact_file(source: Path, output: Path, regions):
     suffix = source.suffix.lower()
     if suffix == ".pdf":
-        try:
-            doc = fitz.open(source)
-            if doc.is_encrypted:
-                doc.close()
-                raise ValueError("Encrypted PDFs cannot be redacted.")
+        import math
+        from PIL import ImageDraw
+        with fitz.open(source) as doc, fitz.open() as rebuilt:
+            if doc.is_encrypted or not len(doc):
+                raise ValueError("Encrypted or empty PDFs cannot be redacted.")
+            grouped={n:[] for n in range(len(doc))}
             for region in regions:
-                if region.page is None or region.page >= len(doc):
+                if region.page is None or not 0 <= region.page < len(doc):
                     raise ValueError("A valid page number is required for each PDF region.")
-                page = doc[region.page]
-                rect = fitz.Rect(region.x0, region.y0, region.x1, region.y1)
-                if not page.rect.intersects(rect):
+                rect=fitz.Rect(region.x0,region.y0,region.x1,region.y1)
+                if not all(math.isfinite(v) for v in rect) or rect.is_empty or not doc[region.page].rect.contains(rect):
                     raise ValueError("A PDF redaction region is outside the page.")
-                page.add_redact_annot(rect & page.rect, fill=(0, 0, 0))
-            for page in doc:
-                page.apply_redactions(images=fitz.PDF_REDACT_IMAGE_PIXELS)
-            doc.save(output, garbage=4, deflate=True, clean=True)
-            doc.close()
-            return output
-        except (fitz.FileDataError, RuntimeError) as exc:
-            raise ValueError("PDF redaction failed; no output was produced.") from exc
+                grouped[region.page].append(rect)
+            for n,page in enumerate(doc):
+                if page.rect.width*page.rect.height*4>12_000_000:
+                    raise ValueError("Page exceeds pixel limit.")
+                pix=page.get_pixmap(matrix=fitz.Matrix(2,2),alpha=False)
+                image=Image.frombytes('RGB',(pix.width,pix.height),pix.samples)
+                draw=ImageDraw.Draw(image)
+                for rect in grouped[n]:
+                    draw.rectangle((max(0,math.floor(rect.x0*2)-2),max(0,math.floor(rect.y0*2)-2),
+                                    math.ceil(rect.x1*2)+1,math.ceil(rect.y1*2)+1),fill='black')
+                import io
+                encoded=io.BytesIO();image.save(encoded,format='PNG')
+                target=rebuilt.new_page(width=page.rect.width,height=page.rect.height)
+                image_xref=target.insert_image(target.rect,stream=encoded.getvalue())
+                # Pixels above are already RGB. Do not carry auxiliary ICC streams in
+                # the strict fresh-raster format; garbage collection removes them.
+                rebuilt.xref_set_key(image_xref,"ColorSpace","/DeviceRGB")
+                image.close()
+            rebuilt.save(output,garbage=4,deflate=True)
+        return output
 
     if suffix in {".png", ".jpg", ".jpeg"}:
         try:
@@ -148,8 +160,11 @@ def redact_file(source: Path, output: Path, regions):
                 for region in regions:
                     if region.page is not None:
                         raise ValueError("Image regions must not include a page number.")
-                    x0, y0 = max(0, int(region.x0)), max(0, int(region.y0))
-                    x1, y1 = min(image.width, int(region.x1)), min(image.height, int(region.y1))
+                    import math
+                    if not all(math.isfinite(v) for v in [region.x0,region.y0,region.x1,region.y1]) or region.x0<0 or region.y0<0 or region.x1>image.width or region.y1>image.height:
+                        raise ValueError("Image redaction region is outside image bounds.")
+                    x0, y0 = math.floor(region.x0), math.floor(region.y0)
+                    x1, y1 = math.ceil(region.x1), math.ceil(region.y1)
                     if x1 <= x0 or y1 <= y0:
                         raise ValueError("Image redaction region is outside image bounds.")
                     ImageDraw.Draw(image).rectangle((x0, y0, x1 - 1, y1 - 1), fill="black")

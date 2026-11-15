@@ -1,0 +1,11 @@
+PASS mixed-language default and packaged OCR language assets
+PASS user-defined numbered PII review priorities
+PASS browser redaction and reopened downloaded-file inspection
+PASS browser zero-selection cannot clear
+PASS purpose changes, tier-local ranks, manual override and mandatory health clearance
+Browser request failed: https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.34/vision_bundle.mjs net::ERR_EMPTY_RESPONSE
+PASS add, move, resize and delete manual region
+PASS browser PDF export blob is independently reopened without searchable text
+PASS no fixed page cap: ten-page PDF analysis and reopened exported PDF
+PASS mini project: 12-digit Aadhaar redaction with VID/BID deliberately out of scope
+PASS normalized source offsets, multiline review queue and exported plaintext

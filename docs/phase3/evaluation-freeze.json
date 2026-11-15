@@ -1,0 +1,21 @@
+{
+  "baseline": "a4c56a0e30e4c70be6e484fad58c920a462299c6",
+  "files": {
+    "frontend/src/processor.ts": "e5cf86903776b5b300559fd95df6dae37dbbcc0a1c1a042a9ce8c8599c6f6cb1",
+    "frontend/src/detection.ts": "34deba2f42f5077ea05e12014660f1a5b8ac01ea8c00d4c238e17aaf349cc820",
+    "frontend/src/finding-dedup.ts": "c5e6b636d79005ebc6187c985708322e6c4ce6a3dd104ee8676038591d168c93",
+    "frontend/src/ocr-rescue.ts": "8643f0740af4d4451bed76cbca22edc2c28030e0f482fb59a50e5687f4815218",
+    "frontend/src/source-localization.ts": "8ccf4148a0acb80ea193cf26f8efd2d084b4365f27ba25d0a36387d491f27ca6",
+    "frontend/src/residual-values.ts": "830bab697a8dc8d61a2f40caaa4b68fdf597c62dd67ab9d16a4d517ef1c3d69d"
+  },
+  "note": "Detection/OCR configuration frozen before opening the new sealed synthetic evaluation. Shared templates mean this is not independent real-world evidence.",
+  "post_freeze_changes": "Export residual uncertainty policy, abort cleanup and TypeScript worker narrowing were corrected after freeze. Recognition/OCR settings were not tuned against sealed results.",
+  "final_files": {
+    "frontend/src/processor.ts": "74cc01c40d2e27ad261abb2cf04f58b809a8e0f2e54b21f92c669c2c5724f0c4",
+    "frontend/src/detection.ts": "34deba2f42f5077ea05e12014660f1a5b8ac01ea8c00d4c238e17aaf349cc820",
+    "frontend/src/finding-dedup.ts": "c5e6b636d79005ebc6187c985708322e6c4ce6a3dd104ee8676038591d168c93",
+    "frontend/src/ocr-rescue.ts": "8643f0740af4d4451bed76cbca22edc2c28030e0f482fb59a50e5687f4815218",
+    "frontend/src/source-localization.ts": "8ccf4148a0acb80ea193cf26f8efd2d084b4365f27ba25d0a36387d491f27ca6",
+    "frontend/src/residual-values.ts": "830bab697a8dc8d61a2f40caaa4b68fdf597c62dd67ab9d16a4d517ef1c3d69d"
+  }
+}
