@@ -6,7 +6,7 @@ body:
     attributes:
       value: |
         Thank you for helping improve ShareShield. **Never upload real Aadhaar/PAN/VID numbers, actual identity documents, raw OCR content, credentials, or personal data.**
-        If the bug exposes sensitive data or describes an exploitable security flaw, **do not file it publicly**. Follow [SECURITY.md](../../SECURITY.md) instead.
+        If the bug exposes sensitive data or describes an exploitable security flaw, **do not file it publicly**. Follow [SECURITY.md](https://github.com/krutharth-dev/ShareShield/blob/main/SECURITY.md) instead.
   - type: textarea
     id: summary
     attributes:
