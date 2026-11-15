@@ -99,7 +99,7 @@ labelledRules.push(
 export type CategoryDefinition = {
  family:string;
  baseRank:number|null;
- validation?:'aadhaar'|'vid'|'pan'|'ifsc'|'card'|'iban'|'phone'|'bank';
+ validation?:'aadhaar'|'vid'|'pan'|'ifsc'|'card'|'iban'|'phone'|'bank'|'birth_date';
  high?:boolean;
  health?:boolean;
  mandatoryReview?:boolean;
@@ -122,7 +122,7 @@ Object.assign(CATEGORY_REGISTRY.IBAN_REVIEW,{validation:'iban',high:true});
 register(['VOTER_ID'],{family:'government',baseRank:8});
 register(['DRIVING_LICENCE_NUMBER'],{family:'government',baseRank:9});
 register(['STUDENT_OR_EMPLOYEE_ID','ACADEMIC_ADMISSION_ID','COLLEGE_USN_REVIEW'],{family:'institutional',baseRank:10});
-register(['DATE_OF_BIRTH'],{family:'identity',baseRank:11});
+register(['DATE_OF_BIRTH'],{family:'identity',baseRank:11,validation:'birth_date'});
 register(['INDIAN_MOBILE','INTERNATIONAL_PHONE_REVIEW'],{family:'contact',baseRank:12,validation:'phone'});
 register(['EMERGENCY_CONTACT_REVIEW'],{family:'contact',baseRank:12});
 register(['EMAIL'],{family:'contact',baseRank:13});

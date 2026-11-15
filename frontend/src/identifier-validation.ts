@@ -31,3 +31,26 @@ export function validateIban(value:string):Validation {
  return {status:result.valid?'passed':'failed',method:'IBAN country format + mod-97',
  detail:result.valid?`Country length and BBAN format (${country}) plus checksums passed. Bank existence, issuance and ownership are not verified.`:'Country-specific length, BBAN format or checksum failed; retain for manual review.'};
 }
+
+/** Calendar validity only. Do not guess between day-first and month-first dates. */
+export function validateBirthDate(value:string):Validation {
+ const input=normalizeDigits(value).trim();
+ const method='Gregorian calendar structure';
+ const fail=(detail:string):Validation=>({status:'failed',method,detail});
+ let year:number,month:number,day:number;
+ const iso=input.match(/^(\d{4})([/.\-])(\d{1,2})\2(\d{1,2})$/);
+ const numeric=input.match(/^(\d{1,2})([/.\-])(\d{1,2})\2(\d{4})$/);
+ const named=input.match(/^(\d{1,2})\s+(Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:t(?:ember)?)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?)\s+(\d{4})$/i);
+ if(iso){year=Number(iso[1]);month=Number(iso[3]);day=Number(iso[4]);}
+ else if(named){year=Number(named[3]);month=['jan','feb','mar','apr','may','jun','jul','aug','sep','oct','nov','dec'].indexOf(named[2].slice(0,3).toLowerCase())+1;day=Number(named[1]);}
+ else if(numeric){
+  year=Number(numeric[4]);const a=Number(numeric[1]),b=Number(numeric[3]);
+  if(a>=1&&a<=12&&b>=1&&b<=12&&a!==b)return {status:'not_checked',method,detail:'Day/month order is ambiguous. Confirm the original date format before approval.'};
+  // Either unambiguous ordering is supported; this is not a locale inference.
+  if(b>12&&a<=12){month=a;day=b;}else{day=a;month=b;}
+ }else return {status:'not_checked',method,detail:'Unsupported or incomplete date format; review the original field.'};
+ const leap=year%4===0&&(year%100!==0||year%400===0);
+ const days=[31,leap?29:28,31,30,31,30,31,31,30,31,30,31];
+ if(year<1||month<1||month>12||day<1||day>days[month-1])return fail('Impossible calendar date; review a possible OCR or source error.');
+ return {status:'passed',method,detail:'Calendar structure passed. This does not verify a person’s birth date, age or identity.'};
+}

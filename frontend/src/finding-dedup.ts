@@ -42,6 +42,26 @@ function sameLocation(a:Region[],b:Region[],threshold:number){
  const overlap=unionArea(intersections);
  return overlap/unionArea(a)>threshold&&overlap/unionArea(b)>threshold;
 }
+/** Native PDF font metrics include whitespace above/below the actual glyphs.
+ * Match one exact native field to a contained OCR line without lowering the
+ * overlap threshold for arbitrary OCR observations or multiline fields.
+ */
+function matchingNativeLine(a:Located,b:Located):Region[]|null{
+ if((a.ocr_confidence===undefined)===(b.ocr_confidence===undefined))return null;
+ const native=a.ocr_confidence===undefined?a:b,ocr=native===a?b:a;
+ if(native.boxes.length!==1||!ocr.boxes.length)return null;
+ const n=native.boxes[0],boxes=ocr.boxes;
+ if(![n,...boxes].every(r=>Object.values(r).every(Number.isFinite)&&r.width>0&&r.height>0))return null;
+ const left=Math.min(...boxes.map(r=>r.x)),right=Math.max(...boxes.map(r=>r.x+r.width));
+ const top=Math.min(...boxes.map(r=>r.y)),bottom=Math.max(...boxes.map(r=>r.y+r.height));
+ const pad=Math.max(2,n.height*.05);
+ if(left<n.x-pad||right>n.x+n.width+pad||top<n.y-pad||bottom>n.y+n.height+pad)return null;
+ if(right-left<n.width*.9||bottom-top<n.height*.4)return null;
+ if(Math.abs((top+bottom)/2-(n.y+n.height/2))>n.height*.2)return null;
+ // Every OCR word must belong to the same physical line.
+ if(boxes.some(r=>Math.abs(r.y+r.height/2-(top+bottom)/2)>n.height*.2))return null;
+ return native.boxes;
+}
 export function consolidateLocated<T extends Located>(candidates:readonly T[],values:ReadonlyMap<string,string>){
  const kept:T[]=[],removed:string[]=[];let disagreements=0;
  for(const candidate of [...candidates].sort((a,b)=>Number(a.recognition_source==='trained_ai')-Number(b.recognition_source==='trained_ai'))){
@@ -56,12 +76,25 @@ export function consolidateLocated<T extends Located>(candidates:readonly T[],va
    if(duplicate){duplicate.classification_conflict??=candidate.classification_conflict;removed.push(candidate.id);continue;}
   }
   if(!family||!candidate.boxes.length){kept.push(candidate);continue;}
+  const identicalValue=(existing:T)=>{
+   const value=digits(values.get(existing.id)??'');return value!==''&&value===digits(values.get(candidate.id)??'');
+  };
   const index=kept.findIndex(existing=>existing.page===candidate.page&&group(existing.category)===family&&
-   sameLocation(existing.boxes,candidate.boxes,.65));
+   (sameLocation(existing.boxes,candidate.boxes,.65)||family==='aadhaar'&&identicalValue(existing)&&matchingNativeLine(existing,candidate)!==null));
   if(index<0){kept.push(candidate);continue;}
   const old=kept[index];old.classification_conflict??=candidate.classification_conflict;
   const oldValue=digits(values.get(old.id)??''),incoming=digits(values.get(candidate.id)??'');
   const same=family==='fallback'||(oldValue!==''&&oldValue===incoming);
+  const nativeLine=family==='aadhaar'&&same?matchingNativeLine(old,candidate):null;
+  if(nativeLine){
+   // Retain the complete, exact native field region; never shrink its mask to
+   // OCR glyph estimates or turn a lower-confidence review into auto-approval.
+   old.boxes=nativeLine;
+   old.detection_confidence=Math.min(old.detection_confidence,candidate.detection_confidence);
+   // Keep native provenance (undefined OCR score) for later OCR-pass merging.
+   old.ocr_confidence=undefined;
+   removed.push(candidate.id);continue;
+  }
   if(!same&&family!=='aadhaar'){kept.push(candidate);continue;}
   if(!same&&family==='aadhaar'){
    old.category='AADHAAR_OCR_REVIEW';

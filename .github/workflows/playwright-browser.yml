@@ -31,6 +31,7 @@ jobs:
           node tests/browser/phase3-cancel.mjs
           node tests/browser/phase3-export.mjs
           node tests/browser/phase4-security.mjs
+          node tests/browser/identifier-reading.mjs
           node tests/browser/context-model.mjs
           SHARESHIELD_PERFORMANCE_REPORT=/tmp/context-performance.json node tests/browser/context-performance.mjs
       - uses: actions/setup-python@v5
@@ -42,6 +43,7 @@ jobs:
           sudo apt-get update && sudo apt-get install -y tesseract-ocr tesseract-ocr-eng
           python ../tools/phase3/verify_exports.py /tmp/phase3-exports
           python ../tools/phase4/verify_downloads.py /tmp/phase4-exports
+          python ../tools/verify_identifier_downloads.py /tmp/identifier-evidence
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -50,6 +52,7 @@ jobs:
             /tmp/phase3-exports
             /tmp/phase4-exports
             /tmp/theme-evidence
+            /tmp/identifier-evidence
           retention-days: 7
       - name: Extend viewer isolated build and local-only browser acceptance
         run: |

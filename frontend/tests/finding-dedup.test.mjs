@@ -62,3 +62,27 @@ test('two-word and three-word OCR segmentations of one number consolidate',()=>{
  const b={...a,id:'b',boxes:[box(10,10,85),box(100,10,40)]};
  assert.equal(consolidateLocated([a,b],new Map([['a','2345 6789 0124'],['b','23456789 0124']])).findings.length,1);
 });
+
+test('native font-metric boxes and contained OCR words yield ten distinct review findings',()=>{
+ const candidates=[];
+ for(let i=0;i<10;i++){
+  const native={id:'n'+i,page:0,category:'AADHAAR_REVIEW',boxes:[box(320,100+i*96,260,47)],detection_confidence:.55,reason:'row review'};
+  const ocr={...native,id:'o'+i,ocr_confidence:.96,boxes:[box(322,112+i*96,77,27),box(412,112+i*96,77,27),box(502,112+i*96,77,27)]};
+  candidates.push(native,ocr,{...ocr,id:'retry'+i});
+ }
+ const result=consolidateLocated(candidates,new Map(candidates.map(f=>[f.id,'2345 6789 0124'])));
+ assert.equal(result.findings.length,10);assert.equal(result.removedIds.length,20);
+ assert.equal(new Set(result.findings.map(f=>f.boxes[0].y)).size,10);
+ for(const f of result.findings){assert.equal(f.boxes.length,1);assert.equal(f.boxes[0].height,47);assert.equal(f.detection_confidence,.55);}
+});
+test('native/OCR matching cannot merge partial words, different readings or multiline regions',()=>{
+ const native={id:'n',page:0,category:'AADHAAR_CANDIDATE',boxes:[box(320,100,260,47)],detection_confidence:.94,reason:'synthetic'};
+ const ocr={...native,id:'o',ocr_confidence:.96,boxes:[box(322,112,77,27),box(412,112,77,27),box(502,112,77,27)]};
+ for(const changed of [
+  {...ocr,boxes:ocr.boxes.slice(0,1)},
+  {...ocr,boxes:ocr.boxes.map((b,i)=>({...b,y:b.y+i*35}))},
+  {...ocr,boxes:ocr.boxes.map(b=>({...b,y:b.y+96}))},
+  {...ocr,page:1}
+ ])assert.equal(consolidateLocated([structuredClone(native),changed],new Map([['n','234567890124'],['o','234567890124']])).findings.length,2);
+ assert.equal(consolidateLocated([native,ocr],new Map([['n','234567890124'],['o','234567890125']])).findings.length,2);
+});
